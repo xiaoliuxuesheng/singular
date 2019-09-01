@@ -35,6 +35,7 @@
 - 依赖注入 : 是对IOC思想的实现
 - 面向切面编程 : 是对面向对象的扩展与增强
 - 为JavaEE开发提供了一站式的解决方案 
+- 轻量级 : 相比较传统的JavaEE规范, 把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
 
 ## 1.4 Spring的模块划分
 
@@ -81,6 +82,15 @@
 
 ## 2.1 初始化Spring容器
 
+:anchor: **IOC - Inverce of Controller**
+
+- 把对象的实例化工作交给Spring容器
+
+:anchor: **Spring配置文件**
+
+- Spring是存放Java对象的容器, Spring的配置文件相当于Spring容器
+- 每个`<bean>`代表要存放的一个对象
+
 :anchor: 根路径读取配置文件初始化IOC
 
 ```java
@@ -93,6 +103,18 @@ ApplicationContext ioc =
 ```java
 ApplicationContext ioc = new FileSystemXmlApplicationContext("系统磁盘路径");
 ```
+
+:anchor: **Spring中对象加载过程**
+
+1. 初始化Spring容器实例
+2. 读取配置文件
+3. 加载配置文件中的信息
+4. 通过反射创建bean并完成初始化,并保存到容器
+
+:anchor: Spring单元测试
+
+- 高手Junit需要运行在Spring容器中
+- 需要设置Spring容器的配置文件
 
 ## 2.2 从容器中获取bean
 
@@ -598,27 +620,141 @@ public class MyBeanPost implements BeanPostProcessor {
 
 **:anchor:将后置处理器注册进spring** 
 
-# 第三章 Spring容器-DI
+### 3. bean的作用域
 
-## 3.1 DI概述
 
-- Ioc 是一种设计思想, DI这对这种设计思想的实现
-- **组件之间依赖关系**由容器在运行期决定 ,容器通过反射的形式将容器中,将容器中的对象注入到对应的属性中, 反射赋值
 
-## 3.2 自动注入标签
+## 2.5 Spring的Bean工厂
 
-1. 标签生效的3要素
+### 1. BeanFactory
 
-    - 标签
-    - 被标准的元素
-    - 标签的解释器
+- 只提供的最基本的IOC功能
+- 在容器启动时候不会实例化bean
 
-2. 自动注入标签使用步骤
+### 2. ApplicationContext
 
-    - 给组件添加注解
-    - 开启spring注解解释器 : context名称空间
+- 继承自BeanFactory工厂, 而且提供了容器之外的功能
+- 在容器启动时就会实例化bean
 
-    > id 默认是类名首字母小写
+# 第三章 Spring注解
+
+## 3.1 注解使用
+
+### 1. 标签的三要素
+
+- 被标注的元素
+- 标签类本身
+- 标签的解释器程序
+
+### 2. Spring注解的使用步骤
+
+- 开启注解解析器 : context名称空间
+- 使用注解代替xml配置
+
+## 3.2 IOC注解
+
+### 1. IOC 注解说明
+
+:anchor: **IOC注解作用** : 通过注解将bean加入到Spring容器
+
+:anchor: **context名称空间** : 在Spring配置中开启IOC注解解析器
+
+- 基本用法
+
+  ```xml
+  <context:component-scan base-package="需要扫描的包"/>
+  ```
+
+- 设置排除指定的组件
+
+  ```xml
+  <context:exclude-filter type="设置类型" expression="类型的值"/>
+  ```
+
+  > type="annotation" : 表示指定注解类型的设置
+  >
+  > type="assignable" : 表示指定类型的类设置
+  >
+  > type="aspectj" : 表示使用aspect表达式设置
+  >
+  > type="regex" : 表示使用正则表达式设置
+  >
+  > type="custom" : 表示使用自定义TypeFilter的实现设置
+
+- 设置只包含指定的组件
+
+  ```xml
+  <context:include-filter type="设置类型" expression="类型的值"/>
+  ```
+
+  > 使用包含设置规则时候, 需要禁用掉默认的过滤规则
+  >
+  > use-default-filters="false"
+
+### 2. IOC注解类型
+
+- **Spring规范的IOC注解**
+
+  > 添加的Spring中组件的id名默认是类名首字母小写
+
+  :anchor: **@Component**  : 是通用注解, 一般用于标注工具栏
+
+  :anchor: **@Repository** : 一般用于标注Dao仓库
+
+  :anchor: **@Service** : 一般用于标注Service组件
+  
+  :anchor: **@Controller** : 一般用于标注Controller前端控制器
+  
+- **向容器添加bean时候指定bean的名称**
+
+  ```java
+  给IOC标签指定value属性值
+  ```
+
+- **向容器添加bean时候指定bean的作用域**
+
+  ```java
+  在类上添加@Scope标签 : 使用value属性指定该bean的作用域
+  ```
+
+## 3.3 DI注解
+
+:anchor:**​ @Autowire**
+
+- 自动装配原理
+
+  > 第一 : 会根据属性类型匹配
+  >
+  > 第二 : 如果找到多个类型, 则以属性名作为bean的id名继续匹配
+  >
+  > 第三 : 如果找不到会抛出异常
+
+- 设置匹配指定id名称的bean
+
+  ```java
+  @Qualifier("指定名称")
+  ```
+
+- 设置如果匹配不到会取消装配
+
+  ```java
+  
+  ```
+
+- @Autowire给方法上添加
+
+  > 会对方法的参数上实现自动装配
+  >
+  > 对参数的装配过程和属性的装配过程相同
+
+:anchor: **@Resources**
+
+- 是Java中制定的规范, 用于自动注入, 功能没有Spring的Autowire强大
+- @Resources 的扩展性好, 如果切换其他容器框架也可以使用
+
+## 3.4 Spring的泛型注入
+
+- Spring中使用泛型匹配时候, 采用反射获取泛型类型, 从而对对应的类型实现自动注入
 
 # 第四章 面向切面 AOP
 
