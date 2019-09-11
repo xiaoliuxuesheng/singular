@@ -1,18 +1,10 @@
-# 第一章 框架与Spring
+# 第一章 Spring概述
 
 ## 1.1 框架
 
-:anchor: **框架概述**
+:anchor: **框架概述** : 框架是抽取出来的高度可重用的代码, 多个可重用模块的集合, 形成某个领域的整体解决方案
 
-- 框架是抽取出的高度可重用的代码;
-- 框架是多个可重用模块的集合, 形成某个领域的整体解决方案
-
-:anchor: **开源组织**
-
-- [**Spring**](https://spring.io)
-- [**Apache **](https://www.apache.org) 
-
-## 1.2 Spring概述
+## 1.2 Spring简介
 
 :anchor: **Spring框架**
 
@@ -21,100 +13,267 @@
 
 :anchor: **Spring技术栈**
 
-- spring farmwork
-- spring data
-- spring security
-- spring boot
-- spring cloud
-- spring session
-- spring io platform
+| Spring技术      | 功能说明 |
+| --------------- | -------- |
+| spring farmwork |          |
+| spring data     |          |
+| spring security |          |
+| spring boot     |          |
+| spring cloud    |          |
 
 ## 1.3 Spring特点
 
-- 非侵入 : 用Spring开发的应用不依赖Spring的API
-- 依赖注入 : 是对IOC思想的实现
-- 面向切面编程 : 是对面向对象的扩展与增强
-- 为JavaEE开发提供了一站式的解决方案 
-- 轻量级 : 相比较传统的JavaEE规范, 把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
+- **为JavaEE开发提供了一站式的解决方案** 
+
+- **非侵入** : 用Spring开发的应用不依赖Spring的API
+- **依赖注入** : 是对IOC思想的实现
+- **面向切面编程** : 是对面向对象的扩展与增强
+- **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
+- **模块化** : 添加特定模块可以解决特定场景的功能 
 
 ## 1.4 Spring的模块划分
 
-:anchor: **Test : 测试模块**
+| spring 测试模块 | 说明 |
+| --------------- | ---- |
+| spring-test     |      |
 
-- spring-aop-XX.RELEASE
+| spring 核心       | 说明 |
+| ----------------- | ---- |
+| spring-beans      |      |
+| spring-core       |      |
+| spring-context    |      |
+| spring-expression |      |
 
-:anchor:**​ Core Container : 核心模块**
+| spring AOP     | 说明 |
+| -------------- | ---- |
+| spring-aop     |      |
+| spring-aspects |      |
 
-- spring-beans-XX.RELEASE
-- spring-core-XX.RELEASE
-- spring-context-XX.RELEASE
-- spring-expression-XX.RELEASE
+| spring Data | 说明 |
+| ----------- | ---- |
+| spring-jdbc |      |
+| spring-orm  |      |
+| spring-tx   |      |
+| spring-oxm  |      |
+| spring-jms  |      |
 
-:anchor: **AOP : 面向切面**
+| spring web       | 说明 |
+| ---------------- | ---- |
+| spring-web       |      |
+| spring-webmvc    |      |
+| spring-websocket |      |
+| spring-webflux   |      |
 
-- spring-aop-XX.RELEASE
-- spring-aspects-XX.RELEASE
+| spring message   | 说明 |
+| ---------------- | ---- |
+| spring-messaging |      |
 
-:anchor: **Data Access : 数据访问**
-
-- spring-jdbc-XX.RELEASE
-- spring-orm-XX.RELEASE
-- spring-tx-XX.RELEASE
-- spring-oxm-XX.RELEASE
-- spring-jms-XX.RELEASE
-
-:anchor: **WEB**
-
-- spring-web-XX.RELEASE
-- spring-webmvc-XX.RELEASE
-- spring-websocket-XX.RELEASE
-- spring-webflux-XX.RELEASE
-
-:anchor: **Messaging : 消息**
-
-- spring-messaging-5.1.9.RELEASE
-
-:anchor: **Instrumentation : 设备**
-
-- spring-instrument-XX.RELEASE
+| spring Instrumentation | 说明 |
+| ---------------------- | ---- |
+| spring-instrument      |      |
 
 # 第二章 Spring容器-IOC
 
-## 2.1 初始化Spring容器
+## 2.1 IOC Helloworld
 
-:anchor: **IOC - Inverce of Controller**
+:anchor: 添加Spring依赖 : pom.xml
 
-- 把对象的实例化工作交给Spring容器
-
-:anchor: **Spring配置文件**
-
-- Spring是存放Java对象的容器, Spring的配置文件相当于Spring容器
-- 每个`<bean>`代表要存放的一个对象
-
-:anchor: 根路径读取配置文件初始化IOC
-
-```java
-ApplicationContext ioc = 
-    new ClassPathXmlApplicationContext("classpath:配置文件路径");
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-beans</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-expression</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
 ```
 
-:anchor: 根据磁盘文件初始化IOC
+:anchor: 定义JavaBean : User.java
 
 ```java
-ApplicationContext ioc = new FileSystemXmlApplicationContext("系统磁盘路径");
+@Setter
+@Getter
+@ToString
+public class User {
+    private String name;
+    public User() {
+        System.out.println(" User构造器被执行.... ");
+    }
+}
 ```
 
-:anchor: **Spring中对象加载过程**
+:anchor: 添加配置文件 : spring-ioc.xml
 
-1. 初始化Spring容器实例
-2. 读取配置文件
-3. 加载配置文件中的信息
-4. 通过反射创建bean并完成初始化,并保存到容器
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean class="com.panda.ioc.beans.User" id="user"></bean>
+</beans>
+```
 
-:anchor: Spring单元测试
+:anchor: 测试springIOC
 
-- 高手Junit需要运行在Spring容器中
-- 需要设置Spring容器的配置文件
+- 初始化IOC容器
+
+    ```java
+    ApplicationContext ioc = 
+        new ClassPathXmlApplicationContext("classpath:spring-ioc.xml");
+    ```
+
+- 从容器中获取组件
+
+    ```java
+    @Test
+    public void testByName() throws Exception {
+        Object user = ioc.getBean("user");
+        System.out.println("user = " + user);
+    }
+    ```
+
+## 2.2 Spring单元测试
+
+- 将Junit运行在Spring容器中
+
+    ```java
+    @RunWith(SpringJUnit4ClassRunner.class)
+    @ContextConfiguration(locations = {"classpath:spring-ioc01.xml"})
+    public class SpringIocTest01 {
+    
+        @Autowired
+        private ApplicationContext ioc;
+        
+        @Test
+        public void testAutowiredIoc() throws Exception {
+            System.out.println("ioc = " + ioc);
+        }
+    }
+    ```
+
+## 2.2 初始化Spring容器
+
+:anchor: 初始化IOC容器的方式
+
+- 根路径读取配置文件初始化IOC
+
+    ```java
+    ApplicationContext ioc = 
+        new ClassPathXmlApplicationContext("classpath:配置文件路径");
+    ```
+
+- 根据磁盘文件初始化IOC
+
+    ```java
+    ApplicationContext ioc = new FileSystemXmlApplicationContext("系统磁盘路径");
+    ```
+
+:anchor: 初始化IOC容器源码
+
+- 读取配置文件 :`new ClassPathXmlApplicationContext`
+
+    ```xml
+    public ClassPathXmlApplicationContext(String configLocation) throws BeansException {
+    	this(new String[] {configLocation}, true, null);
+    }
+    ```
+
+- 最终会调用`ClassPathXmlApplicationContext`构造器 :  
+
+    ```java
+    public ClassPathXmlApplicationContext(
+        String[] configLocations, boolean refresh, @Nullable ApplicationContext parent)
+        throws BeansException {
+    
+        super(parent);
+        setConfigLocations(configLocations);
+        if (refresh) {
+            refresh();
+        }
+    }
+    ```
+
+- 最终会执行 : `refresh()` 方法
+
+    ```java
+    @Override
+    public void refresh() throws BeansException, IllegalStateException {
+        synchronized (this.startupShutdownMonitor) {
+            // 准备刷新上下文
+            prepareRefresh();
+    
+            // 告诉子类刷新内部bean工厂
+            ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+    
+            // 准备bean工厂，以便在此上下文中使用。
+            prepareBeanFactory(beanFactory);
+    
+            try {
+                // 允许在上下文子类中对bean工厂进行后处理。
+                postProcessBeanFactory(beanFactory);
+    
+                // 调用上下文中注册为bean的工厂处理器。
+                invokeBeanFactoryPostProcessors(beanFactory);
+    
+                // 注册拦截bean创建的bean处理器。
+                registerBeanPostProcessors(beanFactory);
+    
+                // 初始化此上下文的消息源。
+                initMessageSource();
+    
+                // 初始化此上下文的事件多播程序。
+                initApplicationEventMulticaster();
+    
+                // 在特定上下文子类中初始化其他特殊bean。
+                onRefresh();
+    
+                // 检查侦听器bean并注册它们。
+                registerListeners();
+    
+                // 实例化所有剩余的(非惰性初始化)单例。
+                finishBeanFactoryInitialization(beanFactory);
+    
+                // 最后一步:发布相应的事件。
+                finishRefresh();
+            }
+    
+            catch (BeansException ex) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Exception encountered during context initialization - " +
+                                "cancelling refresh attempt: " + ex);
+                }
+    
+                // 销毁已经创建的单例，以避免挂起资源。
+                destroyBeans();
+    
+                // 重置 "active" 标记
+                cancelRefresh(ex);
+    
+                // 将异常传播给调用者。
+                throw ex;
+            }
+    
+            finally {
+                // 重置Spring核心中的公共内省缓存，因为我们可能再也不需要单例bean的元数据了……
+                resetCommonCaches();
+            }
+        }
+    }
+    ```
 
 ## 2.2 从容器中获取bean
 
