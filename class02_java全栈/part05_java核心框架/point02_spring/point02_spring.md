@@ -917,5 +917,213 @@ public class MyBeanPost implements BeanPostProcessor {
 
 # 第四章 面向切面 AOP
 
+## 4.1 使用代理模式实现AOP功能
 
+1. 定义要为目标类做增强的类 : 比如日志记录
 
+   ```java
+   public class LogUtils {
+       public static void start(Object ... objects){
+           System.out.println("JKD动态代理解耦:方法开始执行 --- 参数为" + objects);
+       }
+   
+       public static void excep(Object ... objects){
+           System.out.println("JKD动态代理解耦:方法出现异常 --- 参数为" + objects);
+       }
+   
+       public static void end(Object ... objects){
+           System.out.println("JKD动态代理解耦:方法执行完成 --- 参数为" + objects);
+       }
+   }
+   ```
+
+2. 定义JDK动态代理类
+
+   ```java
+   public class TargetProxy {
+   
+       private Object target;
+   
+       public TargetProxy(Object target) {
+           this.target = target;
+       }
+   
+       public Object getProxy() {
+           return Proxy.newProxyInstance(
+                   target.getClass().getClassLoader(),
+                   target.getClass().getInterfaces(),
+                   (proxy, method, args) -> {
+                       Object invoke = null;
+                       try {
+                           LogUtils2.start(method.getName(), Arrays.asList(args));
+                           invoke = method.invoke(target, args);
+                       } catch (Exception e) {
+                           LogUtils2.excep(e.getMessage(), Arrays.asList(args));
+                       } finally {
+                           LogUtils2.end(Arrays.asList(args));
+                       }
+                       return invoke;
+                   });
+       }
+   }
+   ```
+
+3. 获取代理对象, 实现AOP增强功能
+
+   ```java
+   @Test
+   public void testExc() throws Exception {
+       IUserDao proxy = (IUserDao) new TargetProxy(userDao2).getProxy();
+       System.out.println(proxy.getClass());
+       proxy.delete(2);
+   }
+   ```
+
+   - 执行结果
+
+     ```java
+     class com.sun.proxy.$Proxy14
+     【LogUtils2】-JKD动态代理解耦:方法开始执行 --- 参数为[Ljava.lang.Object;@78b729e6
+     com.panda.aop.dao.UserDao.delete:userId=2
+     【LogUtils2】-JKD动态代理解耦:方法执行完成 --- 参数为[Ljava.lang.Object;@6b4a4e18
+     ```
+
+4. JDK代理的总结
+
+   - 真正实现目标类方法的对象是目标类的代理对象
+
+## 4.2 Spring AOP
+
+1. 添加依赖
+
+   ```xml
+   <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-aop</artifactId>
+       <version>5.1.8.RELEASE</version>
+   </dependency>
+   <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-aspects</artifactId>
+       <version>5.1.8.RELEASE</version>
+   </dependency>
+   <dependency>
+       <groupId>aopalliance</groupId>
+       <artifactId>aopalliance</artifactId>
+       <version>1.0</version>
+   </dependency>
+   ```
+
+2. 定义切面类
+
+   ```java
+   @Aspect
+   @Component
+   ```
+
+3. 在切面类中定义并配置增强方法
+
+   ```java
+   @Before()
+   @AfterReturning()
+   @AfterThrowing()
+   @After()
+   @Around()
+   ```
+
+4. 开启IOC和AOP注解驱动
+
+   ```xml
+   <context:component-scan base-package="com.panda.aop"></context:component-scan>
+   
+   <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+   ```
+
+5. 测试AOP功能
+
+   ```java
+   @Autowired
+   private EmployeeService employeeService;
+   
+   @Test
+   public void testInterface() throws Exception{
+       System.out.println(employeeService.getClass());
+       employeeService.save(Employee.builder().id(1).name("aopSave").build());
+   }
+   
+   // 执行结果
+   employeeService.getClass() = class com.sun.proxy.$Proxy23
+   注解式 : AOP方法开始true
+   com.panda.service.EmployeeServiceImpl.saveEmployee(id=1, name=aopSave)
+   注解式 : AOP方法调用结束true
+   注解式 : AOP方法执行完成true
+   ```
+
+## 4.3 AOP相关术语
+
+1. 横切关注点 : 是指对目标类的需要增强的方法的增强时机 : 方法前 | 后 | 结束 |  异常 ....
+2. 通知方法 : 在横切关注点对目标方法的增强的方法
+3. 切面类 : 用于保存通知方法的类
+4. 连接点 : 通知方法对目标方法增强的位置描述
+5. 切入点 : 真正要对目标方法增强的执行时机
+
+## 4.4 AOP细节说明
+
+### 1. 代理对象
+
+- 被AOP增强的类, 在SpringIOC中保存的是该类的代理对象. 并且该类是不会被Spring管理的
+
+- 如果被增强的类有接口 : 则该类的代理对象是JDK动态代理产生的对象
+- 如果被增强的类没有接口 : 则该类的代理对象是CGLIB动态代理产生的对象
+
+### 2. 通知方法的切入点
+
+- 切入表达式
+
+  ```java
+  execution(方法修饰符 返回值类型 方法全类名(方法参数))
+  ```
+
+- 通配符
+
+  - ` * ` 
+    - 可以匹配一个或多个字符
+    - 可以匹配任意一个参数
+  - ` .. ` 
+    - 可以匹配任意多个参数
+    - 可以匹配任意多层路径
+  - 方法权限修饰符 : 只能是 `public` 通常不写
+  - 精确写法 : 一般写返回值类型
+  - execution() 可以使用表达式 : `&&`  `||`  `!`
+
+### 3. 通知方法的执行顺序
+
+- before -> after -> afterReturning -> afterThrowing 
+
+### 4. 抽取公用切入点 : @Pointcut()
+
+### 5. AOP获取异常信息和方法返回值
+
+- @AfterReturning() 的属性 : **returning** : 用于指定通知方法中的哪个参数是目标方法的返回值
+- @AfterThrowing() 的属性 : **throwing** 用于指定通知方法中的哪个参数是目标方法的异常对象
+
+### 5. 通知方法中的参数列表
+
+- JointPoint 类型的参数 : 封装的当前目标方法的详细信息
+- returning : 用于接收方法的返回值
+- throwing : 用于接收方法出现的异常
+
+### 6. 环绕通知 : @Around
+
+- 环绕通知的本质是一个代理模式 : 是其他几个通知的集合功能体
+
+- 环绕通知必须定义的一个参数 ProceedingJointPoint
+
+  ```java
+  ProceedingJointPoint.proceed();
+  ```
+
+  - 这个方法是执行目标方法运行
+  - 必须将目标执行的返回值返回 : 即使返回类型是void
+
+- 环绕通知方法必须有一个返回值 : 环绕通知方法的返回值就是目标方法的返回值
