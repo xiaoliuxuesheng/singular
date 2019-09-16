@@ -46,3 +46,44 @@
 2. Tomcat中处理请求的配置是default-servlet.url-pattern = / , 而JavaEE应用中DispatcherServlet.url-pattern = / , 表示JavaEE应用的请求处理将禁用掉Tomcat的请求处理方式, 所有的请求都交由前端控制器处理
 3. Tomcat中的jsp-servlet处理了JSP页面的请求
 4. url-pattern = /也为RestFul请求提供基础配置
+
+# 011_RequestMapping细节 : 标注位置
+
+- 标注在类上 : 表示为当前类中所有的方法指定基准路径
+- 标准在方法上 : 当前方法的处理请求的URL映射
+
+# 012_RequestMapping细节 : 请求方式
+
+- 属性 : method 表示当前方法处理的请求类型 : 
+
+# 013_RequestMapping细节 : 规定请求参数
+
+- 属性params : 用于规定请求中的参数表达式
+  - params = {"key"} : 表示参数中必须有指定名称的参数
+  - params = {"!key"} : 表示参数中必须不能有指定名称的参数
+  - params = {"key=value"} :  表示请求中的指定参数必须是指定值
+  - params = {"key!=key"} : 表示请求中的指定参数不可以是指定值
+  -  params = {"key=value","key2=value2"} : 规定请求中的多个参数
+
+# 014_ RequestMapping细节 : 规定请求头信息
+
+- 属性 : headers : 用于规定请求的请求头中的参数信息才可以访问
+  - header 的参数规定可以使用表达式
+
+# 015_Ant风格的请求方式
+
+- ? : 匹配任意一个字符
+- `*` : 匹配任意多个字符
+- `**`  : 匹配任意多个字符  或 多层路径
+
+# 016_PathVariable : 获取请求路径中的占位符参数
+
+1. 第一步 : 在请求URL中定义占位符
+2. 第二步 : 在方法参数中定义参数 
+3. 第三步 : 在该方法参数上标注@PathVariable获取占位符中的值
+
+# 017_Rest风格请求
+
+1. 什么是RestFul分隔 : 资源状态转换
+2. 
+
