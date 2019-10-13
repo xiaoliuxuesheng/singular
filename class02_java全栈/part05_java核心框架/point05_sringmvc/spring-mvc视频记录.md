@@ -85,5 +85,27 @@
 # 017_Rest风格请求
 
 1. 什么是RestFul分隔 : 资源状态转换
-2. 
+
+# 018_019_rest 环境
+
+1. DispatcherServlet
+2. EncodingFilter
+3. context:component-scan
+4. InternalResourcesAndViewResover
+5. 定义请求连接 : post get delete put
+6. 处理请求 : method = Request.PUT...
+7. 添加Rest过滤器 : HiddenMethodFilter
+8. post表单添加参数 : _method=请求方式
+9. 过滤器源码解读
+   - 获取请求参数的值
+   - 是post并且参数有值, 则过滤器执行转换请求
+   - 将请求的值转换为大写字母
+   - 根据请求参数转换为对应的请求对象
+   - 返回转换后的请求对象
+
+# 020_高版本Tomcat中的JSP
+
+- 高版本中Tomcat中国没有exception对象 : 需要手动添加 , 在jsp标签中添加 `isErrorPage=true`:表示将出现的错误交给exception对象
+
+
 
