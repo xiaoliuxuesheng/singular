@@ -1,165 +1,299 @@
-# 第一章 初始Redis
+第一章 Redis概述
 
-## 1.1 Redis简介
+## 1.1 Redis支持的数据类型
 
-- 开源、免费的缓存服务器
-- 高性能的Key-Value服务器
-- 支持多种数据结构，功能丰富
+1. String字符串 : 是Redis最基本的数据类型，一个键最大能存储512MB
+2. Hash（哈希）: 是一个string类型的field和value的映射表
+3. List（列表）: 列表是简单的字符串列表，按照插入顺序排序
+4. Set（集合）: 是string类型的无序集合
+5. zset(sorted set：有序集合) : 是string类型元素的集合,且不允许重复的成员。
 
-## 1.2 Redis特性
+## 1.2  Redis持久化
 
-- 速度快：支持10WOPS，C语言编写，单线程(同一时间只执行一条命令)，使用内存管理数据(非阻塞IO,单线程纯内存)
-- 持久化：内存数据可以持久化，RDB 和 AOF
-- 多种数据结构：String、Hash Table、Linked List、Set、Sorted Set、（Bit Map，HyperLogLog，GEO（位置定位计算），）
-- 支持多种编程语言：Java、Python、Php、Node、Go
-- 简单：真个服务器代码简单、少，不依赖外部库，单线程
-- 主从复制：高可用基础
-- 功能丰富：支持简单事物、消息发布订阅、Lua脚本、pipeline
-- 高可用分布式：Redis Sentinel 、 Redis Cluster
+1. Redis 提供了两种持久化方式:RDB（默认） 和AOF
+    - RDB(Redis DataBase) : 功能核心函数rdbSave(生成RDB文件)和rdbLoad（从文件加载内存）两个函数
+    - AOF(Append-only file) : WRITE：根据条件，将 aof_buf 中的缓存写入到 AOF 文件；SAVE：根据条件，调用 fsync 或 fdatasync 函数，将 AOF 文件保存到磁盘中。
+2. Redis两种持久化的特点
+    - aof文件比rdb更新频率高，优先使用aof还原数据
+    - aof比rdb更安全也更大
+    - rdb性能比aof好
+    - 如果两个都配了优先加载AOF
 
-## 1.3 Redis使用场景
+## 1.3 Redis架构模式
 
-- 缓存：保存临时数据
-- 计数器：
-- 消息队列系统：发布与订阅
-- 排行榜功能：
-- 社交网络：
-- 实时系统：
+1. **单机版** ： 使用简单、内存容量有限 、处理能力有限 、无法高可用
+2. **主从复制** ：根据一个 Redis 服务器来创建任意多个该服务器的复制品，其中被复制的服务器为主服务器（master），而通过复制创建出来的服务器复制品则为从服务器（slave）
+    - 只要主从服务器之间的网络连接正常，主从服务器两者会具有相同的数据，主服务器就会一直将发生在自己身上的数据更新同步 给从服务器，从而一直保证主从服务器的数据相同。
+    - 无法保证高可用，没有解决 master 写的压力
+3. **哨兵**：Redis sentinel 是一个分布式系统中监控 redis 主从服务器，并在主服务器下线时自动进行故障转移
+    - 保证高可用、监控各个节点、自动故障迁移；
+    - 缺点：主从模式，切换需要时间丢数据；没有解决 master 写的压力
+4. **集群（proxy 型）**：Twemproxy 是一个 Twitter 开源的一个 redis 和 memcache 快速/轻量级代理服务器
+    - 缺点：增加了新的 proxy，需要维护其高可用。failover 逻辑需要自己实现，其本身不能支持故障的自动转移可扩展性差，进行扩缩容都需要手动干预
+5. **集群（直连型）**：从redis 3.0之后版本支持redis-cluster集群，Redis-Cluster采用无中心结构，每个节点保存数据和整个集群状态,每个节点都和其他所有节点连接
+    - 资源隔离性较差，容易出现相互影响的情况。数据通过异步复制,不保证数据的强一致性
 
-## 1.4 Redis 安装与配置
+## 1.4 缓存穿透
 
-1. Redis安装
+- **概念：** 一般的缓存系统，都是按照key去缓存查询，如果不存在对应的value，就应该去后端系统查找（比如DB）。一些恶意的请求会故意查询不存在的key,请求量很大，就会对后端系统造成很大的压力。这就叫做缓存穿透
+- **解决方案：** 
 
-   - LInux下安装Redis
+# 第二章 Redis安装
 
-     ```sh
-     wget redis.tar.gz   		# 查询Redis官网
-     tar -xzvf redis.tar.gz		# 解压
-     ln -s redis.xx	redis		# 为安装包添加软链接
-     cd redis					# 进入Redis才可以安装
-     make && make install		# 便于安装包,安装好后再/usr/local/bin/目录中
-     redis-server redis.conf		# 使用配置文件启动redis服务器
-     ```
+## 1.1 Linux系统安装Redis
 
-     > 可执行文件说明
-     >
-     > - redis-server:redis服务器
-     > - redis-cli:Redis服务端窗口
-     > - redis-benchmark:Redis性能测试
-     > - redis-check-aop:修复aop文件
-     > - redis-check-dump:修复rdb文件
-     > - redis-sentinel:sentinel服务器
-     >
-     > Redis启动
-     >
-     > - 最简启动 : redis-server(使用默认配置)
-     >
-     > - 动态参数启动 : redis-server --port 6380
-     >
-     > - 配置文件启动:redis-server redis.conf
-     >
-     >   ```sh
-     >   ps -ef | grep redis
-     >   netstart -antpl | grep redis
-     >   redis-cli -h IP号 -p 端口 ping
-     >   ```
+1. 配置编译环境
 
-   - Redis在Windows下安装
+    ```sh
+    # 查看gcc版本,检查系统gcc是否存在
+    gcc -v     
+    
+    # yum 安装gcc
+    yum install gcc
+    ```
 
-2. Redis客户端连接
+2. 下载Redis : [Redis官网](https://redis.io)
 
-   ```sh
-   redis-cli -h IP号 -p 端口
-   
-   ->:ping  
-   pong
-   ```
+    ```sh
+    wget http://download.redis.io/releases/redis-xxx.tar.gz
+    ```
 
-   ```sh
-   telnet IP 端口		# 在windward中查看Redis是否端口开启
-   
-   # 查看已开放的端口
-   firewall-cmd --list-ports
-   
-   开放端口（开放后需要要重启防火墙才生效）
-   
-   firewall-cmd --zone=public --add-port=3338/tcp --permanent
-   
-   重启防火墙
-   
-   firewall-cmd --reload
-   
-   关闭端口（关闭后需要要重启防火墙才生效）
-   
-   firewall-cmd --zone=public --remove-port=3338/tcp --permanent
-   
-   开机启动防火墙
-   systemctl enable firewalld
-   
-   开启防火墙
-   
-   systemctl start firewalld
-   
-   禁止防火墙开机启动
-   systemctl disable firewalld
-   
-   停止防火墙
-   systemctl stop firewalld
-   ```
+3. 解压并准备安装包
 
-   
+    ```sh
+    # wget 默认下载在当前目录,软件安装推荐在/usr/local目录中
+    tar -xzvf redis-xxx.tar.gz
+    
+    # 解压在/usr/local目录中给解压目录创建软连接或者更改安装包名称
+    ln -s redis-xxx redos
+    或者
+    mv redis-xxx redis
+    ```
 
-1. Redis常用配置
+4. 安装与软件说明
 
-   ```properties
-   deamonize yes|no 		# 是否是守护进程,yes是会有进程文件以及日志
-   port 6379				# 端口
-   logfile					# 日志文件
-   dir						# Redis工作目录
-   ```
+    ```sh
+    # 进入Redus源码包
+    cd redis
+    
+    # 安装Redis,安装的redis软件会在/usr/local/bin目录中
+    make && make install
+    
+    # 软件说明
+    redis-server		# Redis服务器
+    redis-cli			# Redis服务端窗口
+    redis-check-rdb		# RedisRDB文件修复
+    redis-check-aof		# RedisAOF文件修复
+    redis-benchmark		# Redis性能测试
+    redis-sentinel		# Redis哨兵服务
+    ```
 
-   
+5. 启动Redis三种方式
 
-# 第二章 Redis数据类型与API
+    ```sh
+    # 方式一 : 默认启动
+    redis-server
+    
+    # 方式二 : 参数命令启动
+    redis-server --port 6380		# Redis服务器
+    
+    # 方式三 : 配置文件说明 默认配置文件在Redis安装包中:redis.conf
+    redis-server redis.conf	
+    ```
 
-## 2.1 通用命令
+6. Redis工具链接redis服务器
 
-- 通用命令
+    ```sh
+    # 查看Redis是否启动
+    ps -ef | grep redis
+    netstart -antpl | grep redis
+    redis-cli -h IP号 -p 端口 ping
+    
+    # CentOS7查看Redis主机的端口是否开放
+    firewall-cmd --list-ports
+    
+    # 外部主机查看Redis主机端口是否开放
+    telnet IP 端口		# 在windward中查看Redis是否端口开启
+    ```
 
-  | 命令           | 说明                                             |
-  | -------------- | ------------------------------------------------ |
-  | keys [pattern] | 遍历所有key                                      |
-  | dbsize         | 查看本数据库有key的总数                          |
-  | exists key     | 判断key是否存在                                  |
-  | del key...     | 删除指定的key                                    |
-  | expire key 秒  | 设置指定key的过期时间                            |
-  | ttl key        | 查询指定key的过期时间                            |
-  | persist key    | 去掉key的过期时间                                |
-  | type key       | 查看key的数据类型:string-hash-list-set-zset-none |
+    ```sh
+    # Linux防火墙扩展
+    # 1.查看已开放的端口
+    firewall-cmd --list-ports
+    
+    # 2.开放端口
+    firewall-cmd --zone=public --add-port=3338/tcp --permanent
+    
+    # 3.开放后需要要重启防火墙才生效
+    firewall-cmd --reload
+    
+    # 3.关闭端口（关闭后需要要重启防火墙才生效）
+    firewall-cmd --zone=public --remove-port=3338/tcp --permanent
+    
+    # 4.开机启动防火墙
+    systemctl enable firewalld
+    
+    # 5.禁止防火墙开机启动
+    systemctl disable firewalld
+    
+    # 6.开启防火墙
+    systemctl start firewalld
+    
+    # 7.停止防火墙
+    systemctl stop firewalld
+    ```
 
-- 数据结构和内部编码
+## 1.2 Windows系统安装Redis
 
-  ```mermaid
-  graph LR
-  Root[key] --> A((String))
-  A --> A1(raw)
-  A --> A2(int)
-  A --> A3(embstr)
-  Root --> B((hash))
-  B --> B1(hashtable)
-  B --> B2(ziplist)
-  Root --> C((list))
-  C --> C1(linkedlist)
-  C --> C2(ziplist)
-  Root --> D((set))
-  D --> D1(hashtable)
-  D --> D2(intset)
-  Root --> E((zset))
-  E --> E1(skiplist)
-  E --> E2(ziplist)
-  ```
+## 1.3 Mac安装Redis
 
-## 2.2 字符串
+## 1.4 Docker安装Redis
+
+# 第三章 Redis 配置说明
+
+## 3.1 Redis基本配置
+
+```properties
+deamonize yes|no 		# 是否是守护进程,yes是会有进程文件以及日志
+port 6379				# 端口
+logfile					# 日志文件
+dir						# Redis工作目录
+```
+
+# 第四章 Redis命令
+
+## 4.1 Redis数据类型
+
+```mermaid
+ graph LR
+ Root{KEY} --> A((String字符串))
+ A --> A1(raw)
+ A --> A2(int)
+ A --> A3(embstr)
+ Root --> B((hash哈希))
+ B --> B1(hashtable)
+ B --> B2(ziplist)
+ Root --> C((list列表))
+ C --> C1(linkedlist)
+ C --> C2(ziplist)
+ Root --> D((set集合))
+ D --> D1(hashtable)
+ D --> D2(intset)
+ Root --> E((zset有序集合))
+ E --> E1(skiplist)
+ E --> E2(ziplist)
+```
+
+## 4.2 Key（键）
+
+### :dash: DEL key [key ...]
+
+- **说明 :** 删除给定的一个或多个 `key` 。不存在的 `key` 会被忽略。
+
+- **返回值 : ** 被删除 `key` 的数量。
+
+### :dash: EXISTS key
+
+- **说明 : ** 检查给定 `key` 是否存在。
+- **返回值 : ** 若 `key` 存在，返回 `1` ，否则返回 `0` 。
+
+### :dash: EXPIRE key seconds
+
+- **说明 : ** 为给定 `key` 设置生存时间，当 `key` 过期时(生存时间为 `0` )，它会被自动删除。
+- **返回值 : ** 设置成功返回 `1` 。当 `key` 不存在或者不能为 `key` 设置生存时间时，返回 `0` 。
+### :dash: EXPIREAT key timestamp
+
+- **说明 : ** EXPIREAT 的作用和 EXPIRE 类似，都用于为 key 设置生存时间。 EXPIREAT 命令接受的时间参数是 UNIX 时间戳(unix timestamp)。
+- **返回值 : **如果生存时间设置成功，返回 `1` 。当 `key` 不存在或没办法设置生存时间，返回 `0` 。
+
+### :dash: PEXPIRE key milliseconds
+
+- **说明 : **以毫秒为单位设置 `key` 的生存时间，而不像 [*EXPIRE*](http://doc.redisfans.com/key/expire.html) 命令那样，以秒为单位。
+- **返回值 : **设置成功，返回 `1`。key` 不存在或设置失败，返回 `0
+
+### :dash: PERSIST key
+
+- **说明 : ** 移除给定 `key` 的生存时间
+- **返回值 : **当生存时间移除成功时，返回 `1` .如果 `key` 不存在或 `key` 没有设置生存时间，返回 `0`
+
+### :dash: KEYS pattern
+
+- **说明 : ** 查找所有符合给定模式 `pattern` 的 `key` 。
+- **返回值 : **符合给定模式的 `key` 列表。
+
+### :dash: MOVE key db
+
+- **说明 : ** 将当前数据库的 `key` 移动到给定的数据库 `db` 当中。
+- **返回值 : **移动成功返回 `1` ，失败则返回 `0` 。
+
+### :dash: TYPE key
+
+- **说明 : ** 返回 `key` 所储存的值的类型
+- **返回值 : **`none` (key不存在)、`string` (字符串)、`list` (列表)、`set` (集合)、`zset` (有序集)、`hash` (哈希表)
+
+```sh
+DEL
+DUMP
+EXISTS
+EXPIRE
+EXPIREAT
+KEYS
+MIGRATE
+MOVE
+OBJECT
+PERSIST
+PEXPIRE
+PEXPIREAT
+PTTL
+RANDOMKEY
+RENAME
+RENAMENX
+RESTORE
+SORT
+TTL
+TYPE
+SCAN
+```
+
+
+
+### :dash: 
+
+- **说明 : ** 
+- **返回值 : **
+
+### :dash: 
+
+- **说明 : ** 
+- **返回值 : **
+
+### :dash: 
+
+- **说明 : ** 
+- **返回值 : **
+
+### :dash: 
+
+- **说明 : ** 
+- **返回值 : **
+
+### :dash: 
+
+- **说明 : ** 
+- **返回值 : **
+
+| 命令           | 说明                                             |
+| -------------- | ------------------------------------------------ |
+| keys [pattern] | 遍历所有key                                      |
+| dbsize         | 查看本数据库有key的总数                          |
+| exists key     | 判断key是否存在                                  |
+| del key...     | 删除指定的key                                    |
+| expire key 秒  | 设置指定key的过期时间                            |
+| ttl key        | 查询指定key的过期时间                            |
+| persist key    | 去掉key的过期时间                                |
+| type key       | 查看key的数据类型:string-hash-list-set-zset-none |
+
+## 4.3 字符串
 
 - 字符串结构
   
@@ -187,7 +321,7 @@
     | getrange key start end       | 获取字符串指定下标所有值                 |
     | setrange key index 值        | 设置指定下标所对应的值                   |
 
-## 2.3 hash
+## 4.4 hash哈希
 
 - 特点
 
@@ -211,7 +345,7 @@
   | hincrby key 字段 值              | 指定key的指定字段自增指定值     |
   | 好incrbyfloat key 字段 值        | 指定key的指定字段自增指定值     |
 
-## 2.4 lsit
+## 4.5 list列表
 
 - 特点
 
@@ -235,9 +369,161 @@
   | lset key index 新值                 | 设置指定索引指定值                                           |
   |                                     |                                                              |
 
-## 2.5 set
+## 4.6 set集合
 
+## 4.7 zset有序集合
 
+### :dash: Zadd
+
+```sh
+ZADD key score member [score member] [score member] ...
+```
+
+- **说明 : ** 将一个或多个 `member` 元素及其 `score` 值加入到有序集 `key` 当中；如果某个 `member` 已经是有序集的成员，那么更新这个 `member` 的 `score` 值
+- **返回值 : **被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员。
+
+### :dash: Zcard
+
+```sh
+ZCARD key
+```
+
+- **说明 : ** 返回有序集 `key` 的基数。
+- **返回值 : **当 `key` 存在且是有序集类型时，返回有序集的基数；当 `key` 不存在时，返回 `0` 。
+
+### :dash: Zcount
+
+```sh
+ZCOUNT key min max
+```
+
+- **说明 : ** 返回有序集 `key` 中， `score` 值在 `min` 和 `max` 之间(默认 `score` 值等于 `min` 或 `max` )的成员的数量
+- **返回值 : **`score` 值在 `min` 和 `max` 之间的成员的数量
+
+### :dash: ZincrBy
+
+```sh
+ZINCRBY key increment member
+```
+
+- **说明 : ** 为有序集 `key` 的成员 `member` 的 `score` 值加上增量 `increment`
+- **返回值 : **`member` 成员的新 `score` 值，以字符串形式表示
+
+### :dash: Zrange
+
+```sh
+ZRANGE key start stop [WITHSCORES]
+```
+
+- **说明 : ** 返回有序集 `key` 中，指定区间内的成员；可以通过使用 `WITHSCORES` 选项，来让成员和它的 `score` 值一并返回
+- **返回值 : **指定区间内，带有 `score` 值(可选)的有序集成员的列表
+
+### :dash: ZrangeByScore
+
+```sh
+ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]
+```
+
+- **说明 : ** 返回有序集 `key` 中，所有 `score` 值介于 `min` 和 `max` 之间(包括等于 `min` 或 `max` )的成员。有序集成员按 `score` 值递增(从小到大)次序排列
+- **返回值 : **指定区间内，带有 `score` 值(可选)的有序集成员的列表
+
+### :dash: Zrank
+
+```sh
+ZRANK key member
+```
+
+- **说明 : ** 返回有序集 `key` 中成员 `member` 的排名。其中有序集成员按 `score` 值递增(从小到大)顺序排列
+- **返回值 : **如果 `member` 是有序集 `key` 的成员，返回 `member` 的排名；如果 `member` 不是有序集 `key` 的成员，返回 `nil` 。
+
+### :dash: Zrem
+
+```sh
+ZREM key member [member ...]
+```
+
+- **说明 : ** 移除有序集 `key` 中的一个或多个成员，不存在的成员将被忽略
+- **返回值 : **被成功移除的成员的数量，不包括被忽略的成员
+
+### :dash: ZremRangeByRank
+
+```sh
+ZREMRANGEBYRANK key start stop
+```
+
+- **说明 : ** 移除有序集 `key` 中，指定排名(rank)区间内的所有成员
+- **返回值 : **被移除成员的数量
+
+### :dash: ZRemRangeByScore
+
+```sh
+ZREMRANGEBYSCORE key min max
+```
+
+- **说明 : ** 移除有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员
+- **返回值 : **被移除成员的数量
+
+### :dash: ZrevrAnge
+
+```sh
+ZREVRANGE key start stop [WITHSCORES]
+```
+
+- **说明 : ** 返回有序集 `key` 中，指定区间内的成员
+- **返回值 : **指定区间内，带有 `score` 值(可选)的有序集成员的列表
+
+### :dash: ZrevrAngeByScore
+
+```sh
+ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]
+```
+
+- **说明 : ** 返回有序集 key 中， score 值介于 max 和 min 之间(默认包括等于 max 或 min )的所有的成员。有序集成员按 score 值递减(从大到小)的次序排列
+- **返回值 : **指定区间内，带有 `score` 值(可选)的有序集成员的列表
+
+### :dash: ZrevrAnge
+
+```sh
+ZREVRANGE key start stop [WITHSCORES]
+```
+
+- **说明 : ** 返回有序集 `key` 中，指定区间内的成员
+- **返回值 : 指定区间内，带有 `score` 值(可选)的有序集成员的列表**
+
+### :dash: Zscore
+
+```sh
+ZSCORE key member
+```
+
+- **说明 : ** 返回有序集 `key` 中，成员 `member` 的 `score` 值
+- **返回值 : **member 成员的 score 值，以字符串形式表示
+
+### :dash: ZUNIONSTORE
+
+```sh
+ZUNIONSTORE destination numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MIN|MAX]
+```
+
+- **说明 : ** 计算给定的一个或多个有序集的并集，其中给定 `key` 的数量必须以 `numkeys` 参数指定，并将该并集(结果集)储存到 `destination`
+- **返回值 : **保存到 `destination` 的结果集的基数
+
+### :dash: ZINTERSTORE
+
+```sh
+ZINTERSTORE destination numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MIN|MAX]
+```
+
+- **说明 : ** 计算给定的一个或多个有序集的交集，其中给定 `key` 的数量必须以 `numkeys` 参数指定，并将该交集(结果集)储存到 `destination`
+- **返回值 : **保存到 `destination` 的结果集的基数。
+
+### :dash: Zscan
+
+```sh
+ZSCAN key cursor [MATCH pattern] [COUNT count]
+```
+
+- **说明 : ** 用于迭代有序集合中的元素（包括元素成员和元素分值）
 
 # 第三章 Redis客户端
 
@@ -1194,7 +1480,6 @@
   
   ```
 
-  
 
 ## 3.2 Python - redis-py
 
@@ -1208,47 +1493,66 @@
 
 ## 4.1 慢查询
 
-> - Redis 声明周期 : 发送命令-命令排队-命令执行-返回结果
-> - 许多存储系统(如: MySQL )提供慢查询日志帮助开发与运维人员定位系统存在的慢操作.所谓慢查询日志就是系统在命令执行前后计算每条命令的执行时间,当超过预设阈值,就将这条命令的相关信息(例如:发生时间,耗时,命令的详细信息)记录到慢查询日志中
->
-> - 慢查询只统计步骤 3 的时间,所以没有慢查询并不代表客户端没有超时问题.
+1. <font size=5><b>Redis命令执行的生命周期</b></font>
 
+    ```mermaid
+     graph LR
+     A(1.发送命令) --> B(2.单线程命令排队) 
+     B --> C(3.执行命令)
+     C --> D(4.返回结果)
+    ```
 
+    :anchor: 慢查询发生在命令执行阶段
 
-- 对于慢查询功能,需要明确两件事:
+    :anchor: 客户端超时不一定是慢查询
 
-  　　预设阈值怎么设置? slowlog-log-slower-than (毫秒),
+2. <font size=5><b>Redis慢查询说明</b></font>
 
-  　　慢查询记录存放在那? 如果需要将 Redis 将配置持久化到本地配置文件,要执行 config rewrite 命令
+    ​		许多存储系统(如: MySQL )提供慢查询日志帮助开发与运维人员定位系统存在的慢操作.所谓慢查询日志就是系统在命令执行前后计算每条命令的执行时间,当超过预设阈值,就将这条命令的相关信息(例如:发生时间,耗时,命令的详细信息)记录到慢查询日志中
 
-  ​		slowlog-max-len 只是说明了慢查询日志最多存储多少条,并没有说明存放在哪里?
+    ​		慢查询只统计步骤 3 的时间,所以没有慢查询并不代表客户端没有超时问题.
 
-  ​			实际上 Redis 使用了一个列表来存储慢查询日志, slowlog-max-len 就是列表的最大长度.一个新的命令满足慢查询条件时被插入到这个列表中,当慢查询日志列表已处于其最大长度时,最早插入的一个命令将从列表中移出
+3. <font size=5><b>Redis慢查询配置</b></font>
 
-  ​		可以看到每个查询日志有4个属性组成,分别是慢查询日志的表示 id 、发生时间戳、命令耗时、执行命令和参数
+    :anchor: **配置说明**
 
-  ​		由于慢查询日志是一个先进先出的队列,也就是说如果慢查询比较多的情况下,可能会丢失部分慢查询命令,为了防止这种情况发生,可以定期执行 slowlog get 命令将慢查询日志持久化到其他存储中(例如: MySQL 、 ElasticSearch 等),然后可以通过可视化工具进行查询
+    - 实际上 Redis 使用了一个列表来存储慢查询日志, slowlog-max-len 就是列表的最大长度.一个新的命令满足慢查询条件时被插入到这个列表中,当慢查询日志列表已处于其最大长度时,最早插入的一个命令将从列表中移出
+    - 每个查询日志有4个属性组成,分别是慢查询日志的表示 id 、发生时间戳、命令耗时、执行命令和参数
+    - 由于慢查询日志是一个先进先出的队列,也就是说如果慢查询比较多的情况下,可能会丢失部分慢查询命令,为了防止这种情况发生,可以定期执行 slowlog get 命令将慢查询日志持久化到其他存储中(例如: MySQL 、 ElasticSearch 等),然后可以通过可视化工具进行查询
 
-- 获取慢查询配置
-  - config get slowlog-max-len：慢查询队列的长度，默认是128
-  - config get slowlog-log-slower-than：慢查询阈值(微妙)，默认是10000
-  - slowlog-log-slower-than=0，记录所有命令, 
-  - slowlog-log-slower-than<0  对于任何命令都不会进行记录.
+    :anchor: **查看当前Redis服务器慢查询参数**
 
-- 设置慢查询配置
-  - 修改配置文件重启
-  - 动态配置，如 config set slowlog-max-len 1000
+    ```sh
+    onfig get slowlog-max-len			# 慢查询队列的长度，默认是128
+    config get slowlog-log-slower-than	# 慢查询阈值(微妙)，默认是10000
+    lowlog-log-slower-than=0			# 记录所有命令
+    slowlog-log-slower-than<0			# 对于任何命令都不会进行记录
+    ```
 
-- 慢查询命令
-  - slowlog get [n]：获取慢查询队列中n个元素
-  - slowlog len：获取慢查询队列的长度
-  - slowlog rest：清空慢查询队列
+    :anchor: **设置慢查询参数**
 
-- 优化方案
-  - slowlog-log-slower-than不要设置过大，默认是10ms，通常设置1ms
-  - slowlog-max-len不要设置过小，通常设置1000左右
-  - 理解命令生命周期
-  - 定期持久化慢查询
+    - 方式一 : 修改配置文件然后重启Redis服务器
+
+    - 方式二 : 动态配置即时生效 
+
+        ```sh
+        onfig set slowlog-max-len 1000
+        ```
+
+    :anchor: **查询慢查询队列的命令**
+
+    ```sh
+    slowlog get [n]		# 获取慢查询队列中n个元素
+    slowlog len			# 获取慢查询队列的长度
+    slowlog rest		# 清空慢查询队列
+    ```
+
+    :anchor: **慢查询推荐优化方案**
+
+    - slowlog-log-slower-than不要设置过大，默认是10ms，通常设置1ms
+    - slowlog-max-len不要设置过小，通常设置1000左右
+    - 理解命令生命周期
+    - 定期持久化慢查询
 
 ## 4.2 pipeline
 
