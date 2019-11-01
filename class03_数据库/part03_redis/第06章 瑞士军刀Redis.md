@@ -67,8 +67,12 @@
 
 ## 6.2 pipeline
 
-1. <font size=5><b>pipeline作用</b></font>
+1. <font size=5><b>Redis命令的执行周期</b></font>
 
+  
+  
+  
+  
   ```mermaid
   sequenceDiagram
   Client ->> RedisServer:命令1

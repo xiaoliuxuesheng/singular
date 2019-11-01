@@ -66,7 +66,15 @@
 
 #### :anchor: **方式二:Spring集成Redis**
 
-1. 添加SpringRedis相关Maven依赖
+> 序列化说明
+>
+> - GenericToStringSerializer: 可以将任何对象泛化为字符串并序列化
+> - Jackson2JsonRedisSerializer: 跟JacksonJsonRedisSerializer实际上是一样的
+> - JacksonJsonRedisSerializer: 序列化object对象为json字符串
+> - JdkSerializationRedisSerializer: 序列化java对象
+> - StringRedisSerializer: 简单的字符串序列化
+
+1. **添加SpringRedis相关Maven依赖**
 
     ```xml
     <dependency>
@@ -81,7 +89,11 @@
     </dependency>
     ```
 
-2. 配置Redis属性配置文件
+2. **配置Redis服务器**
+
+    :anchor: 单例Redis服务器配置
+
+    ​	:one: 添加单实例服务器配置属性
 
     ```properties
     redis.host=127.0.0.1
@@ -107,87 +119,98 @@
     redis.pool.testWhileIdle=true
     ```
 
-3. 配置spring-redis.xml
+    ​	:two: `spring-redis.xml`引入属性配置文件
 
-    ~~~xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xmlns:redis="http://www.springframework.org/schema/redis" xmlns:cache="http://www.springframework.org/schema/cache"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd
-            http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/redis
-        http://www.springframework.org/schema/redis/spring-redis.xsd
-        http://www.springframework.org/schema/cache
-        http://www.springframework.org/schema/cache/spring-cache.xsd
-        ">
-        <context:property-placeholder order="1" location="classpath:redis.properties" ignore-unresolvable="true"/>
-        <!-- Redis -->
-        <!-- 连接池参数 -->
-        <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-            <property name="maxIdle" value="${redis.pool.maxIdle}" />
-            <property name="minIdle" value="${redis.pool.minIdle}" />
-            <property name="maxTotal" value="${redis.pool.maxTotal}" />
-            <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}" />
-            <property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}"></property>
-            <property name="numTestsPerEvictionRun" value="${redis.pool.numTestsPerEvictionRun}"></property>
-            <property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}"></property>
-            <property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
-            <property name="testOnReturn" value="${redis.pool.testOnReturn}" />
-            <property name="testWhileIdle" value="${redis.pool.testWhileIdle}"></property>
-        </bean>
-     
-        <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
-            <property name="poolConfig" ref="jedisPoolConfig" />
-            <property name="hostName" value="${redis.host}" />
-            <property name="port" value="${redis.port}" />
-            <property name="password" value="${redis.pwd}" />
-            <property name="usePool" value="${redis.userPool} " />
-            <property name="database" value="${redis.database}" />
-            <property name="timeout" value="${redis.timeout}" />
-        </bean>
-     
-        <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-            <property name="connectionFactory" ref="jedisConnectionFactory" />
-            
-            <!-- 序列化方式 建议key/hashKey采用StringRedisSerializer -->
-            <property name="keySerializer">
-                <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
-            </property>
-            <property name="valueSerializer">
-                <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
-            </property>
-            <property name="hashKeySerializer">
-                <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
-            </property>
-            <property name="hashValueSerializer">
-                <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
-            </property>
-             <!-- 开启REIDS事务支持 -->
-             <property name="enableTransactionSupport" value="false" />
-        </bean>
-     
-        <!-- 对string操作的封装 -->
-        <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
-            <constructor-arg ref="jedisConnectionFactory" />
-                <!-- 开启REIDS事务支持 -->  
-             <property name="enableTransactionSupport" value="false" />
-        </bean>
-        
-    </beans>
+    ```xml
+    <context:property-placeholder location="classpath:redis.properties"/>
+    ```
+
+    ​	:three: `spring-redis.xml`配置Redis连接池
+
+    ```xml
+    <!-- 连接池参数 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.pool.maxIdle}" />
+        <property name="minIdle" value="${redis.pool.minIdle}" />
+        <property name="maxTotal" value="${redis.pool.maxTotal}" />
+        <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}"></property>
+        <property name="numTestsPerEvictionRun" value="${redis.pool.numTestsPerEvictionRun}"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}"></property>
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
+        <property name="testOnReturn" value="${redis.pool.testOnReturn}" />
+        <property name="testWhileIdle" value="${redis.pool.testWhileIdle}"></property>
+    </bean>
+    
+    <!-- Redis -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="poolConfig" ref="jedisPoolConfig" />
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <property name="password" value="${redis.pwd}" />
+        <property name="usePool" value="${redis.userPool} " />
+        <property name="database" value="${redis.database}" />
+        <property name="timeout" value="${redis.timeout}" />
+    </bean>
+    ```
+
+    :anchor: **集群Redis服务器配置**
+
+    ​	:one: 添加Redis集群服务器配置属性
+
+    ```properties
     
     ```
+
+    ​	:two: `spring-redis.xml`引入属性文件
+
+    ```xml
+    <context:property-placeholder location="classpath:redis.properties"/>
+    ```
+
+    ​	:three: `spring-redis.xml`添加配置链接集群服务器
+
+    ```xml
+    
+    ```
+
+3. **集成StringRedisTemplate**
+
+    - StringRedisTemplate继承了RedisTemplate，设置了Key/Value类型为String类型
+    - StringRedisTemplate的序列化方式配置为：**`StringRedisSerializer`**类型
+
+    ```xml
+    <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+        <constructor-arg ref="jedisConnectionFactory" />
+        <!-- 开启REIDS事务支持 -->  
+        <property name="enableTransactionSupport" value="false" />
+    </bean>
+    ```
+
+4. **集成RedisTemplate**
+
+    ~~~xml
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+        <!-- 序列化方式 建议key/hashKey采用StringRedisSerializer -->
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+        <!-- 开启REIDS事务支持 -->
+        <property name="enableTransactionSupport" value="false" />
+    </bean>
     ~~~
-
-    >  <import resource="classpath:spring/spring-redis.xml" />
-
-4. 封装redis操作工具类
+    
+5. 封装redis操作工具类
 
     ```java
     package com.test.util;
@@ -1101,7 +1124,7 @@
     
     ```
 
-5. Context 工具类
+6. Context 工具类
 
     ```java
     import org.springframework.beans.BeansException;
@@ -1151,150 +1174,253 @@
 
 #### :anchor: 方式三:SpringBoot集成Redis
 
+1. **添加SpringBoot相关Maven依赖**
 
+    ```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    ```
+
+2. **配置Redis服务器**
+
+    :anchor: 配置单实例Redis服务器
+
+    :one: 在配置文件添加Redis属性
+
+    ```properties
+    # Redis数据库索引（默认为0）
+    spring.redis.database=0
+    # Redis服务器地址
+    spring.redis.host=127.0.0.1
+    # Redis服务器连接端口
+    spring.redis.port=6379
+    # Redis服务器连接密码（默认为空）
+    spring.redis.password=
+    # 连接池最大连接数（使用负值表示没有限制）
+    spring.redis.jedis.pool.max-idle=200
+    # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    spring.redis.jedis.pool.max-wait=-1
+    # 连接池中的最大空闲连接
+    spring.redis.jedis.pool.max-active=10
+    # 连接池中的最小空闲连接
+    spring.redis.jedis.pool.min-idle=0
+    # 连接超时时间（毫秒）
+    spring.redis.timeout=1000
+    ```
+
+3. 添加Redis配置类:**RedisAutoConfiguration**
+
+    ```java
+    @Configuration
+    @ConditionalOnClass(RedisOperations.class)
+    @EnableConfigurationProperties(RedisProperties.class)
+    public class RedisAutoConfiguration {
+    
+    
+        @Bean
+        @ConditionalOnMissingBean(RedisConnectionFactory.class)
+        public RedisTemplate<String, Object> getRedisTemplate(RedisConnectionFactory factory) {
+            RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            // 设置Java8的DateTime类型的序列化与反序列化
+            JavaTimeModule module = new JavaTimeModule();
+            module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    
+            module.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            module.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    
+            module.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
+            module.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
+    
+    
+            objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES))
+                    .registerModule(new Jdk8Module())
+                    .registerModule(module);
+    
+    
+            Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+            objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+            jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+    
+            redisTemplate.setConnectionFactory(factory);
+            redisTemplate.setKeySerializer(new StringRedisSerializer());
+            redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+            redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+            return redisTemplate;
+        }
+    
+        @Bean
+        @ConditionalOnMissingBean(RedisConnectionFactory.class)
+        public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+            StringRedisTemplate template = new StringRedisTemplate();
+            template.setConnectionFactory(redisConnectionFactory);
+            return template;
+        }
+    }
+    ```
+
+4. 自定义Redis工具类 : RedisUtil
+
+    ```java
+    
+    ```
 
 ### :dash: Java调用Redis
 
-1. #### 普通同步方式
+#### 1. 普通同步方式
 
-    ```java
-    @Test
-    public void testNormal() {
-        Jedis jedis = new Jedis("localhost");
-        
-        String result = jedis.set("key", "value");
-        
-        jedis.disconnect();
-    }
-    ```
-
-2. #### 事务方式(Transactions)
-
-    > 目的是保障一个client发起的事务中的命令可以连续的执行，而中间不会插入其他client的命令
-
-    ```java
-    @Test
-    public void test2Trans() {
-        Jedis jedis = new Jedis("localhost");
-        
-        Transaction tx = jedis.multi();
-        tx.set("key", "value");
-        List<Object> results = tx.exec();
-        
-        jedis.disconnect();
-    }
-    ```
-
-    - `jedis.watch(…)`方法来监控key，如果调用后key值发生变化，则整个事务会执行失败
-    - 事务中某个操作失败，并不会回滚其他操作
-    - 可以使用`discard()`方法来取消事务
-
-3. #### 管道(Pipelining)
-
-    > 需要采用异步方式，一次发送多个指令，不同步等待其返回结果
-
-    ```java
-    @Test
-    public void test3Pipelined() {
-        Jedis jedis = new Jedis("localhost");
-        
-        Pipeline pipeline = jedis.pipelined();
-        pipeline.set("key", "value");
-        List<Object> results = pipeline.syncAndReturnAll();
-        
-        jedis.disconnect();
-    }
-    ```
-
-4. #### 管道中调用事务
-
-    ```java
-    @Test
-    public void test4combPipelineTrans() {
-        jedis = new Jedis("localhost"); 
-        
-        Pipeline pipeline = jedis.pipelined();
-        pipeline.multi();
-        pipeline.set("key", "value");
-        pipeline.exec();
-        List<Object> results = pipeline.syncAndReturnAll();
-        
-        jedis.disconnect();
-    }
-    ```
-
-5. #### 分布式直连同步调用
-
-    ```java
-    @Test
-    public void testshardNormal() {
-        List<JedisShardInfo> shards = Arrays.asList(
-                new JedisShardInfo("localhost",6379),
-                new JedisShardInfo("localhost",6380));
+```java
+@Test
+public void testNormal() {
+    Jedis jedis = new Jedis("localhost");
     
-        ShardedJedis sharding = new ShardedJedis(shards);
-        String result = sharding.set("key", "value");
+    String result = jedis.set("key", "value");
     
-        sharding.disconnect();
-    }
-    ```
+    jedis.disconnect();
+}
+```
 
-6. #### 分布式直连异步调用
+#### 2. 事务方式(Transactions)
 
-    ```java
-    @Test
-    public void test6shardpipelined() {
-        List<JedisShardInfo> shards = Arrays.asList(
-                new JedisShardInfo("localhost",6379),
-                new JedisShardInfo("localhost",6380));
+> 目的是保障一个client发起的事务中的命令可以连续的执行，而中间不会插入其他client的命令
+
+```java
+@Test
+public void test2Trans() {
+    Jedis jedis = new Jedis("localhost");
     
-        ShardedJedis sharding = new ShardedJedis(shards);
-        ShardedJedisPipeline pipeline = sharding.pipelined();
-        pipeline.set("key", "value");
-        List<Object> results = pipeline.syncAndReturnAll();
-        
-        sharding.disconnect();
-    }
-    ```
-
-7. #### 分布式连接池同步调用
-
-    ```java
-    @Test
-    public void test7shardSimplePool() {
-        List<JedisShardInfo> shards = Arrays.asList(
-                new JedisShardInfo("localhost",6379),
-                new JedisShardInfo("localhost",6380));
+    Transaction tx = jedis.multi();
+    tx.set("key", "value");
+    List<Object> results = tx.exec();
     
-        ShardedJedisPool pool = new ShardedJedisPool(new JedisPoolConfig(), shards);
-    
-        ShardedJedis one = pool.getResource();
-        String result = one.set("key", "value");
-        pool.returnResource(one);
-    
-        pool.destroy();
-    }
-    ```
+    jedis.disconnect();
+}
+```
 
-8. #### 分布式连接池异步调用
+- `jedis.watch(…)`方法来监控key，如果调用后key值发生变化，则整个事务会执行失败
+- 事务中某个操作失败，并不会回滚其他操作
+- 可以使用`discard()`方法来取消事务
 
-    ```java
-    @Test
-    public void test8shardPipelinedPool() {
-        List<JedisShardInfo> shards = Arrays.asList(
-                new JedisShardInfo("localhost",6379),
-                new JedisShardInfo("localhost",6380));
+#### 3. 管道(Pipelining)
+
+```java
+> 需要采用异步方式，一次发送多个指令，不同步等待其返回结果
+@Test
+public void test3Pipelined() {
+    Jedis jedis = new Jedis("localhost");
     
-        ShardedJedisPool pool = new ShardedJedisPool(new JedisPoolConfig(), shards);
-        ShardedJedis one = pool.getResource();
-        ShardedJedisPipeline pipeline = one.pipelined();
-    	pipeline.set("key", "value");
-        List<Object> results = pipeline.syncAndReturnAll();
-        pool.returnResource(one);
-        
-        pool.destroy();
-    }
-    ```
+    Pipeline pipeline = jedis.pipelined();
+    pipeline.set("key", "value");
+    List<Object> results = pipeline.syncAndReturnAll();
+    
+    jedis.disconnect();
+}
+```
+
+#### 4. 管道中调用事务
+
+```java
+@Test
+public void test4combPipelineTrans() {
+    jedis = new Jedis("localhost"); 
+    
+    Pipeline pipeline = jedis.pipelined();
+    pipeline.multi();
+    pipeline.set("key", "value");
+    pipeline.exec();
+    List<Object> results = pipeline.syncAndReturnAll();
+    
+    jedis.disconnect();
+}
+```
+
+#### 5. 分布式直连同步调用
+
+```java
+@Test
+public void testshardNormal() {
+    List<JedisShardInfo> shards = Arrays.asList(
+            new JedisShardInfo("localhost",6379),
+            new JedisShardInfo("localhost",6380));
+
+    ShardedJedis sharding = new ShardedJedis(shards);
+    String result = sharding.set("key", "value");
+
+    sharding.disconnect();
+}
+```
+
+#### 6. 分布式直连异步调用
+
+```java
+@Test
+public void test6shardpipelined() {
+    List<JedisShardInfo> shards = Arrays.asList(
+            new JedisShardInfo("localhost",6379),
+            new JedisShardInfo("localhost",6380));
+
+    ShardedJedis sharding = new ShardedJedis(shards);
+    ShardedJedisPipeline pipeline = sharding.pipelined();
+    pipeline.set("key", "value");
+    List<Object> results = pipeline.syncAndReturnAll();
+    
+    sharding.disconnect();
+}
+```
+
+#### 7. 分布式连接池同步调用
+
+```java
+@Test
+public void test7shardSimplePool() {
+    List<JedisShardInfo> shards = Arrays.asList(
+            new JedisShardInfo("localhost",6379),
+            new JedisShardInfo("localhost",6380));
+
+    ShardedJedisPool pool = new ShardedJedisPool(new JedisPoolConfig(), shards);
+
+    ShardedJedis one = pool.getResource();
+    String result = one.set("key", "value");
+    pool.returnResource(one);
+
+    pool.destroy();
+}
+```
+
+#### 8. 分布式连接池异步调用
+
+```java
+@Test
+public void test8shardPipelinedPool() {
+    List<JedisShardInfo> shards = Arrays.asList(
+            new JedisShardInfo("localhost",6379),
+            new JedisShardInfo("localhost",6380));
+
+    ShardedJedisPool pool = new ShardedJedisPool(new JedisPoolConfig(), shards);
+    ShardedJedis one = pool.getResource();
+    ShardedJedisPipeline pipeline = one.pipelined();
+	pipeline.set("key", "value");
+    List<Object> results = pipeline.syncAndReturnAll();
+    pool.returnResource(one);
+    
+    pool.destroy();
+}
+```
 
 ## 5.2 Python - redis-py
 
