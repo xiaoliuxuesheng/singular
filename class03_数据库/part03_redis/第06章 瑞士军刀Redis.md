@@ -69,36 +69,111 @@
 
 1. <font size=5><b>Redis命令的执行周期</b></font>
 
-  
-  
-  
-  
   ```mermaid
-  sequenceDiagram
-  Client ->> RedisServer:命令1
-  RedisServer ->> RedisServer:执行命令1
-  RedisServer -->> Client:返回结果1
-  Client ->> RedisServer:命令2
-  RedisServer ->> RedisServer:执行命令2
-  RedisServer -->> Client:返回结果2
-  Client ->> RedisServer:命令3
-  RedisServer ->> RedisServer:执行命令3
-  RedisServer -->> Client:返回结果3
+   graph LR
+   A(1.发送命令) --> B(2.单线程命令排队) 
+   B --> C(3.执行命令)
+   C --> D(4.返回结果)
   ```
   
-  ```mermaid
-  sequenceDiagram
-  Client ->> RedisServer:命令1+命令2+命令3...
-  RedisServer ->> RedisServer:执行命令1
+  - Redis的命令执行在毫秒级别，命令的执行主要的消耗时间是在命令的传输与执行结果的相应；
+  - 如果需要执行批量的简单命令，那么大量的时间将会消耗在命令的传输中
   
-  RedisServer ->> RedisServer:执行命令2
-  
-  
-  RedisServer ->> RedisServer:执行命令3
-  RedisServer -->> Client:返回结果1+2+3...
-  ```
-  
-  
+2. <font size=5><b>pipeline命令的执行特点</b></font>
+
+    - 传统批量命令执行方式
+
+        ```mermaid
+        sequenceDiagram
+        Client ->> RedisServer:命令1
+        RedisServer ->> RedisServer:执行命令1
+        RedisServer -->> Client:返回结果1
+        Client ->> RedisServer:命令2
+        RedisServer ->> RedisServer:执行命令2
+        RedisServer -->> Client:返回结果2
+        Client ->> RedisServer:命令3
+        RedisServer ->> RedisServer:执行命令3
+        RedisServer -->> Client:返回结果3
+        ```
+
+    - pipeline执行批量命令
+
+        ```mermaid
+        sequenceDiagram
+        Client ->> RedisServer:命令1+命令2+命令3...
+        RedisServer ->> RedisServer:执行命令1
+        
+        RedisServer ->> RedisServer:执行命令2
+        
+        
+        RedisServer ->> RedisServer:执行命令3
+        RedisServer -->> Client:返回结果1+2+3...
+        ```
+
+    - pipeline机制可以优化吞吐量，但无法提供原子性/事务保障，而这个可以通过Redis-Multi等命令实现。
+    - 部分读写操作存在相关依赖，无法使用pipeline实现，可利用Script机制，但需要在可维护性方面做好取舍
+
+3. <font size=5><b>使用Java执行Pipeline</b></font>
+
+    - Jedis中的pipeline使用
+
+        ```java
+        // 先创建一个pipeline的链接对象.
+        Pipeline pipe = jedis.pipelined();
+        
+        // 批量命令
+        for (int i = 0; i < 10000; i++) {
+            pipe.set(String.valueOf(i), String.valueOf(i));
+        }
+        
+        // 获取所有的response
+        pipe.sync();
+        List<Object> list = pipe.syncAndReturnAll();
+        ```
+
+    - RedisTemplate使用PipeLine
+
+        > 注意事项:
+        >
+        > - 这里的connect是redis原生链接，所以connection的返回结果是基本上是byte数组
+        > - 在doInRedis中返回值必须返回为null
+        > - connection.openPipeline()可以调用，也可以不调用，但是connection.closePipeline()不能调用，调用了拿不到返回值。因为调用的时候会直接将结果返回，同时也不会对代码进行反序列化。
+        > - 
+
+        ```java
+        redisTemplate.execute(new RedisCallback<Long>() {
+             @Nullable
+             @Override
+             public Long doInRedis(RedisConnection connection) throws Exception {
+                 connection.openPipeline();
+                 for (int i = 0; i < 1000000; i++) {
+                     String key = "123" + i;
+                     connection.zCount(key.getBytes(), 0,Integer.MAX_VALUE);
+                 }
+                 return null;
+             }
+         });
+        ```
+
+        > 这个list是放在匿名类内部，对于数据处理不太友好，代码会看起来相当难受，想取出来使用还是不可变的
+
+        ```java
+         List<Long> List = redisTemplate.executePipelined(new RedisCallback<Long>() {
+                    @Nullable
+                    @Override
+                    public Long doInRedis(RedisConnection connection) throws Exception {
+                        connection.openPipeline();
+                       for (int i = 0; i < 1000000; i++) {
+                            String key = "123" + i;
+                            connection.zCount(key.getBytes(), 0,Integer.MAX_VALUE);
+                        }
+                        return null;
+                    }
+                });
+        
+        ```
+
+        > 可以返回我们需要的结果，下面我们可以对得到list进行操作。
 
 ## 6.3 发布订阅
 
