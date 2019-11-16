@@ -102,7 +102,7 @@
 
 :one: 普通类型参数的方法
 
-- String类的方法
+- String类的基本方法:同Java的String类
 
 - StringGroovyMethods的方法
 
