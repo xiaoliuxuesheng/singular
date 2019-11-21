@@ -191,171 +191,170 @@ maxmemory-samples 5
 ```properties
 replica-ignore-maxmemory yes
 ```
-```properties
+### 10. Lazy Freeing
 
+```properties
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+replica-lazy-flush no
+```
+### 11. Append Only Mode
+
+```properties
+appendonly no
+```
+```properties
+appendfilename "appendonly.aof"
+```
+```properties
+appendfsync always
+appendfsync everysec
+appendfsync no
+```
+```properties
+no-appendfsync-on-rewrite no
+```
+```properties
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+```
+```properties
+aof-load-truncated yes
+```
+```properties
+aof-use-rdb-preamble yes
+```
+### 12.LUA scripting
+
+```properties
+lua-time-limit 5000
+```
+### 13. Redis Cluster
+
+```properties
+cluster-enabled yes
+```
+```properties
+cluster-config-file nodes-6379.conf
+```
+```properties
+cluster-node-timeout 15000
+```
+```properties
+cluster-replica-validity-factor 10
+```
+```properties
+cluster-migration-barrier 1
+```
+```properties
+cluster-require-full-coverage yes
+```
+```properties
+cluster-replica-no-failover no
+```
+### 14. cluster Docker/NAT support
+
+```properties
+cluster-announce-ip 10.1.1.5
+cluster-announce-port 6379
+cluster-announce-bus-port 6380
+```
+### 15.SLOW LOG
+
+```properties
+slowlog-log-slower-than 10000
+```
+```properties
+slowlog-max-len 128
+```
+### 16. latency monitor
+
+```properties
+latency-monitor-threshold 0
+```
+### 17. event notification
+
+```properties
+notify-keyspace-events ""
 ```
 ```properties
 
 ```
-```properties
+### 18. advanced config
 
+```properties
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
 ```
 ```properties
-
+list-max-ziplist-size -2
 ```
 ```properties
-
+list-compress-depth 0
 ```
 ```properties
-
+set-max-intset-entries 512
 ```
 ```properties
-
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
 ```
 ```properties
-
+hll-sparse-max-bytes 3000
 ```
 ```properties
-
+stream-node-max-bytes 4096
+stream-node-max-entries 100
 ```
 ```properties
-
+activerehashing yes
 ```
 ```properties
-
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit replica 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
 ```
 ```properties
-
+client-query-buffer-limit 1gb
 ```
 ```properties
-
+proto-max-bulk-len 512mb
 ```
 ```properties
-
+dynamic-hz yes
 ```
 ```properties
-
+aof-rewrite-incremental-fsync yes
 ```
 ```properties
-
+rdb-save-incremental-fsync yes
 ```
 ```properties
+lfu-log-factor 10
+lfu-decay-time 1
+```
+### 19. active defragmentation
 
+```properties
+activedefrag yes
 ```
 ```properties
-
+ active-defrag-ignore-bytes 100mb
 ```
 ```properties
-
+active-defrag-threshold-lower 10
 ```
 ```properties
-
+active-defrag-threshold-upper 100
 ```
 ```properties
-
+active-defrag-cycle-min 5
 ```
 ```properties
-
+active-defrag-cycle-max 75
 ```
 ```properties
-
+active-defrag-max-scan-fields 1000
 ```
-```properties
 
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
-```properties
-
-```
