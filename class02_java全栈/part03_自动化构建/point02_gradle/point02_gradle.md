@@ -269,3 +269,255 @@
 ## 8.2 将脚本嵌入到打包流程
 
 ## 8.3 打包流程核心Task
+
+-----
+
+6-1 gradle概述
+
+1. gradle概念
+    - gradle是AndroidStudio的默认构建工具
+2. gradle作用呢
+    - gradle是一种编程框架
+    - gradle有独立的语法、API、build script 包
+3. gradle优势
+    - 灵活：
+    - 粒度：可以独立的定制构建task
+    - 扩展：可以自定义插件和使用第三方插件
+    - 兼容：兼容maven和alt项目
+
+6-2 gradle生命周期-执行流程
+
+1. gradle执行过程
+    - Initialization：初始化阶段 - 解析整个工程中虽有Project对应的project对象
+    - Configuration：配置阶段 - 解析所有project对象中的task，构建好所有task的拓补图
+    - Execution：执行阶段 - 执行具体的task以及依赖的task
+
+6-3 测试监听执行流程
+
+1. 配置阶段开始前的监听回调
+
+    ```groovy
+    this.beforeEvaluate {}
+    this.gradle.beforeProject {}
+    ```
+
+2. 配置阶段完成后的回调
+
+    ```groovy
+    this.afterEvaluate {}
+    this.gradle.afterProject {}
+    ```
+
+3. 执行完毕后回调监听
+
+    ```groovy
+    this.gradle.buildFinished {}
+    ```
+
+7-1 project详解
+
+1. project概述
+    
+    - 在Idea的项目结构有根工程为Project，子项目成为Module；对于Gradle项目而言，根项目是一个project，一个个的子项目也被成为一个project。
+    
+        > 根project称为:rootProject 
+        >
+        > 其他project称为subProject
+    
+    - 一个Project对应一个build.gradle配置文件，project是由build.gradle文件进行配置和管理
+    
+    - 实际开发中gradle项目的project最多定义两级
+    
+    - 一个子project对应一个输出，
+
+7-2 gradle核心API
+
+1. API分类
+    - gradle生命周期相关
+    - project相关：管理根project与subProject
+    - task相关：新增和管理已有的task的能力
+    - 属性相关：属性的使用与定义
+    - file相关：操作gradle项目下的文件的处理
+    - 其他API：依赖+外部配置
+
+7-3 project相关APi
+
+1. 查看项目中的所有project,树的形式保存
+
+    ```groovy
+    this.getAllprojects()		// 获取所有Project
+    this.getSubprojects()		// 获取当前Project的子Project
+    this.getParent()			// 获取当前Project的父Project
+    this.getRootProject()		// 获取当前项目的根Project
+    ```
+
+7-4 project相关的API
+
+1. 通过API管理Project:为project指定特殊配置, 三个函数作用范围不同
+
+    ```groovy
+    project("project名称") {}		// 获取指定名称的project,并添加配置
+    allprojects {}				 // 获取全部的project并为所有Project添加配置
+    subprojects {}				 // 为当前project所有的子project添加配置,不包括当前工程
+    ```
+
+    ```groovy
+    apply from:'引入其他groovy文件'
+    ```
+
+7-5 属性相关api
+
+1. gradle内置属性
+
+    ```groovy
+    String DEFAULT_BUILD_FILE = "build.gradle";		// 默认的构建文件
+    String PATH_SEPARATOR = ":";					// 路径分隔符
+    String DEFAULT_BUILD_DIR_NAME = "build";		// 默认的输出文件
+    String GRADLE_PROPERTIES = "gradle.properties";	// 默认的属性配置文件
+    ```
+
+2. gradle扩展属性 - 方式一:扩展属性
+
+    - 常量改为变量 的等价方式
+
+    - 扩展属性
+
+        ```groovy
+        // 定义扩展属性
+        ext{
+            属性名称: 值
+        }
+        
+        // 引入扩展属性
+        this.属性名称
+        ```
+
+    - 可以将扩展属性定义在指定的project中
+
+        ```groovy
+        // 表示为所有子project中定义一个:在编译时候所有的子project都会定义一遍扩展属性
+        subproject{
+            ext{
+                属性名称:值
+            }
+        }
+        ```
+
+    - 扩展属性定义在根工程,在其他子project中直接引用,父project中的属性都会被子project继承
+
+        ```groovy
+        // 在根project中定义扩展属性
+        ext{
+            属性名称:值
+        }
+        
+        // 在其他project中引用
+        this.属性名称
+        ```
+
+    - 将扩展属性单独定义在groovy文件中
+
+        ```groovy
+        // 在独立的groovy中定义扩展属性
+        ext{
+            属性名:值
+        }
+        ```
+
+        ```groovy
+        // 根project中引入外部文件
+        apply from: this.file("外部文件名称")
+        
+        // 引用扩展属性
+        rootProject.ext.属性名
+        ```
+
+3. gradle扩展属性 - 方式二:gradle.properties  属性配置文件
+
+    ```properties
+    # 定义gradle.properties的配置文件,是key value的格式,
+    key=value
+    ```
+
+    - value是字符串的格式
+    - 自定义属性不可以和已有方法重复,编译不会保存,使用会出现异常
+
+    ```groovy
+    // groovy中可以直接获取配置文件中的值
+    hasProperty("key")		// 判断是否有指定key
+    key						// 可以使用使用key得到value
+    ```
+
+7-7 file相关API
+
+1. 路径获取API
+
+    ```groovy
+    // 获取根工程目录的路径
+    File getRootDir()
+    
+    // 获取构建目录的路径
+    File getBuildDir()
+    
+    // 获取当前工程目录路径
+    File getProjectDir()
+    ```
+
+2. 文件操作-定位
+
+    ```groovy
+    File file(Object path);
+    ConfigurableFileCollection files(Object... paths);
+    ```
+
+3. 文件操作-拷贝
+
+    ```groovy
+    copy {
+        from files("目标文件目录")
+        into 拷贝目的地
+        exclude{
+            排序不需要的拷贝文件
+        }
+        rename{
+            重命名
+        }
+    }
+    ```
+
+4. 文件操作-遍历
+
+    ```groovy
+    fileTree("build/"){ FileTree fileTree ->
+        fileTree.visit {
+            FileTreeElement element ->
+                println element.file.name
+        }
+    }
+    ```
+
+7-8 其他类型API
+
+1. 依赖相关API
+
+    ```groovy
+    buildscript { ScriptHandler handler ->
+        // 配置工程仓库地址
+        handler.repositories { RepositoryHandler repositories ->
+            repositories.mavenCentral()
+            repositories.mavenLocal()
+            repositories.maven {MavenArtifactRepository artifactRepository ->
+                artifactRepository.name '仓库名称'
+                artifactRepository.url '内部仓库地址'
+            }
+        }
+        // 配置工程插件依赖地址:gradle本身就是框架,这里是框架的插件
+        handler.dependencies {DependencyHandler dependencyHandler ->
+    
+        }
+    }
+    ```
+
+2. Project.
+
+3. 外部命令执行API
