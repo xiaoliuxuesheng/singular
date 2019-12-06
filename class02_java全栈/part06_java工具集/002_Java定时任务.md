@@ -35,7 +35,7 @@
 - 延迟1s启动，执行一次
 
     ```java
-    scheduledExecutorService.schedule(new Runnable() {
+    ScheduledExecutorService.schedule(new Runnable() {
                 @Override
                 public void run() {
                     System.out.println("ScheduledTask");
@@ -120,7 +120,23 @@
 
 # 4.SpringBootTask
 
+- `@Scheduled`失效原因
 
+    - `@Scheduled`注解的源码，主要说明了注解可使用的参数形式，在注解中使用了`Schedules`这个类。
+    - `Spring`容器加载完`bean`之后，`postProcessAfterInitialization`将拦截所有以`@Scheduled`注解标注的方法。
+    - `processScheduled`获取scheduled类参数，之后根据参数类型、相应的延时时间、对应的时区将定时任务放入不同的任务列表中。
+    - 满足条件时将定时任务添加到定时任务列表中，在加入任务列表的同时对定时任务进行注册。ScheduledTaskRegistrar这个类为Spring容器的定时任务注册中心。以下为ScheduledTaskRegistrar部分源码，主要说明该类中包含的属性。Spring容器通过线程处理注册的定时任务。
+    - `ScheduledTaskRegistrar`类中在处理定时任务时会调用`scheduleCronTask`方法初始化定时任务
+    - 在ThreadPoolTaskShcedule这个类中，进行线程池的初始化。在创建线程池时会创建 DelayedWorkQueue()阻塞队列，定时任务会被提交到线程池，由线程池进行相关的操作，线程池初始化大小为1。当有多个线程需要执行时，是需要进行任务等待的，前面的任务执行完了才可以进行后面任务的执行。
+    - 根本原因，jvm启动之后会记录系统时间，然后jvm根据CPU ticks自己来算时间，此时获取的是定时任务的基准时间。如果此时将系统时间进行了修改，当Spring将之前获取的基准时间与当下获取的系统时间进行比对时，就会造成Spring内部定时任务失效。因为此时系统时间发生变化了，不会触发定时任务。
+
+- 解析流程图
+
+    ![这里写图片描述](https://img-blog.csdn.net/20180618104845994?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RpYW1vbmRfVGFv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+- 使用新的方法
+
+    为了避免使用@Scheduled注解在修改服务器时间导致定时任务不执行情况的发生。在项目中需要使用定时任务场景的情况下，使ScheduledThreadPoolExecutor进行替代，它任务的调度是基于相对时间的，原因是它在任务的内部 存储了该任务距离下次调度还需要的时间（使用的是基于 System.nanoTime实现的相对时间 ，不会因为系统时间改变而改变，如距离下次执行还有10秒，不会因为将系统时间调前6秒而变成4秒后执行）。
 
 # 5.Quartz框架
 

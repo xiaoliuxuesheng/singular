@@ -32,8 +32,6 @@
 
 - **M (Modify) : 被修改**
 
-  > - 
-
 - **E (Enclosed) : 独享**
 
 - **S (Share) : 共享**
