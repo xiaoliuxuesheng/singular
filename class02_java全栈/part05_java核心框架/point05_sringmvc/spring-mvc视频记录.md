@@ -31,7 +31,7 @@
 
 # 008_helloworld细节 : RequestMapping
 
-- 作用
+- 作用:value的url中 / 可以不写
 
 # 009_helloworld细节 : spring配置文件
 
