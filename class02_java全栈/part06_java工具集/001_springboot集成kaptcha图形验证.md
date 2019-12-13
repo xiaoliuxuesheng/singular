@@ -156,5 +156,57 @@ public class CodeController {
 }
 ```
 
+#  EasyCaptcha
 
+- 添加依赖
+
+    ```xml
+    <dependency>
+        <groupId>com.github.whvcse</groupId>
+        <artifactId>easy-captcha</artifactId>
+        <version>1.6.2</version>
+    </dependency>
+    ```
+
+- 使用
+
+    - SringMVC , 写出图片
+
+        ```java
+        @Controller
+        public class CaptchaController {
+            
+            @RequestMapping("/captcha")
+            public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+                CaptchaUtil.out(request, response);
+            }
+        }
+        ```
+
+    - ### 设置宽高和位数
+
+        ```java
+        @Controller
+        public class CaptchaController {
+            
+            @RequestMapping("/captcha")
+            public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+                // 设置位数
+                CaptchaUtil.out(5, request, response);
+                // 设置宽、高、位数
+                CaptchaUtil.out(130, 48, 5, request, response);
+                
+                // 使用gif验证码
+                GifCaptcha gifCaptcha = new GifCaptcha(130,48,4);
+                CaptchaUtil.out(gifCaptcha, request, response);
+            }
+        }
+        ```
+
+    - ### 判断验证码是否正确
+
+        ```java
+        CaptchaUtil.ver(verCode, request);
+        CaptchaUtil.clear(request)  
+        ```
 
