@@ -43,7 +43,8 @@
 
     ```java
     @RunWith(SpringRunner.class)
-    @SpringBootTest(classes = SpringbootBaseApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @SpringBootTest(classes = SpringbootBaseApplication.class, 
+                    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
     public class EmployeeControllerTest {
     }
     ```
@@ -51,7 +52,8 @@
 4. 定义契约容器
 
     ```java
-    private static final ContractContainer contractContainer = new ContractContainer(Paths.get("spring-base-contracts/sub-project-01"));
+    private static final ContractContainer contractContainer = 
+        new ContractContainer(Paths.get("spring-base-contracts/sub-project-01"));
     ```
 
 5. 常用常量
