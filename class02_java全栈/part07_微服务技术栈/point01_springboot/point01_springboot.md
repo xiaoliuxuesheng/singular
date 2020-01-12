@@ -120,4 +120,47 @@
     }
     ```
 
-    
+
+# SpringBoot属性配置文件
+
+1. 定义属性配置文件
+
+   ```java
+   @Configuration
+   @EnableConfigurationProperties(SecurityPropertiesConfig.class)
+   ```
+
+   - @EnableConfigurationProperties作用：使使用 @ConfigurationProperties 注解的类生效。
+
+2. 定义属性封装类：@ConfigurationProperties
+
+   ```java
+   @Setter
+   @Getter
+   @Component
+   @ConfigurationProperties(prefix = "panda.security")
+   public class SecurityPropertiesConfig {
+       
+   }
+   ```
+
+3. 在配置文件中指定属性
+
+   ```yaml
+   panda:
+     security:
+       browser:
+         loginPage: /demo_login_page.html
+   ```
+
+4. 添加属性自动提示依赖：和属性配置文件放在同一组件
+
+   ```xml
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-configuration-processor</artifactId>
+       <optional>true</optional>
+   </dependency>
+   ```
+
+   

@@ -333,3 +333,84 @@ spring-boot-starter-jdbc
 
 # 016_WireMock
 
+# 前言
+
+# 第一章 Security入门
+
+## 1.1 学习前提
+
+1. Spring的注解
+2. 自定义Filter
+3. 自定义Interceptor
+4. 使用注解实现APO
+5. RESTful接口开发
+
+## 1.2 Security坏境搭建
+
+1. 添加依赖
+
+   - 依赖的管理平台
+
+     ```xml
+     <dependencyManagement>
+         <dependencies>
+             <dependency>
+                 <groupId>io.spring.platform</groupId>
+                 <artifactId>platform-bom</artifactId>
+                 <version>Brussels-SR4</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
+             <dependency>
+                 <groupId>org.springframework.cloud</groupId>
+                 <artifactId>spring-cloud-dependencies</artifactId>
+                 <version>Dalston.SR2</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
+         </dependencies>
+     </dependencyManagement>
+     ```
+
+   - Security相关依赖
+
+     ```xml
+     <!-- ★ SpringSecurity核心：-->
+     <dependency>
+         <groupId>org.springframework.cloud</groupId>
+         <artifactId>spring-cloud-starter-security</artifactId>
+     </dependency>
+     <dependency>
+         <groupId>org.springframework.social</groupId>
+         <artifactId>spring-social-security</artifactId>
+     </dependency>
+     ```
+
+2. 启用Security功能
+
+   ```yaml
+   security:
+     basic:
+       enabled: true
+   ```
+
+3. 添加Security配置文件
+
+   ```java
+   @Configuration
+   public class SecurityWebConfig extends WebSecurityConfigurerAdapter{
+   	@Override
+       protected void configure(HttpSecurity http) throws Exception {
+           HttpSecurity = http.and()
+       }
+   }
+   ```
+
+4. 常用配置说明
+
+   - csrf跨站点请求伪造
+
+# 第二章 SpringSecurity认证
+
+
+
