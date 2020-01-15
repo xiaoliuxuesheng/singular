@@ -63,34 +63,34 @@
 
 1. **变量的类型**
 
-   - Groovy中的变量的类型本质上都是对象类型
-   - Groovy中的基本类型本质是基本类型的包装类
+    - Groovy中的变量的类型本质上都是对象类型
+    - Groovy中的基本类型本质是基本类型的包装类
 
 2. **变量的定义** : *建议使用强类型定义变量*
 
-   - **强类型定义** : 定义变量时候指定了变量的类型
+    - **强类型定义** : 定义变量时候指定了变量的类型
 
-     ```groovy
-     变量类型 变量名 = 变量值 			# 定义方式与Java变量定义方式相同
-     ```
+        ```groovy
+        变量类型 变量名 = 变量值 			# 定义方式与Java变量定义方式相同
+        ```
 
-   - **弱类型定义** `关键字 : def`: 可以根据变量值推算出变量的类型
+    - **弱类型定义** `关键字 : def`: 可以根据变量值推算出变量的类型
 
-     ```groovy
-     def 变量名称 = 变量值
-     ```
+        ```groovy
+        def 变量名称 = 变量值
+        ```
 
 3. **Sting与GString类型**
 
-   - String类型的使用与Java中String类使用相同
+    - String类型的使用与Java中String类使用相同
 
-   - GString定义的方式
+    - GString定义的方式
 
-     | 定义方式 | 使用说明                                   |
-     | -------- | ------------------------------------------ |
-     | 单引号   | 普通无格式字符串                           |
-     | 双引号   | 可扩展字符串 : 可以使用`${}`引用变量表达式 |
-     | 三单引号 | 格式化输出字符串                           |
+        | 定义方式 | 使用说明                                   |
+        | -------- | ------------------------------------------ |
+        | 单引号   | 普通无格式字符串                           |
+        | 双引号   | 可扩展字符串 : 可以使用`${}`引用变量表达式 |
+        | 三单引号 | 格式化输出字符串                           |
 
 ### :anchor: Groovy中String方法
 
@@ -106,26 +106,26 @@
 
 - StringGroovyMethods的方法
 
-  | API                                                          | 使用说明   |
-  | ------------------------------------------------------------ | ---------- |
-  | center(CharSequence self, Number numberOfChars)              | 字符串填充 |
-  | padRight(CharSequence self, Number numberOfChars, CharSequence padding) | 右填充     |
-  | padLeft(CharSequence self, Number numberOfChars, CharSequence padding) | 左填充     |
-  | String capitalize(CharSequence self)                         | 首字母大写 |
-  | getAt(String text, int index)                                | 获取子串   |
-  | string[]   或者   string[开始索引..结束索引]                 |            |
-  | reverse(CharSequence self)                                   | 反转字符串 |
-  | is包装类型(CharSequence self)                                | 类型判断   |
+    | API                                                          | 使用说明   |
+    | ------------------------------------------------------------ | ---------- |
+    | center(CharSequence self, Number numberOfChars)              | 字符串填充 |
+    | padRight(CharSequence self, Number numberOfChars, CharSequence padding) | 右填充     |
+    | padLeft(CharSequence self, Number numberOfChars, CharSequence padding) | 左填充     |
+    | String capitalize(CharSequence self)                         | 首字母大写 |
+    | getAt(String text, int index)                                | 获取子串   |
+    | string[]   或者   string[开始索引..结束索引]                 |            |
+    | reverse(CharSequence self)                                   | 反转字符串 |
+    | is包装类型(CharSequence self)                                | 类型判断   |
 
 :two: 闭包类型参数方法
 
 - StringGroovyMethods的方法
 
-  | API  | 使用说明 |
-  | ---- | -------- |
-  |      |          |
+    | API  | 使用说明 |
+    | ---- | -------- |
+    |      |          |
 
-###  :anchor: Groovy语句
+### :anchor: Groovy语句
 
 **:one: 顺序语句**
 
@@ -135,12 +135,12 @@
 
 - switch/case : 可以传入任意类型变量和`case`匹配
 
-  ```txt
-  case 字符串
-  case List
-  case 范围   			# 范围[范围开始..范围介绍]
-  case 指定数据的类型
-  ```
+    ```txt
+    case 字符串
+    case List
+    case 范围   			# 范围[范围开始..范围介绍]
+    case 指定数据的类型
+    ```
 
 **:three: 循环语句**
 
@@ -148,27 +148,27 @@
 
 - for循环 : in表达式
 
-  ```groovy
-  for(变量 in 范围){
-      
-  }
-  ```
+    ```groovy
+    for(变量 in 范围){
+        
+    }
+    ```
 
-  ```groovy
-  for(变量 in [集合]){
-      
-  }
-  ```
+    ```groovy
+    for(变量 in [集合]){
+        
+    }
+    ```
 
-  ```groovy
-  for(变量 in [map]){
-      
-  }
-  ```
+    ```groovy
+    for(变量 in [map]){
+        
+    }
+    ```
 
 ## 2.2 Groovy闭包
 
-###  :anchor: 闭包基础
+### :anchor: 闭包基础
 
 :one: **闭包的概念 :** 闭包的本质就是一段代码块
 
@@ -176,36 +176,36 @@
 
 - 定义基本闭包 : {}
 
-  ```groovy
-  def 闭包名称 = {}
-  ```
+    ```groovy
+    def 闭包名称 = {}
+    ```
 
 - 闭包的调用
 
-  ```groovy
-  # 方式一 : 调用闭包函数
-  	闭包名称.call()	
-  # 方式二 : 直接使用闭包函数
-  	闭包名称()
-  ```
+    ```groovy
+    # 方式一 : 调用闭包函数
+    	闭包名称.call()	
+    # 方式二 : 直接使用闭包函数
+    	闭包名称()
+    ```
 
 :three: **闭包的参数**
 
 - 定义闭包参数格式
 
-  ```groovy
-  def 闭包名称 = { 参数类型 参数名称, ... ... ->
-      # 闭包体
-  }
-  ```
+    ```groovy
+    def 闭包名称 = { 参数类型 参数名称, ... ... ->
+        # 闭包体
+    }
+    ```
 
-  > 多个参数用逗号分隔
+    > 多个参数用逗号分隔
 
 - 闭包参数传递
 
-  ```groovy
-  闭包名称(实际参数)
-  ```
+    ```groovy
+    闭包名称(实际参数)
+    ```
 
 - 闭包的默认参数 : 如果闭包中没有定义参数, 则该闭包会有一个默认参数 **it**
 
@@ -230,104 +230,71 @@
 
 ## 3.5 文件下载功能
 
-# 第四章 Gradle核心 - Project 
+# 第六章 Gradle概述
 
-## 4.1 Project类核心作用
+## 6.1 gradle基本概述
 
-## 4.2 核心API讲解
+1. gradle是Java项目的一种构建工具
+2. gradle是AndroidStudio的默认构建工具
+3. gradle可以看做是一个编程框架：gradle包含有groovy语法；build scrpt block（定制化的构建代码块）；自身还有独立的API
 
-## 4.3 Gradle生命周期流程
+## 6.2 gradle优势
 
-## 4.4 版本统一管理脚本编写
+1. 灵活性：可以自定义构建过程
+2. 粒度：可以独立定制构建任务（task）
+3. 扩展：可以包含自定义插件和使用第三方插件
+4. 兼容性：兼容Maven和Ant所有的构建功能
 
-# 第五章 Gradle核心 - Task
+## 6.3 gradle生命周期
 
-## 5.1 Task定义和使用
+### :anchor: Initialization：初始化阶段
 
-## 5.2 Task依赖输入和输出
+> 解析整个工程中所有Project对应的project对象，根project以及相关的子project；
 
-## 5.3 Task修改默认构建流程
-
-# 第六章 Gradle核心 - 其他模块
-
-## 6.1 第三方库依赖管理
-
-## 6.2 工程初始化核心类Setting类作用
-
-## 6.3 源码管理类SourceSet讲解
-
-# 第七章 Gradle核心 - 自定义插件
-
-## 7.1 插件类Pluging的定义和使用
-
-## 7.2 Gradle 如何管理插件的依赖
-
-# 第八章 Gradle修改默认打包流程
-
-## 8.1 Android 和 Java的打包流程
-
-## 8.2 将脚本嵌入到打包流程
-
-## 8.3 打包流程核心Task
-
------
-
-6-1 gradle概述
-
-1. gradle概念
-    - gradle是AndroidStudio的默认构建工具
-2. gradle作用呢
-    - gradle是一种编程框架
-    - gradle有独立的语法、API、build script 包
-3. gradle优势
-    - 灵活：
-    - 粒度：可以独立的定制构建task
-    - 扩展：可以自定义插件和使用第三方插件
-    - 兼容：兼容maven和alt项目
-
-6-2 gradle生命周期-执行流程
-
-1. gradle执行过程
-    - Initialization：初始化阶段 - 解析整个工程中虽有Project对应的project对象
-    - Configuration：配置阶段 - 解析所有project对象中的task，构建好所有task的拓补图
-    - Execution：执行阶段 - 执行具体的task以及依赖的task
-
-6-3 测试监听执行流程
-
-1. 配置阶段开始前的监听回调
+- 初始化阶段监听方法
 
     ```groovy
     this.beforeEvaluate {}
     this.gradle.beforeProject {}
     ```
 
-2. 配置阶段完成后的回调
+### :anchor: Configuration：配置阶段
+
+> 解析所有project对象中的task，构建好所有task的拓补图
+
+- 配置阶段监听方法
 
     ```groovy
     this.afterEvaluate {}
     this.gradle.afterProject {}
     ```
 
-3. 执行完毕后回调监听
+### :anchor: Execution：执行阶段
+
+> 执行具体的task以及依赖的task：每个gradle命令本质都是一个task，执行这个task需要先执行这个task相关联的其他task，相关联的task是在这个阶段执行完成
+
+- 执行阶段完成的监听回调方法
 
     ```groovy
     this.gradle.buildFinished {}
     ```
 
-7-1 project详解
+# 第七章 Gradle核心API
+
+## 7.1 Project核心API
 
 1. project概述
-    
+
     - 在Idea的项目结构有根工程为Project，子项目成为Module；对于Gradle项目而言，根项目是一个project，一个个的子项目也被成为一个project。
-    
+
         > 根project称为:rootProject 
         >
         > 其他project称为subProject
-    
+
     - 一个Project对应一个build.gradle配置文件，project是由build.gradle文件进行配置和管理
-    
+
     - 实际开发中gradle项目的project最多定义两级
-    
+
     - 一个子project对应一个输出，
 
 7-2 gradle核心API
@@ -365,7 +332,7 @@
     apply from:'引入其他groovy文件'
     ```
 
-7-5 属性相关api
+## 7.2 属性相关API
 
 1. gradle内置属性
 
@@ -448,7 +415,9 @@
     key						// 可以使用使用key得到value
     ```
 
-7-7 file相关API
+
+
+## 7.3 文件相关API
 
 1. 路径获取API
 
@@ -496,7 +465,9 @@
     }
     ```
 
-7-8 其他类型API
+
+
+## 7.4 其他API
 
 1. 依赖相关API
 
@@ -518,6 +489,213 @@
     }
     ```
 
-2. Project.
+#  第八章 Gradle核心-Task
 
-3. 外部命令执行API
+## 8.1 Task的定义及配置
+
+:anchor: 当前Project中的所有Task
+
+```sh
+gradle tasks
+```
+
+:anchor: 定义Task
+
+1. 格式一 : 使用Task函数定义`Task task(String name, Closure configureClosure);`
+
+    ```groovy
+    task Task名称{
+        // 
+    }
+    ```
+
+2. 格式二 : 使用Task容器创建
+
+    ```groovy
+    this.tasks.create("name":"Task名称"){
+        //
+    }
+    ```
+
+:anchor: TaskContainer(容器)相关API
+
+> 一个Project中会有非常多的Task，Gradle是通过TaskContainer管理Project中的Task
+>
+> TaskContainer会根据Task的依赖将Task构建出拓补图，在执行Task时执行所依赖的Task
+
+| 方法名称                              | 使用说明           |
+| ------------------------------------- | ------------------ |
+| Task findByPath(String path)          | 找不到结果为null   |
+| Task getByPath(String path)           | 找不到抛出异常     |
+| Task create(String name, Closure col) | 创建Task           |
+| Task replace(String name)             | 替换指定名称的Task |
+
+:anchor: 配置Task
+
+1. Task的配置属性
+
+    | 属性        | 说明              |
+    | ----------- | ----------------- |
+    | name        | 指定名称          |
+    | description | 添加说明          |
+    | group       | 指定分组,同一组的 |
+    | type        | 指定Task的处理类  |
+    | dependsOn   | 依赖的其他Task    |
+    | overwrite   | 重写Task          |
+    | action      | 执行逻辑          |
+
+2. Task配置格式一 : 在Task名称后使用参数的格式设置属性与值
+
+    ```groovy
+    task Task名称("group":"值"){
+        // code
+    }
+    ```
+
+3. Task配置格式二 : 使用API的方式配置Task
+
+    ```groovy
+    task Task名称{
+        setDescription("值")
+    }
+    ```
+
+## 8.2 Task执行详解
+
+:anchor: 默认的Task执行
+
+​		在Project的配置阶段中，gradle中的配置代码都会被执行到，所以在配置阶段所有的Task中的代码都会执行到，但是不会执行Task的逻辑，Task逻辑的执行是在执行阶段完成的
+
+:anchor: 配置Task在执行阶段执行 : doFirst 与 doLast
+
+- doFirst或doLast特点
+    - doFirst用于给已存在的Task之前添加逻辑
+    - doLast用于给已存在的Task之后添加逻辑
+    - 可以将Task的中的执行时间修改为执行阶段执行
+    - 一个Task中可以定义多个doFirst或doLas
+    - 在外部定义的doFirst或doLas优先执行于内部定义的
+
+1. 格式一 : 在Task内部定义
+
+    ```groovy
+    task Task名称 {
+        doFirst {
+            // code
+        }
+        doLast{
+        	// code
+        }
+    }
+    ```
+
+2. 格式二 : 在Task外部执行Task的doFirst与doLast的API
+
+    ```groovy
+    Task名称.doFirst{
+    	// code
+    }
+    Task名称.doLast{
+    	// code
+    }
+    ```
+
+## 8.3 Task依赖执行顺序
+
+:anchor: dependsOn强依赖方式
+
+> task有依赖关系时候,执行task会优先执行所依赖的Task
+
+1. 方式一 : task的dependsOn属性
+
+    ```groovy
+    // 格式一
+    task task名称(dependsOn: [依赖Task1, 依赖Task2]) {
+        
+    }
+    
+    // 格式二
+    task名称.dependsOn{
+    	
+    }
+    ```
+
+2. 方式二 : 通过Task的dependsOn方法
+
+    ```groovy
+    task task名称 {
+        dependsOn this.tasks.findAll { task ->
+            
+            return task
+        }
+    }
+    ```
+
+:anchor: 通过Task输入输出
+
+1. 输入输出的作用
+
+    ​	一个Task的输出可以设置为另一个Task的输入，通过输入和输出关联Task之间的关系，这样可以通过制定Task的输入和输出改变Task的执行顺序
+
+2. Task的输入与输
+
+    - TaskInputs:代表Task的输入类，可以接收任意数据类型和文件类型
+    - TaskOutputs:代表Task的输出类，只可以接收文件类型
+
+3. 定义输入与输出
+
+    ```groovy
+    task 任务1{ Task task ->
+        // 为Task指定输出
+        task.outputs 目标文件
+    }
+    
+    task 任务1{ Task task ->
+        // 为Task指定输入
+        task.inputs 目标文件
+    }
+    ```
+    
+- Task.inputs指定TaskInputs
+    - Task.outputs指定TaskOutputs
+    - 通过同一个目标文件将两个Task关联起来，如果其他的Task同时依赖的输入输出相关联的Task，gradle会将输出类型的Task先执行
+
+:anchor: 通过API连接到构建生命周期
+
+- 让指定Task指定运行在指定Task之后，这几个Task需要同时执行
+
+    ```groovy
+    task taskY {
+        mustRunAfter taskX		// 强制
+    }
+    ```
+
+    ```groovy
+    task taskY {
+        shouldRunAfter taskX	// 不是强制
+    }
+    ```
+
+
+## 8.4 Task类型
+
+# 第六章 Gradle核心 - 其他模块
+
+## 6.1 第三方库依赖管理
+
+## 6.2 工程初始化核心类Setting类作用
+
+## 6.3 源码管理类SourceSet讲解
+
+# 第七章 Gradle核心 - 自定义插件
+
+## 7.1 插件类Pluging的定义和使用
+
+## 7.2 Gradle 如何管理插件的依赖
+
+# 第八章 Gradle修改默认打包流程
+
+## 8.1 Android 和 Java的打包流程
+
+## 8.2 将脚本嵌入到打包流程
+
+## 8.3 打包流程核心Task
