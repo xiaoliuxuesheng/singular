@@ -411,7 +411,7 @@ org.springframework.beans.factory.BeanFactory#getBean(java.lang.String, java.lan
 
 ### 4. 自定义静态工厂类创建对象
 
-:anchor: : 工厂类不需要被实例化
+:anchor:  工厂类不需要被实例化
 
 - 自定义工厂类 : 在工厂类的静态方法中创建指定对象
 
