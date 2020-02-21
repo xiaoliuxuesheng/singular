@@ -1,4 +1,330 @@
-# HTML
+**display  显示模式**
+
+**color 文字颜色**
+
+**font 字体**
+
+> *font-weight  文字粗细*
+>
+> *font-size  字体大小*
+>
+> *font-style 文字样式*
+>
+> *font-family  文字字体*
+
+**text-align  文本对齐** 
+
+**text-decoration  文本装饰** 
+
+**text-indent  文本缩进**
+
+**line-height  行高**
+
+**overflow  超出模式**
+
+**background 背景属性**
+
+> *background-color 背景颜色*
+>
+> *background-image  背景图片*
+>
+> *background-position  背景定位*
+>
+> *background-repeat  背景平铺*
+>
+> *background-attachment  背景关联*
+
+**background-size  背景图片大小**
+
+
+background-blend-mode
+
+background-clip
+
+background-origin
+
+
+
+**visibility  显示隐藏**
+
+**height  高**
+
+**width  宽**
+
+**border  边框**
+
+> border-style
+>
+> border-color
+>
+> border-width
+
+**border-radius  边框圆角**
+
+> border-bottom-left-radius
+>
+> border-bottom-right-radius
+>
+> border-top-left-radius
+>
+> border-top-right-radius
+
+border-top
+
+> border-top-color
+>
+> border-top-style
+>
+> border-top-width
+
+border-bottom
+
+> border-bottom-color
+>
+> border-bottom-style
+>
+> border-bottom-width
+
+border-left
+
+> border-left-color
+>
+> border-left-style
+>
+> border-left-width
+
+border-right
+
+> border-right-color
+>
+> border-right-style
+>
+> border-right-width
+
+**padding  内边距**
+
+> padding-bottom
+>
+> padding-left
+>
+> padding-right
+>
+> padding-top
+
+**margin  外边距**
+
+> margin-bottom
+>
+> margin-left
+>
+> margin-right
+>
+> margin-top
+
+**box-sizing**
+
+
+
+float
+
+clear
+
+
+
+left
+
+right
+
+top
+
+bottom
+
+
+
+border-image
+border-image-outset
+border-image-repeat
+border-image-slice
+border-image-source
+border-image-width
+
+border-collapse
+border-spacing
+
+
+
+align-content
+align-items
+align-self
+all
+animation
+animation-delay
+animation-direction
+animation-duration
+animation-fill-mode
+animation-iteration-count
+animation-name
+animation-play-state
+animation-timing-function
+appearance
+backface-visibility
+
+
+
+
+box-align
+box-direction
+box-flex
+box-flex-group
+box-lines
+box-ordinal-group
+box-orient
+box-pack
+box-shadow
+
+caption-side
+
+clip
+
+column-count
+column-fill
+column-gap
+column-rule
+column-rule-color
+column-rule-style
+column-rule-width
+column-span
+column-width
+columns
+content
+counter-increment
+counter-reset
+cursor
+direction
+
+empty-cells
+filter
+flex
+flex-basis
+flex-direction
+flex-flow
+flex-grow
+flex-shrink
+flex-wrap
+
+@font-face
+
+font-size-adjust
+
+font-stretch
+
+font-variant
+
+grid-columns
+
+grid-rows
+
+hanging-punctuation
+
+icon
+
+justify-content
+
+@keyframes
+
+
+
+letter-spacing
+
+
+
+list-style
+
+list-style-image
+
+list-style-position
+
+list-style-type
+
+max-height
+
+max-width
+
+@media
+min-height
+min-width
+nav-down
+nav-index
+nav-left
+nav-right
+nav-up
+opacity
+order
+outline
+outline-color
+outline-offset
+outline-style
+outline-width
+
+
+
+page-break-after
+page-break-before
+page-break-inside
+perspective
+perspective-origin
+position
+punctuation-trim
+quotes
+resize
+
+rotation
+tab-size
+table-layout
+target
+target-name
+target-new
+target-position
+
+text-justify
+text-outline
+text-overflow
+text-shadow
+text-transform
+text-wrap
+
+transform
+transform-origin
+transform-style
+transition
+transition-delay
+transition-duration
+transition-property
+transition-timing-function
+unicode-bidi
+vertical-align
+
+white-space
+
+word-break
+word-spacing
+word-wrap
+z-index
+writing-mode
+
+
+
+*text-align-last  实用性太低*
+
+*overflow-x*
+
+*overflow-y*
+
+<del>text-decoration-color</del>
+<del>text-decoration-line</del>
+<del>text-decoration-style</del>
+
+# ---------------------------
 
 ## CSS
 
