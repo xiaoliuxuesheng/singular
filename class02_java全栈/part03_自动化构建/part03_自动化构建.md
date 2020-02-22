@@ -1,0 +1,3 @@
+- [point01_maven](/class02_java全栈/part03_自动化构建/point01_maven/point01_maven.md)
+- [point02_gradle](/class02_java全栈/part03_自动化构建/point02_gradle/point02_gradle.md)
+- [point03_Jenkins](/class02_java全栈/part03_自动化构建/point03_Jenkins/point03_Jenkins.md)

@@ -1,3 +1,14 @@
+- [point01_struts2](/class02_java全栈/part05_java核心框架/point01_struts2/point01_struts2.md)
+- [point02_spring](/class02_java全栈/part05_java核心框架/point02_spring/point02_spring.md)
+- [point03_hibernate](/class02_java全栈/part05_java核心框架/point03_hibernate/point03_hibernate.md)
+- [point04_jpa](/class02_java全栈/part05_java核心框架/point04_jpa/point04_jpa.md)
+- [point05_sringmvc](/class02_java全栈/part05_java核心框架/point05_sringmvc/point05_sringmvc.md)
+- [point06_springdata](/class02_java全栈/part05_java核心框架/point06_springdata/point06_springdata.md)
+- [point07_mybatis](/class02_java全栈/part05_java核心框架/point07_mybatis/point07_mybatis.md)
+- [point08_mybatisplus](/class02_java全栈/part05_java核心框架/point08_mybatisplus/point08_mybatisplus.md)
+- [point09_shiro](/class02_java全栈/part05_java核心框架/point09_shiro/point09_shiro.md)
+- [point10_springsecurity](/class02_java全栈/part05_java核心框架/point10_springsecurity/point10_springsecurity.md)
+
 # 开发底层规范
 
 ## 01_HTTP响应状态码
