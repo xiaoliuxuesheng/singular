@@ -147,7 +147,6 @@
 | logback  | logback-spring.xml<br/>logback-spring.groovy<br/>logback.xml<br/>logback.groovy |
 | Log4j2   | log4j2-spring.xml<br/>log4j2.xml                             |
 | JUL      | logging.properties                                           |
-|          |                                                              |
 
 - 需要在类路径下添加日志框架自己的日志文件
 

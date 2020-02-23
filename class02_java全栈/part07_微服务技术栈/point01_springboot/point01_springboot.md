@@ -10,7 +10,7 @@
 
 ## 1.2 Spring Boot的优点
 
-<img src="F:/视频收藏_IT开发/class02_java全栈/part07_微服务技术栈/point01_springboot/imgs/01_SpringBoot优点"/>
+<img src="./imgs/01_SpringBoot优点"/>
 
 
 
@@ -243,13 +243,13 @@ public class HttpEncodingAutoConfiguration {
    - **普通值(字面量)的格式**
 
      ```properties
-     # 设置字符类型的值
+     #设置字符类型的值
      key1=字符串常量  
      
-     # 设置属性类型的值
+     #设置属性类型的值
      key2=15      
      
-     # 布尔类型的值
+     #布尔类型的值
      key3=0 | 1 或 true|false
      ```
 
@@ -262,19 +262,19 @@ public class HttpEncodingAutoConfiguration {
    - **使用内置random的api注入随机数**
 
      ```properties
-     # 随机字符串
+     #随机字符串
      com.blog.stringValue=${random.value}
      
-     # 随机int
+     #随机int
      com.blog.numberValue=${random.int}
      
-     # 随机long
+     #随机long
      com.blog.bignumberValue=${random.long}
      
-     # 10以内的随机数
+     #10以内的随机数
      com.blog.randomValue0=${random.int(10)}
      
-     # 10-20的随机数
+     #10-20的随机数
      com.blog.randomValue1=${random.int[10,20]}
      ```
 
@@ -315,15 +315,15 @@ public class HttpEncodingAutoConfiguration {
    - **普通值(字面量)**
 
      ```yml
-     # 字符串类型
+     #字符串类型
      key: zhangsan
      key: 'zhangsan \n lisi'		# 双引号不会转义字符串里面的特殊字符；作为本身想表示的意思
      key: "zhangsan \n lisi"		# 单引号会转义特殊字符，特殊字符最终只是一个普通的字符串数据
      
-     # 数值类型
+     #数值类型
      key: 18
      
-     # 布尔值只可以是true 或 false ,yml不会识别0和1
+     #布尔值只可以是true 或 false ,yml不会识别0和1
      key: true
      ```
 
@@ -359,24 +359,24 @@ public class HttpEncodingAutoConfiguration {
    - **对象(属性和值)、Map(键值对)**
 
      ```yml
-     # 使用缩进表示
+     #使用缩进表示
      people:
          name: zhangsan
          age: 20
          
-     # 行内写法：用{}封装属性
+     #行内写法：用{}封装属性
      people: {name:zhangsan,age: 20}
      ```
 
    - **数组、list、set**
 
      ```yml
-     # 使用缩进表示
+     #使用缩进表示
      pets:
          - dog
          - pig
          - cat
-     #  行内写法：用[]封装属性
+     #行内写法：用[]封装属性
      pets: [dog,pig,cat]
      ```
 
