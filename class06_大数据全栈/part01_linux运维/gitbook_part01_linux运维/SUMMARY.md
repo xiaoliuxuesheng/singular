@@ -1,8 +1,0 @@
-- [前言](README.md)
-- [point01_Linux基础](data/point01_Linux基础.md)
-- [point02_Shell编程](data/point02_Shell编程.md)
-- [point03_Linux系统管理](data/point03_Linux系统管理.md)
-- [point04_Linux服务管理](data/point04_Linux服务管理.md)
-- [point05_MySQL管理](data/point05_MySQL管理.md)
-- [point06_Linux集群](data/point06_Linux集群.md)
-- [point07_Linux虚拟化](data/point07_Linux虚拟化.md)

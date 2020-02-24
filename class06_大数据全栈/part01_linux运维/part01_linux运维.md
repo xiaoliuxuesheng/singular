@@ -1,4 +1,14 @@
- 安装和登录命令：login、install、mount、umount、chsh、exit、last；
+- [point01_Linux基础](/class06_大数据全栈/part01_linux运维/point01_Linux基础/point01_Linux基础.md)
+- [point02_Shell编程](/class06_大数据全栈/part01_linux运维/point02_Shell编程/point02_Shell编程.md)
+- [point03_Linux系统管理](/class06_大数据全栈/part01_linux运维/point03_Linux系统管理/point03_Linux系统管理.md)
+- [point04_Linux服务管理](/class06_大数据全栈/part01_linux运维/point04_Linux服务管理/point04_Linux服务管理.md)
+- [point05_MySQL管理](/class06_大数据全栈/part01_linux运维/point05_MySQL管理/point05_MySQL管理.md)
+- [point06_Linux集群](/class06_大数据全栈/part01_linux运维/point06_Linux集群/point06_Linux集群.md)
+- [point07_Linux虚拟化](/class06_大数据全栈/part01_linux运维/point07_Linux虚拟化/point07_Linux虚拟化.md)
+
+
+
+安装和登录命令：login、install、mount、umount、chsh、exit、last；
 
 - 文件处理命令：file、grep、dd、find、diff、cat、ln；
 - 系统管理相关命令：df、top、free、quota、at、lp、adduser、groupadd、kill、crontab；

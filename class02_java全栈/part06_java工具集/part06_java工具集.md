@@ -1,0 +1,8 @@
+- [point01_阿里支付](/class02_java全栈/part06_java工具集/point01_阿里支付/point01_阿里支付.md)
+- [point02_微信支付](/class02_java全栈/part06_java工具集/point02_微信支付/point02_微信支付.md)
+- [point03_单点登录](/class02_java全栈/part06_java工具集/point03_单点登录/point03_单点登录.md)
+- [point04_graphql](/class02_java全栈/part06_java工具集/point04_graphql/point04_graphql.md)
+- [point05_wiremock](/class02_java全栈/part06_java工具集/point05_wiremock/point05_wiremock.md)
+- [point06_task](/class02_java全栈/part06_java工具集/point06_task/point06_task.md)
+- [point07_swagger](/class02_java全栈/part06_java工具集/point07_swagger/point07_swagger.md)
+- [point08_easyexcel](/class02_java全栈/part06_java工具集/point08_easyexcel/point08_easyexcel.md)

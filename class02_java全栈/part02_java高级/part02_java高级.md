@@ -1,9 +1,8 @@
 - [point01_xml编程](/class02_java全栈/part02_java高级/point01_xml编程/point01_xml编程.md)
-
 - [point02_设计模式](/class02_java全栈/part02_java高级/point02_设计模式/point02_设计模式.md)
 - [point03_java反射](/class02_java全栈/part02_java高级/point03_java反射/point03_java反射.md)
 - [point04_java集合框架](/class02_java全栈/part02_java高级/point04_java集合框架/point04_java集合框架.md)
 - [point05_javaIO](/class02_java全栈/part02_java高级/point05_javaIO/point05_javaIO.md)
-- [point06_javaNIO](/class02_java全栈/part02_java高级/name/point06_javaNIO.md)
+- [point06_javaNIO](/class02_java全栈/part02_java高级/point06_javaNIO/point06_javaNIO.md)
 - [point07_java多线程与并发](/class02_java全栈/part02_java高级/point07_java多线程与并发/point07_java多线程与并发.md)
 - [point08_java新特性](/class02_java全栈/part02_java高级/point08_java新特性/point08_java新特性.md)
