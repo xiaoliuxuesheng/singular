@@ -22,7 +22,7 @@
    </html>
    ```
 
-2. **<font size=4 color=blue>嵌入样式：</font>**样式写在 <kbd>\<style\></kbd>标签内，<kbd>\<style\></kbd>标签定义在html文件的<kbd>\<head\></kbd>标签内
+2. **<font size=4 color=blue>嵌入样式：</font>**样式写在 `<style>`标签内，`<style>`标签定义在html文件的`<head>`标签内
 
    ```html
    <!DOCTYPE html>
@@ -101,35 +101,35 @@
 
 ### 2.1 CSS元素显示模式
 
-#### <font color=blue>:anchor: 块级元素</font>
+#### <font color=blue>▲ 块级元素</font>
 
 - 独占一行；
 - 如果没有设置宽度默认和父元素宽度相同；
 - 可以为元素设置宽和高；
 
-#### <font color=blue>:anchor: 行内元素</font>
+#### <font color=blue>▲ 行内元素</font>
 
 - 不会独占一行；
 - 如果没有设置宽度默认和内容一样宽‘
 - 为元素设置宽和高无效；
 
-#### <font color=blue>:anchor: 行内块元素</font>
+#### <font color=blue>▲ 行内块元素</font>
 
 - 为了让元素既不会独占一行，又可以设置宽度和高度；
 
 ### 2.2 CSS三大特性
 
-#### <font color=blue>:anchor: 继承性</font>
+#### <font color=blue>▲ 继承性</font>
 
 - 只有color、font-、text-开头的属性才会被继承，只要是被嵌套的后代就会被继承；
 - a标签的中文字的颜色和下划线不能被继承；
 - 标题标签的文字大小不能被继承；
 
-#### <font color=blue>:anchor: 层叠性</font>
+#### <font color=blue>▲ 层叠性</font>
 
 - 是CSS处理样式设置冲突的能力：层叠样式表；
 
-#### <font color=blue>:anchor: 优先级</font>
+#### <font color=blue>▲ 优先级</font>
 
 - ID > class > 标签 > 通配符 > 继承 > 默认
 
@@ -227,7 +227,7 @@
 
 ## 第一章 文字属性
 
-**<font color=blue size=4>:anchor: 文字样式：font-style</font>**
+**<font color=blue size=4>▲ 文字样式：font-style</font>**
 
 | 值      | 描述                                   |
 | :------ | :------------------------------------- |
@@ -236,7 +236,7 @@
 | oblique | 浏览器会显示一个倾斜的字体样式。       |
 | inherit | 规定应该从父元素继承字体样式。         |
 
-**<font color=blue size=4>:anchor: 文字粗细：font-weight</font>**
+**<font color=blue size=4>▲ 文字粗细：font-weight</font>**
 
 | 值        | 描述                                                        |
 | :-------- | :---------------------------------------------------------- |
@@ -247,7 +247,7 @@
 | 100 ~ 900 | 定义由粗到细的字符。400 等同于 normal，而 700 等同于 bold。 |
 | inherit   | 规定应该从父元素继承字体的粗细。                            |
 
-**<font color=blue size=4>:anchor: 文字大小：font-size</font>**
+**<font color=blue size=4>▲ 文字大小：font-size</font>**
 
 | 值                                                           | 描述                                                         |
 | :----------------------------------------------------------- | :----------------------------------------------------------- |
@@ -258,7 +258,7 @@
 | %                                                            | 把 font-size 设置为基于父元素的一个百分比值。                |
 | inherit                                                      | 规定应该从父元素继承字体尺寸。                               |
 
-**<font color=blue size=4>:anchor: 文字字体：font-family</font>**
+**<font color=blue size=4>▲ 文字字体：font-family</font>**
 
 | 值      | 描述                           |
 | :------ | :----------------------------- |
@@ -268,7 +268,7 @@
 - 英文字体无法解析中文，中文字体可以解析英文；
 - 设置字体必须是系统已安装字体，否则会显示系统默认字体；
 
-### <font color=blue size=4>:anchor: 文字属性缩写：font </font>
+### <font color=blue size=4>▲ 文字属性缩写：font </font>
 
 ```css
 font: 样式 粗细 大小 字体;
@@ -282,7 +282,7 @@ font: 样式 粗细 大小 字体;
 
 ## 第二章 文本属性
 
-### <font color=blue size=4>:anchor: 文本装饰：text-decoration</font>
+### <font color=blue size=4>▲ 文本装饰：text-decoration</font>
 
 | 值           | 描述                                          |
 | :----------- | :-------------------------------------------- |
@@ -293,7 +293,7 @@ font: 样式 粗细 大小 字体;
 | blink        | 定义闪烁的文本。                              |
 | inherit      | 规定应该从父元素继承 text-decoration 属性的值 |
 
-### <font color=blue size=4>:anchor: 文本对齐：text-align</font>
+### <font color=blue size=4>▲ 文本对齐：text-align</font>
 
 | 值      | 描述                                       |
 | :------ | :----------------------------------------- |
@@ -303,7 +303,7 @@ font: 样式 粗细 大小 字体;
 | justify | 实现两端对齐文本效果。                     |
 | inherit | 规定应该从父元素继承 text-align 属性的值。 |
 
-### <font color=blue size=4>:anchor: 文本缩进：text-indent</font>
+### <font color=blue size=4>▲ 文本缩进：text-indent</font>
 
 | 值      | 描述                                        |
 | :------ | :------------------------------------------ |
@@ -311,7 +311,7 @@ font: 样式 粗细 大小 字体;
 | *%*     | 定义基于父元素宽度的百分比的缩进。          |
 | inherit | 规定应该从父元素继承 text-indent 属性的值。 |
 
-### <font color=blue size=4>:anchor: 字母文本：text-transform</font>
+### <font color=blue size=4>▲ 字母文本：text-transform</font>
 
 | 值         | 描述                                           |
 | :--------- | :--------------------------------------------- |
@@ -321,13 +321,13 @@ font: 样式 粗细 大小 字体;
 | lowercase  | 定义无大写字母，仅有小写字母。                 |
 | inherit    | 规定应该从父元素继承 text-transform 属性的值。 |
 
-### <font color=blue size=4>:anchor: 行高：line-height</font>
+### <font color=blue size=4>▲ 行高：line-height</font>
 
 - 如果没有给盒子设置高度，默认行高和内容高度相同；
 - 如果行高和盒子高度相同，则文本等内容在盒子中会垂直居中；
 - 如果需要多行文字居中，需要给盒子添加padding实现文字居中；
 
-### <font color=blue size=4>:anchor: 超出模式：overflow  </font>
+### <font color=blue size=4>▲ 超出模式：overflow  </font>
 
 | 值      | 描述                                                     |
 | :------ | :------------------------------------------------------- |
@@ -339,7 +339,7 @@ font: 样式 粗细 大小 字体;
 
 ## 第三章 文本颜色
 
-### <font color=blue size=4>:anchor: 文本颜色：color</font>
+### <font color=blue size=4>▲ 文本颜色：color</font>
 
 | 值              | 描述                                                         |
 | :-------------- | :----------------------------------------------------------- |
@@ -351,9 +351,9 @@ font: 样式 粗细 大小 字体;
 
 ## 第四章 背景属性
 
-**<font color=blue size=4>:anchor: 背景颜色：background-color</font>**
+**<font color=blue size=4>▲ 背景颜色：background-color</font>**
 
-**<font color=blue size=4>:anchor: 背景图片：background-image</font>**
+**<font color=blue size=4>▲ 背景图片：background-image</font>**
 
 ```css
 background-image:url('图片链接');
@@ -363,7 +363,7 @@ background-image:url('图片链接');
   - 背景图片不占页面空间；
   - 背景图片的位置等属性容易控制；
 
-**<font color=blue size=4>:anchor: 背景平铺：background-repeat</font>**
+**<font color=blue size=4>▲ 背景平铺：background-repeat</font>**
 
 | 值        | 说明                                         |
 | :-------- | :------------------------------------------- |
@@ -373,7 +373,7 @@ background-image:url('图片链接');
 | no-repeat | background-image不会重复                     |
 | inherit   | 指定background-repea属性设置应该从父元素继承 |
 
-**<font color=blue size=4>:anchor: 背景定位：background-position</font>**
+**<font color=blue size=4>▲ 背景定位：background-position</font>**
 
 | 值                                               | 描述                                                         |
 | :----------------------------------------------- | :----------------------------------------------------------- |
@@ -382,7 +382,7 @@ background-image:url('图片链接');
 | *xpos ypos*                                      | 第一个值是水平位置，第二个值是垂直。左上角是0。单位可以是像素（0px0px）或任何其他 [CSS单位](https://www.runoob.com/try/css-units.html)。如果仅指定了一个值，其他值将是50％。你可以混合使用％和positions |
 | inherit                                          | 指定background-position属性设置应该从父元素继承              |
 
-**<font color=blue size=4>:anchor: 背景关联：background-attachment  </font>**
+**<font color=blue size=4>▲ 背景关联：background-attachment  </font>**
 
 | 值      | 描述                                              |
 | :------ | :------------------------------------------------ |
@@ -391,7 +391,7 @@ background-image:url('图片链接');
 | local   | 背景图片会随着元素内容的滚动而滚动。              |
 | inherit | 指定 background-attachment 的设置应该从父元素继承 |
 
-### <font color=blue size=4>:anchor: 背景属性：background</font>
+### <font color=blue size=4>▲ 背景属性：background</font>
 
 ```css
 background: 颜色 图片 平铺 关联 定位;
@@ -399,15 +399,23 @@ background: 颜色 图片 平铺 关联 定位;
 
 - 任意一个属性都可以省略
 
+### <font color=blue size=4>▲ 指定背景绘制区域：background-clip</font>
+
+| 值          | 说明                                             |
+| :---------- | :----------------------------------------------- |
+| border-box  | 默认值。背景绘制在边框方框内（剪切成边框方框）。 |
+| padding-box | 背景绘制在衬距方框内（剪切成衬距方框）。         |
+| content-box | 背景绘制在内容方框内（剪切成内容方框）。         |
+
 ## 第五章 盒子模型
 
 <img src='./imgs/css_盒子模型'/>
 
-### <font color=blue size=4>:anchor: 内容宽度：width</font>
+### <font color=blue size=4>▲ 内容宽度：width</font>
 
-### <font color=blue size=4>:anchor: 内容高度：height</font>
+### <font color=blue size=4>▲ 内容高度：height</font>
 
-**<font color=blue size=4>:anchor: 边框样式：border-style</font>**
+**<font color=blue size=4>▲ 边框样式：border-style</font>**
 
 - **同时设置四条边框的样式**
 
@@ -433,7 +441,7 @@ background: 颜色 图片 平铺 关联 定位;
   | outset     | 定义 3D outset 边框。其效果取决于 border-color 的值。        |
   | inherit    | 规定应该从父元素继承边框样式。                               |
 
-**<font color=blue size=4>:anchor: 边框颜色：border-color</font>**
+**<font color=blue size=4>▲ 边框颜色：border-color</font>**
 
 - **同时设置四条边框的颜色**
 
@@ -441,7 +449,7 @@ background: 颜色 图片 平铺 关联 定位;
   border-color: 上 右 下 左;
   ```
 
-**<font color=blue size=4>:anchor: 边框宽度：border-width</font>**
+**<font color=blue size=4>▲ 边框宽度：border-width</font>**
 
 - **同时设置四条边框的颜色**
 
@@ -449,7 +457,7 @@ background: 颜色 图片 平铺 关联 定位;
   border-width: 上 右 下 左;
   ```
 
-### <font color=blue size=4>:anchor: 边框：border</font>
+### <font color=blue size=4>▲ 边框：border</font>
 
 - 通用边框设置格式
 
@@ -491,7 +499,7 @@ background: 颜色 图片 平铺 关联 定位;
      >
      > border-right-width
 
-### <font color=blue size=4>:anchor: 内边距：padding</font>
+### <font color=blue size=4>▲ 内边距：padding</font>
 
 - 内边距首先会考虑到父元素的边界，所以会有垂直方向内边距塌陷现象；
 - 内边距会修改盒子模型的大小
@@ -506,7 +514,7 @@ padding: 上 右 下 左;
 3. padding-right
 4. padding-top
 
-### <font color=blue size=4>:anchor: 外边距：margin</font>
+### <font color=blue size=4>▲ 外边距：margin</font>
 
 - 在默认布局的垂直方向的外边距，默认情况下外边距是不会叠加，会出现合并现象，哪个盒子的外边距大以哪个为主；
 - 盒子水平居中：设置左右方向为auto：`margin 垂直距离 auto`
@@ -520,7 +528,7 @@ margin: 上 右 下 左;
 3. margin-right
 4. margin-top
 
-### <font color=blue size=4>:anchor: 容器最终尺寸：box-sizing</font>
+### <font color=blue size=4>▲ 容器最终尺寸：box-sizing</font>
 
 - 默认修改盒子模型的属性会改变盒子的大小，box-sizing用于规定容器的最终尺寸模式。
 
@@ -530,7 +538,7 @@ margin: 上 右 下 左;
 | border-box  | 指定宽度和高度（最小/最大属性）确定元素边框。也就是说，对元素指定宽度和高度包括了 padding 和 border 。通过从已设定的宽度和高度分别减去边框和内边距才能得到内容的宽度和高度。 |
 | inherit     | 指定 box-sizing 属性的值，应该从父元素继承                   |
 
-### <font color=blue size=4>:anchor: 显示隐藏：visibility</font>
+### <font color=blue size=4>▲ 显示隐藏：visibility</font>
 
 | 值       | 描述                                                         |
 | :------- | :----------------------------------------------------------- |
@@ -539,7 +547,7 @@ margin: 上 右 下 左;
 | collapse | 当在表格元素中使用时，此值可删除一行或一列，但是它不会影响表格的布局。被行或列占据的空间会留给其他内容使用。如果此值被用在其他的元素上，会呈现为 "hidden"。 |
 | inherit  | 规定应该从父元素继承 visibility 属性的值。                   |
 
-### <font color=blue>:anchor: 元素显示模式转换：display</font>
+### <font color=blue>▲ 元素显示模式转换：display</font>
 
 | 值                 | 描述                                                         |
 | :----------------- | :----------------------------------------------------------- |
@@ -565,7 +573,7 @@ margin: 上 右 下 左;
 
 ## 第六章 浮动属性
 
-### <font color=blue size=4>:anchor: 浮动元素：float</font>
+### <font color=blue size=4>▲ 浮动元素：float</font>
 
 > 将标准流中元素转换为浮动流
 
@@ -576,7 +584,7 @@ margin: 上 右 下 左;
 | none    | 默认值。元素不浮动，并会显示在其在文本中出现的位置。 |
 | inherit | 规定应该从父元素继承 float 属性的值。                |
 
-### <font color=blue size=4>:anchor: 清除浮动：clear</font>
+### <font color=blue size=4>▲ 清除浮动：clear</font>
 
 | 值      | 描述                                  |
 | :------ | :------------------------------------ |
@@ -600,7 +608,7 @@ margin: 上 右 下 左;
 
 ## 第二章 浮动布局
 
-### <font color=blue size=4>:anchor: 浮动流排版特点</font>
+### <font color=blue size=4>▲ 浮动流排版特点</font>
 
 1. 浮动流是一种“半脱离标准流”的排版方式；
    - 标准流设置浮动属性后，元素在原标准流中等于删除效果，原来的位置会释放，浮动元素会覆盖掉标准元素。
@@ -610,23 +618,23 @@ margin: 上 右 下 左;
 5. 浮动流中的所有元素都可以设置宽和高；
 6. 浮动元素是不能撑起父元素的高度；
 
-### <font color=blue size=4>:anchor: 浮动元素排版规则</font>
+### <font color=blue size=4>▲ 浮动元素排版规则</font>
 
 1. 相同方向的浮动元素：先浮动的元素会显示在前面，后浮动的元素会显示在后面；
 2. 不懂方向的浮动元素：左浮动会找左浮动，右浮动会找右浮动；
 3. 浮动元素浮动后的位置：右浮动元素在浮动之前在标准流中的位置确定，只在原来所在行浮动；
 
-### <font color=blue size=4>:anchor: 浮动元素贴靠现象</font>
+### <font color=blue size=4>▲ 浮动元素贴靠现象</font>
 
 - 当父元素的宽度足够放置浮动元素时，浮动元素会按顺序贴靠；
 - 当父元素宽度不够时，浮动元素会找现在贴靠元素的上一个浮动元素，直到贴靠在父元素；
 
-### <font color=blue size=4>:anchor: 浮动元素字围现象</font>
+### <font color=blue size=4>▲ 浮动元素字围现象</font>
 
 - 浮动元素不会覆盖标准流元素总的文本内容；
 - 浮动元素浮动后显示位置任然会保留；
 
-### <font color=blue size=4>:anchor: 消除浮动</font>
+### <font color=blue size=4>▲ 消除浮动</font>
 
 - 给父元素设置高度：企业开发中一般盒子的高度是由内容决定，所以不推荐使用盒子高度；
 - 为浮动元素添加clear属性：添加了clear属性的元素margin属性会失效
@@ -643,6 +651,82 @@ margin: 上 右 下 左;
 ## 第四章 弹性布局
 
 ## 第五章 栅格系统
+
+### 5.1 栅格系统概述
+
+<font size=4 color=blue>▲ 栅格系统的介绍</font>
+
+​		CSS 网格布局(Grid Layout) 是CSS中最强大的布局系统。 这是一个二维系统，可以同时处理列和行，它将网页划分成一个个网格，可以任意组合不同的网格，做出各种各样的布局。
+
+​		栅格系统与FLEX弹性布局有相似之处理，都是由父容器包含多个项目元素的使用。Flex 布局是轴线布局，只能指定"项目"针对轴线的位置，可以看作是**一维布局**。Grid 布局则是将容器划分成"行"和"列"，产生单元格，然后指定"项目所在"的单元格，可以看作是**二维布局**。Grid 布局远比 Flex 布局强大。
+
+​		在CSS早期的布局设计中，使用table标签作为布局元素，后来被div取代，随着移动互联网的快速发展，div布局兼容性不足，栅格布局采用类似表格的单元格的方式，并且拥有div的灵活特点。栅格布局的整体是一个容器，用纵横的栅格线分隔为一个个的单元格，布局原理是将元素填充到栅格容器的单元格中。
+
+<font size=4 color=blue>▲ 栅格容器中相关术语</font>
+
+- **容器（container）**：采用网格布局的区域；
+- **项目（item）**：容器内部采用网格定位的子元素，  **项目只能是容器的顶层子元素**
+- **行（row）**：容器里面的水平区域
+- **列（column）**：容器里面的垂直区域  
+- **单元格**：行和列的交叉区域
+- **网格线（grid line）**：划分网格的线，
+  - 水平网格线划分出行：水平网格线的编号从1开始，从上到下；
+  - 垂直网格线划分出列：垂直网格线的编号从1开始，从左到右；
+- 单元格的边：单元格必须是个矩形，所以是由四条边围成的，每个单元格的每条表都有编号和名称；
+  - 行起始边 和 行结束边
+  - 列起始边 和 列结束边
+- 偏移：指单元格的偏移，单元格偏移后会占用被偏移单元格的从而形成一个新是栅格
+  - 行偏移：指单元格列起始线到下一个单元格列起始线为一个偏移；
+  - 列偏移：指单元格行起始线到下一个单元格行起始线为一个偏移；
+- **Grid 布局的属性分成两类：**
+  - 一类定义在容器上面，称为容器属性；
+  - 另一类定义在项目上面，称为项目属性。
+
+### 5.2 栅格的声明
+
+####  <font size=4 color=blue>▲ 块级容器声明栅格</font>
+
+- 定义一个简答的容器级html元素
+
+  ```html
+  <div class="grid">
+      <div class="item01"></div>
+  </div>
+  ```
+
+- 将定义好的容器级元素声明为一个栅格系统
+
+  ```css
+  <style>
+      .grid{
+          display: grid;
+          grid-template-rows: 100px 100px 100px;
+          grid-template-columns:  100px 100px 100px;
+      }
+      .item01{
+          width: 100px;
+          height: 100px;
+          background-color: #cccccc;
+          border: 1px saddlebrown solid;
+          padding: 10px;
+          background-clip: content-box;
+          box-sizing: border-box;
+      }
+  </style>
+  ```
+
+  > - 栅格的三要素：
+  >   - ① 有一个容器级标签并且设置显示属性为：display: grid;
+  >   - ② 需要指定栅格容器的行数和每一行的高度：grid-template-rows: 100px 100px 100px;
+  >   - ③ 需要指定栅格容器中的列和每一列的宽度：grid-template-columns:  100px 100px 100px;
+
+- 显示效果
+
+  <img src='./imgs/栅格定义01' width=30%/>
+
+  
+
+### 5.3 栅格系统的元素填充
 
 # 第五部分 CSS新特性
 
