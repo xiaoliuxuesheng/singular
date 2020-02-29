@@ -4,17 +4,80 @@
 
 # 第二章 Docker安装
 
-## 2.1 Linux的安装与配置
+## 2.1 CentOS系统中安装
 
+> https://docs.docker.com/install/linux/docker-ce/centos/
 
+1. 安装的前提条件：需要一个CentOS 7的维护版本。不支持或测试存档版本，必须启用centos-extras存储库。默认情况下启用此存储库
 
-## 2.2 Mac系统下的安装与配置
+2. 需要卸载掉旧版的Docker：如果yum报告说这些包都没有安装，也没有关系
 
+   ```sh
+   sudo yum remove docker \
+                     docker-client \
+                     docker-client-latest \
+                     docker-common \
+                     docker-latest \
+                     docker-latest-logrotate \
+                     docker-logrotate \
+                     docker-engine
+   ```
 
+3. 安装Docker社区版：大多数用户设置Docker的存储库并从中进行安装，以简化安装和升级任务。这是推荐的方法。一些用户下载RPM包并手动安装它，并完全手动管理升级。这在某些情况下非常有用，比如在没有互联网接入的气隙系统上安装Docker。在测试和开发环境中，一些用户选择使用自动化的方便脚本来安装Docker。
 
-## 2.3 Windows系统下的安装与配置
+   - 设置存储库
 
+     ```sh
+     sudo yum install -y yum-utils \
+       device-mapper-persistent-data \
+       lvm2
+     ```
 
+   - 配置存储库
+
+     ```sh
+     sudo yum-config-manager \
+         --add-repo \
+         https://download.docker.com/linux/centos/docker-ce.repo
+     ```
+
+   - 安装
+
+     ```sh
+     sudo yum install docker-ce docker-ce-cli containerd.io
+     ```
+
+4. 启动docker
+
+   ```sh
+   sudo systemctl start docker
+   ```
+
+5. 配置docker镜像远程地址
+
+   ```sh
+   
+   ```
+
+## 2.2 Mac系统中的安装
+
+> https://docs.docker.com/docker-for-mac/install/
+
+## 2.3 Windows系统下的安装
+
+> https://docs.docker.com/docker-for-windows/install/
+
+## 2.4 Ubuntu系统中安装
+
+> https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+## 2.5 其他LInux系统
+
+> `Debian`：https://docs.docker.com/install/linux/docker-ce/debian/
+>
+> `Fedora`：https://docs.docker.com/install/linux/docker-ce/fedora/
+>
+> 其他 `Linux` 发行版：https://docs.docker.com/install/linux/docker-ce/binaries/
 
 # 第三章 Docker常用命令
 
