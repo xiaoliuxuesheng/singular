@@ -616,6 +616,39 @@ public class HttpEncodingAutoConfiguration {
 
 # 第三章 SpringBoot日志框架
 
+## 3.1 日志框架介绍
+
+<font size=4 color=blue>▲ 日志框架使用原理</font>：主流日志框架有自己的日志抽象接口，并且为接口提供的不同的实现从而形成了不同的日志框架，在开发中使用主流日志框架时，首先需要引入的日志的抽象层，对日志开发是面向接口开发的；其次需要引入该抽象层的实现，并且只能引入一个实现；有些框架默认自带有日志系统，所以在开发中需要解决的首要问题就是日志冲突问题
+
+<font size=4 color=blue>▲ 主流的日志抽象层以及对应的实现层</font>
+
+| 接口层                                    | 实现层                                                       |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| <del>jboss-logging</del>                  | 比较优秀，日志框架稍微高级，使用难度较高                     |
+| <del>JCL( jakarta commons logging )</del> | Apache开发的Commons logging日志，停止维护很久了              |
+| <del>JUL（java.util.logging）</del>       | 是java为了和log4j挣市场开发的                                |
+| **SLF4j**                                 | <del>① 首先诞生的是Log4j这个日志框架，有性能问题</del><br />② 为解决Log4j性能问题，重新开发的**Logback**日志框架 |
+| Log4j2                                    | Apache借Log4j之名而开发，很优秀，但是主流框架未适配          |
+
+- Spring 中默认是 : commons-logging
+- SpringBoot 中默认是 : SLF4j + logback组合
+
+## 3.2 日志框架使用方式
+
+<font size=4 color=blue>▲ 正常情况的日志框架引入</font>：首先在java应用中引入`slf4j-api`日志抽象层，并为这个抽象层添加一个日志实现层的框架，建议使用`logback`：`logback-classic`、`logback-core`
+
+![image-20200303210414320](./imgs/image-20200303210414320)
+
+<font size=4 color=blue>▲ 日志替换处理方案</font>：如果应用中的使用的日志接口是SLF4J，在不改变代码的情况下可以引入有log4j提供的日志适配包+对应的日志框架即可完成替换。
+
+![image-20200303210801553](./imgs/image-20200303210801553)
+
+<font size=4 color=blue>▲ 日志统一处理方案</font>：在Java应用开发中经常使用到各种成熟框架，而这些框架一般会有默认的日志框架，如果在使用这些Java框架后需要统一日志框架的使用方式，需要为这些Java框架的默认的日志框架引入日志替换包，并且一定要移除掉应用框架的默认的日志框架。
+
+<img src='./imgs/legacy'/>
+
+## 3.3 SpringBoot中的日志框架profile
+
 
 
 # 第四章 SpringBoot WEB开发
