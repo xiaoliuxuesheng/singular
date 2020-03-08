@@ -649,7 +649,11 @@ public class HttpEncodingAutoConfiguration {
 
 ## 3.3 SpringBoot中的日志框架profile
 
+<font size=4 color=blue>▲ SpringBoot的日志配置</font>：
 
+- 
+
+<font size=4 color=blue>▲ SpringBoot的日志格式说明</font>：
 
 # 第四章 SpringBoot WEB开发
 
