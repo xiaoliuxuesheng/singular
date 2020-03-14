@@ -119,6 +119,16 @@
    >
    > - 可以定义在标签的属性中，字符串可以引用符号中间不可以添加空格
 
+<font size=4 color=blue>★ 属性绑定</font>
+
+1. 在模板文件中定义标签的属性中引用属性
+
+   ```html
+   
+   ```
+
+   
+
 ## 2.2 运算
 
 <font size=4 color=blue>★ 普通运算</font>
@@ -142,24 +152,249 @@
 ## 2.3 列表渲染
 
 ```js
-<view wx:for="{{可迭代数据对象}}" wx:for-item="变量名" ws:for-index="索引">
+<view wx:for="{{list}}" wx:for-item="person" ws:for-index="index" wx:key="id">
   {{person.id}}:{{person.name}}--{{index}}
 </view>
 ```
 
+> - for表示需要遍历的列表对象
+> - key表示遍历没一条后标识这条数据唯一的一个值,需要指定提高性能
+
 ## 2.4 条件渲染
 
-```js
+1. wx:if - wx:elif - wx:else：if条件渲染会直接改变标签来判断显示隐藏，性能比较差
 
-```
+   ```html
+   <view>
+     <view wx:if="{{show}}">条件渲染</view>
+     <view wx:elif="{{show}}">elif</view>
+     <view wx:else>else</view>
+   </view>
+   ```
+
+2. 使用hidden隐藏：通过修改样式实现显示隐藏
+
+   ```html
+   <view hidden="{{show}}">hidden</view>
+   ```
+
+   > hidden属性不能和display属性一起设置
+
+## 2.5 小程序事件绑定
+
+> - 小程序事件,通过bind关键字来实现，如：bindinpu、bindchange
+> - 不同的组件支持不同的事件，查看具体组件即可
+
+1. 在模板页面的标签中绑定事件并指定时间名称
+
+   ```html
+   <input type="text" bindinput="handleInput"/>	
+   
+   <button bindtap="handletap" data-param="{{1}}">+</button>
+   <button bindtap="handletap" data-param="{{-1}}">-</button>
+   ```
+
+   > - 不能在事件绑定中传递参数
+   > - 通过自定义属性的方式传递参数，再在事件源中获取该元素的自定义属性
+
+2. 在脚本文件中定义事件，事件定义和data是同级
+
+   ```js
+   Page({
+     data: {
+       "num":0
+     },
+     // 定义事件函数
+     handleInput(e){
+       this.setData({
+         num: e.detail.value
+       })
+     }
+   })
+   ```
+
+   > - 不能直接使用this.data.属性进行赋值，需要使用this.setData({}}中重新定义data中的属性值
+
+## 2.6 样式
+
+<font size=4 color=blue>★ 尺寸单位</font>
+
+- rpx：可以根据屏幕宽度进行自适应，
+
+  > 如：IPhone6规定屏幕宽度为750rpx，屏幕宽度为375px，共有750个物理像素，则750prx = 375px = 750物理像素（1rpx = 0.5px = 1物理像素）
+
+- 使用步骤：建议微信小程序开发设计可以用IPhone6作为视觉稿的标准
+
+  1. 确定设计稿中元素的宽度：已知大小的一个像素值
+
+  2. 计算比例：设计固定宽度是750rpx
+
+     - 页面的宽度page = 750rpx
+
+     - 则可以计算出一个像素的prx：1px = 750rpx / page
+
+     - 根据1px的rpx可以得到具体的像素值，在小程序的样式文件中使用公式
+
+       ```css
+       width:calc(750prx * 元素宽度 / 屏幕宽度像素值)
+       ```
+
+<font size=4 color=blue>★ 样式导入</font>
+
+> - 小程序中支持样式导入，也可以支持less中的导入混用
+> - 使用@import语句可以导入外联样式，只支持相对路径
+
+- 微信小程序样式定义
+
+  ```css
+  .small-p{
+  	padding:5px;
+  }
+  ```
+
+- 导入外部样式
+
+  ```css
+  @import 'common.wxss';
+  .small-p{
+  	padding:5px;
+  }
+  ```
+
+<font size=4 color=blue>★ 选择器</font>
+
+> 小程序不支持通配符选择器
+
+- 小程序支持的选择器
+
+  | 选择器       | 示例              | 描述                     |
+  | ------------ | ----------------- | ------------------------ |
+  | .class       | .info             | 选择class=info的所有元素 |
+  | \#id         | \#id              | 选择id职位id的元素       |
+  | element      | view              | 选择所有的view元素       |
+  | e1,e2        | 并集选择器        | 选择e1和e2类型的元素     |
+  | nth-child(n) | view:nth-child(2) | 子元素序选择器           |
+  | ::after      | view::after       | 在元素后面插入内容       |
+  | ::before     | view::before      | 在元素前面插入内容       |
+
+<font size=4 color=blue>★ 使用less</font>
+
+- 原生小程序不支持less，其他基于小程序的框架大部分都支持，为了引入一个less而引入一个框架不显示
+
+- 使用less的方式
+
+  1. 使用编辑器vscode
+
+  2. 安装easy less插件
+
+  3. 在vscode中设置中加入如下配置
+
+     ```json
+     "less.compile":{
+         "outExt":".wxss"
+     }
+     ```
+
+  4. 在要编写样式的地方，新建less文件，正常编辑即可
+
+# 第三章 内置组件snipaste
+
+## 3.1 视图容器
+
+view：代替div标签
+
+- hover-class：按下时候自动添加的样式类
+- hover-stop-propagation：指定私服阻止本节点的祖先节点出现点击状态
+
+text：文本标签，只能嵌套text，只有改标签长按文字可以复制
+
+- selectable属性：添加改属性才可以长按复制
+- decode属性：是否解码
+
+image：图片标签，默认宽度是320px，高度240px
+
+- src：图片资源地址
+
+- mode：图片裁剪模式
+
+  | 模式名称 | 说明 |
+  | -------- | ---- |
+  |          |      |
+
+- lazy-load：图片懒加载，默认是false
+
+swiper：微信内置轮播图组件，要配置swiper-item完成轮播效果
+
+- swiper是轮播外层容器，每个轮播项的swiper-item，在swiper-item中添加图片组件
+- 默认宽度是100%，默认高度是150px，需要根据原图的高度和高度，
+- 属性：autoplay - 自动轮播
+- 属性：interval - 轮播时间
+- 属性：circular - 循环轮播
+- 属性：indicator-dots - 显示轮播指示点
+- 属性：indicator-color - 指示点颜色
+- 属性：indicator-active-color - 当前选中的指示点颜色
+
+navigate：导航组件，类似超链接，是一个块级元素
+
+- target：在哪个目标上发生跳转
+- url：当前小程序内的跳转链接
+- open-type：跳转方式
+  - navigate：保留当前页面，跳转到应用内的某个页面
+  - redirect：关闭当前页面，跳转到应用内的某个页面
+  - switchTab：跳转到tabBar页面，并关闭其他非tabBar页面
+  - reLaunch：关闭所有页面
+  - navigateBack：关闭当前页面，返回到上级页面数
+  - exit：退出小程序
+
+rich-text：富文本标签，可以将字符串继续成对应的标签
+
+- nodes接受标签字符串或接受对象数组，对象需要知道标签名，与标签属性、或子节点
+
+button：按钮标签
+
+1. 外观属性
+   - size：大小 - default mini
+   - type：控制按钮颜色：default灰色  primary-绿色 warn - 红色
+   - plain：是否镂空
+   - disabled：是否禁用
+   - loading：加载图片
+
+2. 内置API ：open-type
+   - contact：打开客服会话
+   - share：触发用户分享
+   - getPhoneNumber：获取用户手机号
+   - getUserInfo：获取用户信息
+   - launchApp：打开App
+   - openSetting：打开设置
+   - feedback： 打开已经反馈
+
+icon：内置封装的小图标
+
+- type：类型
+- size：大小
+- color：颜色
+
+radio：单选框，要和父元素redio-group组合使用
+
+checkbook：复选框，要和父元素checkbox-group组合使用
+
+## 3.2 基础内容
+
+## 3.3 表单组件
+
+## 3.4 导航
+
+## 3.5 媒体组件
+
+## 3.6 地图
+
+## 3.7 画布
+
+# 第四章 自定义组件
 
 
 
-# 第三章 内置组件
-
-# 第四章 页面生命周期
-
-# 第五章 自定义组件
+# 第五章 页面生命周期
 
 # 第六章 其他
 
