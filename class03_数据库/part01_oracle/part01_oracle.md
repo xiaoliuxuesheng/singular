@@ -126,7 +126,161 @@
 
 ### 4.2 Oracle常用操作符
 
+1. 单引号
+   - 引用一个字符串常量，也就是界定一个字符串的开始和结束，**这个字符串常量是区分大小写的**
+   - 转义符，对紧随其后出现的字符(单引号)进行转义 
+2. 双引号
+   - 关键字、对象名、字段名、别名加双引号，则示意 Oracle将严格区分大小写，否则Oracle都默认大写。
+
 ### 4.3 Oracle约束类型
+
+> - Oracle中约束是保证数据库表中的数据完整性和一致性的一种手段
+>
+> - 同一个数据库中的约束名称不可以重名
+
+<font size=4 color=blue>.★ 主键约束</font>：【**primary key**】- 主键在数据表中只有一个，但一个主键约束可以由多个列组成
+
+<font size=4 color=blue>★ 外键约束</font>：【**foreign key**】- 用于保证使用外键约束的数据列与所引用的数据表的的主键数据一致
+
+<font size=4 color=blue>★ 唯一约束</font>：【**unique**】用于设置输入时保证该列字段的值是唯一的
+
+<font size=4 color=blue>★ 检查约束</font>：【**check**】用于规定一个列的输入值，以保证数据的正确性
+
+<font size=4 color=blue>★ 非空约束</font>：【**not null**】添加非空约束保证该字段必须输入值
+
+1. 在创建数据表时候添加主键约束
+
+   ```sql
+   CREATE TABLE 数据表名称(
+     ID VARCHAR2(32),
+     CONSTRAINT 主键名称 PRIMARY KEY (主键字段)
+   );
+   ```
+
+2. 为已存在表新增主键约束
+
+   ```sql
+   ALTER TABLE 数据表名称
+   ADD CONSTRAINT 主键名称 PRIMARY KEY (主键字段);
+   ```
+
+3. 删除主键约束
+
+   ```sql
+   ALTER TABLE 数据表名称
+   DROP CONSTRAINT 约束(主键)名称;
+   ```
+
+
+
+1. 在创建数据表时候添加外键约束
+
+   ```sql
+   CREATE TABLE 数据表名称 (
+     ID   VARCHAR2(32),
+     NAME VARCHAR2(32),
+     CONSTRAINT 外键约束名称 FOREIGN KEY (外键字段名称) 
+       REFERENCES 引用的表名 (引用的字段) 
+         ON DELETE CASCADE
+   );
+   ```
+
+2. 为已存在表新增外键约束
+
+   ```sql
+   ALTER TABLE 数据表名称
+   ADD CONSTRAINT 外键约束名称 FOREIGN KEY (外键字段名称)
+   REFERENCES 引用的表名(引用的字段) 
+     ON DELETE CASCADE ;
+   ```
+
+3. 删除外键约束
+
+   ```sql
+   ALTER TABLE 数据库名称
+   DROP CONSTRAINT 约束(外键)名称;
+   ```
+
+
+
+1. 在创建数据表时候添加唯一约束
+
+   ```sql
+   CREATE TABLE ORC_TABLE03_NAME(
+     NAME VARCHAR2(30),
+     CONSTRAINT UK_ID UNIQUE (NAME)
+   );
+   ```
+
+2. 为已存在表新增唯一约束
+
+   ```sql
+   ALTER TABLE 数据表名称
+   ADD CONSTRAINT 外键约束名称 FOREIGN KEY (外键字段名称)
+   REFERENCES 引用的表名(引用的字段) 
+     ON DELETE CASCADE ;
+   ```
+
+3. 删除唯一约束
+
+   ```sql
+   ALTER TABLE 数据库名称
+   DROP CONSTRAINT 约束(唯一)名称;
+   ```
+
+
+
+1. 在创建数据表时候添加检查约束
+
+   ```sql
+   CREATE TABLE ORC_TABLE03_NAME(
+     NAME VARCHAR2(30),
+     CONSTRAINT UK_ID UNIQUE (NAME)
+   );
+   ```
+
+2. 为已存在表新增检查约束
+
+   ```sql
+   ALTER TABLE 数据表名称
+   ADD CONSTRAINT 外键约束名称 FOREIGN KEY (外键字段名称)
+   REFERENCES 引用的表名(引用的字段) 
+     ON DELETE CASCADE ;
+   ```
+
+3. 删除检查约束
+
+   ```sql
+   ALTER TABLE 数据库名称
+   DROP CONSTRAINT 约束(唯一)名称;
+   ```
+
+
+
+1. 在创建数据表时候添加非空约束
+
+   ```sql
+   CREATE TABLE ORC_TABLE03_NAME(
+     NAME VARCHAR2(30),
+     CONSTRAINT UK_ID UNIQUE (NAME)
+   );
+   ```
+
+2. 为已存在表新增非空约束
+
+   ```sql
+   ALTER TABLE 数据表名称
+   ADD CONSTRAINT 外键约束名称 FOREIGN KEY (外键字段名称)
+   REFERENCES 引用的表名(引用的字段) 
+     ON DELETE CASCADE ;
+   ```
+
+3. 删除非空约束
+
+   ```sql
+   ALTER TABLE 数据库名称
+   DROP CONSTRAINT 约束(唯一)名称;
+   ```
 
 ## 第五章 Oracle内置函数
 
