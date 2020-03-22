@@ -70,6 +70,19 @@
     - 镜像加速配置
         1. 从阿里云获取镜像地址 
         2. 修改docker镜像地址 : /etc/docker/daemon.json
+        
+        ```sh
+        sudo mkdir -p /etc/docker
+        sudo tee /etc/docker/daemon.json <<-'EOF'
+        {
+          "registry-mirrors": ["https://84u6b78t.mirror.aliyuncs.com"]
+        }
+        EOF
+        sudo systemctl daemon-reload
+        sudo systemctl restart docker
+        ```
+        
+        
 
 4. 启动Docker
 

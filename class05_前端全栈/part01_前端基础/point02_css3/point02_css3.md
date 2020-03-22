@@ -9,70 +9,38 @@
 1. **<font size=4 color=blue>行内样式：</font>**样式定义在html标签的style属性上
 
    ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-    	...
-   </head>
-   <body>
    <div style="background-color: red;">
        行内样式,
    </div>
-   </body>
-   </html>
    ```
-
+   
 2. **<font size=4 color=blue>嵌入样式：</font>**样式写在 `<style>`标签内，`<style>`标签定义在html文件的`<head>`标签内
 
    ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <style rel="stylesheet" type="text/css">
-           .app2{
-               background-color: red;
-           }
-       </style>
-   </head>
-   <body>
-   	...
-   </body>
-   </html>
+   <style rel="stylesheet" type="text/css">
+       .app2{
+           background-color: red;
+       }
+   </style>
    ```
-
+   
    - 属性`rel`：
    - 属性`type`：
-
+   
 3. **<font size=4 color=blue>外部样式</font>**
 
    ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-   	<link rel="stylesheet"  type="text/css" href="./css/01_外部css.css">
-   </head>
-   <body>
-   	...
-   </body>
-   </html>
+   <link rel="stylesheet"  type="text/css" href="./css/01_外部css.css">
    ```
-
+   
 4. **<font size=4 color=blue>引入样式</font>**
 
    ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-   	<style rel="stylesheet" type="text/css">
-           @import "./css/02_导入css.css";
-           或者
-           @import url("./css/02_导入css.css");
-       </style>
-   </head>
-   <body>
-   	...
-   </body>
-   </html>
+   <style rel="stylesheet" type="text/css">
+       @import "./css/02_导入css.css";
+       或者
+       @import url("./css/02_导入css.css");
+   </style>
    ```
 
 ### 1.3 CSS样式优先级
@@ -82,19 +50,11 @@
 ### 1.4 注释
 
 ```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<style rel="stylesheet" type="text/css">
-        /*
-            注释描述
-        */
-    </style>
-</head>
-<body>
-	...
-</body>
-</html>
+<style rel="stylesheet" type="text/css">
+    /*
+    注释描述
+    */
+</style>
 ```
 
 ## 第二章 CSS模型
