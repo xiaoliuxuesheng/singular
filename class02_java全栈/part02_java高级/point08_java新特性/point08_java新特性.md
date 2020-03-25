@@ -61,12 +61,14 @@
   > Lambda体被` -> `分隔，也称为箭头函数，箭头左边**圆括号**表示接口参数，箭头右边**大括号**表示接口方法的实现
 
 - <font size=4 color=blue>参数列表简写格式</font>
+
   1. 没有参数：参数的圆括号不可以省略
   2. 有一个以上参数：参数的圆括号不可以省略
   3. 有一个参数：参数的圆括号可以省略
   4. 参数类型可以省略：在接口抽象方法中推断出参数类型
+
 - <font size=4 color=blue>Lambda体简写格式</font>
-  
+
   1. 没有返回值：如果函数体只有一句话，大括号可以省略
   2. 有返回值：如果函数体只有一句话，return关键字可大括号都可以省略，否则不可以省略
 
@@ -76,7 +78,7 @@
 
 ### 1. 基本函数式接口
 
--  <font size=4 color=blue>Consumer</font>：消费型接口，用来消费数据的，如何消费，消费规则自己定义
+- <font size=4 color=blue>Consumer</font>：消费型接口，用来消费数据的，如何消费，消费规则自己定义
 
   ```java
   public interface Consumer<T> {
@@ -214,9 +216,35 @@
 
 - <font size=4 color=blue>收集：collect()</font>：Collector收集器，用于定制手机方法，Collectors提供了很多静态方法，可以方便的创建常见收集器实例
 
-  - 
+
+### 5. 并行流与串行流
+
+## 1.4 Optional
+
+### 1. Optional介绍
+
+​		Optional类是一个容器类，代表一个值存在或者不存在，原来是用null代表一个值是否存在，现在null这个概念可以用Optional类来表达，并且可以有效的避免程序的空指针异常。
+
+### 2. 常用API说明
+
+- 创建一个Optional实例
+  - Optional.of()：创建一个Optional实例；
+  - Optional.empty()：创建一个空的Optional实例；
+  - Optional.ofNullAble(T t)：若t不为null，创建Optional实例，否则创建一个空实例；
+- 常用API
+  - isPresent()：判断是否包含值
+  - ofElse(T t)：如果调用对象包含值，则返回该值，否则返回t
+  - ofElseGet(Supplier s)：如果调用对象包含值，返回该值，否则返回Supplier获取到的值
+  - map(Function f)：如果有值，则使用Function对其处理，否则返回Optional.empty()
+  - flatMap(Function f)：功能与map类似，要求返回值必须是Optional
+
+## 1.5 接口默认方法
+
+
 
 # 第二部分 Java9
+
+## 2.1 
 
 # 第三部分 Java11
 
