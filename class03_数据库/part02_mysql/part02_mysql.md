@@ -17,6 +17,52 @@
 
 ## 第一章 MySql安装
 
+1. docker
+
+   - 拉取
+
+     ```sh
+     docker pull mysql:5.7.19
+     ```
+
+   - 运行
+
+     ```sh
+     docker run --name mysql -p 3306:3306 -v D:/panda_docker_files/mysql/data:/var/lib/mysql -v D:/panda_docker_files/mysql/config:/etc/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7.19
+     ```
+
+     > - --name：容器名
+     > - --p：映射宿主主机端口
+     > - -v：挂载宿主目录到容器目录
+     > - -e：设置环境变量，此处指定root密码
+     > - -d：后台运行容器
+
+   - 进入容器
+
+     ```sh
+     docker exec -it mysql /bin/sh
+     ```
+
+   - 登陆mysql
+
+     ```sh
+     mysql -uroot -p
+     ```
+
+   - 查询root用户登录权限
+
+     ```sql
+     select host,user,plugin,authentication_string from mysql.user;
+     ```
+
+   - 修改root权限
+
+     ```sql
+     ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
+     ```
+
+     
+
 ## 第二章 MySql数据类型
 
 ## 第三章 MySql操作符
