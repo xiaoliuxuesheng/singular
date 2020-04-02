@@ -195,6 +195,8 @@ form 表名 [连接查询]
 
 ### 3.8 连接查询
 
+<img src='https://www.runoob.com/wp-content/uploads/2019/01/sql-join.png'/>
+
 1. inner join 内连接查询
 
    ```sql
