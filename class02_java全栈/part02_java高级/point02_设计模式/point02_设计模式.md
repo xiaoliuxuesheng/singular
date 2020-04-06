@@ -53,7 +53,7 @@
 
 ## 2.1 简单工厂模式
 
-​		简单工厂模式也称为静态工厂模式，基本结构是一个类中定义一个静态方法，在静态方法中完成对象的创建；这工厂模式中负责生产对象的类称为工厂类，一般开发中使用Factory作为类的后缀名（约定）；
+​		简单工厂模式也称为静态工厂模式或实例工厂模式，基本结构是一个类中定义一个工厂方法，在工厂方法中完成对象的创建；这工厂模式中负责生产对象的类称为工厂类，一般开发中使用Factory作为类的后缀名（约定）；
 
 <font size=4 color=blue>1. 简单工厂涉及相关对象说明</font>
 
@@ -68,54 +68,88 @@
 - 为所需要生成的产品定义规范（抽象父类或者接口）
 
   ```java
-  abstract class Product{
-      public abstract void show();
+  public interface IProduct {
+      void show();
   }
   ```
 
-- 根据规范设计对应的产品族
+- 根据规范设计对应的产品
 
   ```java
-  class  ProductA extends  Product{
-      @Override
+  public class ProductA implements IProduct{
       public void show() {
-          System.out.println("生产出了产品A");
+          System.out.println(" 创建产品A成功 ");
       }
   }
-  
-  class  ProductB extends  Product{
-      @Override
+  public class ProductB implements IProduct {
       public void show() {
-          System.out.println("生产出了产品C");
-      }
-  }
-  
-  class  ProductC extends  Product{
-      @Override
-      public void show() {
-          System.out.println("生产出了产品C");
+          System.out.println(" 创建产品B成功 ");
       }
   }
   ```
-
-- 定义简单工厂，用于生产这些类的对象：简单工厂的形式由对种①根据参数返回对应的对象②定义多个方法，每个方法返回对应的对象③使用泛型+反射为指定的类实例化对象
 
   ```java
-  class  Factory {
-      public static Product createProduct(String productName){
-          switch (productName){
-              case "A":
-                  return new ProductA();
-              case "B":
-                  return new ProductB();
-              case "C":
-                  return new ProductC();
-              default:
-                  return null;
-          }
+  // 工厂模式需要扩展创建的对象
+  public class ProductC implements IProduct {
+      public void show() {
+          System.out.println(" 创建产品C成功 ");
       }
   }
   ```
+
+- 定义简单工厂
+
+  - 使用方法逻辑创建对象
+  
+    ```java
+    public class SimpleFactory01 {
+        public static IProduct create(String type) {
+            switch (type) {
+                // 已经开发完成的
+                case "A":
+                    return new ProductA();
+                case "B":
+                    return new ProductB();
+    
+                // 工厂类新增代码完成扩展要创建的对象
+                case "C":
+                    return new ProductC();
+                default:
+                    return null;
+            }
+        }
+    }
+    ```
+    
+  - 使用反射创建简单工厂
+  
+    ```java
+    public class SimpleFactory02 {
+        public static IProduct create(String productBeanName) {
+            try {
+                return (IProduct) Class.forName(productBeanName).newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    ```
+  
+  - 使用泛型创建简单工厂：本质还是反射
+  
+    ```java
+    public class SimpleFactory03<T> {
+        public static <T> T create(Class<T> t) {
+            try {
+                return(T) t.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    ```
 
 ## 2.2 工厂方法模式
 
@@ -123,45 +157,533 @@
 
 <font size=4 color=blue>1. 工厂方法模式涉及相关对象说明</font>
 
-| 名称 | 作用说明 |
-| ---- | -------- |
-|      |          |
+| 名称       | 作用说明                             |
+| ---------- | ------------------------------------ |
+| 工厂类     | 在工厂类中定义创建对象对象的抽象方法 |
+| 工厂实现类 | 是对抽象方法的具体实现               |
+| 抽象产品   |                                      |
+| 具体产品   |                                      |
+
+<font size=4 color=blue>2. 工厂方法模式案例</font>
+
+- 为所需要生成的产品定义规范（抽象父类或者接口）
+
+  ```java
+  public interface IProduct {
+      void show();
+  }
+  ```
+
+- 根据规范设计对应的产品
+
+  ```java
+  public class ProductA implements IProduct{
+      public void show() {
+          System.out.println(" 创建产品A成功 ");
+      }
+  }
+  public class ProductB implements IProduct {
+      public void show() {
+          System.out.println(" 创建产品B成功 ");
+      }
+  }
+  ```
+
+  ```java
+  // 工厂模式需要扩展创建的对象
+  public class ProductC implements IProduct {
+      public void show() {
+          System.out.println(" 创建产品C成功 ");
+      }
+  }
+  ```
+
+- 定义工厂类，定义抽象方法
+
+  ```java
+  public interface Factory {
+  	IProduct create();
+  }
+  ```
+
+- 在工厂子类中完成对象创建
+
+  ```java
+  public class ProductAFactory implements Factory {
+      @Override
+      public IProduct create() {
+          return new ProductA();
+      }
+  }
+  public class ProductBFactory implements Factory {
+      @Override
+      public IProduct create() {
+          return new ProductB();
+      }
+  }
+  ```
+
+  ```java
+  // 为扩展的产品c创建工厂
+  public class ProductCFactory implements Factory {
+      @Override
+      public IProduct create() {
+          return new ProductC();
+      }
+  }
+  ```
+
+## 2.3 抽象工厂模式
+
+## 2.4 单例设计模式
+
+### 1. 创建单例的各种方式
+
+<font color=blue size=4>**★ - 饿汉式-静态常量**</font>
+
+- **实现原理**
+
+  - 使用静态常量的方式将单例对象准备好, 可接获取即可使用
+
+- **Java**
+
+  ```java
+  public class Single {
+      
+      private static final Single INSTANCE = new Single();
+  
+      public static Single getInstance() {
+          return INSTANCE;
+      }
+      
+      private Single() {
+          if (null != INSTANCE){
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+  
+      private Object readResolve() {
+          return INSTANCE;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 在类加载的时候就立即初始化，并且创建单例对象
+  - 绝对线程安全，在线程还没出现以前就是实例化了
+  - 类加载的时候就初始化，不管用与不用都占着空间，浪费了内存
+
+<font color=blue size=4>**★ - 饿汉式-静态代码块**</font>
+
+- **实现原理**
+
+- **Java**
+
+  ```java
+  public class Single {
+      
+      private static final Single INSTANCE;
+      static {
+          INSTANCE = new Single();
+      }
+  
+      public static Single getInstance() {
+          return INSTANCE;
+      }
+  
+      
+      private Single() {
+          if (null != INSTANCE){
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+      
+  	private Object readResolve() {
+          return INSTANCE;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 特点和静态常量方式的单例模式相同
+
+<font color=blue size=4>**☆ - 懒汉式-普通**</font>
+
+- **实现原理**
+
+- **Java**
+
+  ```java
+  public class Single {
+      
+      private static Single instance;
+  
+      public static Single getInstance() {
+          if (null == instance){
+              instance = new Single();
+          }
+          return instance;
+      }
+      
+      private Single() {
+          if (null != instance){
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+      
+      private Object readResolve() {
+          return instance;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 这样的单例存在线程安全隐患
+  - 不推荐
+
+<font color=blue size=4>**☆ - 懒汉式-同步方法**</font>
+
+- **实现原理**
+
+  - 单线程环境下实现懒加载
+
+- **Java**
+
+  ```java
+  public class Single {
+      
+      private static Single instance;
+  
+      public static synchronized Single getInstance() {
+          if (null == instance){
+              instance = new Single();
+          }
+          return instance;
+      }
+      
+      private Single() {
+          if (null != instance){
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+  
+      private Object readResolve() {
+          return instance;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 加上 synchronized 关键字，使这个方法变成线程同步方法,会导致程序运行性能大幅下降
+
+<font color=blue size=4>**☆ - 懒汉式-同步代码块**</font>
+
+- **实现原理**
+
+  - 单线程环境下实现懒加载
+
+- **Java**
+
+  ```java
+  public class Single {
+      
+      private static SingleSynBlock instance;
+      
+      public static SingleSynBlock getInstance() {
+          if (null == instance) {
+              synchronized (SingleSynBlock.class) {
+                  instance = new SingleSynBlock();
+              }
+          }
+          return instance;
+      }
+      
+      
+      private Single() {
+          if (null != instance){
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+  
+      private Object readResolve() {
+          return instance;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 线程不安全并且效率提升不明显,
+  - 最危险的一种单例模式
+
+<font color=blue size=4>**★ - 懒汉式-双重检查**</font>
+
+- **实现原理**
+
+  - 解决同步方法的单例模式中出现的问题, 使用双重判断保证单例的实现
+
+- **Java**
+
+  ```java
+  public class Single{
+      
+      private static volatile Single instance = null;
+  
+      public static Single getInstance() {
+          if (null == instance) {
+              synchronized (Single.class) {
+                  if (null == instance) {
+                      instance = new Single();
+                  }
+              }
+          }
+          return instance;
+      }
+      
+      private Single() {
+          if (null != instance){
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+  
+      private Object readResolve() {
+          return instance;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 性能相对比较良好
+  - 而且适合多线程环境
+  - 关键字 `volatile` : 保证此变量对所有的线程的可见性，当一个线程修改了这个变量的值，volatile 保证了新值能立即同步到主内存，以及每次使用前立即从主内存刷新。但普通变量做不到这点，普通变量的值在线程间传递均需要通过主内存
+
+<font color=blue size=4>**★ - 懒汉式-静态内部类**</font>
+
+- **实现原理**
+
+  - 枚举类中每个值代表该枚举类的一个静态实例对象,
+  - 它是线程安全的，不可变的，并且很好的解决了序列化中的多实例问题
+
+- **Java**
+
+  ```java
+  public class Single{
+      
+      public static Single getInstance() {
+          return InnerClass.INSTANCE;
+      }
+      
+      private static class InnerClass {
+          public static final Single INSTANCE = new Single();
+      }
+      
+      private SingleInnerClass() {
+          if (InnerClass.INSTANCE != null) {
+              throw new RuntimeException("实例对象已存在");
+          }
+      }
+  
+      private Object readResolve() {
+          return InnerClass.INSTANCE;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 静态内部类不会再外部类加载时候加载, 在使用内部类时候才会被加载
+  - 兼顾饿汉式的内存浪费，也兼顾 synchronized 性能问题。内部类一定是要在方法调用之前初始化，巧妙地避免了线程安全问题
+
+<font color=blue size=4>**★ - 枚举单例**</font>
+
+- **实现原理**
+
+- **Java**
+
+  ```java
+  public enum SingleEnum{
+      
+      INSTANCE;
+      
+      private Single single;
+  
+      SingleEnum() {
+          single = new Single();
+      }
+  
+      public Single getInstance() {
+          return single;
+      }
+  }
+  ```
+
+- **特点**
+
+  - 在 JDK 枚举的语法特殊性，以及反射也为枚举保驾护航，让枚举式单例成为一种比较优雅的实现。###
+
+### 2. 反射破坏单例
+
+- Java反射可以调用私有方法,所以反射会破坏单例
+
+  ```java
+  Class<?> clz = Class.forName(clzName);
+  Constructor<?> constructor = clz.getDeclaredConstructor();
+  constructor.setAccessible(true);
+  Object o1 = constructor.newInstance();
+  Object o2 = constructor.newInstance();
+  
+  ```
+
+- 解决方案 : 在构造方法中做一些限制
+
+  ```java
+  public class Single{
+      private Single() {
+          if (null != instance){
+              throw new RuntimeException("不允许重复实例化");
+          }
+      }
+  }
+  
+  ```
+
+### 3. 序列化破坏单例
+
+- 单例对象序列化然后写入到磁盘,再从磁盘中读取到对象，反序列化转化为内存对象。反序列化后的对象会重新分配内存,重新创建破坏了单例
+
+  ```java
+  String path = "序列化文件路径";
+  
+  Object instance1 = obj;
+  Object instance2 = null;
+  
+  FileOutputStream objStream = new FileOutputStream(path);
+  ObjectOutputStream outputObjStream = new ObjectOutputStream(objStream);
+  outputObjStream.writeObject(instance1);
+  outputObjStream.flush();
+  outputObjStream.close();
+  
+  ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(path));
+  instance2 = objectInputStream.readObject();
+  objectInputStream.close();
+  
+  ```
+
+- 序列化解决破坏单例的方式 : 只需要增加 readResolve()方法即可
+
+  ```java
+  public class Single{
+      private Object readResolve(){
+          return instance;
+      }
+  }
+  ```
+
+### 4. 标准单例的设计方式
+
+```java
+public class Single{
+    private Single() {
+        if (null != instance){
+            throw new RuntimeException("不允许重复实例化");
+        }
+    }
+    
+    //TODU 除枚举外的其余的单例设计方式
+    
+    private Object readResolve(){
+        return instance;
+    }
+}
+```
+
+### 5. 单例模式的知识点
+
+1. 多线程的的使用 : 用于验证单例的线程安全
+
+2. <kbd>synchronized</kbd>, <kbd>volatile</kbd> 关键字的理解 : java基础
+
+3. 反射的基本使用 : 创建实例与方法调用
+
+4. 反序列化的原理的;理解 : readResolve()方法
+
+   ```java
+   new ObjectInputStream(InputStream in);
+   Object o = ObjectInputStream.readObject();
+   ```
+
+5. TreadLoca线程单例 : 不能保证其创建的对象是全局唯一，但是能保证在单个线程中是唯一的，天生的线程安全
+
+6. 反射破坏单例的解决方案
+
+7. 序列化破坏单例的解决方案
+
+8. ThreadLocal线程单例
+
+## 2.5 建造者设计模式
+
+<font color=blue size=4>**1. 概述**</font>
+
+​	建造者（Builder）模式的定义：指将一个复杂对象的构造与它的表示分离，使同样的构建过程可以创建不同的表示，这样的设计模式被称为建造者模式。它是将一个复杂的对象分解为多个简单的对象，然后一步一步构建而成。它将变与不变相分离，即产品的组成部分是不变的，但每一部分是可以灵活选择的。
+
+<font color=blue size=4>**2. 实现原理：基本角色**</font>
+
+- 复杂的对象以及组成复杂对象的若干个子产品对象
+- 抽象的构建者：用于制定生产复杂对象以及子产品对象的生成方法规范
+- 构建者实现类：在实现类中完成了对复杂对象的创建和复杂对象的子产品的创建
+- 指挥者对象：选择其中的一个构建者，并选择构建的子产品最终组装为复杂对象
+
+<font color=blue size=4>**3. 代码案例**</font>
 
 
 
-### 1.1 概述
+## 2.6 原型设计模式
 
-:anchor: 意图：工厂模式（Factory Pattern）式属于创建型模式，它提供了一种创建对象的最佳方式。在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。
-
-## 第02章 抽象工厂模式
-## 第03章 单例模式
-## 第04章 建造者模式
-
-### 4.1 概述
-
-​		建造者（Builder）模式的定义：指将一个复杂对象的构造与它的表示分离，使同样的构建过程可以创建不同的表示，这样的设计模式被称为建造者模式。它是将一个复杂的对象分解为多个简单的对象，然后一步一步构建而成。它将变与不变相分离，即产品的组成部分是不变的，但每一部分是可以灵活选择的。
-
-### 4.2 实现原理
-
-1. 建造者模式中的基本角色
-   - 复杂的对象以及组成复杂对象的若干个子产品对象
-   - 抽象的构建者：用于制定生产复杂对象以及子产品对象的生成方法规范
-   - 构建者实现类：在实现类中完成了对复杂对象的创建和复杂对象的子产品的创建
-   - 指挥者对象：选择其中的一个构建者，并选择构建的子产品最终组装为复杂对象
-
-## 第05章 原型模式
-
-### 5.1 概述
+<font color=blue size=4>**1. 概述**</font>
 
 ​		原型（Prototype）模式的定义如下：用一个已经创建的实例作为原型，通过复制该原型对象来创建一个和原型相同或相似的新对象。在这里，原型实例指定了要创建的对象的种类。用这种方式创建对象非常高效，根本无须知道对象创建的细节
 
-### 5.2 实现原理
+<font color=blue size=4>**2. 实现原理**</font>
 
-:anchor: 浅克隆
+- 浅克隆：如果字段是值类型的，则对该字段执行逐位复制，如果字段是引用类型，则复制引用但不复制引用的对象；因此，原始对象及其复本引用同一对象
 
-:anchor: 深克隆
+  ```java
+  public class Resume implements Cloneable {
+      private String name;
+      private String sex;
+      private String age;
+      private String timeArea;
+      private String company;
+      private List<String> lists;
+  	
+      @Override
+      protected Object clone() throws CloneNotSupportedException {
+          return super.clone();
+      }
+  }
+  ```
 
-## 第06章 适配器模式
+  > lists是引用类型，克隆后修改原修改引用类型的值，会影响到原对象
+
+- 深克隆：把要复制的对象所引用的对象都复制一遍
+
+  ```java
+  @Override
+  protected Resume clone() throws CloneNotSupportedException {
+      Resume clone = (Resume) super.clone();
+      List<String> target = new ArrayList<>();
+      target.addAll(this.lists);
+      clone.lists = target;
+      return clone;
+  }
+  ```
+
+# 第三章 结构型设计模式
 
 ### 6.1 概述
 
