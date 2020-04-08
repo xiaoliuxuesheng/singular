@@ -140,6 +140,8 @@
 
 # 5.Quartz框架
 
+## ★ Quartz入门
+
 :one:添加依赖
 
 ```xml
@@ -295,3 +297,165 @@ public class HelloWorldJob implements Job {
     Spring task是执行时间+间隔时间(比如；执行时间是3s,间隔是2s,则每5s执行一次；执行时间是3s,间隔是5s,则每8s执行一次。)
     timer有2中方法schedule和scheduleAtFixedRate，前者会等任务结束在开始计算时间间隔，后者是在任务开始就计算时间，有并发的情况
     ScheduledExecutorService的scheduleAtFixedRate类似Quartz，scheduleWithFixedDelay类似SpringTask
+
+# 第五部分 Quartz框架
+
+## 第一章 Quartz入门
+
+### 1.1 Quartz介绍
+
+​		Quartz是OpenSymphony开源组织在Job scheduling领域又一个开源项目，完全由Java开发，可以用来执行定时任务，类似于java.util.Timer。但是相较于Timer， Quartz增加了很多功能：持久性作业 - 就是保持调度定时的状态；作业管理 - 对调度作业进行有效的管理;
+
+### 1.2 Quartz基本坏境
+
+- Quartz的使用场景
+
+  1. 可以嵌入在另一个独立应用程序
+  2. 可以在用于程序服务器内被实例化，并参与事务
+  3. 可以作为一个独立程序运行，可以通过远程方法调用RMI(Remote Method Invocation)
+  4. 可以被实例化，作为独立项目集群，用于作业的执行
+
+- Quartz基本依赖
+
+  ```xml
+  <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>2.3.0</version>
+  </dependency>
+  <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz-jobs</artifactId>
+      <version>2.3.0</version>
+  </dependency>
+  ```
+
+- Quartz的SpringBoot启动器
+
+  ```xml
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-quartz</artifactId>
+  </dependency>
+  <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz-jobs</artifactId>
+  </dependency>
+  ```
+
+### 1.3 Quartz入门案例
+
+1. Quartz的基本组成部分：
+
+   - 调度器：Scheduler - 负责Job和Trigger后结合起来
+   - 任务：JobDetail - 实现Job接口的一个定时功能
+   - 触发器：Trigger - 能够实现触发任务去执行的触发器，包括SimpleTrigger和CronTrigger
+
+2. 案例代码
+
+   ```java
+   public class HelloJob implements Job {
+       @Override
+       public void execute(JobExecutionContext context) throws JobExecutionException {
+           System.out.println("LocalDateTime.now() = " + LocalDateTime.now());
+       }
+   
+       public static void main(String[] args) throws Exception {
+           // 从调度器工厂获取调度器
+           Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+           // 创建JobDetail
+           JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)
+                   .withIdentity(new JobKey("hello_job_name", "hello_job_gup"))
+                   .build();
+           // 创建触发器
+           Trigger trigger = TriggerBuilder.newTrigger()
+                   .withIdentity(new TriggerKey("hello_trigger_key", "hello_trigger_gup"))
+                   .startNow()
+                   .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(5))
+                   .build();
+           // 添加任务到调度执行计划列表
+           scheduler.scheduleJob(jobDetail, trigger);
+   
+           // 启动
+           scheduler.start();
+       }
+   }
+   ```
+
+## 第二章 Quartz详细说明
+
+### 2.1 QuartzAPI
+
+1. Quartz体系结构
+
+   <img src="https://s1.ax1x.com/2020/04/07/GgyYrQ.png" alt="GgyYrQ.png" border="0" />
+
+2. Quartz主要组件说明
+
+   - Scheduler：用于与调度程序交互的的主程序接口；成为任务执行计划表：只有安排进执行计划的Job，符合预定义的触发时间（Trigger），该任务才会被执行；
+
+     | 方法名称                        | 说明               |
+     | ------------------------------- | ------------------ |
+     | scheduleJob(jobDetail, trigger) | 添加任务到调度列表 |
+     | start()                         | 启动               |
+     | shutdown()                      | 停止               |
+     | deleteJob(JobKey key)           | 删除               |
+     | resumeAll()                     | 恢复所有           |
+     | resumeJob()                     | 恢复任务           |
+
+   - Job：自定义的希望在未来时间能够被调度执行的类，主要包含执行的业务逻辑；
+
+     - JobExecutionContext：任务执行参数：可以访问到Quartz运行时环境和对应Job本身的明细数据，Scheduler执行Job时候，会将这个参数传递给Job接口的JobExecutionContext参数中
+
+       | 方法名称              | 说明           |
+       | --------------------- | -------------- |
+       | getJobDetail()        | JobDetail      |
+       | getTrigger()          | Trigger        |
+       | getScheduler()        | Scheduler      |
+       | getMergedJobDataMap() | JobDataMap     |
+       | getFireTime()         | 第一次执行时间 |
+
+     - JobDataMap：可以包含数据对象，在Job执行的时候可以使用其中的对象；
+
+   - JobDetail：是对Job的进一步的包装，主要用于描述对应Job的详细信息，由JobBuilder创建；
+
+     - JobBuilder：声明任务实例，并定义任务详情，如任务组，任务名称；
+
+     | 方法名称         | 说明             |
+     | ---------------- | ---------------- |
+     | getKey()         | 获取Job详情      |
+     | getJobClass()    | 获取Job执行Class |
+     | getJobDataMap()  | 获取JobDataMap   |
+     | getDescription() | 获取Job描述信息  |
+
+   - Trigger：主要用于定义触发时间的类，需要添加进任务执行计划表才会生效，由TriggerBuilder创建；
+
+     - TriggerBuilder：创建Trigger实例，并定义改实例的详情，如触发器组名，触发器名称；
+     - SimpleScheduleBuilder：
+     - CronScheduleBuilder：
+     - CalendarIntervalScheduleBuilder：
+     - DailyTimeIntervalScheduleBuilder：
+
+     | 方法名称              | 说明             |
+     | --------------------- | ---------------- |
+     | getKey()              | 获取调度器详情   |
+     | getNextFireTime()     | 获取下次执行时间 |
+     | getPreviousFireTime() | 获取上次执行时间 |
+     | getJobDataMap()       | 获取JobDataMap   |
+     | getJobKey()           | 获取Job详情      |
+
+   - JobListener、TriggerListener、SchedulerListener监听器：用于对组件的监听；
+
+### 2.2 Quartz配置说明
+
+- quartz.properties
+
+  ```properties
+  
+  ```
+
+### 2.3 Quartz监听器
+
+## 第三章 Quartz与SpringBoot
+
+ 
