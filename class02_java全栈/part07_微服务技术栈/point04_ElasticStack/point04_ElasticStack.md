@@ -55,10 +55,6 @@
    network.host: 0.0.0.0 # 任意IP都可访问
    ```
 
-4. 
-
-
-
 ★ Linux安装
 
 
@@ -73,11 +69,9 @@
 
    ```sh
    vim etc/sysctl.conf
-   vm.max_map_count=163840
+   vm.max_map_count=131072
    
    ```
-
-   
 
 2. 下载ElasticSearch
 
@@ -104,35 +98,176 @@
    -v /docker/elstatic/search/plugins:/usr/share/elasticsearch/plugins \
    -v /docker/elstatic/search/data:/usr/share/elasticsearch/data \
    -d elasticsearch:7.6.0
+   
+   
+   docker run -p 9200:9200 -p 9300:9300 --name elasticsearch -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "discovery.type=single-node" -e "cluster.name=elasticsearch" -v D:/panda_docker_files/search/plugins:/usr/share/elasticsearch/plugins -v D:/panda_docker_files/search/data:/usr/share/elasticsearch/data -d elasticsearch:7.6.0
    ```
 
-   
+4. 测试安装：http://120.27.22.124:9200/
+
+5. 安装：elstaticstarch-head
+
+   - docker：需要处理服务跨域访问配置
+
+     ```sh
+     docker pull mobz/elasticsearch-head:5
+     
+     docker run -d --name es_head -p 9100:9100 mobz/elasticsearch-head:5
+     ```
+
+   - Github：Chrome插件的使用无需处理跨域
+
+     ```sh
+     git clone https://github.com/mobz/elasticsearch-head.git
+     ```
 
 ## 2.3 基本概念说明
 
+### 1. 索引
+
+- 索引是ElasticSearch对逻辑数据的存储，所以它可以分为更小的部分
+- 可以把索引看成关系型数据库的表，索引的结构是为快速有效的全文检索准备的，特别是它不存储原始值
+- ElasticSearch可以把索引存放在一台机器或者分散在多态服务器上，每个索引有一个或多个分片（shard），每个分片可以有多个副本（replica）。
+
+### 2. 文档
+
+- 存储在Electicsearch中的主要实体叫文档（document），用关系型数据库类比的话，一个文档相当于数据表中的一行记录。
+- ElasticSearch和MongoDB中的文档相似，都可以有不同的结构，但在ElasticSearch中，相同字段必须有相同的类型。
+- 文档由多个字段组成，每个字段可以多次的出现在同一文档中，这种字段称为**多值字段**，
+- 每个字段的类型可以是文本、数值、日期等；字段类型也可以是复杂类型，一个字段可以包含其他子文档或数组；
+
+### 3. 映射
+
+- 所有文档写进索引之前都会先进行分析：如何将输入的文本分隔为词条、哪些词条又会被过滤；这种行为称为映射，一般由用户自定义规则，比如使用中文分词
+
+### 4. 文档类型
+
+- 在ElasticSearch中，一个索引对象可以存储很对不同用途的对象。例如：博客中的文章也可以存储评论数据，是根据文档类型进行区分
+- 每个文档类型可以有不同的结构
+- 不同的文档类型不能为相同的属性设置不同的类型，例如：同一索引中的所有文档类型中，有一个字段title字段的必须具有相同的类型。
+
 ## 2.4 RESTful接口说明
 
+> 在ElasticSearch中，提供了丰富的RESTful API的操作完成基本的crud、创建索引、删除索引等
 
+1. **创建非结构化索引**
 
-# 第二章 Elasticsearch安装
+   ​		在Lucene中创建索引是需要定义字段名称以及字段类型的，在ElasticSearch中提供了非结构化索引（表结构不固定），就是不需要创建索引结构即可将数据写入到索引中，实际上ElasticSearch底层会进行结构化操作，此操作用户是不需要关注的。
 
-## 2.1 版本说明
+   - 创建空索引：<kbd>PUT 请求 --> ElasticSearch服务地址/索引名称</kbd>
 
-## 2.2 Linux系统安装
+     ```json
+     # http://120.27.22.124:9200/panda
+     {
+     	"settings":{
+     		"index":{
+     			"number_of_shard":"2",
+     			"number_of_replicas":"0"
+     		}
+     	}
+     }
+     ```
 
-## 2.3 Windows安装
+   - 删除索引：<kbd>DELETE请求 --> ElasticSearch服务地址/索引名称</kbd>
 
-# 第三章 Elasticsearch入门
+     ```json
+     # http://120.27.22.124:9200/panda
+     ```
 
-## 3.1 Elasticsearch术语
+2. **插入数据**
 
+   - URL规则：<kbd>POST请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}</kbd>
 
+     ```json
+     # http://120.27.22.124:9200/panda/emp/<001> ID可以不指定,会自动生成
+     {
+         "name":"张三",
+         "age":23,
+         "gender":"男"
+     }
+     
+     # 响应：result的值是created
+     {
+         "result": "created",
+     }
+     ```
 
-# 第四章 ElasticStack核心
+3. **更新数据：**ElasticSearch本质是不允许更新，可以采用同ID文档进行覆盖完成更新，全量覆盖
 
-# 第五章 中文分词
+   - 全量覆盖URL规则：<kbd>PUT请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}</kbd>
 
-# 第六章 ElasticStack集群
+     ```json
+     # http://127.0.0.1:9200/panda/user/1001
+     {
+     	"id":"1002",
+         "name":"盈盈",
+         "age":13,
+         "gender":"女"
+     }
+     
+     # 响应：result的值是updated并且_version的值会自增1
+     {
+         "_version": 2,
+         "result": "updated",
+     }
+     ```
 
-# 第七章 集成Java客户端
+   - 局部更新URL规则：<kbd>POST请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}/_update</kbd>，需要更新的自动用doc包装
+
+     ```json
+     # http://127.0.0.1:9200/panda/user/1001/_update
+     {
+     	"doc":{
+     		"name":"令狐冲"
+     	}
+     }
+     ```
+
+4. **删除数据：**删除不存在的数据会出异常
+
+   - 删除URL：<kbd>DELETE请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}</kbd>
+
+     ```json
+     # http://127.0.0.1:9200/panda/user/1001 删除不会立即移除出磁盘,等后续删除步骤一起执行
+     ```
+
+5. **搜索数据**
+
+   - 使用ID进行搜索：<kbd>GET请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}</kbd>
+
+     ```json
+     # http://127.0.0.1:9200/panda/user/1001
+     ```
+
+   - 返回全部（默认10条）数据：<kbd>GET请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}/_search</kbd>
+
+     ```json
+     # http://127.0.0.1:9200/panda/user/_search
+     ```
+
+   - 使用查询参数：<kbd>GET请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}/_search?q=字段:条件值</kbd>
+
+     ```json
+     # http://127.0.0.1:9200/panda/user/_search?q=age:>20
+     ```
+
+6. **DSL搜索：**ElasticSearch提供丰富灵活的查询语言，领域特定语言
+
+   - 基本格式：<kbd>POST请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}/_search</kbd>
+
+     ```json
+     {
+         "quary":{
+             "查询类型":{
+                 "字段":"值"
+             }
+         }
+     }
+     ```
+
+     - 查询类型：
+
+7. **高亮显示**
+
+8. **聚合**
 
