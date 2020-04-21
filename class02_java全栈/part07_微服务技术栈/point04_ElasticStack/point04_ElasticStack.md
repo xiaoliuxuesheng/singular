@@ -227,28 +227,28 @@
 
    - 删除URL：<kbd>DELETE请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}</kbd>
 
-     ```json
-     # http://127.0.0.1:9200/panda/user/1001 删除不会立即移除出磁盘,等后续删除步骤一起执行
+     ```http
+     http://127.0.0.1:9200/panda/user/1001 删除不会立即移除出磁盘,等后续删除步骤一起执行
      ```
 
 5. **搜索数据**
 
    - 使用ID进行搜索：<kbd>GET请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}</kbd>
 
-     ```json
-     # http://127.0.0.1:9200/panda/user/1001
+     ```http
+     http://127.0.0.1:9200/panda/user/1001
      ```
 
    - 返回全部（默认10条）数据：<kbd>GET请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}/_search</kbd>
 
-     ```json
-     # http://127.0.0.1:9200/panda/user/_search
+     ```http
+     http://127.0.0.1:9200/panda/user/_search
      ```
 
    - 使用查询参数：<kbd>GET请求 --> ElasticSearch服务地址/{索引}/{类型}/{id}/_search?q=字段:条件值</kbd>
 
-     ```json
-     # http://127.0.0.1:9200/panda/user/_search?q=age:>20
+     ```http
+     http://127.0.0.1:9200/panda/user/_search?q=age:>20
      ```
 
 6. **DSL搜索：**ElasticSearch提供丰富灵活的查询语言，领域特定语言
@@ -270,4 +270,157 @@
 7. **高亮显示**
 
 8. **聚合**
+
+# 第三章 ElasticSearch核心详解
+
+## 3.1 文档
+
+- 元数据：matedata
+
+  ```json
+  {
+      "_index":"索引",
+      "_type":"对象类型",
+      "_id":"文档唯一主键"
+  }
+  ```
+
+  > - _index：类似关系型数据库中的数据库，是ES存储和索引关联数据的地方；事实上，ES的数据被存储在分片上，索引只是一个把一个或多个分片组在一起的逻辑空间，而对程序而言，文档是存储在索引中
+  > - _type：在应用中，万物皆对象，某一类对象可以抽象为一种类型，type用于描述数据的类型，意味着同一类型的数据表示相同的事物。在ES中每个类型都有自己 映射或者结构定义
+  > - _id：如果不手动指定就由ES自动生成32为字符串，用于唯一标识文档
+
+## 3.2 查询相应
+
+1.  **pretty：格式化查询结果**
+
+   ```http
+   http://127.0.0.1:9200/panda/user/_search?pretty
+   ```
+
+2. **_source=指定相应字段**
+
+   - `?_source=age,name`返回列表中指定字段
+
+     ```http
+     http://127.0.0.1:9200/panda/user/_search?_source=age,name
+     ```
+
+   - `/id/_source`：只返回实体数据
+
+     ```http
+     http://127.0.0.1:9200/panda/user/1001/_source
+     ```
+
+   - `/id/_source?_source=age`：返回实体数据的指定字段
+
+     ```sh
+     http://127.0.0.1:9200/panda/user/1001/_source?_source=age
+     ```
+
+## 3.3 判断文档是否存在
+
+1. 根据查询结果的`found`属性：true标识存在，false表示不存在
+2. 发送HEAD请求：相应200表示存在，否则表示不存在
+
+## 3.4 批量操作
+
+1. 批量查询：<kbd>POST请求 --> ElasticSearch服务地址/{索引}/{类型}/_mget</kbd>
+
+   ```json
+   # http://127.0.0.1:9200/panda/user/_mget
+   {
+   	"ids":["1001","1002"]
+   }
+   ```
+
+2. _bulk：批量插入、修改、删除； <kbd>POST请求 --> ElasticSearch服务地址/{索引}/{类型}/\bulk</kbd>
+
+   ```json
+   {"动作":{"_index":"索引","_type":"类型","_id":"主键"}}
+   {请求体}\n
+   ```
+
+   > - 动作：create=插入、update=修改、delete=删除
+   >   - delete没有请求体
+   > - 请求体后必须有换行符
+
+3. 批量请求性能说明：ES批量操作的最佳性能
+
+   - 批量请求是需要被加载到接受请求节点的内存中，所以请求越大，其他请求的内存就越小
+   - 最佳的请求大小取决与硬件、文档大小、复杂度以及索引和要搜素的负载
+
+## 3.5 分页
+
+- form：起始偏移量
+
+- size：每页显示数量
+
+  ```json
+  GET /_search?size=5
+  GET /_search?size=5&from=10
+  ```
+
+
+## 3.6 映射
+
+​		ES可以进行明确的字段类型说明，在操作数据时候可以根据数据类型判断数据与实际字段是否符合
+
+- 自动判断规则
+
+  | JSON Type               | 字段类型  |
+  | ----------------------- | --------- |
+  | Boolean值:true 或 false | "boolean" |
+  | 整数数字                | "long"    |
+  | 小数数字                | "double"  |
+  | 日期格式的字符串        | "date"    |
+  | 包含字母等字符串        | "string"  |
+
+- ES中支持的数据类型
+
+  | 类型     | 表示的数据类型             |
+  | -------- | -------------------------- |
+  | String   | string、text、keyword      |
+  | number   | byte、short、integer、long |
+  | floating | float、double              |
+  | Boolean  | boolean                    |
+  | Date     | date                       |
+
+  > - string类型在旧版ES中使用，在ES5.x版本之后不再支持string，由text和keyword替代
+  > - text类型：当一个字段是要被全文搜素的，应该使用text类型，设置text类型后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个个的词项，text类型的字段不用于排序，很少用聚合
+  > - keyword类型：适用于索引结构化的字段，keyword字段只能通过精确值搜索到
+
+- 创建明确类型的索引
+
+  ```json
+  # http://127.0.0.1:9200/panda
+  {
+      "settings":{
+          "number_of_shards":2,
+          "number_of_replicas":1
+       }, 
+      "mappings" : {
+          "properties":{
+              "id":{
+                  "type":"text"
+              },
+              "title":{
+                  "type":"text"
+              },
+              "content":{
+                  "type":"text"
+              }
+          }
+      }
+  }
+  ```
+
+- 查询映射
+
+  ```http
+  GET /索引/类型/_mapping
+  ```
+
+  
+
+## 3.7 结构化查询
 
