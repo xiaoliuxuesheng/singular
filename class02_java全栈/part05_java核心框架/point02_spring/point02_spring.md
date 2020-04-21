@@ -1,3 +1,61 @@
+# 第一章 Spring源码构建
+
+1. 下载源码包
+
+   ```sh
+   https://gitee.com/panda-study-opensource/Spring-Framework.git
+   ```
+
+2. 根据需要阅读的源码版本新建分支
+
+   ```sh
+   git checkout -b panda5.2.4.RELEASE
+   ```
+
+3. 将代码重置到该tag对应的分支上
+
+   ```sh
+   git reset -hard v5.2.4.RELEASE
+   ```
+
+4. Gradle编译环境准备
+
+5. 修改build.gradle文件为阿里云仓库地址
+
+   - 在文件首行添加
+
+     ```groovy
+     buildscript {
+     	repositories {
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/groups/public/'
+     		}
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+     		}
+     	}
+     }
+     ```
+
+   - 在ext扩展属性之后添加仓库地址
+
+     ```groovy
+     allprojects {
+     	repositories {
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/groups/public/'
+     		}
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+     		}
+     	}
+     }
+     ```
+
+6. 等待构建完成
+
+7. 新建模块引入Spring组件
+
 # 前言 面试
 
 
