@@ -1,5 +1,18 @@
 # 前言 
 
+1. 自学练习经典网站
+   - [百度](https://www.baidu.com/)
+   - [简书](https://www.jianshu.com/)
+   - [腾讯新闻](https://news.qq.com/)
+   - [优酷TV](https://tv.youku.com/)
+   - [小米官网](https://www.mi.com/)
+   - [京东首页](https://www.jd.com/)
+   - [考拉海购](https://www.kaola.com/)
+2. 前端学习体系
+   - React + Native：可以开发IOS、Android、移动端
+   - Weex + Vue：可以开发IOS、Android、移动端
+   - Flutter（Dart语言）：可以开发IOS、Android、移动端、PC端
+
 # 第一章 HTML基础
 
 ## 1.1 HTML概述
@@ -10,20 +23,41 @@
 
 ## 1.2 HTML的发展
 
-## 1.3 HTML标签的分类
+## 1.3 浏览器引擎
+
+| 引擎    | 内核       | 常见浏览器                               |
+| ------- | ---------- | ---------------------------------------- |
+| Blink   | Chrome     | Chrome、360极速浏览器、360安全浏览器     |
+|         | Chromium   | QQ浏览器、搜狗高速浏览器、Opera          |
+| Gecko   | Firefox    | Firefox（火狐浏览器）                    |
+| Webkit  | Safari     | Safari、Android 默认浏览器               |
+|         | U3（国产） | UC浏览器                                 |
+| Trident | Edge       | Microsoft Edge                           |
+|         | IE 内核    | IE6 - IE11、360极速浏览器、360安全浏览器 |
+
+## 1.4 HTML标签的分类
 
 1. 根据标签的个数
    - 单标签
-   - 双标签
+   - 双标签：开始标签和结束标签
 2. 根据标签的嵌套关系
+   - 祖先标签
+   - 父标签
    - 兄弟标签
-   - 父子标签
+   - 子标签
+   - 后代标签
 3. 根据标签的页面占位
    - 块标签：标签元素独占一行
    - 行内标签：标签元素不会独占一行，并且不可以设置高和宽
    - 行内块标签：标签元素不会独占一行，但是可以为其指定高和宽
 
-## 1.4 HTML标准结构
+## 1.5 标签的属性
+
+1. id：为标签指定唯一标识，一个html文档标签的id属性值不能重复
+2. class：根据class属性值的名称将标签分类
+3. title：为标签指定标题属性值
+
+## 1.5 HTML标准结构
 
 ```html
 <!DOCTYPE html>
@@ -73,28 +107,50 @@
 ## 3.1 有序列表
 
 ```html
-
+<ol>
+    <li></li>
+    ... ...
+    <li></li>
+</ol>
 ```
-
-- 
 
 ## 3.2 无序列表
 
+```html
+<ul>
+    <li></li>
+    ... ...
+    <li></li>
+</ul>
+```
+
 ## 3.3 自定义列表
+
+
 
 # 第四章 表格标签
 
 ## 4.1 表格标签完整结构
 
 ```html
-
+<table>
+    <thead>
+        <tr>
+            <th>标题</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>内容</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>尾部</td>
+        </tr>
+    </tfoot>
+</table>
 ```
-
-## 4.2 标签标签说明
-
-| 标签名称 | 标签说明 |
-| -------- | -------- |
-|          |          |
 
 # 第五章 表单标签
 
