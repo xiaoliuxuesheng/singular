@@ -182,14 +182,14 @@
 2. 快速入门：为某个类mock一个对象并为其录制行为和结果
 
     ```java
-  @Test
-  public void select() {
+    @Test
+    public void select() {
       UserDao userDao = PowerMockito.mock(UserDao.class);
       PowerMockito.when(userDao.select()).thenReturn(10);
       UserService userService = new UserService(userDao);
       int select = userDao.select();
       Assert.assertEquals(10, select);
-  }
+    }
     ```
 
 ## 2.3 mock局部变量
@@ -569,7 +569,7 @@
      }
      ```
 
-   - 使用注解Annotation的方式
+   - 使用initMocks()并注解Annotation的方式
 
      ```java
      public class Mock02WithAnno {
@@ -585,6 +585,6 @@
          public void testMock() throws Exception{
              EmployeeDO aaa = employeeMapper.queryEmpDB("aaa");
          }
-         
      }
      ```
+
