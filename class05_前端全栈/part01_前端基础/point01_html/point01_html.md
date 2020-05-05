@@ -133,20 +133,36 @@
 ## 4.1 表格标签完整结构
 
 ```html
-<table>
+<table width="100%" 
+       height="193" 
+       border="1" 
+       cellpadding="0" 
+       cellspacing="0" 
+       bordercolor="#000000" 
+       bgcolor="#FFFFFF"
+       background="#FFFFFF">
     <thead>
         <tr>
+            <th>标题</th>
             <th>标题</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>内容</td>
+            <td colspan="2">合并横向单元格</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td rowspan="2">合并纵向单元格</td>
+        </tr>
+        <tr>
+            <td></td>
         </tr>
     </tbody>
     <tfoot>
         <tr>
-            <td>尾部</td>
+            <td>tfoot</td>
+            <td>tfoot</td>
         </tr>
     </tfoot>
 </table>

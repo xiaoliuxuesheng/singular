@@ -432,13 +432,13 @@
 
 ## 6.1 gradle基本概述
 
-1. gradle是Java项目的一种构建工具
-2. gradle是AndroidStudio的默认构建工具
-3. gradle可以看做是一个编程框架：gradle包含有groovy语法；build scrpt block（定制化的构建代码块）；自身还有独立的API
+1. gradle是Java项目的一种构建工具，用于构建打包应用程序；
+2. gradle是AndroidStudio的默认构建工具；
+3. gradle可以看做是一个编程框架：gradle包含有①groovy语法；②build scrpt block（定制化的构建代码块）；③自身还有独立的API；具有框架的所有特点，使用编程实现应用程序的打包构建；
 
 ## 6.2 gradle优势
 
-1. 灵活性：可以自定义构建过程
+1. 灵活性：Maven和Ant的源码和构建过程分离；Gradle可以查看构建源码，自定义构建过程；
 2. 粒度：可以独立定制构建任务（task）
 3. 扩展：可以包含自定义插件和使用第三方插件
 4. 兼容性：兼容Maven和Ant所有的构建功能
@@ -454,7 +454,6 @@
   ```groovy
   this.beforeEvaluate {}
   this.gradle.beforeProject {}
-  
   ```
 
 ### :anchor: Configuration：配置阶段
@@ -466,7 +465,6 @@
   ```groovy
   this.afterEvaluate {}
   this.gradle.afterProject {}
-  
   ```
 
 ### :anchor: Execution：执行阶段
@@ -477,76 +475,79 @@
 
   ```groovy
   this.gradle.buildFinished {}
-  
   ```
 
 # 第七章 Gradle核心API
 
-## 7.1 Project核心API
+## 7.1 深入了解Project
 
-1. project概述
+​		在IDEA的Java的项目的结构中，根工程被称为Project，子模块被称为Module；然而对于Gradle而言，根项目是一个Project对象（**rootProject** ），而且子模块也被称为一个Project对象（**subProject**）；执行命令`gradle projects`会输出项目中的所有Project，项目中如果有子模块，这些子模块也会作为Project并且输出相关信息；
 
-   - 在Idea的项目结构有根工程为Project，子项目成为Module；对于Gradle项目而言，根项目是一个project，一个个的子项目也被成为一个project。
+​		在gradle项目中，一个Project对应一个build.gradle配置文件，project是由build.gradle文件进行配置和管理；gradle对Project的管理是采用树形结构：只有一个根Project，其余为子Project，实际开发中gradle项目的project最多定义两级；
 
-     > 根project称为:rootProject 
-     >
-     > 其他project称为subProject
+​		根Project的作用是用于管理子Project，子Project的重点是对应输出，并且一个子project对应一个输出（如jar包、war包等等）；
 
-   - 一个Project对应一个build.gradle配置文件，project是由build.gradle文件进行配置和管理
+## 7.2 Project核心API
 
-   - 实际开发中gradle项目的project最多定义两级
+### <font size=4 color=blue>**1. Gradle生命周期相关API**</font>
 
-   - 一个子project对应一个输出，
+| API                                                          | 使用说明                   |
+| ------------------------------------------------------------ | -------------------------- |
+| Project.beforeEvaluate()<br />Project.gradle.beforeProject() | 初始化阶段之前配置阶段之前 |
+| Project.afterEvaluate()<br />Project.gradle.afterProject()   | 配置阶段之后执行阶段之前   |
+| Project.gradle.buildFinished()                               | 执行阶段完成后             |
 
-7-2 gradle核心API
+### <font size=4 color=blue>**2. Project相关API**</font>
 
-1. API分类
-   - gradle生命周期相关
-   - project相关：管理根project与subProject
-   - task相关：新增和管理已有的task的能力
-   - 属性相关：属性的使用与定义
-   - file相关：操作gradle项目下的文件的处理
-   - 其他API：依赖+外部配置
+> 在gradle应用中，每个build.gradle文件都是一个groovy脚本，经过编译后会生成为一个Project字节码，所以每个build.gradle本身就是一个Project类的实例，在配置脚本中可以使用Project的API
 
-7-3 project相关APi
+| API：操作父Project和管理子Project | 使用说明                                            |
+| --------------------------------- | --------------------------------------------------- |
+| getAllprojects()                  | 获取所有Project                                     |
+| getSubprojects()                  | 获取当前Project的子Project                          |
+| getParent()                       | 获取当前Project的父Project                          |
+| getRootProject()                  | 获取当前项目的根Project                             |
+| **通过API管理Project**            | **为project指定特殊配置, 三个函数作用范围不同**     |
+| project("project名称") {}         | 获取指定名称的project,并添加配置                    |
+| allprojects {}                    | 获取全部的project并为所有Project添加配置            |
+| subprojects {}                    | 为当前project所有的子project添加配置,不包括当前工程 |
 
-1. 查看项目中的所有project,树的形式保存
+### <font size=4 color=blue>**3. Task相关API**</font>
 
-   ```groovy
-   this.getAllprojects()		// 获取所有Project
-   this.getSubprojects()		// 获取当前Project的子Project
-   this.getParent()			// 获取当前Project的父Project
-   this.getRootProject()		// 获取当前项目的根Project
-   
-   ```
+| API：新增Task、使用Task | 使用说明 |
+| ----------------------- | -------- |
+|                         |          |
 
-7-4 project相关的API
+### <font size=4 color=blue>**4. 属性相关API**</font>
 
-1. 通过API管理Project:为project指定特殊配置, 三个函数作用范围不同
+- **gradle内置属性**：定义在Project类中
 
-   ```groovy
-   project("project名称") {}		// 获取指定名称的project,并添加配置
-   allprojects {}				 // 获取全部的project并为所有Project添加配置
-   subprojects {}				 // 为当前project所有的子project添加配置,不包括当前工程
-   
-   ```
+  | 属性名称                                        | 使用说明           |
+  | ----------------------------------------------- | ------------------ |
+  | String DEFAULT_BUILD_FILE = "build.gradle";     | 默认的构建文件     |
+  | String PATH_SEPARATOR = ":";                    | 路径分隔符         |
+  | String DEFAULT_BUILD_DIR_NAME = "build";        | 默认的输出文件目录 |
+  | String GRADLE_PROPERTIES = "gradle.properties"; | 默认的属性配置文件 |
 
-   ```groovy
-   apply from:'引入其他groovy文件'
-   
-   ```
+-  
 
-## 7.2 属性相关API
 
-1. gradle内置属性
 
-   ```groovy
-   String DEFAULT_BUILD_FILE = "build.gradle";		// 默认的构建文件
-   String PATH_SEPARATOR = ":";					// 路径分隔符
-   String DEFAULT_BUILD_DIR_NAME = "build";		// 默认的输出文件
-   String GRADLE_PROPERTIES = "gradle.properties";	// 默认的属性配置文件
-   
-   ```
+### <font size=4 color=blue>**5. File相关API**</font>
+
+| API：操作Project文件处理 | 使用说明 |
+| ------------------------ | -------- |
+|                          |          |
+
+### <font size=4 color=blue>**6. 其他API**</font>
+
+| API  | 使用说明 |
+| ---- | -------- |
+|      |          |
+
+## 7.3 Project核心API实战
+
+7.2 属性相关API
 
 2. gradle扩展属性 - 方式一:扩展属性
 
@@ -627,9 +628,7 @@
    
    ```
 
-
-
-## 7.3 文件相关API
+7.3 文件相关API
 
 1. 路径获取API
 
@@ -681,9 +680,7 @@
    
    ```
 
-
-
-## 7.4 其他API
+7.4 其他API
 
 1. 依赖相关API
 

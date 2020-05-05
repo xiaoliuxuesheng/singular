@@ -45,7 +45,7 @@
 
 ## 1.4 设计模型种类
 
-<img src='./imgs/01_设计模式'/>
+<img src="https://s1.ax1x.com/2020/03/20/82asII.png" alt="82asII.png" border="0" />
 
 # 第二章 创建型模式
 
@@ -536,9 +536,8 @@
   constructor.setAccessible(true);
   Object o1 = constructor.newInstance();
   Object o2 = constructor.newInstance();
-  
   ```
-
+  
 - 解决方案 : 在构造方法中做一些限制
 
   ```java
@@ -571,9 +570,8 @@
   ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(path));
   instance2 = objectInputStream.readObject();
   objectInputStream.close();
-  
   ```
-
+  
 - 序列化解决破坏单例的方式 : 只需要增加 readResolve()方法即可
 
   ```java
@@ -629,7 +627,9 @@ public class Single{
 
 <font color=blue size=4>**1. 概述**</font>
 
-​	建造者（Builder）模式的定义：指将一个复杂对象的构造与它的表示分离，使同样的构建过程可以创建不同的表示，这样的设计模式被称为建造者模式。它是将一个复杂的对象分解为多个简单的对象，然后一步一步构建而成。它将变与不变相分离，即产品的组成部分是不变的，但每一部分是可以灵活选择的。
+​		建造者（Builder）模式的定义：**指将一个复杂对象的构造与它的表示分离，使同样的构建过程可以创建不同的表示，这样的设计模式被称为建造者模式**。它是将一个复杂的对象分解为多个简单的对象，然后一步一步构建而成。它将变与不变相分离，即产品的组成部分是不变的，但每一部分是可以灵活选择的。
+
+​		构建者模式一般用在构建流程或者组成部件固定的场合，将这些部件分开构建成为组件对象，再将这些组件对象整合成为目标对象。
 
 <font color=blue size=4>**2. 实现原理：基本角色**</font>
 
@@ -640,13 +640,207 @@ public class Single{
 
 <font color=blue size=4>**3. 代码案例**</font>
 
+- **标准的建造者格式**
 
+  1. 有一个复杂的Java对象，是需要使用构造器创建该对象
+
+     ```java
+     @Setter
+     @Getter
+     public class Bike { 
+         private IFrame frame; 
+         private ISeat seat; 
+         private ITire tire; 
+     }
+     ```
+
+  2. 这个对象是由多个复杂对象组成，所以在抽象该对象创建方法时候也要对内部对象的创建做抽象
+
+     ```java
+     public abstract class Builder { 
+         abstract void buildFrame(); 
+         abstract void buildSeat(); 
+         abstract void buildTire(); 
+         abstract Bike createBike(); 
+     } 
+     ```
+
+  3. 要构建不同的产品只需要各自实现创建产品的抽象类：在真实的建造者中完成对象的创建，做到创建和表现相分离
+
+     ```java
+     // 这个类会构建出一个摩拜单车的产品
+     public class MobikeBuilder extends Builder{ 
+         private Bike mBike = new Bike(); 
+         @Override 
+         void buildFrame() { 
+             mBike.setFrame(new AlloyFrame()); 
+         } 
+         @Override 
+         void buildSeat() { 
+             mBike.setSeat(new DermisSeat()); 
+         } 
+         @Override 
+         void buildTire() { 
+             mBike.setTire(new SolidTire()); 
+         } 
+         @Override 
+         Bike createBike() { 
+             return mBike; 
+         } 
+     } 
+     // 这个类会构建出一个ofo的产品
+     public class OfoBuilder extends Builder{ 
+         private Bike mBike = new Bike(); 
+         @Override 
+         void buildFrame() { 
+             mBike.setFrame(new CarbonFrame()); 
+         } 
+         @Override 
+         void buildSeat() { 
+             mBike.setSeat(new RubberSeat()); 
+         } 
+         @Override 
+         void buildTire() { 
+             mBike.setTire(new InflateTire()); 
+         } 
+         @Override 
+         Bike createBike() { 
+             return mBike; 
+         } 
+     } 
+     ```
+
+  4. 指挥者类：根据不同的构建者创建出不同的产品
+
+     ```java
+     public class Director { 
+         private Builder mBuilder = null; 
+         public Director(Builder builder) { 
+             mBuilder = builder; 
+         } 
+         public Bike construct() { 
+             mBuilder.buildFrame(); 
+             mBuilder.buildSeat(); 
+             mBuilder.buildTire(); 
+             return mBuilder.createBike(); 
+         } 
+     }
+     ```
+
+  5. 产品的创建测试
+
+     ```java
+     public class Click { 
+         public static void main(String[] args) { 
+             showBike(new OfoBuilder()); 
+             showBike(new MobikeBuilder()); 
+         } 
+         private void showBike(Builder builder) {
+             Director director = new Director(builder); 
+             Bike bike = director.construct(); 
+             bike.getFrame().frame(); 
+             bike.getSeat().seat(); 
+             bike.getTire().tire(); 
+         } 
+     } 
+     ```
+
+- **简化系统结构，可以把Director和抽象建造者进行结合**
+
+  1. **不使用建造者模式创建产品**
+
+     - 定义产品类
+
+       ```java
+       public class Computer { 
+           private String cpu; 
+           private String screen; 
+           private String memory; 
+           private String mainboard; 
+           public Computer(String cpu, String screen, String memory, String mboard) { 
+               this.cpu = cpu; 
+               this.screen = screen; 
+               this.memory = memory; 
+               this.mainboard = mboard; 
+           } 
+       } 
+       ```
+
+     - 创建产品非 Builder 模式：使用传统方法使用构造器创建对象
+
+       ```java
+       Computer computer = new Computer(“cpu”, “screen”, “memory”, “mainboard”); 
+       ```
+
+  2. **使用简化方式创建产品**
+
+     - 定义产品并定义对应的建造者对象
+
+       ```java
+       public class NewComputer { 
+           private String cpu; 
+           private String screen; 
+           private String memory; 
+           private String mainboard; 
+           public NewComputer() { 
+               throw new RuntimeException(“can’t init”); 
+           } 
+           private NewComputer(Builder builder) { 
+               cpu = builder.cpu; 
+               screen = builder.screen; 
+               memory = builder.memory; 
+               mainboard = builder.mainboard; 
+           } 
+           public static final class Builder { 
+               private String cpu; 
+               private String screen; 
+               private String memory; 
+               private String mainboard; 
+               
+           public Builder() {} 
+           
+           public Builder cpu(String val) { 
+               cpu = val; 
+               return this; 
+           } 
+           public Builder screen(String val) { 
+               screen = val; 
+               return this; 
+           } 
+           public Builder memory(String val) { 
+               memory = val; 
+               return this; 
+           } 
+           public Builder mainboard(String val) { 
+               mainboard = val; 
+               return this; 
+           } 
+           public NewComputer build() {
+               return new  NewComputer(this);} 
+           } 
+       } 
+       ```
+
+     - 测试Builder模式创建产品
+
+       ```java
+       NewComputer newComputer = new NewComputer.Builder() 
+               .cpu(“cpu”) 
+               .screen(“screen”) 
+               .memory(“memory”) 
+               .mainboard(“mainboard”) 
+               .build(); 
+       ```
 
 ## 2.6 原型设计模式
 
 <font color=blue size=4>**1. 概述**</font>
 
-​		原型（Prototype）模式的定义如下：用一个已经创建的实例作为原型，通过复制该原型对象来创建一个和原型相同或相似的新对象。在这里，原型实例指定了要创建的对象的种类。用这种方式创建对象非常高效，根本无须知道对象创建的细节
+​		原型模式的思路：Java中Object是所有类的根类，Object提供了一个clone方法，该方法可以将Java对象复制一份，但是需要实现克隆方法的Java类**必须实现一个接口Cloneable**：该接口表示实现类能够复制且具有复制的能力，这种复制方式也称为原型模式。
+
+​		原型（Prototype）模式的定义如下：用一个已经创建的实例作为原型，通过复制该原型对象来创建一个和原型相同或相似的新对象。在这里，原型实例指定了要创建的对象的种类。用这种方式创建对象非常高效，根本无须知道对象创建的细节。
+
+​		在Spring中指定scope=prototype（多例）的Bean的创建，就是使用的原型模式
 
 <font color=blue size=4>**2. 实现原理**</font>
 
@@ -670,31 +864,262 @@ public class Single{
 
   > lists是引用类型，克隆后修改原修改引用类型的值，会影响到原对象
 
-- 深克隆：把要复制的对象所引用的对象都复制一遍
+- 深克隆：复制对象的所有基本数据类型的成员变量值；为所有引用数据类型的成员变量申请存储空间，并复制每个引用类型成员变量所引用的对象，直到该对象的所有成员；（**总结一句话：深拷贝是对整个对象进行拷贝**）
 
-  ```java
-  @Override
-  protected Resume clone() throws CloneNotSupportedException {
-      Resume clone = (Resume) super.clone();
-      List<String> target = new ArrayList<>();
-      target.addAll(this.lists);
-      clone.lists = target;
-      return clone;
-  }
-  ```
+  1. **深拷贝方式一**：重新clone方法来实现深拷贝
+  
+     ```java
+     @Override
+     protected Resume clone() throws CloneNotSupportedException {
+         Resume clone = (Resume) super.clone();
+         List<String> target = new ArrayList<>();
+         target.addAll(this.lists);
+         clone.lists = target;
+         return clone;
+     }
+     ```
+  
+  2. **深拷贝方式二**：通过对象序列化实现深拷贝
+  
+     ```java
+     
+     ```
 
 # 第三章 结构型设计模式
 
-### 6.1 概述
+## 3.1 适配器模式
 
-​		适配器模式（Adapter）的定义如下：将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类能一起工作。适配器模式分为类结构型模式和对象结构型模式两种，前者类之间的耦合度比后者高，且要求程序员了解现有组件库中的相关组件的内部结构，所以应用相对较少些。
+<font color=blue size=4>**1. 概述**</font>
 
-### 6.2 实现原理
+​		适配器模式（Adapter）：将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类能一起工作。适配器模式分为类结构型模式和对象结构型模式两种，前者类之间的耦合度比后者高，且要求程序员了解现有组件库中的相关组件的内部结构，所以应用相对较少些。
 
-1. 因为接口规范不同，需要定义一个适配器类，在适配器类中调用真实的实现方法
-2. 因为多个规范在多个接口中，需要定义一个适配器类，实现需要方法
+- **主要优点**
+  - 将目标类和适配者类解耦，通过引入一个适配器类来重用现有的适配者类，无须修改原有结构。
+  - 增加了类的透明性和复用性，将具体的业务实现过程封装在适配者类中，对于客户端类而言是透明的，而且提高了适配者的复用性，同一个适配者类可以在多个不同的系统中复用。
+  - 灵活性和扩展性都非常好，通过使用配置文件，可以很方便地更换适配器，也可以在不修改原有代码的基础上增加新的适配器类，完全符合“开闭原则”。
 
-## 第08章 代理模式
+<font color=blue size=4>**2. 实现原理**</font>
+
+- **Target（目标抽象类）**：目标抽象类定义客户所需接口，可以是一个抽象类或接口，也可以是具体类。
+- **Adapter（适配器类）**：适配器可以调用另一个接口，作为一个转换器，对Adaptee和Target进行适配，适配器类是适配器模式的核心，在对象适配器中，它通过继承Target并关联一个Adaptee对象使二者产生联系。
+- **Adaptee（适配者类）**：适配者即被适配的角色，它定义了一个已经存在的接口，这个接口需要适配，适配者类一般是一个具体类，包含了客户希望使用的业务方法，在某些情况下可能没有适配者类的源代码。
+
+<font color=blue size=4>**3. 代码案例**</font>
+
+- **类适配器**：由于适配器类是适配者类的子类，因此可以在适配器类中置换一些适配者的方法，使得适配器的灵活性更强。
+
+  1. 首先有一个已存在的将被适配的类
+
+     ```java
+     public class Adaptee {
+         public void adapteeRequest() {
+             System.out.println("被适配者的方法");
+         }
+     }
+     ```
+
+  2. 定义一个目标接口：为了适配另一个API
+
+     ```java
+     public interface Target {
+         void request();
+     }
+     ```
+
+  3. 适配器类是需要整合已存在的API和目标接口API，所以单纯的继承或实现是不够的
+
+     ```java
+     public class Adapter extends Adaptee implements Target{
+         @Override
+         public void request() {
+             //...一些操作...
+             super.adapteeRequest();
+             //...一些操作...
+         }
+     }
+     ```
+
+  4. 适配器完成测试适配器类
+
+     ```java
+     public class Test {
+         public static void main(String[] args) {
+             Target target = new ConcreteTarget();
+             target.request();
+     
+             Target adapterTarget = new Adapter();
+             adapterTarget.request();
+         }
+     }
+     ```
+
+- **对象适配器**：一个对象适配器可以把多个不同的适配者适配到同一个目标；可以适配一个适配者的子类，由于适配器和适配者之间是关联关系，根据“里氏代换原则”，适配者的子类也可通过该适配器进行适配。
+
+  1. 对象适配器与类适配器不同之处在于，类适配器通过继承来完成适配，对象适配器则是通过关联来完成
+
+     ```java
+     public class Adapter implements Target{
+         // 适配者是对象适配器的一个属性
+         private Adaptee adaptee = new Adaptee();
+     
+         @Override
+         public void request() {
+             //...
+             adaptee.adapteeRequest();
+             //...
+         }
+     }
+     ```
+
+## 3.2 装饰器模式
+
+<font color=blue size=4>**1. 概述**</font>
+
+​		**装饰者模式(Decorator Pattern)**：动态地给一个对象增加一些额外的职责，增加对象功能来说，装饰模式比生成子类实现更为灵活。装饰模式是一种对象结构型模式。
+
+​		在装饰者模式中，为了让系统具有更好的灵活性和可扩展性，我们通常会定义一个抽象装饰类，而将具体的装饰类作为它的子类
+
+<font color=blue size=4>**2. 实现原理**</font>：**核心在于抽象装饰类的设计**
+
+- **Component（抽象构件）**：它是具体构件和抽象装饰类的共同父类，声明了在具体构件中实现的业务方法，它的引入可以使客户端以一致的方式处理未被装饰的对象以及装饰之后的对象，实现客户端的透明操作。
+
+- **ConcreteComponent（具体构件）**：它是抽象构件类的子类，用于定义具体的构件对象，实现了在抽象构件中声明的方法，装饰器可以给它增加额外的职责（方法）。
+
+- **Decorator（抽象装饰类）**：它也是抽象构件类的子类，用于给具体构件增加职责，但是具体职责在其子类中实现。它维护一个指向抽象构件对象的引用，通过该引用可以调用装饰之前构件对象的方法，并通过其子类扩展该方法，以达到装饰的目的。
+
+- **ConcreteDecorator（具体装饰类）**：它是抽象装饰类的子类，负责向构件添加新的职责。每一个具体装饰类都定义了一些新的行为，它可以调用在抽象装饰类中定义的方法，并可以增加新的方法用以扩充对象的行为。
+
+<font color=blue size=4>**3. 代码案例**</font>
+
+- 煎饼抽象类
+
+  ```java
+  public abstract class ABattercake {
+      protected abstract String getDesc();
+      protected abstract int cost();
+  }
+  ```
+
+- 普通煎饼类，继承了煎饼抽象类，一个煎饼 8 块钱
+
+  ```java
+  public class Battercake extends ABattercake {
+      @Override
+      protected String getDesc() {
+          return "煎饼";
+      }
+      @Override
+      protected int cost() {
+          return 8;
+      }
+  }
+  ```
+
+- 抽象装饰类，需要注意的是，**抽象装饰类通过成员属性的方式将 煎饼抽象类组合进来，同时也继承了煎饼抽象类**，且这里定义了新的业务方法 `doSomething()`
+
+  ```java
+  public abstract class AbstractDecorator extends ABattercake {
+      private ABattercake aBattercake;
+  
+      public AbstractDecorator(ABattercake aBattercake) {
+          this.aBattercake = aBattercake;
+      }
+  
+      protected abstract void doSomething();
+  
+      @Override
+      protected String getDesc() {
+          return this.aBattercake.getDesc();
+      }
+      @Override
+      protected int cost() {
+          return this.aBattercake.cost();
+      }
+  }
+  ```
+
+- 鸡蛋装饰器，继承了抽象装饰类，鸡蛋装饰器在父类的基础上增加了一个鸡蛋，同时价格加上 1 块钱
+
+  ```java
+  public class EggDecorator extends AbstractDecorator {
+      public EggDecorator(ABattercake aBattercake) {
+          super(aBattercake);
+      }
+  
+      @Override
+      protected void doSomething() {
+  
+      }
+  
+      @Override
+      protected String getDesc() {
+          return super.getDesc() + " 加一个鸡蛋";
+      }
+  
+      @Override
+      protected int cost() {
+          return super.cost() + 1;
+      }
+  
+      public void egg() {
+          System.out.println("增加了一个鸡蛋");
+      }
+  }
+  ```
+
+- 香肠装饰器，与鸡蛋装饰器类似，继承了抽象装饰类，给在父类的基础上加上一根香肠，同时价格增加 2 块钱
+
+  ```java
+  public class SausageDecorator extends AbstractDecorator{
+      public SausageDecorator(ABattercake aBattercake) {
+          super(aBattercake);
+      }
+      @Override
+      protected void doSomething() {
+  
+      }
+  
+      @Override
+      protected String getDesc() {
+          return super.getDesc() + " 加一根香肠";
+      }
+      @Override
+      protected int cost() {
+          return super.cost() + 2;
+      }
+  }
+  ```
+
+- 测试装饰器
+
+  ```java
+  public class Test {
+      public static void main(String[] args) {
+          // 购买一个煎饼
+          ABattercake aBattercake = new Battercake();
+          
+          
+          // 购买一个加鸡蛋的煎饼
+          ABattercake aBattercake = new Battercake();
+          aBattercake = new EggDecorator(aBattercake);
+          
+          // 购买一个加两个鸡蛋的煎饼
+          ABattercake aBattercake = new Battercake();
+          aBattercake = new EggDecorator(aBattercake);
+          aBattercake = new EggDecorator(aBattercake);
+          
+          // 购买一个加两个鸡蛋和一根香肠的煎饼
+          ABattercake aBattercake = new Battercake();
+          aBattercake = new EggDecorator(aBattercake);
+          aBattercake = new EggDecorator(aBattercake);
+          aBattercake = new SausageDecorator(aBattercake);
+      }
+  }
+  ```
+
+  
+
+## 3.3 代理模式
 
 ### 8.1 概述
 
