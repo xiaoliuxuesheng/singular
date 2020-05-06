@@ -445,6 +445,8 @@
 
 ## 6.3 gradle生命周期
 
+<img src="https://s1.ax1x.com/2020/05/06/YEbVyj.png" width='600'/>
+
 ### :anchor: Initialization：初始化阶段
 
 > 解析整个工程中所有Project对应的project对象，根project以及相关的子project；
@@ -529,15 +531,51 @@
   | String DEFAULT_BUILD_DIR_NAME = "build";        | 默认的输出文件目录 |
   | String GRADLE_PROPERTIES = "gradle.properties"; | 默认的属性配置文件 |
 
--  
+- **gradle扩展属性 - 属性块**
 
+  ```groovy
+  // 定义属性块：属性块中的值可以是单个键值对，也可以是键值对的map
+  ext {
+      属性名称=属性值
+  }
+  
+  // 引用属性值
+  this.属性名
+  ```
 
+- **gradle扩展属性 - 在project中定义属性块**：在build.gradle编译过程中，会为每个对应的Project添加一遍扩展属性块；可以定义在根project或者任何一个project中，父Project中的扩展属性会被子Project继承；
+
+  ```groovy
+  // 使用gradle的Project的API获取到Project对象,就可以为这个对象设置属性块
+  subprojects {
+      ext{
+          属性名称=属性值
+      }
+  }
+  
+  // 在对应的Project的build.gradle中直接可以应用这个属性名
+  ```
+
+- **gradle扩展属性 - 配置文件提取**：在项目中额外定义gradle配置文件，在项目的build.gradle引入这个配置文件，则在Project中就会读取到外部配置文件的属性
+
+  ```groovy
+  // 把外部配置文件引入到build.gradle中
+  apply from: this.file('文件名称')
+  
+  // 在Project的build.gradle可以直接使用外部配置文件中的属性
+  ```
+
+- **gradle扩展属性 - gradle默认配置文件`gradle.properties`**：该配置文件是gradle项目的默认配置文件，配置文件添加到项目中，框架会自动识别并加载配置文件中的属性；在配置文件中格式只可以是key=value的格式；读取到配置属性的key默认是字符串；配置文件中的key不可以是build.gradle中方法重名，编译正常，运行参数会冲突；
 
 ### <font size=4 color=blue>**5. File相关API**</font>
 
-| API：操作Project文件处理 | 使用说明 |
-| ------------------------ | -------- |
-|                          |          |
+| API：路径获取相关API     | 使用说明              |
+| ------------------------ | --------------------- |
+| File getRootDir()        | 获取根工程文件对象    |
+| File getBuildDir()       | 获取build目录文件对象 |
+| File getProjectDir()     | 获取当前工程文件对象  |
+| **API：文件操作相关API** | **使用说明**          |
+|                          |                       |
 
 ### <font size=4 color=blue>**6. 其他API**</font>
 
