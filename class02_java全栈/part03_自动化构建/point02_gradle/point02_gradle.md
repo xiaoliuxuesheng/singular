@@ -569,154 +569,80 @@
 
 ### <font size=4 color=blue>**5. File相关API**</font>
 
-| API：路径获取相关API     | 使用说明              |
-| ------------------------ | --------------------- |
-| File getRootDir()        | 获取根工程文件对象    |
-| File getBuildDir()       | 获取build目录文件对象 |
-| File getProjectDir()     | 获取当前工程文件对象  |
-| **API：文件操作相关API** | **使用说明**          |
-|                          |                       |
+| API：路径获取相关API                                         | 使用说明                               |
+| ------------------------------------------------------------ | -------------------------------------- |
+| File getRootDir()                                            | 获取根工程文件对象                     |
+| File getBuildDir()                                           | 获取build目录文件对象                  |
+| File getProjectDir()                                         | 获取当前工程文件对象                   |
+| **API：文件操作相关API**                                     | **使用说明**                           |
+| file(String path)                                            | 以当前Project为相对路径定位文件        |
+| files(Object ... path)                                       | 以当前Project为相对路径定位多个文件    |
+| copy{<br />    form  file(目标文件)<br />    into 目的地目录文件或路径<br />    exclude {文件过滤}<br />    rename{文件重命名}<br /> } | 文件拷贝：可以拷贝整个目录或单个文件； |
+| fileTree(String path){<br />    操作文件树<br />}            | 将制定路径映射为文件树                 |
+| delete(Object ... path)                                      | 删除文件                               |
+| mkdir(Object path)                                           | 新建文件                               |
 
 ### <font size=4 color=blue>**6. 其他API**</font>
 
-| API  | 使用说明 |
-| ---- | -------- |
-|      |          |
+- **Project.buildscript**：为项目配置构建脚本路径
 
-## 7.3 Project核心API实战
+  ```groovy
+  this.buildscript { ScriptHandler scriptHandler ->
+  	// ScriptHandler脚本处理器类
+  }
+  ```
 
-7.2 属性相关API
-
-2. gradle扩展属性 - 方式一:扩展属性
-
-   - 常量改为变量 的等价方式
-
-   - 扩展属性
+  1. **ScriptHandler.repositories**：配置工程中仓库地址
 
      ```groovy
-     // 定义扩展属性
-     ext{
-         属性名称: 值
-     }
-     
-     // 引入扩展属性
-     this.属性名称
-     
-     ```
-
-   - 可以将扩展属性定义在指定的project中
-
-     ```groovy
-     // 表示为所有子project中定义一个:在编译时候所有的子project都会定义一遍扩展属性
-     subproject{
-         ext{
-             属性名称:值
+     scriptHandler.repositories { RepositoryHandler repositoryHandler ->
+         repositoryHandler.flatDir()		// 文件夹依赖,本地libs库
+         repositoryHandler.jcenter()		// Android中开发需要的库
+         repositoryHandler.mavenCentral()// Maven远程仓库
+         repositoryHandler.mavenLocal()	// 本地Maven仓库
+         repositoryHandler.maven { MavenArtifactRepository repository -> //maven私有仓库
+             repository.name = ''	// 仓库别名
+             repository.url = ''		// 仓库地址
+             repository.credentials { PasswordCredentials credentials ->
+                 credentials.username = ''	// 仓库用户名
+                 credentials.password = ''	// 仓库地址
+             }
          }
      }
-     
      ```
 
-   - 扩展属性定义在根工程,在其他子project中直接引用,父project中的属性都会被子project继承
+  2. **ScriptHandler.dependencies**：Gradle框架的第三方库的依赖，Gradle本身也是一个编程框架，在编写Gradle脚本时候可以引用第三方的库，需要在这里添加对应的依赖
 
      ```groovy
-     // 在根project中定义扩展属性
-     ext{
-         属性名称:值
+     scriptHandler.dependencies { DependencyHandler dependencyHandler ->
+         // DependencyHandler
      }
-     
-     // 在其他project中引用
-     this.属性名称
-     
      ```
 
-   - 将扩展属性单独定义在groovy文件中
+- **Project.dependencies**：为开发的应用添加第三方依赖
 
-     ```groovy
-     // 在独立的groovy中定义扩展属性
-     ext{
-         属性名:值
-     }
-     
-     ```
+  ```groovy
+  this.dependencies { DependencyHandler dependencyHandler ->
+      provided 'group:name:version'			// 只编译不打包
+      compile 'group:name:version'            // 打包编译会加入到最终打包结果中
+      compile group: '', name: '', version: ''// 格式二
+      testCompile 'group:name:version'        // 测试环境依赖
+      compile files('hibernate.jar', 'libs/spring.jar')
+      compile fileTree('libs')
+      compile project(本地源码工厂名)			// 引入本地源码工程
+      compile('group:name:version') { 
+          force = true                			// 版本冲突以当前版本为准
+          exclude module: 'name'      			// 根据 name 排除
+          exclude group: 'group'      			// 根据 group 排除
+          exclude group: 'group', module: 'name'  //同时根据name和group排除
+          transitive = false          			// 是否启用传递依赖,默认为false
+      }
+  }
+  ```
 
-     ```groovy
-     // 根project中引入外部文件
-     apply from: this.file("外部文件名称")
-     
-     // 引用扩展属性
-     rootProject.ext.属性名
-     
-     ```
+  
 
-3. gradle扩展属性 - 方式二:gradle.properties  属性配置文件
-
-   ```properties
-   # 定义gradle.properties的配置文件,是key value的格式,
-   key=value
-   
-   ```
-
-   - value是字符串的格式
-   - 自定义属性不可以和已有方法重复,编译不会保存,使用会出现异常
-
-   ```groovy
-   // groovy中可以直接获取配置文件中的值
-   hasProperty("key")		// 判断是否有指定key
-   key						// 可以使用使用key得到value
-   
-   ```
-
-7.3 文件相关API
-
-1. 路径获取API
-
-   ```groovy
-   // 获取根工程目录的路径
-   File getRootDir()
-   
-   // 获取构建目录的路径
-   File getBuildDir()
-   
-   // 获取当前工程目录路径
-   File getProjectDir()
-   
-   ```
-
-2. 文件操作-定位
-
-   ```groovy
-   File file(Object path);
-   ConfigurableFileCollection files(Object... paths);
-   
-   ```
-
-3. 文件操作-拷贝
-
-   ```groovy
-   copy {
-       from files("目标文件目录")
-       into 拷贝目的地
-       exclude{
-           排序不需要的拷贝文件
-       }
-       rename{
-           重命名
-       }
-   }
-   
-   ```
-
-4. 文件操作-遍历
-
-   ```groovy
-   fileTree("build/"){ FileTree fileTree ->
-       fileTree.visit {
-           FileTreeElement element ->
-               println element.file.name
-       }
-   }
-   
-   ```
+## 7.3 Project核心API实战
 
 7.4 其他API
 
@@ -738,7 +664,6 @@
    
        }
    }
-   
    ```
 
 # 第八章 Gradle核心-Task
