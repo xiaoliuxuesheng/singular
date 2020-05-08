@@ -1,3 +1,7 @@
+|       |             |                                               |
+| ----- | ---- | ---- |
+| **studio** | /ˈstuːdioʊ/ | n. 工作室；广播 电视 演播室；画室；电影制片厂 |
+
 # 前言
 
 :anchor: Gradle特点
@@ -670,81 +674,73 @@
 
 ## 8.1 Task的定义及配置
 
-:anchor: 当前Project中的所有Task
+### <font size=4 color=blue>**1. 使用gradle命令查看Task**</font>
 
 ```sh
 gradle tasks
-
 ```
 
-:anchor: 定义Task
+### <font size=4 color=blue>**2. 定义Task**</font>
 
-1. 格式一 : 使用Task函数定义`Task task(String name, Closure configureClosure);`
+- **方式一**：Project.tesk()方法
 
-   ```groovy
-   task Task名称{
-       // 
-   }
-   
-   ```
+  ```groovy
+  Project.tesk 自定义任务名称{
+      
+  }
+  ```
 
-2. 格式二 : 使用Task容器创建
+- **方式二**：使用Task容器创建Task，一个Project中会有非常多的Task，Gradle是通过TaskContainer管理Project中的Task；TaskContainer会根据Task的依赖将Task构建出拓补图，在执行Task时执行所依赖的Task
 
-   ```groovy
-   this.tasks.create("name":"Task名称"){
-       //
-   }
-   
-   ```
+  ```groovy
+  this.tasks.create("name":"Task名称"){
+      //
+  }
+  
+  ```
 
-:anchor: TaskContainer(容器)相关API
+  > - TaskContainer常用API
+  >
+  >   | 方法名称                              | 使用说明           |
+  >   | ------------------------------------- | ------------------ |
+  >   | Task findByPath(String path)          | 找不到结果为null   |
+  >   | Task getByPath(String path)           | 找不到抛出异常     |
+  >   | Task create(String name, Closure col) | 创建Task           |
+  >   | Task replace(String name)             | 替换指定名称的Task |
 
-> 一个Project中会有非常多的Task，Gradle是通过TaskContainer管理Project中的Task
->
-> TaskContainer会根据Task的依赖将Task构建出拓补图，在执行Task时执行所依赖的Task
+### <font size=4 color=blue>**3. 配置Task**</font>
 
-| 方法名称                              | 使用说明           |
-| ------------------------------------- | ------------------ |
-| Task findByPath(String path)          | 找不到结果为null   |
-| Task getByPath(String path)           | 找不到抛出异常     |
-| Task create(String name, Closure col) | 创建Task           |
-| Task replace(String name)             | 替换指定名称的Task |
+- **Task的配置属性**
 
-:anchor: 配置Task
+  | 属性        | 说明              |
+  | ----------- | ----------------- |
+  | name        | 指定名称          |
+  | description | 添加说明          |
+  | group       | 指定分组,同一组的 |
+  | type        | 指定Task的处理类  |
+  | dependsOn   | 依赖的其他Task    |
+  | overwrite   | 重写Task          |
+  | action      | 执行逻辑          |
 
-1. Task的配置属性
+- **Task配置格式一** : 在Task名称后使用参数的格式设置属性与值
 
-   | 属性        | 说明              |
-   | ----------- | ----------------- |
-   | name        | 指定名称          |
-   | description | 添加说明          |
-   | group       | 指定分组,同一组的 |
-   | type        | 指定Task的处理类  |
-   | dependsOn   | 依赖的其他Task    |
-   | overwrite   | 重写Task          |
-   | action      | 执行逻辑          |
+  ```groovy
+  task Task名称("属性名":"值"){
+      // code
+  }
+  ```
 
-2. Task配置格式一 : 在Task名称后使用参数的格式设置属性与值
+- **Task配置格式二** : 使用API的方式配置Task
 
-   ```groovy
-   task Task名称("group":"值"){
-       // code
-   }
-   
-   ```
+  ```groovy
+  task Task名称{
+      setDescription("值")
+  }
+  ```
 
-3. Task配置格式二 : 使用API的方式配置Task
+## 8.2 Task执行顺序
 
-   ```groovy
-   task Task名称{
-       setDescription("值")
-   }
-   
-   ```
-
-## 8.2 Task执行详解
-
-:anchor: 默认的Task执行
+<font size=4 color=blue>**1. Task的默认执行机制**</font>
 
 ​		在Project的配置阶段中，gradle中的配置代码都会被执行到，所以在配置阶段所有的Task中的代码都会执行到，但是不会执行Task的逻辑，Task逻辑的执行是在执行阶段完成的
 
@@ -768,9 +764,8 @@ gradle tasks
        	// code
        }
    }
-   
    ```
-
+   
 2. 格式二 : 在Task外部执行Task的doFirst与doLast的API
 
    ```groovy
@@ -780,7 +775,6 @@ gradle tasks
    Task名称.doLast{
    	// code
    }
-   
    ```
 
 ## 8.3 Task依赖执行顺序
@@ -801,9 +795,8 @@ gradle tasks
    task名称.dependsOn{
    	
    }
-   
    ```
-
+   
 2. 方式二 : 通过Task的dependsOn方法
 
    ```groovy
@@ -813,7 +806,6 @@ gradle tasks
            return task
        }
    }
-   
    ```
 
 :anchor: 通过Task输入输出
@@ -839,7 +831,6 @@ gradle tasks
        // 为Task指定输入
        task.inputs 目标文件
    }
-   
    ```
 
 - Task.inputs指定TaskInputs
@@ -865,6 +856,8 @@ gradle tasks
   ```
 
 ## 8.4 Task类型
+
+## 8.5 连接到构建生命周期
 
 # 第六章 Gradle核心 - 其他模块
 
