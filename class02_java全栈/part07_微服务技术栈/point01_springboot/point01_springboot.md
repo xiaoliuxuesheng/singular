@@ -10,7 +10,7 @@
 
 ## 1.2 Spring Boot的优点
 
-<img src="./imgs/01_SpringBoot优点"/>
+<img src="https://s1.ax1x.com/2020/05/08/YnEXGV.png" alt="YnEXGV.png" border="0" />
 
 
 
@@ -214,7 +214,7 @@ public class HttpEncodingAutoConfiguration {
 
 ★  **@Condition派生注解的功能 **
 
-<img src='./imgs/Condition派生'/>
+<img src="https://s1.ax1x.com/2020/05/08/YnVAG6.png" alt="YnVAG6.png" border="0" />
 
 # 第二章 SpringBoot配置文件
 
@@ -637,15 +637,15 @@ public class HttpEncodingAutoConfiguration {
 
 <font size=4 color=blue>▲ 正常情况的日志框架引入</font>：首先在java应用中引入`slf4j-api`日志抽象层，并为这个抽象层添加一个日志实现层的框架，建议使用`logback`：`logback-classic`、`logback-core`
 
-![image-20200303210414320](./imgs/image-20200303210414320)
+<img src="https://s1.ax1x.com/2020/05/08/YnVdds.png" alt="YnVdds.png" border="0" />
 
 <font size=4 color=blue>▲ 日志替换处理方案</font>：如果应用中的使用的日志接口是SLF4J，在不改变代码的情况下可以引入有log4j提供的日志适配包+对应的日志框架即可完成替换。
 
-![image-20200303210801553](./imgs/image-20200303210801553)
+<img src="https://s1.ax1x.com/2020/05/08/YnVfoR.png" alt="YnVfoR.png" border="0" />
 
 <font size=4 color=blue>▲ 日志统一处理方案</font>：在Java应用开发中经常使用到各种成熟框架，而这些框架一般会有默认的日志框架，如果在使用这些Java框架后需要统一日志框架的使用方式，需要为这些Java框架的默认的日志框架引入日志替换包，并且一定要移除掉应用框架的默认的日志框架。
 
-<img src='./imgs/legacy'/>
+<img src="https://s1.ax1x.com/2020/05/08/YnV5Jx.png" alt="YnV5Jx.png" border="0" />
 
 ## 3.3 SpringBoot中的日志框架profile
 
@@ -668,6 +668,8 @@ public class HttpEncodingAutoConfiguration {
 
 
 # 第七章 SpringBoot自定义启动器
+
+
 
 @ConditionalOnClass：当类路径classpath下有指定的类的情况下进行自动配置
 
