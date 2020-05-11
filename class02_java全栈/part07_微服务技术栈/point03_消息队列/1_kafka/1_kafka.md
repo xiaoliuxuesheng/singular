@@ -116,6 +116,52 @@
 
 2.1 消息发送
 
+1. kafka消息的producer发送消息流程
+
+   <img src="https://s1.ax1x.com/2020/05/11/YJ51zj.png" alt="YJ51zj.png" border="0" />
+
+   - **ProducerRecord**：表示一条待发送的消息记录，主要由5个字段构成。ProducerRecord允许用户在创建消息对象的时候就直接指定要发送的分区，这样producer后续发送该消息时可以直接发送到指定分区，而不用先通过Partitioner计算目标分区了；还可以直接指定消息的时间戳——但一定要慎重使用这个功能，因为它有可能会令时间戳索引机制失效。
+
+     | 字段      | 说明      |
+     | --------- | --------- |
+     | topic     | 所属topic |
+     | partition | 所属分区  |
+     | key       | 键值      |
+     | value     | 消息体    |
+     | timestrap | 时间戳    |
+
+   - **RecordMetaData**：该类表示Kafka服务器端返回给客户端的消息元数据
+
+     | 字段                | 说明                 |
+     | ------------------- | -------------------- |
+     | offset              | 该条消息的位移       |
+     | timestrap           | 时间戳               |
+     | topic+partition     | 所属topic的分区      |
+     | checksum            | 消息CRC32码          |
+     | serializedKeySize   | 序列化后消息键字节数 |
+     | serializedValueSize | 序列化后消息值字节数 |
+
+2. 消息发送流程描述
+
+   - 用户首先构建待发送的消息对象ProducerRecord，然后调用KafkaProducer#send方法进行发送。
+   - KafkaProducer接收到消息后首先对其进行序列化
+   - 然后结合本地缓存的元数据信息一起发送给partitioner去确定目标分区
+   - 最后追加写入到内存中的消息缓冲池(accumulator)
+   - 此时KafkaProducer#send方法成功返回。同时，KafkaProducer中还有一个专门的Sender IO线程负责将缓冲池中的消息分批次发送给对应的broker，完成真正的消息发送逻辑。
+
+3. producer关键参数
+
+   - **batch.size** 我把它列在了首位，因为该参数对于调优producer至关重要。之前提到过新版producer采用分批发送机制，该参数即控制一个batch的大小。默认是16KB
+   -  **acks**关乎到消息持久性(durability)的一个参数。高吞吐量和高持久性很多时候是相矛盾的，需要先明确我们的目标是什么？ 高吞吐量？高持久性？亦或是中等？因此该参数也有对应的三个取值：0， -1和1
+   -  **linger.ms**减少网络IO，节省带宽之用。原理就是把原本需要多次发送的小batch，通过引入延时的方式合并成大batch发送，减少了网络传输的压力，从而提升吞吐量。当然，也会引入延时
+   -  **compression.type  producer**所使用的压缩器，目前支持gzip, snappy和lz4。压缩是在用户主线程完成的，通常都需要花费大量的CPU时间，但对于减少网络IO来说确实利器。生产环境中可以结合压力测试进行适当配置
+   -  **max.in.flight.requests.per.connection** 关乎消息乱序的一个配置参数。它指定了Sender线程在单个Socket连接上能够发送未应答PRODUCE请求的最大请求数。适当增加此值通常会增大吞吐量，从而整体上提升producer的性能。不过笔者始终觉得其效果不如调节batch.size来得明显，所以请谨慎使用。另外如果开启了重试机制，配置该参数大于1可能造成消息发送的乱序(先发送A，然后发送B，但B却先行被broker接收)
+   -  **retries** 重试机制，对于瞬时失败的消息发送，开启重试后KafkaProducer会尝试再次发送消息。对于有强烈无消息丢失需求的用户来说，开启重试机制是必选项
+
+4. 内部流程
+
+   - https://www.jianshu.com/p/46cb44c6b96c
+
 2.2 原理剖析
 
 2.3 生产者参数说明

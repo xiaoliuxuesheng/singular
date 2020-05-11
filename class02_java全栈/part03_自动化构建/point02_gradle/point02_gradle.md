@@ -647,32 +647,6 @@
 
 - **外部命令执行API**
 
-  
-
-## 7.3 Project核心API实战
-
-7.4 其他API
-
-1. 依赖相关API
-
-   ```groovy
-   buildscript { ScriptHandler handler ->
-       // 配置工程仓库地址
-       handler.repositories { RepositoryHandler repositories ->
-           repositories.mavenCentral()
-           repositories.mavenLocal()
-           repositories.maven {MavenArtifactRepository artifactRepository ->
-               artifactRepository.name '仓库名称'
-               artifactRepository.url '内部仓库地址'
-           }
-       }
-       // 配置工程插件依赖地址:gradle本身就是框架,这里是框架的插件
-       handler.dependencies {DependencyHandler dependencyHandler ->
-   
-       }
-   }
-   ```
-
 # 第八章 Gradle核心-Task
 
 ## 8.1 Task的定义及配置
@@ -680,7 +654,7 @@
 ### <font size=4 color=blue>**1. 使用gradle命令查看Task**</font>
 
 ```sh
-gradle tasks
+gradle tasks		# 查看当前工程下的task以及相关描述
 ```
 
 ### <font size=4 color=blue>**2. 定义Task**</font>
@@ -696,13 +670,12 @@ gradle tasks
 - **方式二**：使用Task容器创建Task，一个Project中会有非常多的Task，Gradle是通过TaskContainer管理Project中的Task；TaskContainer会根据Task的依赖将Task构建出拓补图，在执行Task时执行所依赖的Task
 
   ```groovy
-  this.tasks.create("name":"Task名称"){
+  Project.tasks.create("name":"Task名称"){
       //
   }
-  
   ```
-
-  > - TaskContainer常用API
+  
+> - TaskContainer常用API
   >
   >   | 方法名称                              | 使用说明           |
   >   | ------------------------------------- | ------------------ |
@@ -737,81 +710,94 @@ gradle tasks
 
   ```groovy
   task Task名称{
-      setDescription("值")
+      setDescription("值") 
   }
   ```
 
 ## 8.2 Task执行顺序
 
-<font size=4 color=blue>**1. Task的默认执行机制**</font>
+​		在Project的配置阶段中，gradle中的配置代码都会被执行到，所以在配置阶段所有的Task中的代码都会执行到，但是不会执行Task的逻辑，Task逻辑的执行是在执行阶段完成的，Task的执行逻辑是在doFirst和doLast代码块中；
 
-​		在Project的配置阶段中，gradle中的配置代码都会被执行到，所以在配置阶段所有的Task中的代码都会执行到，但是不会执行Task的逻辑，Task逻辑的执行是在执行阶段完成的
-
-:anchor: 配置Task在执行阶段执行 : doFirst 与 doLast
-
-- doFirst或doLast特点
+- **配置Task在执行阶段执行doFirst或doLast的特点**
+  
   - doFirst用于给已存在的Task之前添加逻辑
   - doLast用于给已存在的Task之后添加逻辑
+  - doFirst或doLast代码块在Task中可以定义多个，执行顺序是编写顺序
   - 可以将Task的中的执行时间修改为执行阶段执行
-  - 一个Task中可以定义多个doFirst或doLas
   - 在外部定义的doFirst或doLas优先执行于内部定义的
+  
+- **格式一 : 在Task内部定义**
 
-1. 格式一 : 在Task内部定义
+  ```groovy
+  task Task名称 {
+      doFirst {
+          // code
+      }
+      doLast{
+      	// code
+      }
+  }
+  
+  // 使用追加符简化task的的doLast定义
+  task Task名称 << {
+  	// 不需要再指定doLast代码块
+  }
+  ```
 
-   ```groovy
-   task Task名称 {
-       doFirst {
-           // code
-       }
-       doLast{
-       	// code
-       }
-   }
-   ```
-   
-2. 格式二 : 在Task外部执行Task的doFirst与doLast的API
+- **格式二 : 在Task外部执行Task的doFirst与doLast的API**
 
-   ```groovy
-   Task名称.doFirst{
-   	// code
-   }
-   Task名称.doLast{
-   	// code
-   }
-   ```
+  ```groovy
+  Task名称.doFirst{
+  	// code
+  }
+  Task名称.doLast{
+  	// code
+  }
+  ```
 
 ## 8.3 Task依赖执行顺序
 
-:anchor: dependsOn强依赖方式
+### <font size=4 color=blue>**1. dependsOn强依赖方式**</font>
 
-> task有依赖关系时候,执行task会优先执行所依赖的Task
+​		task有依赖关系时候，执行task会优先执行所依赖的Task；使用dependsOn依赖task时，必须是在当前task之前已经定义好的task，如果需要依赖多个，则要用列表的方式添加依赖的Task；如果依赖的多个Task直接没有依赖关系，则这些task的执行顺序是随机的；
 
-1. 方式一 : task的dependsOn属性
+- **方式一 : task的dependsOn参数**
 
-   ```groovy
-   // 格式一
-   task task名称(dependsOn: [依赖Task1, 依赖Task2]) {
-       
-   }
-   
-   // 格式二
-   task名称.dependsOn{
-   	
-   }
-   ```
-   
-2. 方式二 : 通过Task的dependsOn方法
+  ```groovy
+  task task名称(dependsOn: [依赖Task1, 依赖Task2]) {
+      dependsOn(taskA)
+  }
+  ```
 
-   ```groovy
-   task task名称 {
-       dependsOn this.tasks.findAll { task ->
-           
-           return task
-       }
-   }
-   ```
+- **方式二 : 通过Task的dependsOn属性**
 
-:anchor: 通过Task输入输出
+  ```groovy
+  // 直接指定Task名称
+  task task名称 {
+      dependsOn(taskA)
+  }
+  
+  // 通过匹配的方式指定以来的task
+  task task名称 {
+      dependsOn this.tasks.findAll { task ->
+          return task
+      }
+  }
+  ```
+
+- **方式三 : 通过task的dependsOn方法**
+
+  ```groovy
+  task名称.dependsOn{
+  	
+  }
+  ```
+
+### <font size=4 color=blue>**2. 通过Task输入输出**</font>
+
+### <font size=4 color=blue>**3. 通过API连接到构建生命周期**</font>
+
+:anchor: 
 
 1. 输入输出的作用
 
@@ -840,7 +826,7 @@ gradle tasks
   - Task.outputs指定TaskOutputs
   - 通过同一个目标文件将两个Task关联起来，如果其他的Task同时依赖的输入输出相关联的Task，gradle会将输出类型的Task先执行
 
-:anchor: 通过API连接到构建生命周期
+:anchor: 
 
 - 让指定Task指定运行在指定Task之后，这几个Task需要同时执行
 
