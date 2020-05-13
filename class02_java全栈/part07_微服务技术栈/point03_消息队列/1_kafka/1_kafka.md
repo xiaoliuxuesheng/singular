@@ -1,3 +1,251 @@
+第一章 初始Kafka
+
+1.1 基本概念讲解
+
+1. kakfa基本介绍
+
+   ​	Kafka是采用Scala语言开发的一个多分区、多副本并且基于Zookeeper协议的分布式消息系统。目前Kafka已经定位为衣蛾分布式流式处理平台，它以高吞吐、可持久化、可水平扩展、支持流处理等对种特性而被广泛应用。
+
+   ​	Kakfa是一个分布式的发布-订阅消息系统，能够支撑海量数据的传输；
+
+   ​	Kafka将消息持久化到磁盘中，并对消息创建了备份保证数据的安全；
+
+   ​	Kafka在保证了较高的处理速度的同时，又能保证数据处理的低延迟和零丢失；
+
+2. Kafka特性
+
+   - 高吞吐量、低延迟：每秒处理几十万条，延迟最低只有几毫秒，每个主题可以分多个分区，消费者对分区进行消费
+   - 可扩展性：支持热扩展
+   - 持久性、可靠性：消息持久化到磁盘，并支持数据备份
+   - 容错性：允许集群节点失败
+   - 高并发：支持数千个客户同时读写
+   - 可伸缩：
+
+3. 使用场景
+
+   - 日志收集：通过Kaka以统一接口服务的方式开放给各种consumer
+   - 消息系统：结构生成和消费者；缓存消息
+   - 用户活动跟踪：记录用户活动
+   - 运营指标：记录运营监控数据
+   - 流式处理：
+
+4. 概念详解
+
+   <img src="https://s1.ax1x.com/2020/05/10/Y8ArjI.png" alt="Y8ArjI.png" border="0" />
+   
+   - **Producer**：生产者即数据发布者，该角色将消息发布到Kafka的Topic中。broker接收到生产者发送的消息后，broker将该消息追加到当前用于追加数据的segment文件中。生产者发送的消息，存储到一个partition中，生产者也可以指定数据存储的partition
+   - **consumer**：消费者可以冲broker中读取数据。消费者可以效仿多个topic中的数据
+   - **topic**：在kafka中，使用一个类表属性来划分数据段所属类，划分数据的这个类称为topic。如果把kafka看做一个数据库，topic可以理解为数据库中的一张表，topic的名字即为表名。
+   - **partition：topic**中的数据分割为一个或多个partition。每个topic至少有一个partition。每个partition中的数据使用多个segment文件存储。partition中的数据是有序的，partition间的数据不一定是有序的。如果topic有对个partition，消费数据时就不能保证数据的顺序。在需要严格保证消息的消费顺序的场景下，需要将partition的数目设置为1。
+   - **partition offset**：每条消息都有一个档期partition下唯一的64字节的offset，他指明了这条消息的起始位置
+   - **replicas of partition**：副本是一个分区的副本。副本不会被消费者消费，副本只用于防止数据丢失，即消费者不从为follwer的partition中消费数据，而是从为leader的partition中读取数据。副本之间是一主多从的关系。
+   - **broker**：Kafka 集群包含一个或多个服务器，服务器节点称为broker。broker存储topic的数据。如果某topic有N个partition，集群有N个broker，那么每个broker存储该topic的一个partition。如果某topic有N个partition，集群有(N+M)个broker，那么其中有N个broker存储该topic的一个partition，剩下的M个
+     broker不存储该topic的partition数据。如果某topic有N个partition，集群中broker数目少于N个，那么
+     一个broker存储该topic的一个或多个partition。在实际生产环境中，尽量避免这种情况的发生，这种
+     情况容易导致Kafka集群数据不均衡
+   - **leader + follower**：Follower跟随Leader，所有写请求都通过Leader路由，数据变更会广播给所有Follower，Follower与Leader保持数据同步。如果Leader失效，则从Follower中选举出一个新的Leader。当Follower与Leader挂掉、卡住或者同步太慢，leader会把这个follower从“in sync replicas”（ISR）列表中删除，重新创建一个Follower。
+   - **zookeeper**：zookeeper负责维护和协调broker。当kafka系统中新增broker或某个broker发生故障失效时，由zookeeper通知生产者和消费者。生产者和消费者依据zookeeper的broker状态与broker协调数据段发布和订阅任务
+   - **AR（Assigned Replicas）**：分区中所有的副本统称为AR
+   - **ISR（In-Sync Replicas）**：所有与Leader部分保持一定程度的副本（包括Leader副本在内）组成ISR
+   - **OSR（Out-of-Sync Replicas）**：与Leader副本同步滞后过多的副本
+   - **HW（High Watermark）**：高水位，标识了一个特定的offset，消费者只能拉取到这个offset之前的消息
+   - **LEO（Log End Offset）**：日志末尾位移（log end offset），记录是该副本底层日志（log）中下一条消息的位移值（注意：是下一条），如果LEO=10，那么表示该副本保存了10条消息，位移范围为[0,9]。
+
+1.2 安装与配置
+
+1. 安装
+
+   - Kafka需要安装Java环境：Windows和Linux
+   - 安装ZooKeeper：
+
+2. 启动执行脚本
+
+   | 启动执行                             | 执行参数                    | 使用说明                         |
+   | ------------------------------------ | --------------------------- | -------------------------------- |
+   | **connect-distributed**              |                             |                                  |
+   | **connect-mirror-maker**             |                             |                                  |
+   | **connect-standalone**               |                             |                                  |
+   | **kafka-acls**                       |                             |                                  |
+   | **kafka-broker-api-versions**        |                             |                                  |
+   | **kafka-console-consumer**           |                             | **kafka命令行工具模拟消费端**    |
+   |                                      | --bootstrap-server IP:端口  | 连接到的kafka服务地址            |
+   |                                      | --topic topic名称           | 消费指定名称的Topic              |
+   | **kafka-console-producer**           |                             | **kafka命令行工具模拟发送端**    |
+   | **kafka-consumer-groups**            |                             |                                  |
+   | **kafka-consumer-perf-test**         |                             |                                  |
+   | **kafka-delegation-tokens**          |                             |                                  |
+   | **kafka-delete-records**             |                             |                                  |
+   | **kafka-dump-log**                   |                             |                                  |
+   | **kafka-leader-election**            |                             |                                  |
+   | **kafka-log-dirs**                   |                             |                                  |
+   | **kafka-mirror-maker**               |                             |                                  |
+   | **kafka-preferred-replica-election** |                             |                                  |
+   | **kafka-producer-perf-test**         |                             |                                  |
+   | **kafka-reassign-partitions**        |                             |                                  |
+   | **kafka-replica-verification**       |                             |                                  |
+   | **kafka-run-class**                  |                             |                                  |
+   | **kafka-server-start**               |                             | **启动kafka服务**                |
+   | **kafka-server-stop**                |                             | **关闭kafka服务**                |
+   | **kafka-streams-application-reset**  |                             |                                  |
+   | **kafka-topics**                     |                             | **kafka的Topic命令行工具**       |
+   |                                      | --create \| deletet \| list | Topic的创建 \| 删除 \|  列表查询 |
+   |                                      | --zookeeper host:port       | 连接指定的zookeeper              |
+   |                                      | --partitions 分区数         | 创建的topic的分区数              |
+   |                                      | --replication-factor 副本数 | 创建的Topic副本数                |
+   |                                      | --topic 名称                | 创建指定名称的topic              |
+   | kafka-verifiable-consumer            |                             |                                  |
+   | kafka-verifiable-producer            |                             |                                  |
+   | trogdor                              |                             |                                  |
+   | zookeeper-security-migration         |                             |                                  |
+   | zookeeper-server-start               |                             | 启动内置的ZooKeeper注册中心      |
+   | zookeeper-server-stop                |                             | 停止内置的ZooKeeper服务          |
+   | zookeeper-shell                      |                             |                                  |
+
+1.3 Java程序连接
+
+1.4 服务参数说明
+
+1. server.properties
+   - broker.id=0：表示broker的编号，如果集群中有多个broker，每个broker设置的编号应该不同
+   - listeners=PLAINTEXT://:9092：broker对外提供的服务入口地址
+   - log.dirs=/tmp/kafka-logs：kafka日志文件目录地址
+   - zookeeper.connect=localhost:2181：kafka连接的ZooKeeper注册中心地址
+2. 
+
+第二章 生产者
+
+2.1 消息发送
+
+1. kafka消息的producer发送消息流程
+
+   <img src="https://s1.ax1x.com/2020/05/11/YJ51zj.png" alt="YJ51zj.png" border="0" />
+
+   - **ProducerRecord**：表示一条待发送的消息记录，主要由5个字段构成。ProducerRecord允许用户在创建消息对象的时候就直接指定要发送的分区，这样producer后续发送该消息时可以直接发送到指定分区，而不用先通过Partitioner计算目标分区了；还可以直接指定消息的时间戳——但一定要慎重使用这个功能，因为它有可能会令时间戳索引机制失效。
+
+     | 字段      | 说明      |
+     | --------- | --------- |
+     | topic     | 所属topic |
+     | partition | 所属分区  |
+     | key       | 键值      |
+     | value     | 消息体    |
+     | timestrap | 时间戳    |
+
+   - **RecordMetaData**：该类表示Kafka服务器端返回给客户端的消息元数据
+
+     | 字段                | 说明                 |
+     | ------------------- | -------------------- |
+     | offset              | 该条消息的位移       |
+     | timestrap           | 时间戳               |
+     | topic+partition     | 所属topic的分区      |
+     | checksum            | 消息CRC32码          |
+     | serializedKeySize   | 序列化后消息键字节数 |
+     | serializedValueSize | 序列化后消息值字节数 |
+
+2. 消息发送流程描述
+
+   - 用户首先构建待发送的消息对象ProducerRecord，然后调用KafkaProducer#send方法进行发送。
+   - KafkaProducer接收到消息后首先对其进行序列化
+   - 然后结合本地缓存的元数据信息一起发送给partitioner去确定目标分区
+   - 最后追加写入到内存中的消息缓冲池(accumulator)
+   - 此时KafkaProducer#send方法成功返回。同时，KafkaProducer中还有一个专门的Sender IO线程负责将缓冲池中的消息分批次发送给对应的broker，完成真正的消息发送逻辑。
+
+3. producer关键参数
+
+   - **batch.size** 我把它列在了首位，因为该参数对于调优producer至关重要。之前提到过新版producer采用分批发送机制，该参数即控制一个batch的大小。默认是16KB
+   -  **acks**关乎到消息持久性(durability)的一个参数。高吞吐量和高持久性很多时候是相矛盾的，需要先明确我们的目标是什么？ 高吞吐量？高持久性？亦或是中等？因此该参数也有对应的三个取值：0， -1和1
+   -  **linger.ms**减少网络IO，节省带宽之用。原理就是把原本需要多次发送的小batch，通过引入延时的方式合并成大batch发送，减少了网络传输的压力，从而提升吞吐量。当然，也会引入延时
+   -  **compression.type  producer**所使用的压缩器，目前支持gzip, snappy和lz4。压缩是在用户主线程完成的，通常都需要花费大量的CPU时间，但对于减少网络IO来说确实利器。生产环境中可以结合压力测试进行适当配置
+   -  **max.in.flight.requests.per.connection** 关乎消息乱序的一个配置参数。它指定了Sender线程在单个Socket连接上能够发送未应答PRODUCE请求的最大请求数。适当增加此值通常会增大吞吐量，从而整体上提升producer的性能。不过笔者始终觉得其效果不如调节batch.size来得明显，所以请谨慎使用。另外如果开启了重试机制，配置该参数大于1可能造成消息发送的乱序(先发送A，然后发送B，但B却先行被broker接收)
+   -  **retries** 重试机制，对于瞬时失败的消息发送，开启重试后KafkaProducer会尝试再次发送消息。对于有强烈无消息丢失需求的用户来说，开启重试机制是必选项
+
+4. 内部流程
+
+   - https://www.jianshu.com/p/46cb44c6b96c
+
+2.2 原理剖析
+
+2.3 生产者参数说明
+
+第三章 消费者
+
+3.1 概念入门
+
+3.2 消息接收
+
+第四章 主题
+
+4.1 管理
+
+4.2 增加分区
+
+第五章 分区
+
+5.1 副本机制
+
+5.2 Leader选举机制
+
+5.3 分区重新分配
+
+5.4 自动再均衡
+
+5.5 分区分配策略
+
+第六章 物理存储
+
+6.1 日志存储概述
+
+6.2 日志存储
+
+6.3 磁盘存储
+
+第七章 稳定性
+
+7.1 事务
+
+7.2 控制器
+
+7.3 可靠性保证
+
+7.4 一致性验证
+
+7.5 消息重复的场景及解决方案
+
+第八章 高级应用
+
+8.1 命令行工具
+
+8.2 数据管理Connect
+
+8.3 延时队列
+
+8.4 重拾队列
+
+8.5 流式处理
+
+8.6 SpringBootKafka
+
+8.7 消息中间件对比
+
+第九章 集群
+
+9.1 集群搭建
+
+9.2 多集群同步
+
+第十章 监控
+
+10.1 监控度量指标
+
+10.2 broker监控
+
+10.3 主题分区监控
+
+10.4 生产者架空
+
+10.5 消费者监控
+
+10.6 监控工具kafkaEagle
+
 # 第一章 初始Kafka
 
 ## 1.1 Kafka介绍
