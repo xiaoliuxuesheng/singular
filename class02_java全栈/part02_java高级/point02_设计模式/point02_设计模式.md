@@ -53,6 +53,8 @@
 
 ## 2.1 简单工厂模式
 
+<img src="https://s1.ax1x.com/2020/05/13/YaiR6e.jpg" alt="YaiR6e.jpg" width='400' />
+
 ​		简单工厂模式也称为静态工厂模式或实例工厂模式，基本结构是一个类中定义一个工厂方法，在工厂方法中完成对象的创建；这工厂模式中负责生产对象的类称为工厂类，一般开发中使用Factory作为类的后缀名（约定）；
 
 <font size=4 color=blue>1. 简单工厂涉及相关对象说明</font>
@@ -65,104 +67,84 @@
 
 <font size=4 color=blue>2. 案例演示</font>
 
-- 为所需要生成的产品定义规范（抽象父类或者接口）
+- 抽象产品与具体产品的关系：面向接口编程
 
   ```java
-  public interface IProduct {
-      void show();
+  public interface IProduct{
+  	// TUDO
   }
-  ```
-
-- 根据规范设计对应的产品
-
-  ```java
+  
   public class ProductA implements IProduct{
-      public void show() {
-          System.out.println(" 创建产品A成功 ");
-      }
-  }
-  public class ProductB implements IProduct {
-      public void show() {
-          System.out.println(" 创建产品B成功 ");
-      }
+  	// TUDO  
   }
   ```
+
+- 使用方法逻辑创建对象
 
   ```java
-  // 工厂模式需要扩展创建的对象
-  public class ProductC implements IProduct {
-      public void show() {
-          System.out.println(" 创建产品C成功 ");
+  public class SimpleFactory01 {
+      public static IProduct create(String type) {
+          switch (type) {
+              // 已经开发完成的
+              case "A":
+                  return new ProductA();
+              case "B":
+                  return new ProductB();
+  
+              // 工厂类新增代码完成扩展要创建的对象
+              case "C":
+                  return new ProductC();
+              default:
+                  return null;
+          }
+      }
+  }
+  ```
+  
+- 使用反射创建简单工厂
+
+  ```java
+  public class SimpleFactory02 {
+      public static IProduct create(String productBeanName) {
+          try {
+              return (IProduct) Class.forName(productBeanName).newInstance();
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+          return null;
       }
   }
   ```
 
-- 定义简单工厂
+- 使用泛型创建简单工厂：本质还是反射
 
-  - 使用方法逻辑创建对象
-  
-    ```java
-    public class SimpleFactory01 {
-        public static IProduct create(String type) {
-            switch (type) {
-                // 已经开发完成的
-                case "A":
-                    return new ProductA();
-                case "B":
-                    return new ProductB();
-    
-                // 工厂类新增代码完成扩展要创建的对象
-                case "C":
-                    return new ProductC();
-                default:
-                    return null;
-            }
-        }
-    }
-    ```
-    
-  - 使用反射创建简单工厂
-  
-    ```java
-    public class SimpleFactory02 {
-        public static IProduct create(String productBeanName) {
-            try {
-                return (IProduct) Class.forName(productBeanName).newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-    ```
-  
-  - 使用泛型创建简单工厂：本质还是反射
-  
-    ```java
-    public class SimpleFactory03<T> {
-        public static <T> T create(Class<T> t) {
-            try {
-                return(T) t.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-    ```
+  ```java
+  public class SimpleFactory03<T> {
+      public static <T> T create(Class<T> t) {
+          try {
+              return(T) t.newInstance();
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+          return null;
+      }
+  }
+  ```
 
 ## 2.2 工厂方法模式
+
+<img src="https://s1.ax1x.com/2020/05/13/YaEyHH.jpg" alt="YaEyHH.jpg" width="500" />
 
 ​		简单工厂模式出现的问题是：如过需要添加新的产品，则需要修改原来的代码，对扩展和修改不友好；为解决简单工厂模式出现的问题，可以使用工厂方法模式：借鉴模板方法模式的思路，定义创建对象的抽象方法，将具体对象的创建延迟到子类实现，即由子类来决定应该实例化（创建）哪一个类。
 
 <font size=4 color=blue>1. 工厂方法模式涉及相关对象说明</font>
 
-| 名称       | 作用说明                             |
-| ---------- | ------------------------------------ |
-| 工厂类     | 在工厂类中定义创建对象对象的抽象方法 |
-| 工厂实现类 | 是对抽象方法的具体实现               |
-| 抽象产品   |                                      |
-| 具体产品   |                                      |
+| 名称            | 作用说明                                                     |
+| --------------- | ------------------------------------------------------------ |
+| Creator         | 抽象工厂。它实现了所有操纵产品的方法，但不实现工厂方法。Creator所有的子类都必须要实现 |
+| ConcreteCreator | 具体工厂。制造产品的实际工厂。它负责创建一个或者多个具体产品 |
+| Product         | 抽象产品。所有的产品必须实现这个共同的接口                   |
+| ConcreteProduct | 具体产品                                                     |
 
 <font size=4 color=blue>2. 工厂方法模式案例</font>
 
@@ -187,17 +169,15 @@
           System.out.println(" 创建产品B成功 ");
       }
   }
-  ```
-
-  ```java
-  // 工厂模式需要扩展创建的对象
+  
+// 工厂模式需要扩展创建的对象
   public class ProductC implements IProduct {
       public void show() {
           System.out.println(" 创建产品C成功 ");
       }
   }
   ```
-
+  
 - 定义工厂类，定义抽象方法
 
   ```java
@@ -221,10 +201,8 @@
           return new ProductB();
       }
   }
-  ```
-
-  ```java
-  // 为扩展的产品c创建工厂
+  
+// 为扩展的产品c创建工厂
   public class ProductCFactory implements Factory {
       @Override
       public IProduct create() {
@@ -232,8 +210,155 @@
       }
   }
   ```
+  
 
 ## 2.3 抽象工厂模式
+
+​		在工厂方法模式中，我们使用一个工厂创建一个产品，也就是说一个具体的工厂对应一个具体的产品。但是有时候我们需要一个工厂能够提供多个产品对象，而不是单一的对象，这个时候我们就需要使用抽象工厂模式。
+
+- 在讲解抽象工厂模式之前，我们需要厘清两个概念：
+
+​		**产品等级结构**。产品的等级结构也就是产品的继承结构。例如一个为空调的抽象类，它有海尔空调、格力空调、美的空调等一系列的子类，那么这个抽象类空调和他的子类就构成了一个产品等级结构。
+
+​		**产品族**。产品族是在抽象工厂模式中的。在抽象工厂模式中，产品族是指由同一个工厂生产的，位于不同产品等级结构中的一组产品。比如，海尔工厂生产海尔空调。海尔冰箱，那么海尔空调则位于空调产品族中。
+
+<img src="https://s1.ax1x.com/2020/05/13/YaZVFs.jpg" alt="YaZVFs.jpg" border="0" />
+
+<font size=4 color=blue>1. 抽象工厂模式涉及相关对象说明</font>
+
+| 名称            | 作用说明                                                     |
+| --------------- | ------------------------------------------------------------ |
+| AbstractFactory | 抽象工厂。抽象工厂定义了一个接口，所有的具体工厂都必须实现此接口，这个接口包含了一组方法用来生产产品。 |
+| ConcreteFactory | 具体工厂。具体工厂是用于生产不同产品族。要创建一个产品，客户只需要使用其中一个工厂完全不需要实例化任何产品对象 |
+| AbstractProduct | 抽象产品。这是一个产品家族，每一个具体工厂都能够生产一整组产品 |
+| Product         | 具体产品                                                     |
+
+<font size=4 color=blue>2. 抽象工厂模式案例</font>：是披萨店。为了要保证每家加盟店都能够生产高质量的披萨，防止使用劣质的原料，我们打算建造一家生产原料的工厂，并将原料运送到各家加盟店。但是加盟店都位于不同的区域，比如纽约、芝加哥。纽约使用一组原料，芝加哥使用另一种原料。在这里我们可以这样理解，这些不同的区域组成了原料家族，每个区域实现了一个完整的原料家族。
+
+- 首先有一个披萨产品，在这个披萨类里面，我们需要使用原料，将prepare()方法声明为抽象，在这个方法中，我们需要收集披萨所需要的原料。
+
+  ```java
+  public abstract class Pizza {
+      /*
+      * 每个披萨都持有一组在准备时会用到的原料
+      */
+      String name;
+      Dough dough;
+      Sauce sauce;
+      Veggies veggies[];
+      Cheese cheese;
+      Pepperoni pepperoni;
+      Clams clams;
+      /*
+      * prepare()方法声明为抽象方法。在这个方法中，我们需要收集披萨所需要的原料，而这些原料都是来自原料工厂
+      */
+      abstract void prepare();
+      void bake(){
+          System.out.println("Bake for 25 munites at 350");
+      }
+      void cut(){
+          System.out.println("Cutting the pizza into diagonal slices");
+      }
+      void box(){
+          System.out.println("Place pizza in official PizzaStore box");
+      }
+      public String getName() {
+          return name;
+      }
+      public void setName(String name) {
+          this.name = name;
+      }
+  }
+  ```
+
+- 具体的披萨制作时候需要从原料工厂中得到原料
+
+  ```java
+  public class CheesePizza extends Pizza{
+      PizzaIngredientFactory ingredientFactory;
+      /*
+      * 要制作披萨必须要有制作披萨的原料，而这些原料是从原料工厂运来的
+      */
+      public CheesePizza(PizzaIngredientFactory ingredientFactory){
+          this.ingredientFactory = ingredientFactory;
+          prepare();
+      }
+      /* 实现prepare方法
+      * prepare 方法一步一步地创建芝士比萨，每当需要原料时，就跟工厂要
+      */
+      void prepare() {
+          System.out.println("Prepareing " + name);
+          dough = ingredientFactory.createDough();
+          sauce = ingredientFactory.createSauce();
+          cheese = ingredientFactory.createCheese();
+      }
+  }
+  
+  public class ClamPizza extends Pizza{
+      PizzaIngredientFactory ingredientFactory;
+      public ClamPizza(PizzaIngredientFactory ingredientFactory){
+          this.ingredientFactory = ingredientFactory;
+      }
+      @Override
+      void prepare() {
+          System.out.println("Prepare " + name);
+          dough = ingredientFactory.createDough();
+          sauce = ingredientFactory.createSauce();
+          cheese = ingredientFactory.createCheese();
+          clams = ingredientFactory.createClams();
+      }
+  }
+  ```
+
+- 所以需要创建一个原料工厂。该工厂为抽象工厂，负责创建所有的原料
+
+  ```java
+  public interface PizzaIngredientFactory {
+      /*
+       *在接口中，每个原料都有一个对应的方法创建该原料
+      **/
+      public Dough createDough();
+      public Sauce createSauce();
+      public Cheese createCheese();
+      public Veggies[] createVeggies();
+      public Pepperoni createPepperoni();
+      public Clams createClams();
+  }
+  ```
+
+- 创建具体的原料工厂。该具体工厂只需要继承PizzaIngredientFactory，然后实现里面的方法即可。具体的原料工厂也可定义为多个
+
+  ```java
+  public class NYPizzaIngredientFactory implements PizzaIngredientFactory{
+      @Override
+      public Cheese createCheese() {
+          return new ReggianoCheese();
+      }
+      @Override
+      public Clams createClams() {
+          return new FreshClams();
+      }
+      @Override
+      public Dough createDough() {
+          return new ThinCrustDough();
+      }
+      @Override
+      public Pepperoni createPepperoni() {
+          return new SlicedPepperoni();
+      }
+      @Override
+      public Sauce createSauce() {
+          return new MarinaraSauce();
+      }
+      @Override
+      public Veggies[] createVeggies() {
+          Veggies veggies[] =  {new Garlic(),new Onion(),new Mushroom(),new RefPepper()};
+          return veggies;
+      }
+  }
+  ```
+
+- 
 
 ## 2.4 单例设计模式
 
