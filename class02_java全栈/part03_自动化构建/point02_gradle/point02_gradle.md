@@ -795,36 +795,30 @@ gradle tasks		# 查看当前工程下的task以及相关描述
 
 ### <font size=4 color=blue>**2. 通过Task输入输出**</font>
 
+<img src="https://s1.ax1x.com/2020/05/12/YUAq2T.png" alt="YUAq2T.png" border="0" />
+
+​		inputs和outputs是Task的两个属性，如果一个Task的输出是另一个Task的输入，则这两个Task就有的关联关系，即为这两个Task同时执行指定了执行顺序，首先被执行的是资源输出类型的Task；
+
+​		Task的输入和输出的执行逻辑是在Task的执行代码块中完成的；
+
+- inputs：输入类型是接收文件、目录或者key：value的任意数据对象
+
+  ```groovy
+  inputs.files("文件A","文件B")
+  inputs.file("文件路径")
+  inputs.dir("文件目录路径")
+  inputs.properties("key":任意类型Value)
+  ```
+
+- outputs：输出类型只能是文件类型
+
+  ```groovy
+  outputs.files("文件A","文件B")
+  outputs.file("文件路径")
+  outputs.dir("文件目录路径")
+  ```
+
 ### <font size=4 color=blue>**3. 通过API连接到构建生命周期**</font>
-
-:anchor: 
-
-1. 输入输出的作用
-
-   ​	一个Task的输出可以设置为另一个Task的输入，通过输入和输出关联Task之间的关系，这样可以通过制定Task的输入和输出改变Task的执行顺序
-
-2. Task的输入与输
-
-   - TaskInputs:代表Task的输入类，可以接收任意数据类型和文件类型
-   - TaskOutputs:代表Task的输出类，只可以接收文件类型
-
-3. 定义输入与输出
-
-   ```groovy
-   task 任务1{ Task task ->
-       // 为Task指定输出
-       task.outputs 目标文件
-   }
-   
-   task 任务1{ Task task ->
-       // 为Task指定输入
-       task.inputs 目标文件
-   }
-   ```
-
-- Task.inputs指定TaskInputs
-  - Task.outputs指定TaskOutputs
-  - 通过同一个目标文件将两个Task关联起来，如果其他的Task同时依赖的输入输出相关联的Task，gradle会将输出类型的Task先执行
 
 :anchor: 
 
@@ -850,15 +844,23 @@ gradle tasks		# 查看当前工程下的task以及相关描述
 
 # 第六章 Gradle核心 - 其他模块
 
-## 6.1 第三方库依赖管理
+## 6.1 Setting类作用
 
-## 6.2 工程初始化核心类Setting类作用
+​		在Gradle的初始化阶段会执行build.gradle文件构建Project对象，在此之前会加载settings.gradle文件构建Settings对象，settings.gradle主要作用是决定项目的哪些project要被Gradle管理。
 
-## 6.3 源码管理类SourceSet讲解
+- **include(String... var1)**：引入程序中的项目交由Gradle管理
+
+## 6.2 SourceSet类讲解
+
+## 6.3 Pluging的定义和使用
+
+## 6.4 Android插件对Gradle的扩展
+
+## 6.5 如何迁移到Gradle
 
 # 第七章 Gradle核心 - 自定义插件
 
-## 7.1 插件类Pluging的定义和使用
+## 7.1 插件类
 
 ## 7.2 Gradle 如何管理插件的依赖
 
@@ -866,6 +868,6 @@ gradle tasks		# 查看当前工程下的task以及相关描述
 
 ## 8.1 Android 和 Java的打包流程
 
-## 8.2 将脚本嵌入到打包流程
+## 8.2 将脚本嵌入到打包流程	
 
 ## 8.3 打包流程核心Task

@@ -74,15 +74,12 @@
    ```java
    @Configuration
    public class SecurityWebConfig extends WebSecurityConfigurerAdapter {
-       
        @Override
        protected void configure(HttpSecurity http) throws Exception {
        	
        }
-       
    }
    ```
-```
    
    - WebSecurityConfigurerAdapter：是Security提供的web应用的适配器配置类
    - configure(HttpSecurity http)：
@@ -111,7 +108,7 @@
      protected void configure(HttpSecurity http) throws Exception {
      	http.httpBasic();
      }
-```
+     ```
 
 3. <font size=4 color=red>**UsernamePasswordAuthenticationFilter：**</font>如果是表单登录会被这个过滤器拦截并校验
 
@@ -130,14 +127,14 @@
      // 修改默认的登录请求
      @Override
      protected void configure(HttpSecurity http) throws Exception {
-   		http.formLogin()
+      		http.formLogin()
              .loginPage("修改登录请求URL,如果请求被认证拦截会跳转到这个请求中")
              .loginProcessingUrl("默认是/login交给过滤器处理,这里可以修改")
              .usernameParameter("修改请求参数：用户名,默认是username")
              .passwordParameter("修改请求参数：密码,默认是password");
      }
      ```
-     
+
    - 通过定义认证的URL，扩展认证的方式：如果被认证拦截引发跳转的是html请求，则跳转到登录页面；如果被认证拦截引发跳转的是Rest请求，则返回json格式的认证响应，表示该请求需要认证；如下案例
 
      ```java
@@ -204,15 +201,14 @@
    - 如果要加密方式生效，需要将PasswordEncoder配置到Spring中
 
      ```java
-     @Bean
-     public PasswordEncoder passwordEncoder() {
-         // BCryptPasswordEncoder是Security内置的加密实现
-         return new BCryptPasswordEncoder();
-     }
+      @Bean
+          public PasswordEncoder passwordEncoder() {
+              // BCryptPasswordEncoder是Security内置的加密实现
+              return new BCryptPasswordEncoder();
+          }
      ```
 
    - 如果Spring中有PasswordEncoder类型的bean，在进行用户密码匹配时候，就会调用matches方法
-   
 7. <font size=4 color=red>**PasswordEncoder**</font>：设置密码加密方式，源码如下
 
 ## 1.3 Security认证源码分析
