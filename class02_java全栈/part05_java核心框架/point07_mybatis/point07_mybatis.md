@@ -6,7 +6,264 @@
 
 
 
-# 第一章 MyBatis简介
+# 前言
+
+
+
+# 第一章 Mybatis入门
+
+## 1.1 MyBatis简介
+
+​		前身是iBatis，原来是Apache的一个开源项目，在2010年6月份这个项目迁移到了Google Code，随着该项目的不断升级，iBatis3.x也正式推出，并同时改名为MyBatis。随后MyBatis项目迁移到了Github。
+
+- MyBatis 是支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架。
+- MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。
+- MyBatis可以使用简单的XML或注解用于配置和原始映射，将接口和Java的实体映射成数据库中的记录。
+
+## 1.2 MyBatis入门案例
+
+<font size=4 color=blue>**1. 准备MyBatis基本依赖** </font>
+
+```xml
+<!-- 1. MyBatis -->
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.2.6</version>
+</dependency>
+<dependency>
+    <groupId>cglib</groupId>
+    <artifactId>cglib</artifactId>
+    <version>3.2.5</version>
+</dependency>
+
+<!-- 2. log4j日志依赖 -->
+<dependency>
+    <groupId>log4j</groupId>
+    <artifactId>log4j</artifactId>
+    <version>1.2.16</version>
+</dependency>
+
+<!-- 3. 添加mysql驱动 -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.12</version>
+</dependency>
+
+<!-- 4. 测试相关工具 -->
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.11</version>
+</dependency>
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.16.18</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+<font size=4 color=blue>**2. log4j日志配置文件 log4j.properties** </font>
+
+```properties
+log4j.rootLogger=DEBUG,CONSOLE
+log4j.logger.cn.siliang.dao=debug
+log4j.logger.com.ibatis=debug
+log4j.logger.com.ibatis.common.jdbc.SimpleDataSource=debug
+log4j.logger.com.ibatis.common.jdbc.ScriptRunner=debug
+log4j.logger.com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate=debug
+log4j.logger.java.sql.Connection=debug
+log4j.logger.java.sql.Statement=debug
+log4j.logger.java.sql.PreparedStatement=debug
+log4j.logger.java.sql.ResultSet=debug
+log4j.logger.org.tuckey.web.filters.urlrewrite.UrlRewriteFilter=debug
+######################################################################################
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+log4j.appender.Threshold=error
+log4j.appender.CONSOLE.Target=System.out
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+log4j.appender.CONSOLE.layout.ConversionPattern=%d{yyyy-M-d HH:mm:ss}%x[%5p][%F:%L]%m%n
+######################################################################################
+log4j.appender.file=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.file.DatePattern=yyyy-MM-dd
+log4j.appender.file.File=log.log
+log4j.appender.file.Append=true
+log4j.appender.file.Threshold=error
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=%d{yyyy-M-d HH:mm:ss}%x[%5p](%F:%L)%m%n
+log4j.logger.com.opensymphony.xwork2=error
+
+```
+
+<font size=4 color=blue>**3. 初始化数据库** </font>
+
+```sql
+create database if not exists case_mybatisplus;
+use case_mybatisplus;
+
+create table if not exists mybatis_employee
+(
+  id         char(50) primary key comment 'ID',
+  dept_id    bigint unsigned comment '部门ID',
+  name       varchar(30)    default '' comment '用户名',
+  age        int unsigned   default 0 comment '年龄',
+  gender     tinyint        default 1 comment '性别',
+  salary     decimal(15, 3) default -1 comment '工资'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment 'mybatis练习:员工表';
+
+insert into mybatis_employee values ('1',1,'令狐冲',23,'1','2300');
+insert into mybatis_employee values ('2',2,'任盈盈',23,'1','3422');
+insert into mybatis_employee values ('3',1,'岳不群',55,'1','8888');
+
+create table if not exists mybatis_department
+(
+  id         bigint unsigned primary key auto_increment comment 'ID',
+  dept_name  varchar(30)     default '' comment '部门名称'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment 'mybatis练习:部门表';
+
+insert into mybatis_department values (1,'华山派');
+insert into mybatis_department values (2,'日月派');
+```
+
+<font size=4 color=blue>**4. 数据库对应JavaBean** </font>
+
+```java
+@Setter
+@Getter
+@ToString
+public class Department {
+    private Integer id;
+    private String deptName;
+}
+
+@Setter
+@Getter
+@ToString
+public class Employee {
+    private String id;
+    private String name;
+    private Integer age;
+    private Integer gender;
+    private BigDecimal salary;
+}
+```
+
+<font size=4 color=blue>**5. MyBatis全局配置文件 mybatis-config.xml** </font>
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 全局环境配置-->
+    <environments default="development">
+        <environment id="development">
+            <!-- 事物 -->
+            <transactionManager type="JDBC"/>
+            <!-- 配置数据源 -->
+            <dataSource type="POOLED">
+                <!-- 数据库驱动  -->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" 
+                          value="jdbc:mysql://localhost:3306/case_mybatisplus"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 引入自定义mapper.xml -->
+    <mappers>
+        <mapper resource="mybatis/mapper/StudentMapper.xml"/>
+    </mappers>
+</configuration>
+```
+
+<font size=4 color=blue>**4. SQL配置文件** </font>
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.mybatis.mapper.EmployeeMapper">
+
+</mapper>
+```
+
+<font size=4 color=blue>**5. 定义Mapper接口** </font>
+
+```java
+public interface EmployeeMapper {
+    // 查询学生
+    List<Employee> getEmployees();
+}
+```
+
+```xml
+<select id="getEmployees" resultType="com.panda.mybatis.model.domain.Employee">
+        select * from mybatis_employee
+</select>
+```
+
+<font size=4 color=blue>**6. 测试Helloworld** </font>
+
+```java
+public class EmployeeMapperTeset {
+    SqlSession sqlSession;
+	 @Before
+    public void before() throws Exception{
+        String resource = "mybatis/mybatis-config.xml";
+        // 配置mybatis获得输入流
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        // 创建 SqlSessionFactory
+        SqlSessionFactory sqlSessionFactory = 
+            new SqlSessionFactoryBuilder().build(inputStream);
+        //从 SqlSessionFactory 中获取 SqlSession
+        sqlSession = sqlSessionFactory.openSession();
+    }
+    @After
+    public void after() throws Exception{
+        // 关闭 SqlSession
+        sqlSession.close();
+    }
+    @Test
+    public void getEmployees() throws Exception{
+        EmployeeMapper01 mapper = sqlSession.getMapper(EmployeeMapper01.class);
+        List<Employee> employees = mapper.getEmployees();
+    }
+}
+```
+
+# 第二章 MyBatis相关API
+
+## 2.1 配置文件相关
+
+<font size=4 color=blue>**1. 配置文件方式** </font>
+
+- **xml格式的配置文件**
+- **Java代码格式的配置类**
+
+<font size=4 color=blue>**2. 常用配置属性说明** </font>
+
+
+
+## 2.2 SqlSessionFactory
+
+<font size=4 color=blue>**1. 说明** </font>
+
+
+
+<font size=4 color=blue>**2. API** </font>
+
+
+
+## 2.3 SqlSession
+
+
 
 
 
@@ -291,7 +548,7 @@
 
   - 封装规则五 : 直接使用map
 
-    - #{map.key} 获取map中的value
+    - {map.key} 获取map中的value
 
 - 特殊参数 : 集合类型参数 也会封装在map中
 
@@ -301,9 +558,11 @@
 
 ### 3. 取值方式
 
-- #{} : 预编译的方式生成SQL
-  - 可以指定取值规则JdbcType : 作用数据库可以不能识别null的处理 JdbcType = NULL改变null的处理
-  - 全局配置的 `jdbcTypeForNull = OTHER`对null的处理为`OTHER`
+- {} : 预编译的方式生成SQL
+
+- 可以指定取值规则JdbcType : 作用数据库可以不能识别null的处理 JdbcType = NULL改变null的处理
+- 全局配置的 `jdbcTypeForNull = OTHER`对null的处理为`OTHER`
+
 - ${} : 字符串替换的方式生成SQL
 
 ## 4.2 SQL映射标签
@@ -941,3 +1200,39 @@ public Object getNamedParams(Object[] args) {
     ```
 
 3. pojo需要实现序列化接口
+
+# 第一章 MyBatis简介
+
+# 第二章 MyBatis入门案例
+
+## 2.1 整合SpringBoot
+
+# 第三章 Mybatis全局配置
+
+#第四章 MyBatis SQL配置文件
+
+## 4.1 cache 
+
+## 4.2 cache-ref  
+
+## 4.3 resultMap  
+
+1. 级联属性封装结果集
+2. 
+
+## 4.4 sql  
+
+## 4.5 insert  
+
+## 4.6 update 
+
+## 4.7 delete 
+
+## 4.8 select 
+
+1. 返回单个对象
+2. 返回单个值
+3. 返回list
+4. 返回Map
+5. 返回记录的map
+
