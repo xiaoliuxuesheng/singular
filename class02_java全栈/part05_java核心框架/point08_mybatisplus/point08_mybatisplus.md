@@ -480,6 +480,91 @@
 
 # 第六章 代码生成器
 
+## 6.1 代码生成器简介
+
+​		MP的代码生成插件中定义了大量的自定义设置，生成的代码功能比较全面。
+
+​		表及字段命名策略：在MP中建议是数据中的表名和字段名也采用驼峰命名方式，如果采用下划线命名，需要开启全局下划线开关。数据库采用驼峰是因为在对应实体类和属性时就可以直接映射，稍微减少性能损耗；
+
+​		MP的代码生成是基于Java代码，而且功能远远大于MBG,可以生成实体类、mapper接口、service层、controller层；MBG是需要一个XML配置文件才可以生成；
+
+## 6.2 代码生成器环境准备
+
+1. 添加代码生成JAR依赖
+
+   ```xml
+   <dependency>
+       <groupId>com.baomidou</groupId>
+       <artifactId>mybatis-plus-generator</artifactId>
+       <version>3.1.1</version>
+   </dependency>
+   ```
+
+2. Java代码
+
+   ```java
+   import com.baomidou.mybatisplus.annotation.IdType;
+   import com.baomidou.mybatisplus.generator.AutoGenerator;
+   import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+   import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+   import com.baomidou.mybatisplus.generator.config.PackageConfig;
+   import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+   import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+   
+   public class MybatisPlusGeneratorConfig2 {
+       public static void main(String[] args) {
+           // 1. 全局配置
+           GlobalConfig config = new GlobalConfig();
+           config.setAuthor("刘晓东")
+                   .setOpen(false)
+                   .setActiveRecord(true)
+                   .setFileOverride(true)
+                   .setIdType(IdType.ID_WORKER)
+                   .setBaseResultMap(true)
+                   .setBaseColumnList(true)
+                   .setServiceName("%sService")
+                   .setXmlName("%sMapper")
+                   .setOutputDir("E:/panda-study-framework/commons-template/src/main/java");
+   
+           // 2. 数据源配置
+           DataSourceConfig dataSourceConfig = new DataSourceConfig();
+           dataSourceConfig.setUrl("jdbc:mysql://localhost:3306/case_mybatisplus?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC")
+                   .setDriverName("com.mysql.jdbc.Driver")
+                   .setUsername("root")
+                   .setPassword("root");
+   
+           // 3. 策略配置
+           StrategyConfig strategyConfig = new StrategyConfig();
+           strategyConfig.setCapitalMode(true)
+                   .setEntityLombokModel(true)
+                   .setSkipView(true)
+                   .setNaming(NamingStrategy.underline_to_camel)
+                   .setColumnNaming(NamingStrategy.underline_to_camel)
+                   .setInclude("employee", "department");
+   
+           // 2. 包配置
+           PackageConfig packageConfig = new PackageConfig();
+           packageConfig.setParent("com.panda.mp")
+                   .setModuleName("generator")
+                   .setEntity("model.domain")
+                   .setMapper("mapper")
+                   .setService("service")
+                   .setServiceImpl("service.impl")
+                   .setController("web.controller")
+                   .setXml("mapper");
+   
+           AutoGenerator generator = new AutoGenerator();
+           generator.setGlobalConfig(config)
+                   .setDataSource(dataSourceConfig)
+                   .setPackageInfo(packageConfig)
+                   .setStrategy(strategyConfig);
+           generator.execute();
+       }
+   }
+   ```
+
+   
+
 # 第七章 插件扩展
 
 # 第八章 自定义全局操作
