@@ -1,18 +1,265 @@
-
-
-
-
-
-
-
-
 # 前言
 
 
 
-# 第一章 Mybatis入门
+# 第一章 数据持久化
 
-## 1.1 MyBatis简介
+## 1.1 基本环境准备
+
+<font size=4 color=blue>**1. 准备数据库测试表** </font>
+
+```sql
+create database if not exists case_mybatisplus;
+use case_mybatisplus;
+
+create table if not exists mybatis_employee
+(
+  id         char(50) primary key comment 'ID',
+  dept_id    bigint unsigned comment '部门ID',
+  name       varchar(30)    default '' comment '用户名',
+  age        int unsigned   default 0 comment '年龄',
+  gender     tinyint        default 1 comment '性别',
+  salary     decimal(15, 3) default -1 comment '工资'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment 'mybatis练习:员工表';
+
+insert into mybatis_employee values ('1',1,'令狐冲',23,'1','2300');
+insert into mybatis_employee values ('2',2,'任盈盈',23,'1','3422');
+insert into mybatis_employee values ('3',1,'岳不群',55,'1','8888');
+
+create table if not exists mybatis_department
+(
+  id         bigint unsigned primary key auto_increment comment 'ID',
+  dept_name  varchar(30)     default '' comment '部门名称'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment 'mybatis练习:部门表';
+
+insert into mybatis_department values (1,'华山派');
+insert into mybatis_department values (2,'日月派');
+```
+
+<font size=4 color=blue>**2. 新建Maven工程添加基本依赖** </font>
+
+```xml
+<!-- 1. 添加mysql驱动 -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.18</version>
+</dependency>
+
+<!-- 2. 测试相关工具 -->
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.16.18</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+<font size=4 color=blue>**3. 新建数据表对应的实体类** </font>：在之后的学习中一直用这两张表
+
+```java
+@Setter
+@Getter
+@ToString
+public class EmployeeDO implements Serializable {
+    private static final long serialVersionUID = 749824536257824974L;
+    /**
+    * ID
+    */
+    private String id;
+    /**
+    * 部门ID
+    */
+    private Long deptId;
+    /**
+    * 用户名
+    */
+    private String name;
+    /**
+    * 年龄
+    */
+    private Integer age;
+    /**
+    * 性别
+    */
+    private Boolean gender;
+    /**
+    * 工资
+    */
+    private BigDecimal salary;
+
+}
+
+@Setter
+@Getter
+@ToString
+public class DepartmentDO {
+    /**
+     * id
+     */
+    private Integer id;
+    /**
+     * 部门名称
+     */
+    private String deptName;
+}
+```
+
+## 1.2 使用JDBC操作数据库
+
+<font size=4 color=blue>**使用JDBC操作数据库的基本流程** </font>
+
+- **【加】**加载数据库驱动：Class.forName(DRIVER)
+
+- **【连】**创建数据库连接对象：DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+- **【预】**创建SQL预编译Statement 对象：Connection.reateStatement()
+
+- **【执】**执行 SQL处理结果集：Statement .executeQuery(sql)
+
+- **【释】**释放对象：close()
+
+  ```java
+  public class JDBCTest {
+  
+      private static final String URL = "jdbc:mysql://127.0.0.1:3306/case_mybatisplus";
+      private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+      private static final String USERNAME = "root";
+      private static final String PASSWORD = "root";
+  
+      @Test
+      public void testJdbc() {
+          String sql = "SELECT * FROM mybatis_employee WHERE dept_id = 1";
+          Connection conn = null;
+          try {
+              Class.forName(DRIVER);
+              conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+              Statement stmt = conn.createStatement();
+              ResultSet rs = stmt.executeQuery(sql);
+              List<EmployeeDTO> employees = new ArrayList<>(rs.getRow());
+              while (rs.next()) {
+                  EmployeeDTO employee = new EmployeeDTO();
+                  employee.setId(rs.getString("id"));
+                  employee.setName(rs.getString("name"));
+                  employee.setDeptId(rs.getLong("dept_id"));
+                  employee.setAge(rs.getInt("age"));
+                  employee.setSalary(rs.getDouble("salary"));
+                  employee.setGender(rs.getBoolean("gender"));
+                  employees.add(employee);
+              }
+              System.out.println("Query SQL ==> " + sql);
+              System.out.println("Query Result: ");
+              employees.forEach(System.out::println);
+          } catch (Exception e) {
+              e.printStackTrace();
+          } finally {
+              try {
+                  if (conn != null) {
+                      conn.close();
+                  }
+              } catch (SQLException e) {
+                  e.printStackTrace();
+              }
+          }
+      }
+  }
+  ```
+
+  ​		JDBC最核心的步骤其实只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，其余的步骤虽然必不可少，但是可以模块化的东西；JDBC的优点不必多说，**最快的**，总结一下主要的缺点
+
+  - 每次请求需要创建数据库连接，浪费资源：可以采用连接池解决
+  - SQL和Java代码耦合严重，对优化不友好：解决方案将SQL和Java代码分离，SQL独立配置
+  - 对结果集的处理会浪费大量的代码处理简单的字段和实体属性的映射，冗余严重：完善数据库和实体映射
+
+## 1.3 使用SpringJDBC操作数据库
+
+<font size=4 color=blue>**1. 在Maven项目中添加SpringJDBC依赖** </font>
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.0.6.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jdbc</artifactId>
+    <version>5.1.2.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-tx</artifactId>
+    <version>5.1.2.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>commons-logging</groupId>
+    <artifactId>commons-logging</artifactId>
+    <version>1.2</version>
+</dependency>
+```
+
+<font size=4 color=blue>**1. 使用JdbcTemplate操作数据库** </font>
+
+```java
+public class StringJDBCTest {
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/case_mybatisplus";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
+    
+    JdbcTemplate jdbcTemplate;
+
+    @Before
+    public void initJdbcTemplate() throws Exception {
+        DataSource d = new SimpleDriverDataSource(new Driver(), URL, USERNAME, PASSWORD);
+        jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(d);
+    }
+
+    @Test
+    public void selectEmp() throws Exception {
+        String sql = "SELECT * FROM mybatis_employee WHERE dept_id = 1";
+        List<EmployeeDTO> employees = new ArrayList<>();
+        jdbcTemplate.query(sql, new ResultSetExtractor<List<EmployeeDTO>>() {
+            @Override
+            public List<EmployeeDTO> extractData(ResultSet rs) throws Exception{
+                while (rs.next()) {
+                    EmployeeDTO employee = new EmployeeDTO();
+                    employee.setId(rs.getString("id"));
+                    employee.setName(rs.getString("name"));
+                    employee.setDeptId(rs.getLong("dept_id"));
+                    employee.setAge(rs.getInt("age"));
+                    employee.setSalary(rs.getDouble("salary"));
+                    employee.setGender(rs.getBoolean("gender"));
+                    employees.add(employee);
+                }
+                return employees;
+            }
+        });
+        System.out.println("Query SQL ==> " + sql);
+        System.out.println("Query Result: ");
+        employees.forEach(System.out::println);
+    }
+}
+
+```
+
+​		从代码中可以看出来，使用SpringJDBC操作数据库的核心步骤也只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，但是对比JDBC而言，其他的步骤比如数据库的连接对象，SQL语句的执行对象不再在编码中完成；缺点还是很明显的：从JDBC的缺点中拷贝来两条
+
+- SQL和Java代码耦合严重，对优化不友好：解决方案将SQL和Java代码分离，SQL独立配置
+- 对结果集的处理会浪费大量的代码处理简单的字段和实体属性的映射，冗余严重：完善数据库和实体映射
+
+## 1.4 使用Hibernate操作数据库
+
+
+
+## MyBatis简介
 
 ​		前身是iBatis，原来是Apache的一个开源项目，在2010年6月份这个项目迁移到了Google Code，随着该项目的不断升级，iBatis3.x也正式推出，并同时改名为MyBatis。随后MyBatis项目迁移到了Github。
 
@@ -44,25 +291,7 @@
     <version>1.2.16</version>
 </dependency>
 
-<!-- 3. 添加mysql驱动 -->
-<dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-    <version>5.1.12</version>
-</dependency>
 
-<!-- 4. 测试相关工具 -->
-<dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>4.11</version>
-</dependency>
-<dependency>
-    <groupId>org.projectlombok</groupId>
-    <artifactId>lombok</artifactId>
-    <version>1.16.18</version>
-    <scope>provided</scope>
-</dependency>
 ```
 
 <font size=4 color=blue>**2. log4j日志配置文件 log4j.properties** </font>
@@ -100,57 +329,16 @@ log4j.logger.com.opensymphony.xwork2=error
 <font size=4 color=blue>**3. 初始化数据库** </font>
 
 ```sql
-create database if not exists case_mybatisplus;
-use case_mybatisplus;
 
-create table if not exists mybatis_employee
-(
-  id         char(50) primary key comment 'ID',
-  dept_id    bigint unsigned comment '部门ID',
-  name       varchar(30)    default '' comment '用户名',
-  age        int unsigned   default 0 comment '年龄',
-  gender     tinyint        default 1 comment '性别',
-  salary     decimal(15, 3) default -1 comment '工资'
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment 'mybatis练习:员工表';
-
-insert into mybatis_employee values ('1',1,'令狐冲',23,'1','2300');
-insert into mybatis_employee values ('2',2,'任盈盈',23,'1','3422');
-insert into mybatis_employee values ('3',1,'岳不群',55,'1','8888');
-
-create table if not exists mybatis_department
-(
-  id         bigint unsigned primary key auto_increment comment 'ID',
-  dept_name  varchar(30)     default '' comment '部门名称'
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment 'mybatis练习:部门表';
-
-insert into mybatis_department values (1,'华山派');
-insert into mybatis_department values (2,'日月派');
 ```
 
 <font size=4 color=blue>**4. 数据库对应JavaBean** </font>
 
 ```java
-@Setter
-@Getter
-@ToString
-public class Department {
-    private Integer id;
-    private String deptName;
-}
 
-@Setter
-@Getter
-@ToString
-public class Employee {
-    private String id;
-    private String name;
-    private Integer age;
-    private Integer gender;
-    private BigDecimal salary;
-}
 ```
 
-<font size=4 color=blue>**5. MyBatis全局配置文件 mybatis-config.xml** </font>
+<font size=4 color=blue>**5. MyBatis全局配置文件 mybatis-configuration.xml** </font>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -158,6 +346,9 @@ public class Employee {
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
     <!-- 全局环境配置-->
     <environments default="development">
         <environment id="development">
@@ -167,7 +358,7 @@ public class Employee {
             <dataSource type="POOLED">
                 <!-- 数据库驱动  -->
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" 
+                <property name="url"
                           value="jdbc:mysql://localhost:3306/case_mybatisplus"/>
                 <property name="username" value="root"/>
                 <property name="password" value="root"/>
@@ -177,7 +368,7 @@ public class Employee {
 
     <!-- 引入自定义mapper.xml -->
     <mappers>
-        <mapper resource="mybatis/mapper/StudentMapper.xml"/>
+        <mapper resource="mybatis/mapper/EmployeeMapper.xml"/>
     </mappers>
 </configuration>
 ```
@@ -191,6 +382,9 @@ public class Employee {
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.panda.mybatis.mapper.EmployeeMapper">
 
+    <select id="selectList" resultType="com.panda.mybatis.model.domain.EmployeeDO">
+        select * from mybatis_employee;
+    </select>
 </mapper>
 ```
 
@@ -198,30 +392,22 @@ public class Employee {
 
 ```java
 public interface EmployeeMapper {
-    // 查询学生
-    List<Employee> getEmployees();
+    List<EmployeeDO> selectList();
 }
-```
-
-```xml
-<select id="getEmployees" resultType="com.panda.mybatis.model.domain.Employee">
-        select * from mybatis_employee
-</select>
 ```
 
 <font size=4 color=blue>**6. 测试Helloworld** </font>
 
 ```java
-public class EmployeeMapperTeset {
-    SqlSession sqlSession;
-	 @Before
+SqlSession sqlSession;
+    @Before
     public void before() throws Exception{
-        String resource = "mybatis/mybatis-config.xml";
+        String resource = "mybatis/mybatis-configuration.xml";
         // 配置mybatis获得输入流
         InputStream inputStream = Resources.getResourceAsStream(resource);
         // 创建 SqlSessionFactory
-        SqlSessionFactory sqlSessionFactory = 
-            new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSessionFactory sqlSessionFactory =
+                new SqlSessionFactoryBuilder().build(inputStream);
         //从 SqlSessionFactory 中获取 SqlSession
         sqlSession = sqlSessionFactory.openSession();
     }
@@ -232,10 +418,10 @@ public class EmployeeMapperTeset {
     }
     @Test
     public void getEmployees() throws Exception{
-        EmployeeMapper01 mapper = sqlSession.getMapper(EmployeeMapper01.class);
-        List<Employee> employees = mapper.getEmployees();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        List<EmployeeDO> employees = mapper.selectList();
+        employees.forEach(System.out::println);
     }
-}
 ```
 
 # 第二章 MyBatis相关API
