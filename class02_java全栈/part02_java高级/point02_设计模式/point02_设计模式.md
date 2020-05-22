@@ -170,21 +170,25 @@
       }
   }
   
-// 工厂模式需要扩展创建的对象
-  public class ProductC implements IProduct {
-      public void show() {
-          System.out.println(" 创建产品C成功 ");
-      }
-  }
   ```
-  
-- 定义工厂类，定义抽象方法
+
+- 工厂模式需要扩展创建的对象
 
   ```java
-  public interface Factory {
-  	IProduct create();
-  }
+   public class ProductC implements IProduct {
+        public void show() {
+            System.out.println(" 创建产品C成功 ");
+        }
+    }
   ```
+
+- 定义工厂类，定义抽象方法
+
+   ```java
+  public interface Factory {
+    	IProduct create();
+    }
+   ```
 
 - 在工厂子类中完成对象创建
 
@@ -202,16 +206,18 @@
       }
   }
   
-// 为扩展的产品c创建工厂
-  public class ProductCFactory implements Factory {
-      @Override
-      public IProduct create() {
-          return new ProductC();
-      }
-  }
   ```
   
+- 为扩展的产品c创建工厂
 
+  ```java
+  public class ProductCFactory implements Factory {
+  	@Override
+  	public IProduct create() {
+  		return new ProductC();
+  	}
+  }
+  ```
 ## 2.3 抽象工厂模式
 
 ​		在工厂方法模式中，我们使用一个工厂创建一个产品，也就是说一个具体的工厂对应一个具体的产品。但是有时候我们需要一个工厂能够提供多个产品对象，而不是单一的对象，这个时候我们就需要使用抽象工厂模式。
