@@ -188,7 +188,7 @@
   public interface Factory {
     	IProduct create();
     }
-   ```
+  ```
 
 - 在工厂子类中完成对象创建
 
@@ -1254,13 +1254,78 @@ public class Single{
 
 ### 8.1 概述
 
-​		由于某些原因需要给某对象提供一个代理以控制对该对象的访问。这时，访问对象不适合或者不能直接引用目标对象，代理对象作为访问对象和目标对象之间的中介。
+​		代理模式的主要作用是用于增强目标对象。在不改变目标对象的前提，对目标对象实现增强；主要思路是将调用对象和被调用对象分离，一定程度上降低了耦合度。扩展性好；而且保护了目标对象；主要优点是：职责清晰，目标对象就是实现实际的业务逻辑，不用关心其他非本职责的事务，通过后期的代理完成，附带的结果就是编程简洁清晰。
+
+​		代理模式的缺点主要是：①对象与对象调用之间增加了一层代理，可能会导致执行的速度变慢；②实现代理的代码有时会很复杂，添加了额外的工作量；③增加系统的复杂度
 
 ### 8.2 实现原理
 
-:anchor: JDK静态代理
+:anchor: **静态代理**：静态代理类的前提是被动代理对象由接口
 
-:anchor: JDK动态代理
+- 买房案例：买房消费者的实现类有个买房的人
+
+  ```java
+  // 消费者抽象接口
+  public interface HouseConsumer {
+      void buyHouse(Integer money);
+  }
+  
+  // 具体的买房对象
+  public class HoseOwner implements HouseConsumer {
+      public void buyHouse(Integer money) {
+          System.out.println("HoseOwner总共花了"+money+"元钱 ---  买了一套房子");
+      }
+  }
+  ```
+
+- 为买房的人定义一个代理：帮助买房人买房，代理的主要功能是讨价还价，买到房后为房子进行装修
+
+  ```java
+  public class StaticHoseProxy implements HouseConsumer {
+  
+      private HoseOwner hoseOwner;
+  
+      public StaticHoseProxy(HoseOwner hoseOwner) {
+          this.hoseOwner = hoseOwner;
+      }
+  
+      public void buyHouse(Integer money) {
+          int cheep = money-money/3;
+          bargain(cheep);
+          hoseOwner.buyHouse(money-cheep);
+          finish();
+      }
+  
+      private void bargain(Integer money){
+          System.out.println("------------>>>> 房屋代理进行讨价还价,便宜了"+money+"元");
+      }
+  
+      private void finish(){
+          System.out.println("------------>>>> 房屋代理把房子装修好了");
+      }
+  
+  }
+  ```
+
+- 最后测试：让代理帮助买房人买房
+
+  ```java
+  @Test
+  public void staticProxyTest(){
+      StaticHoseProxy proxy = new StaticHoseProxy(new HoseOwner());
+      proxy.buyHouse(9000);
+  }
+  
+  
+  // 买房结果
+  ------------>>>> 房屋代理进行讨价还价,便宜了6000元
+  HoseOwner总共花了3000元钱 ---  买了一套房子
+  ------------>>>> 房屋代理把房子装修好了
+  ```
+
+:anchor: JDK动态代理：利用JDK的API,动态的在内存中构建代理对象。不需要继承父类，可扩展性高。前提仍然是被代理对象需要实现一个接口
+
+
 
 :anchor: SpringCGLIB动态代价
 
