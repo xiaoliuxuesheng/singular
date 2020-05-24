@@ -1,3 +1,154 @@
+1. Nginx基本概念
+
+   - Nginx是什么
+   - 反向代理
+   - 负载均衡
+   - 动静分离
+     - 静态资源：可以理解为前端的固定页面，这里面包含HTML、CSS、JS、图片等等，不需要查数据库也不需要程序处理，直接就能够显示的页面，如果想修改内容则必须修改页面，但是访问效率相当高。
+     - 动态资源：需要程序处理或者从数据库中读数据，能够根据不同的条件在页面显示不同的数据，内容更新不需要修改页面但是访问速度不及静态页面。
+
+2. Nginx安装与命令
+
+   - Linux系统中安装
+
+   - Nginx命令
+
+     - 查看Nginx安装，对yum安装有效
+
+       ```sh
+       whereis nginx
+       ```
+
+     - 查看Nginx版本号
+
+       ```sh
+       nginx -v
+       ```
+
+     - nginx启动命令
+
+       ```sh
+       # 关闭
+       nginx -s stop
+       
+       # 启动
+       nginx
+       
+       # 冲加载nginx配置文件
+       nginx -s reload
+       ```
+
+   - Nginx配置文件
+
+     - 全局块：从配置文件开始到events直接的内容是全局块的配置内容，主要作用是设置一些影响nginx服务器整体运行的配置指令，主要包括：①配置运行Nginx服务器的用户组②允许生成的work process数③ 进程PID存放路径 ④ 日志存放路径以及类型 ⑤ 外部配置文件的引入
+
+       ```sh
+       user  nginx;
+       worker_processes  1;  # 值越大处理并发越多,被硬件和软件约束
+       
+       error_log  /var/log/nginx/error.log warn;
+       pid        /var/run/nginx.pid;
+       ```
+
+     - events块：主要影响Nginx服务器与用户的网络连接，常用的设置包括①是否开启多work_process下的网络连接进行序列化②是否允许同时接收多个网络连接选取那种事件驱动模型来处理请求，每个work_process可以同时支持的最大连接数
+
+       ```sh
+       events {
+           worker_connections  1024;
+       }
+       ```
+
+     - http块：最重要的配置模块，代理、缓存、日志的定义、以及第三方模块的配置；http块也包括：http全局块和server块
+
+       - http全局块：配置的指令包括文件引入、MINI_TYPE定义、日志自定义、链接超时时间、单链接请求数上限
+
+         ```sh
+         http {
+             include       mime.types;
+             default_type  application/octet-stream;
+         
+             #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+             #                  '$status $body_bytes_sent "$http_referer" '
+             #                  '"$http_user_agent" "$http_x_forwarded_for"';
+         
+             #access_log  logs/access.log  main;
+         
+             sendfile        on;
+             #tcp_nopush     on;
+         
+             #keepalive_timeout  0;
+             keepalive_timeout  65;
+         
+             #gzip  on;
+         }
+         ```
+
+       - server块
+
+         ```sj
+         http {
+         	    server {
+                     listen       80;
+                     server_name  localhost;
+         
+                     #charset koi8-r;
+         
+                     #access_log  logs/host.access.log  main;
+         
+                     location / {
+                         root   html;
+                         index  index.html index.htm;
+                     }
+         
+                     #error_page  404              /404.html;
+         
+                     # redirect server error pages to the static page /50x.html
+                     #
+                     error_page   500 502 503 504  /50x.html;
+                     location = /50x.html {
+                         root   html;
+                     }
+         
+                     # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+                     #
+                     #location ~ \.php$ {
+                     #    proxy_pass   http://127.0.0.1;
+                     #}
+         
+                     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+                     #
+                     #location ~ \.php$ {
+                     #    root           html;
+                     #    fastcgi_pass   127.0.0.1:9000;
+                     #    fastcgi_index  index.php;
+                     #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+                     #    include        fastcgi_params;
+                     #}
+         
+                     # deny access to .htaccess files, if Apache's document root
+                     # concurs with nginx's one
+                     #
+                     #location ~ /\.ht {
+                     #    deny  all;
+                 #}
+             }	
+         }
+         ```
+
+         
+
+3. Nginx实战 - 反向代理
+
+4. Nginx实战 - 负载均衡
+
+5. Nginx实战 - 动静分离
+
+6. Nginx集群高可用
+
+7. Nginx原理
+
+
+
 # 第一部分 Nginx基础
 
 ## 第一章 快速安装
@@ -36,6 +187,105 @@
 <font size=4 color=blue>**1. Windows系统**</font>
 
 <font size=4 color=blue>**2. Linux系统yum安装**</font>
+
+- 默认情况Centos7中无Nginx的源，最近发现Nginx官网提供了Centos的源地址。添加源
+
+  ```sh
+  sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+  ```
+
+- 安装Nginx：通过yum search nginx看看是否已经添加源成功。如果成功则执行下列命令安装Nginx
+
+  ```sh
+  sudo yum install -y nginx
+  ```
+
+- 启动Nginx并设置开机自动运行
+
+  ```sh
+  sudo systemctl start nginx.service
+  sudo systemctl enable nginx.service
+  ```
+
+- wget安装
+
+  - 下载相关组件
+
+    ```sh
+    wget http://nginx.org/download/nginx-1.10.2.tar.gz
+    wget http://www.openssl.org/source/openssl-fips-2.0.10.tar.gz
+    wget http://zlib.net/zlib-1.2.11.tar.gz
+    wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.40.tar.gz
+    ```
+
+  - 安装c++编译环境，如已安装可略过
+
+    ```sh
+    yum install gcc-c++
+    
+    期间会有确认提示输入y回车
+    Is this ok [y/N]:y
+    ```
+
+  - 安装Nginx及相关组件
+
+    - openssl安装
+
+      ```sh
+      [root@localhost src]# tar zxvf openssl-fips-2.0.10.tar.gz省略安装内容...
+      [root@localhost src]# cd openssl-fips-2.0.10
+      [root@localhost openssl-fips-2.0.10]# ./config && make && make install省略安装内容...
+      ```
+
+    - pcre安装
+
+      ```sh
+      [root@localhost src]# tar zxvf pcre-8.40.tar.gz省略安装内容...
+      [root@localhost src]# cd pcre-8.40
+      [root@localhost pcre-8.40]# ./configure && make && make install省略安装内容...
+      ```
+
+    - zlib安装
+
+      ```sh
+      [root@localhost src]# tar zxvf zlib-1.2.11.tar.gz省略安装内容...
+      [root@localhost src]# cd zlib-1.2.11
+      [root@localhost zlib-1.2.11]# ./configure && make && make install省略安装内容...
+      ```
+
+    - nginx安装
+
+      ```sh
+      [root@localhost src]# tar zxvf nginx-1.10.2.tar.gz省略安装内容...
+      [root@localhost src]# cd nginx-1.10.2
+      [root@localhost nginx-1.10.2]# ./configure && make && make install省略安装内容...
+      ```
+
+  - 启动Nginx
+
+    - 先找一下nginx安装到什么位置上了
+
+      ```sh
+      whereis nginx
+      ```
+
+    - 进入目录并启动
+
+  - 开放80端口
+
+    ```sh
+    firewall-cmd --permanent --zone=public --add-port=80/tcp
+    
+    firewall-cmd --reload
+    ```
+
+  - 安装目录启动命令
+
+    ```sh
+    /usr/local/nginx
+    ```
+
+    
 
 <font size=4 color=blue>**3. Docker安装**</font>
 
