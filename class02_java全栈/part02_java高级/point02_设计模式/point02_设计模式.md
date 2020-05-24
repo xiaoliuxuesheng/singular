@@ -1248,7 +1248,6 @@ public class Single{
   }
   ```
 
-  
 
 ## 3.3 代理模式
 
@@ -1260,7 +1259,7 @@ public class Single{
 
 ### 8.2 实现原理
 
-:anchor: **静态代理**：静态代理类的前提是被动代理对象由接口
+:anchor: **静态代理**：静态代理的实现方式有两种，一是代理类实现被代理对象的接口，二是代理类继承被代理类；这样做的目的只有一个，就是代理对象需要执行被代理对象中真实的方法。代理对象通过组合被代理对象，由代理对象间接的调用被代理对象的方法。
 
 - 买房案例：买房消费者的实现类有个买房的人
 
@@ -1323,11 +1322,155 @@ public class Single{
   ------------>>>> 房屋代理把房子装修好了
   ```
 
-:anchor: JDK动态代理：利用JDK的API,动态的在内存中构建代理对象。不需要继承父类，可扩展性高。前提仍然是被代理对象需要实现一个接口
+:anchor: JDK动态代理：利用JDK的API,动态的在内存中构建代理对象。不需要继承父类，可扩展性高。前提仍然是被代理对象需要实现一个接口；其核心原理是`Proxy.newProxyInstance()`通过反射创建出代理对象，在代理对象中实现方法增强，最终也是在代理类中通过反射调用被代理对象的真实方法
 
+- Proxy.newProxyInstance()参数说明：loader是类加载器，需要使用到被代理对象的类加载器才能在内存中创建被代理对象的代理类；创建的代理类的类型需要参考被代理对象的接口，第二个参数interface，可能会实现多个接口；handler表示调用处理程序，表示对被代理对象的增强逻辑，是个接口所以自定义JDK代理类需要实现InvocationHandler接口
 
+  ```java
+  public static Object newProxyInstance(ClassLoader loader,
+                                        Class<?>[] interfaces,
+                                        InvocationHandler handler){
+      
+  }
+  ```
 
-:anchor: SpringCGLIB动态代价
+- 案例说明：还是买房的案例，定义一个JKD代理类
+
+  ```java
+  public class InvocationHandlerImpl implements InvocationHandler {
+   
+      /**
+       * 这个就是我们要代理的真实对象
+       */
+      private Object subject;
+   
+      /**
+       * 构造方法，给我们要代理的真实对象赋初值
+       *
+       * @param subject
+       */
+      public InvocationHandlerImpl(Object subject)
+      {
+          this.subject = subject;
+      }
+   
+      /**
+       * 该方法负责集中处理动态代理类上的所有方法调用。
+       * 调用处理器根据这三个参数进行预处理或分派到委托类实例上反射执行
+       *
+       * @param proxy  代理类实例
+       * @param method 被调用的方法对象
+       * @param args   调用参数
+       * @return
+       * @throws Throwable
+       */
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+          //在代理真实对象前我们可以添加一些自己的操作
+          System.out.println("在调用之前，我要干点啥呢？");
+   
+   
+          //当代理对象调用真实对象的方法时，其会自动的跳转到代理对象关联的handler对象的invoke方法来进行调用
+          Object returnValue = method.invoke(subject, args);
+   
+          //在代理真实对象后我们也可以添加一些自己的操作
+          System.out.println("在调用之后，我要干点啥呢？");
+   
+          return returnValue;
+      }
+  }
+  ```
+
+- 使用Proxy.newProxyInstance()创建代理对象并执行增强方法
+
+  ```java
+  @Test
+  public void jdkProxyTest(){
+      // 代理的真实对象
+      HoseOwner owner = new HoseOwner();
+      ClassLoader loader = owner.getClass().getClassLoader(); // 反射获取类加载器
+      Class[] interfaces = owner.getClass().getInterfaces();	// 反射获取代理类的接口
+      
+      // 要代理哪个真实对象，就将该对象传进去，最后是通过该真实对象来调用其方法
+      InvocationHandlerImpl handler = new InvocationHandlerImpl(owner);
+  
+      // 该方法用于为指定类装载器、一组接口及调用处理器生成动态代理类实例
+      HouseConsumer subject = (HouseConsumer) Proxy.newProxyInstance(loader, interfaces, handler);
+  
+      subject.buyHouse(9000);
+  }
+  ```
+
+:anchor: SpringCGLIB动态代理：CGLIB(Code Generation Library)是一个开源项目！是一个强大的，高性能，高质量的Code生成类库，CGLIB代理原理是通过动态为代理里生成子类，通过子类实现的代理功能
+
+- 添加CGLIB依赖或者SpringAOP自带CGLIB
+
+  ```xml
+  <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2.2</version>
+  </dependency>
+  ```
+
+- 实现一个业务类，注意，这个业务类并没有实现任何接口
+
+  ```java
+  public class HelloService {
+   
+      public HelloService() {
+          System.out.println("HelloService构造");
+      }
+  
+      // 该方法不能被子类覆盖,Cglib是无法代理final修饰的方法的,因为子类无法实现final方法
+      final public void sayOthers(String name) {
+          System.out.println("HelloService:sayOthers>>"+name);
+      }
+   
+      public void sayHello() {
+          System.out.println("HelloService:sayHello");
+      }
+  }
+  
+  ```
+
+- 自定义代理增强类实现MethodInterceptor接口
+
+  ```java
+  public class CglibProxy implements MethodInterceptor {
+  
+      /**
+       * sub：cglib生成的代理对象
+       * method：被代理对象方法
+       * objects：方法入参
+       * methodProxy: 代理方法
+       */
+      @Override
+      public Object intercept(Object sub, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+          System.out.println("======插入前置通知======");
+          Object object = methodProxy.invokeSuper(sub, objects);
+          System.out.println("======插入后者通知======");
+          return object;
+      }
+  }
+  ```
+
+- 测试
+
+  ```java
+  @Test
+  public void testCglib() throws Exception{
+      Enhancer enhancer = new Enhancer();
+      // 设置enhancer对象的父类
+      enhancer.setSuperclass(HelloService.class);
+      // 设置enhancer的回调对象
+      enhancer.setCallback(new CglibProxy());
+      // 创建代理对象
+      HelloService proxy= (HelloService)enhancer.create();
+      // 通过代理对象调用目标方法
+      proxy.sayHello();
+  
+  }
+  ```
 
 ## 第09章 外观模式
 
