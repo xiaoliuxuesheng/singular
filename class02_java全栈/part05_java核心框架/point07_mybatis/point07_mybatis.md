@@ -113,7 +113,7 @@ public class DepartmentDO {
 
 ## 1.2 使用JDBC操作数据库
 
-<font size=4 color=blue>**使用JDBC操作数据库的基本流程** </font>
+<font size=4 color=blue>**1. 使用JDBC操作数据库的基本流程** </font>
 
 - **【加】**加载数据库驱动：Class.forName(DRIVER)
 
@@ -171,11 +171,13 @@ public class DepartmentDO {
   }
   ```
 
-  ​		JDBC最核心的步骤其实只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，其余的步骤虽然必不可少，但是可以模块化的东西；JDBC的优点不必多说，**最快的**，总结一下主要的缺点
+<font size=4 color=blue>**2. 使用总结** 	</font>
 
-  - 每次请求需要创建数据库连接，浪费资源：可以采用连接池解决
-  - SQL和Java代码耦合严重，对优化不友好：解决方案将SQL和Java代码分离，SQL独立配置
-  - 对结果集的处理会浪费大量的代码处理简单的字段和实体属性的映射，冗余严重：完善数据库和实体映射
+​		JDBC最核心的步骤其实只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，其余的步骤虽然必不可少，但是可以模块化的东西；JDBC的优点不必多说，**最快的**，总结一下主要的缺点
+
+- 每次请求需要创建数据库连接，浪费资源：可以采用连接池解决
+- SQL和Java代码耦合严重，对优化不友好：解决方案将SQL和Java代码分离，SQL独立配置
+- 对结果集的处理会浪费大量的代码处理简单的字段和实体属性的映射，冗余严重：完善数据库和实体映射
 
 ## 1.3 使用SpringJDBC操作数据库
 
@@ -204,7 +206,7 @@ public class DepartmentDO {
 </dependency>
 ```
 
-<font size=4 color=blue>**1. 使用JdbcTemplate操作数据库** </font>
+<font size=4 color=blue>**2. 使用JdbcTemplate操作数据库** </font>
 
 ```java
 public class StringJDBCTest {
@@ -250,51 +252,34 @@ public class StringJDBCTest {
 
 ```
 
-​		从代码中可以看出来，使用SpringJDBC操作数据库的核心步骤也只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，但是对比JDBC而言，其他的步骤比如数据库的连接对象，SQL语句的执行对象不再在编码中完成；缺点还是很明显的：从JDBC的缺点中拷贝来两条
+<font size=4 color=blue>**3. 使用总结** </font>
+
+​	从代码中可以看出来，使用SpringJDBC操作数据库的核心步骤也只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，但是对比JDBC而言，其他的步骤比如数据库的连接对象，SQL语句的执行对象不再在编码中完成；缺点还是很明显的：从JDBC的缺点中拷贝来两条
 
 - SQL和Java代码耦合严重，对优化不友好：解决方案将SQL和Java代码分离，SQL独立配置
 - 对结果集的处理会浪费大量的代码处理简单的字段和实体属性的映射，冗余严重：完善数据库和实体映射
 
 ## 1.4 使用Hibernate操作数据库
 
-
-
-## MyBatis简介
-
-​		前身是iBatis，原来是Apache的一个开源项目，在2010年6月份这个项目迁移到了Google Code，随着该项目的不断升级，iBatis3.x也正式推出，并同时改名为MyBatis。随后MyBatis项目迁移到了Github。
-
-- MyBatis 是支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架。
-- MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。
-- MyBatis可以使用简单的XML或注解用于配置和原始映射，将接口和Java的实体映射成数据库中的记录。
-
-## 1.2 MyBatis入门案例
-
-<font size=4 color=blue>**1. 准备MyBatis基本依赖** </font>
+<font size=4 color=blue>**1. 添加Hibernate的依赖** </font>
 
 ```xml
-<!-- 1. MyBatis -->
 <dependency>
-    <groupId>org.mybatis</groupId>
-    <artifactId>mybatis</artifactId>
-    <version>3.2.6</version>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>5.2.6.Final</version>
 </dependency>
-<dependency>
-    <groupId>cglib</groupId>
-    <artifactId>cglib</artifactId>
-    <version>3.2.5</version>
-</dependency>
+```
 
-<!-- 2. log4j日志依赖 -->
+<font size=4 color=blue>**2. 添加日志依赖以及相关的配置文件：在这里使用 `log4j.properties`** </font>
+
+```xml
 <dependency>
     <groupId>log4j</groupId>
     <artifactId>log4j</artifactId>
     <version>1.2.16</version>
 </dependency>
-
-
 ```
-
-<font size=4 color=blue>**2. log4j日志配置文件 log4j.properties** </font>
 
 ```properties
 log4j.rootLogger=DEBUG,CONSOLE
@@ -323,20 +308,134 @@ log4j.appender.file.Threshold=error
 log4j.appender.file.layout=org.apache.log4j.PatternLayout
 log4j.appender.file.layout.ConversionPattern=%d{yyyy-M-d HH:mm:ss}%x[%5p](%F:%L)%m%n
 log4j.logger.com.opensymphony.xwork2=error
-
 ```
 
-<font size=4 color=blue>**3. 初始化数据库** </font>
+<font size=4 color=blue>**3. Hibernate数据配置文件：hibernate.cfg.xml（根目录）** </font>
 
-```sql
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="current_session_context_class">thread</property>
+        <property name="hibernate.connection.driver_class">
+            com.mysql.jdbc.Driver
+        </property>
+        <property name="hibernate.connection.url">
+            jdbc:mysql://localhost/case_mybatisplus
+        </property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
 
+        <!-- 可以将向数据库发送的SQL语句显示出来 -->
+        <property name="hibernate.show_sql">true</property>
+        <!-- 格式化SQL语句 -->
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- hibernate的方言 -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+        <!-- 配置hibernate的映射文件所在的位置 -->
+        <mapping resource="Employee.hbm.xml" />
+    </session-factory>
+</hibernate-configuration>
 ```
 
-<font size=4 color=blue>**4. 数据库对应JavaBean** </font>
+<font size=4 color=blue>**4. 实体类映射文件：Employee.hbm.xml（根目录）** </font>
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.panda.mybatis">
+    <!--
+        name：即实体类的全名
+        table：映射到数据库里面的那个表的名称
+        catalog：数据库的名称
+     -->
+    <class name="com.panda.mybatis.model.domain.EmployeeDO" table="mybatis_employee">
+        <!-- class下必须要有一个id的子元素 -->
+        <!-- id是用于描述主键的 -->
+        <id name="id" column="id">
+            <!-- 主键生成策略 -->
+            <generator class="native"/>
+        </id>
+        <!--
+            使用property来描述属性与字段的对应关系
+            如果length忽略不写，且你的表是自动创建这种方案，那么length的默认长度是255
+        -->
+        <property name="deptId" column="dept_id"/>
+        <property name="name" column="name"/>
+        <property name="age" column="age"/>
+        <property name="gender" column="gender"/>
+        <property name="salary" column="salary"/>
+    </class>
+</hibernate-mapping>
+```
+
+<font size=4 color=blue>**5. 使用Hibernate做查询** </font>
 
 ```java
+@Test
+public void demo1() {
+    //1. 加载Hibernate的核心配置文件
+    Configuration configuration = new Configuration().configure();
 
+    //2. 创建SessionFactory对象，类似于JDBC中的连接池
+    SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+    //3. 通过SessionFactory获取到Session对象，类似于JDBC中的Connection
+    Session session = sessionFactory.openSession();
+    EmployeeDO employeeDO = session.get(EmployeeDO.class, "1");
+    System.out.println(employeeDO);
+    //7. 释放资源
+    session.close();
+    sessionFactory.close();
+}
 ```
+
+<font size=4 color=blue>**6. 使用总结** </font>
+
+​		在Hibernate的使用中，需要在配置文件中添加大量的配置，在对数据操作的过程中除了需要关注数据本来的业务逻辑，还需要对Hibernate框架的配置做到熟练应用，学习成本稍高；
+
+​		Hibernate的使用还是比较简单的，在上述的查询操作中没有看见一句SQL，其核心逻辑就是一句话：`session.get(EmployeeDO.class, "1")`；
+
+# 第二章 Mybatis入门案例
+
+## 2.1 MyBatis简介
+
+​		前身是iBatis，原来是Apache的一个开源项目，在2010年6月份这个项目迁移到了Google Code，随着该项目的不断升级，iBatis3.x也正式推出，并同时改名为MyBatis。随后MyBatis项目迁移到了Github。
+
+- MyBatis 是支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架。
+- MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。
+- MyBatis可以使用简单的XML或注解用于配置和原始映射，将接口和Java的实体映射成数据库中的记录。
+
+## 2.2 MyBatis入门案例
+
+<font size=4 color=blue>**1. 准备MyBatis基本依赖** </font>
+
+```xml
+<!-- 1. MyBatis -->
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.2.6</version>
+</dependency>
+<dependency>
+    <groupId>cglib</groupId>
+    <artifactId>cglib</artifactId>
+    <version>3.2.5</version>
+</dependency>
+```
+
+<font size=4 color=blue>**2. log4j日志依赖以及配置文件 ** </font>
+
+<font size=4 color=blue>**3. 初始化数据库和数据表** </font>
+
+<font size=4 color=blue>**4. JavaBean** </font>
 
 <font size=4 color=blue>**5. MyBatis全局配置文件 mybatis-configuration.xml** </font>
 
@@ -399,7 +498,9 @@ public interface EmployeeMapper {
 <font size=4 color=blue>**6. 测试Helloworld** </font>
 
 ```java
-SqlSession sqlSession;
+public class MyBatisTest {
+
+    SqlSession sqlSession;
     @Before
     public void before() throws Exception{
         String resource = "mybatis/mybatis-configuration.xml";
@@ -422,6 +523,7 @@ SqlSession sqlSession;
         List<EmployeeDO> employees = mapper.selectList();
         employees.forEach(System.out::println);
     }
+}
 ```
 
 # 第二章 MyBatis相关API
@@ -435,23 +537,13 @@ SqlSession sqlSession;
 
 <font size=4 color=blue>**2. 常用配置属性说明** </font>
 
-
-
 ## 2.2 SqlSessionFactory
 
 <font size=4 color=blue>**1. 说明** </font>
 
-
-
 <font size=4 color=blue>**2. API** </font>
 
-
-
 ## 2.3 SqlSession
-
-
-
-
 
 # 第二章 MyBatis的基本操作
 
@@ -468,9 +560,6 @@ SqlSession sqlSession;
   ```java
   new SqlSessionFactoryBuilder().build(resourceAsStream);
   ```
-
-  
-
 
 
 # 第三章 Mybatis全局配置文件
