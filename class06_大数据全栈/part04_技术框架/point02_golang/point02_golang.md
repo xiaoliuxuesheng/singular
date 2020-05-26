@@ -50,11 +50,175 @@
 
 ## 2.1 关键字和保留字
 
+### <font size=4 color=blue>1. Go语言中标识符</font>
+
+- 只能由字母数字和`_`(下划线）组成，
+- 只能以字母和`_`开头
+
+### <font size=4 color=blue>2. 内置关键字</font>
+
+| break        | default         | func       | interface   | select     |
+| ------------ | --------------- | ---------- | ----------- | ---------- |
+| **case**     | **defer**       | **go**     | **map**     | **struct** |
+| **chan**     | **else**        | **goto**   | **package** | **switch** |
+| **const**    | **fallthrough** | **if**     | **range**   | **type**   |
+| **continue** | **for**         | **import** | **return**  | **var**    |
+
+### <font size=4 color=blue>3. 保留字</font>
+
+- **Constants**：true、false、iota、nil
+
+- **Types**
+
+  | int         | int8        | int16         | int32          | int64       |
+  | ----------- | ----------- | ------------- | -------------- | ----------- |
+  | **uint**    | **uint8**   | **uint16**    | **uint32**     | **uint64**  |
+  | **float32** | **float64** | **complex64** | **complex128** | **uintptr** |
+  | **bool**    | **byte**    | **rune**      | **string**     | **error**   |
+
+- **Functions**
+
+  | make     | len       | cap         | new         | append   |
+  | -------- | --------- | ----------- | ----------- | -------- |
+  | **copy** | **close** | **delete**  | **complex** | **real** |
+  | **imag** | **panic** | **recover** |             |          |
+
 ## 2.2 操作符
+
+### <font size=4 color=blue>1. 算术运算符</font>
+
+| 运算符 | 描述 |
+| :----- | :--: |
+| +      | 相加 |
+| -      | 相减 |
+| *      | 相乘 |
+| /      | 相除 |
+| %      | 求余 |
+
+### <font size=4 color=blue>2. 关系运算符</font>
+
+| 运算符 |                             描述                             |
+| :----: | :----------------------------------------------------------: |
+|   ==   |    检查两个值是否相等，如果相等返回 True 否则返回 False。    |
+|   !=   |  检查两个值是否不相等，如果不相等返回 True 否则返回 False。  |
+|   >    |  检查左边值是否大于右边值，如果是返回 True 否则返回 False。  |
+|   >=   | 检查左边值是否大于等于右边值，如果是返回 True 否则返回 False。 |
+|   <    |  检查左边值是否小于右边值，如果是返回 True 否则返回 False。  |
+|   <=   | 检查左边值是否小于等于右边值，如果是返回 True 否则返回 False。 |
+
+### <font size=4 color=blue>3. 逻辑运算符</font>
+
+| 运算符 |                             描述                             |
+| :----: | :----------------------------------------------------------: |
+|   &&   | 逻辑 AND 运算符。 如果两边的操作数都是 True，则为 True，否则为 False。 |
+|  \|\|  | 逻辑 OR 运算符。 如果两边的操作数有一个 True，则为 True，否则为 False。 |
+|   !    | 逻辑 NOT 运算符。 如果条件为 True，则为 False，否则为 True。 |
+
+###<font size=4 color=blue>4. 位运算符</font>
+
+| 运算符 |                             描述                             |
+| :----: | :----------------------------------------------------------: |
+|   &    |    参与运算的两数各对应的二进位相与。 （两位均为1才为1）     |
+|   \|   |  参与运算的两数各对应的二进位相或。 （两位有一个为1就为1）   |
+|   ^    | 参与运算的两数各对应的二进位相异或，当两对应的二进位相异时，结果为1。 （两位不一样则为1） |
+|   <<   | 左移n位就是乘以2的n次方。 “a<<b”是把a的各二进位全部左移b位，高位丢弃，低位补0。 |
+|   >>   | 右移n位就是除以2的n次方。 “a>>b”是把a的各二进位全部右移b位。 |
+
+###  <font size=4 color=blue>5. 赋值运算符</font>
+
+| 运算符 |                      描述                      |
+| :----: | :--------------------------------------------: |
+|   =    | 简单的赋值运算符，将一个表达式的值赋给一个左值 |
+|   +=   |                  相加后再赋值                  |
+|   -=   |                  相减后再赋值                  |
+|   *=   |                  相乘后再赋值                  |
+|   /=   |                  相除后再赋值                  |
+|   %=   |                  求余后再赋值                  |
+|  <<=   |                   左移后赋值                   |
+|  >>=   |                   右移后赋值                   |
+|   &=   |                  按位与后赋值                  |
+|  \|=   |                  按位或后赋值                  |
+|   ^=   |                 按位异或后赋值                 |
 
 ## 2.3 数据类型
 
+### <font size=4 color=blue>1. 整型</font>
+
+### <font size=4 color=blue>2. 浮点型</font>
+
+### <font size=4 color=blue>3. 复数</font>
+
+### <font size=4 color=blue>4. bool</font>
+
+### <font size=4 color=blue>5. byte</font>
+
+### <font size=4 color=blue>6. rune</font>
+
+### <font size=4 color=blue>7. string</font>
+
+### <font size=4 color=blue>8. 数组</font>
+
+### <font size=4 color=blue>9. 切片</font>
+
+### <font size=4 color=blue>10. map</font>
+
 ## 2.4 基本语法
+
+### <font size=4 color=blue>1. if条件语句</font>
+
+```go
+if 表达式1 {
+    分支1
+} else if 表达式2 {
+    分支2
+} else{
+    分支3
+}
+```
+
+- go语言格式说明：规定与`if`匹配的左括号`{`必须与`if和表达式`放在同一行，`{`放在其他位置会触发编译错误
+
+### <font size=4 color=blue>2. switch条件语句</font>
+
+```go
+switch {
+	case 掉价表达式:
+		fallthrough
+	default:
+		// 
+}
+```
+
+- go中默认每个case默认break
+- fallthrough语法可以执行满足条件的case的下一个case
+
+### <font size=4 color=blue>3. for遍历语句</font>
+
+```go
+for 初始语句;条件表达式;结束语句{
+    循环体语句
+}
+
+// for循环的初始语句可以被忽略，但是初始语句后的分号必须要写
+i := 0
+for ; i < 10; i++ {
+    fmt.Println(i)
+}
+
+// for循环的初始语句和结束语句都可以省略
+i := 0
+for i < 10 {
+    fmt.Println(i)
+    i++
+}
+```
+
+- for range
+- for循环可以通过break、goto、return、panic语句强制退出循环。
+
+### <font size=4 color=blue>4. goto</font>
+
+
 
 # 第三章 Go语言函数
 
