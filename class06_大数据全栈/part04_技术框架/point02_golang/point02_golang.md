@@ -36,7 +36,7 @@
 
 ### <font size=4 color=blue>2. IntelliJ GoLand</font>
 
-## 1.3 Go语言结构
+## 1.4 Go语言结构
 
 ### <font size=4 color=blue>1. GO语言语法特征</font>
 
@@ -44,7 +44,7 @@
 - 有接口，有函数式编程，CSP并发模型（gorountine-channel）
 - 有编程经验的来说，go语言是另一种标准（重新树立学习观）
 
-##1.4 Go命令
+##1.5 Go命令
 
 #第二章 Go语言基础
 
