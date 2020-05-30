@@ -1,26 +1,35 @@
-- [point01_struts2](/class02_java全栈/part05_java核心框架/point01_struts2/point01_struts2.md)
-- [point02_spring](/class02_java全栈/part05_java核心框架/point02_spring/point02_spring.md)
-- [point03_hibernate](/class02_java全栈/part05_java核心框架/point03_hibernate/point03_hibernate.md)
-- [point04_jpa](/class02_java全栈/part05_java核心框架/point04_jpa/point04_jpa.md)
-- [point05_sringmvc](/class02_java全栈/part05_java核心框架/point05_sringmvc/point05_sringmvc.md)
-- [point06_springdata](/class02_java全栈/part05_java核心框架/point06_springdata/point06_springdata.md)
-- [point07_mybatis](/class02_java全栈/part05_java核心框架/point07_mybatis/point07_mybatis.md)
-- [point08_mybatisplus](/class02_java全栈/part05_java核心框架/point08_mybatisplus/point08_mybatisplus.md)
-- [point09_shiro](/class02_java全栈/part05_java核心框架/point09_shiro/point09_shiro.md)
-- [point10_springsecurity](/class02_java全栈/part05_java核心框架/point10_springsecurity/point10_springsecurity.md)
+# [point01_struts2](/class02_java全栈/part05_java核心框架/point01_struts2/point01_struts2.md)
 
-# 开发底层规范
+# [point02_spring](/class02_java全栈/part05_java核心框架/point02_spring/point02_spring.md)
 
-## 01_HTTP响应状态码
+# [point03_hibernate](/class02_java全栈/part05_java核心框架/point03_hibernate/point03_hibernate.md)
 
-### 1xx:信息
+# [point04_jpa](/class02_java全栈/part05_java核心框架/point04_jpa/point04_jpa.md)
+
+# [point05_sringmvc](/class02_java全栈/part05_java核心框架/point05_sringmvc/point05_sringmvc.md)
+
+# [point06_springdata](/class02_java全栈/part05_java核心框架/point06_springdata/point06_springdata.md)
+
+# [point07_mybatis](/class02_java全栈/part05_java核心框架/point07_mybatis/point07_mybatis.md)
+
+# [point08_mybatisplus](/class02_java全栈/part05_java核心框架/point08_mybatisplus/point08_mybatisplus.md)
+
+# [point09_shiro](/class02_java全栈/part05_java核心框架/point09_shiro/point09_shiro.md)
+
+# [point10_springsecurity](/class02_java全栈/part05_java核心框架/point10_springsecurity/point10_springsecurity.md)
+
+开发底层规范
+
+01_HTTP响应状态码
+
+1xx:信息
 
 | code | message             | 说明                                                         |
 | ---- | ------------------- | ------------------------------------------------------------ |
 | 100  | Continue            | 服务器仅接收到部分请求，但是一旦服务器并没有拒绝该请求，客户端应该继续发送其余的请求。 |
 | 101  | Switching Protocols | 服务器转换协议：服务器将遵从客户的请求转换到另外一种协议。   |
 
-### 2xx:成功
+2xx:成功
 
 | code | message                       | 说明                                                         |
 | ---- | ----------------------------- | ------------------------------------------------------------ |
@@ -32,7 +41,7 @@
 | 205  | Reset Content                 | 没有新文档。但浏览器应该重置它所显示的内容。用来强制浏览器清除表单输入内容。 |
 | 206  | Partial Content               | 客户发送了一个带有Range头的GET请求，服务器完成了它。         |
 
-### 3xx:重定向
+3xx:重定向
 
 | code | message            | 说明                                                         |
 | ---- | ------------------ | ------------------------------------------------------------ |
@@ -45,7 +54,7 @@
 | 306  | Unused             | 此代码被用于前一版本。目前已不再使用，但是代码依然被保留。   |
 | 307  | Temporary Redirect | 被请求的页面已经临时移至新的url。                            |
 
-### 4xx:客户端错误
+4xx:客户端错误
 
 | code | message                         | 说明                                                         |
 | ---- | ------------------------------- | ------------------------------------------------------------ |
@@ -69,7 +78,7 @@
 | 417  | Expectation Failed              | 执行失败                                                     |
 | 423  |                                 | 锁定的错误                                                   |
 
-###  5xx:服务器错误
+5xx:服务器错误
 
 | code | message                    | 说明                                               |
 | ---- | -------------------------- | -------------------------------------------------- |
@@ -80,9 +89,9 @@
 | 504  | Gateway Timeout            | 网关超时。                                         |
 | 505  | HTTP Version Not Supported | 服务器不支持请求中指明的HTTP协议版本               |
 
-# 第一部分 统一的交互风格
+第一部分 统一的交互风格
 
-## 1.1 响应码规范
+1.1 响应码规范
 
 **:anchor: 说明** 
 
@@ -139,7 +148,7 @@
    - 采用枚举的方式实现对状态码的规范：代码简介，逻辑清晰；
    - 设计静态方法：`valueOf(Integer code)`根据状态码获取所对应的状态对象；
 
-## 1.2 响应格式
+1.2 响应格式
 
 **:anchor: 说明**
 
@@ -193,7 +202,7 @@ public class ResponseResult<T> {
 }
 ```
 
-## 1.3 异常处理
+1.3 异常处理
 
 **:anchor: 说明**
 

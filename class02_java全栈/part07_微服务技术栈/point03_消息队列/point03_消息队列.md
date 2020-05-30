@@ -1,3 +1,9 @@
+point03_消息队列
+	1_kafka
+	2_rabbitmq
+	3_activemq
+	4_rocketmq
+
 # 第一章 消息队列
 
 ## 1.1 消息队列介绍

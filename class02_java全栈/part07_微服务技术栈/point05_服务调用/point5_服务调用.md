@@ -1,3 +1,8 @@
+point05_服务调用
+	1_RestTemplate
+	2_dubbo
+	3_OpenFeign
+
 // https://www.bilibili.com/video/av57339315/?p=1
 // https://www.bilibili.com/video/av57339315/?p=2
 // https://www.bilibili.com/video/av57339315/?p=3
