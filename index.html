@@ -7,6 +7,17 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <style>
+    .app-nav{
+      position: fixed;
+      width: 63%;
+      height: 38px; 
+      right: 20px;
+      font-weight: bold; 
+      margin-bottom: 0;
+    }
+  
+  </style>
 </head>
 <body>
   <div id="app"></div>
@@ -18,7 +29,6 @@
       loadSidebar: false,
       subMaxlevel: 4,
       loadNavbar: true,
-      // complete configuration parameters
       search: {
         placeholder: '搜索',
         noData: '找不到结果',
@@ -27,15 +37,15 @@
         namespace: 'xiaoliuxuesheng',
       },
       plugins: [
-    function(hook) {
-      var footer = [
-        '<a href="javascript:scroll(0,0)" style="float:right;position: fixed;bottom: 32px;right: 50px">返回顶部</a>'
-      ].join('');
-      hook.afterEach(function(html) {
-        return html + footer;
-      });
-    }
-  ]
+        function(hook) {
+          var footer = [
+            '<a href="javascript:scroll(0,0)" style="float:right;position: fixed;bottom: 32px;right: 20px">返回顶部</a>'
+          ].join('');
+          hook.afterEach(function(html) {
+            return html + footer;
+          });
+        }
+      ]
     }
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
@@ -43,6 +53,5 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-
 </body>
 </html>
