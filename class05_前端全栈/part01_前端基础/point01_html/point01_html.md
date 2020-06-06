@@ -288,12 +288,38 @@
 
 ## 5.3 button
 
+
+
+## 5.4 process
+
+1. **进度条（process）**：用于显示某个特定任务的时间进度这个任务的时间上限是可以确定的值，如播放一段音乐的时间；或者是不可确定的值，如上传一个文件到服务器上；max表示进度条的最大值，value表是进度条的当前进度值；
+
+   ```html
+   <progress max="100" value="30"></progress>
+   ```
+
+2. **使用说明**：在2020年的建议是这个标签仅供娱乐，慎用；不同的浏览器有不同的样式，而且样式还特别难看；兼容性还不好，Android、iOS、浏览器中使用不统一；
+
+## 5.5 meter
+
+1. **度量器（meter）**：与process类型，不同之处在于，它的最小值和最大值必须是确定的
+
+   ```html
+   <meter max="100" high="80" low="20" value="10" ></meter>
+   <meter max="100" high="80" low="20" value="25" ></meter>
+   <meter max="100" high="80" low="20" value="70" ></meter>
+   <meter max="100" high="80" low="20" value="85" ></meter>
+   <meter max="100" high="80" low="20" value="100" ></meter>
+   ```
+
+2. **使用说明**：**同上**；再重复一遍：在2020年的建议是这个标签仅供娱乐，慎用；不同的浏览器有不同的样式，而且样式还特别难看；兼容性还不好，Android、iOS、浏览器中使用不统一；
+
 # 第六章 多媒体标签
 
 ## 6.1 audio
 
+
+
 ## 6.2 video
 
-## 6.3 process
-
-## 6.4 meter
+1. 
