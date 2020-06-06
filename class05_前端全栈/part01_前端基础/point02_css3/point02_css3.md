@@ -104,9 +104,15 @@
 | -------------------------------- | ------------------------------------------------------------ |
 | <font color=blue>▲ 继承性</font> | 只有color、font-、text-开头的属性才会被继承，<br />只要是被嵌套的后代就会被继承；<br /> a标签的中文字的颜色和下划线不能被继承； <br />标题标签的文字大小不能被继承； |
 | <font color=blue>▲ 层叠性</font> | 是CSS处理样式设置冲突的能力：层叠样式表；                    |
-| <font color=blue>▲ 优先级</font> | ID > class > 标签 > 通配符 > 继承 > 默认<br />行内样式        --->    权重：1000<br />id                    --->    权重：0100<br />class               --->    权重：0010<br />标签/伪元素   --->    权重：0001<br />*                      --->    权重：0000 |
+| <font color=blue>▲ 优先级</font> | ID > class > 标签 > 通配符 > 继承 > 默认<br />行内样式        --->    权重：1000<br />id                    --->    权重：0100<br />class/伪类      --->    权重：0010<br />标签                --->    权重：0001<br />*                      --->    权重：0000 |
 
 - **!import**：官方认为!import和优先级没一点关系。不建议使用!import：Never绝不要在全站使用!import。要优先考虑使用样式规则的优先级来解决问题而不是 `!important`
+
+1. **层叠性**：是指多种CSS样式的叠加，如果是一个属性通过不同的选择器作用到了同一个元素上，这时候其中的一个属性会被另一个属性层叠掉；**属性层叠基本的规则：就近原则**
+2. **继承性**：子标签会继承父标签的**某些**样式，可以继承是样式如上表格中的说明；
+3. **优先级**：五大基本选择器有各自的权重，根据选择器权重相加，权重大的优先级高；
+   - 级别直接的权重不可跨越 
+   - 继承的权重为0
 
 # 第二部分 CSS选择器
 
@@ -127,8 +133,8 @@
 | 儿子选择器     | 选择器A > 选择器B | 匹配是选择器A儿子元素为**选择器B**的       |
 | 交集选择器     | 选择器A选择器B    | 匹配是**选择器A**并且并且是**选择器B**元素 |
 | 并集选择器     | 选择器A , 选择器B | 匹配**所有选择器**选中的元素               |
-| 相邻兄弟选择器 | 选择器A + 选择器B | 匹配选择器A**平级的相邻的**选择器B         |
-| 通用兄弟选择器 | 选择器A ~ 选择器B | 匹配选择器A**平级的**选择器B               |
+| 相邻兄弟选择器 | 选择器A + 选择器B | 匹配选择器A**平级的相邻的选择器B**         |
+| 通用兄弟选择器 | 选择器A ~ 选择器B | 匹配选择器A**平级的选择器B**               |
 
 ## 第三章 属性选择器
 
@@ -374,65 +380,67 @@ background: 颜色 图片 平铺 关联 定位;
 
 ## 第五章 盒子模型
 
+​		所有的文档标签都是一个矩形框，被称为元素框（element box）：主要是描述了这个文档元素在浏览器中所占的位置大小；**所以每个盒子除了有自己的大小和位置外，还会影响到其他盒子的位置。**
+
 <img src="https://s1.ax1x.com/2020/06/04/twUi2F.jpg" alt="twUi2F.jpg" border="0" />
 
 ### <font color=blue size=4>▲ 内容宽度：width</font>
 
 ### <font color=blue size=4>▲ 内容高度：height</font>
 
-**<font color=blue size=4>▲ 边框样式：border-style</font>**
+### <font color=blue size=4>▲ 边框：border</font>
 
-- **同时设置四条边框的样式**
+- **边框圆角：border-redius**
+
+  ```css
+  border-redius: 上 右 下 左;
+  ```
+
+  > 如果值设置一个圆角，则四个圆的属性都有效；
+  >
+  > 如果对应位置缺省设置圆角，则该位置的圆角和对角的角度相同
+
+- **边框样式：border-style**
 
   ```css
   border-style: 上 右 下 左;
   ```
 
-  > - 如果缺省一个边，默认样式和对边相同
+  | 常用边框样式值 | 描述                                                         |
+  | :------------- | :----------------------------------------------------------- |
+  | **none**       | 定义无边框。                                                 |
+  | **solid**      | 定义实线。                                                   |
+  | **dashed**     | 定义虚线。在大多数浏览器中呈现为实线。                       |
+  | hidden         | 与 "none" 相同。不过应用于表时除外，对于表，hidden 用于解决边框冲突。 |
+  | dotted         | 定义点状边框。在大多数浏览器中呈现为实线。                   |
+  | double         | 定义双线。双线的宽度等于 border-width 的值。                 |
+  | groove         | 定义 3D 凹槽边框。其效果取决于 border-color 的值。           |
+  | ridge          | 定义 3D 垄状边框。其效果取决于 border-color 的值。           |
+  | inset          | 定义 3D inset 边框。其效果取决于 border-color 的值。         |
+  | outset         | 定义 3D outset 边框。其效果取决于 border-color 的值。        |
+  | inherit        | 规定应该从父元素继承边框样式。                               |
 
-- **常用边框样式值**
-
-  | 值         | 描述                                                         |
-  | :--------- | :----------------------------------------------------------- |
-  | **none**   | 定义无边框。                                                 |
-  | **solid**  | 定义实线。                                                   |
-  | **dashed** | 定义虚线。在大多数浏览器中呈现为实线。                       |
-  | hidden     | 与 "none" 相同。不过应用于表时除外，对于表，hidden 用于解决边框冲突。 |
-  | dotted     | 定义点状边框。在大多数浏览器中呈现为实线。                   |
-  | double     | 定义双线。双线的宽度等于 border-width 的值。                 |
-  | groove     | 定义 3D 凹槽边框。其效果取决于 border-color 的值。           |
-  | ridge      | 定义 3D 垄状边框。其效果取决于 border-color 的值。           |
-  | inset      | 定义 3D inset 边框。其效果取决于 border-color 的值。         |
-  | outset     | 定义 3D outset 边框。其效果取决于 border-color 的值。        |
-  | inherit    | 规定应该从父元素继承边框样式。                               |
-
-**<font color=blue size=4>▲ 边框颜色：border-color</font>**
-
-- **同时设置四条边框的颜色**
+- **边框颜色：border-color**
 
   ```css
   border-color: 上 右 下 左;
   ```
 
-**<font color=blue size=4>▲ 边框宽度：border-width</font>**
-
-- **同时设置四条边框的颜色**
+- **边框宽度：border-width**
 
   ```css
   border-width: 上 右 下 左;
   ```
 
-### <font color=blue size=4>▲ 边框：border</font>
-
-- 通用边框设置格式
+- **边框综合：border**
 
   ```css
   border: 宽度 颜色 样式;
   ```
 
-- 分别设置边框
+- **分别设置边框**
 
-  1. border-top
+  1. 顶部边框：border-top
 
      > border-top-color
      >
@@ -440,7 +448,7 @@ background: 颜色 图片 平铺 关联 定位;
      >
      > border-top-width
 
-  2. border-bottom
+  2. 底部边框：border-bottom
 
      > border-bottom-color
      >
@@ -448,7 +456,7 @@ background: 颜色 图片 平铺 关联 定位;
      >
      > border-bottom-width
 
-  3. border-left
+  3. 左边框：border-left
 
      > border-left-color
      >
@@ -456,7 +464,7 @@ background: 颜色 图片 平铺 关联 定位;
      >
      > border-left-width
 
-  4. border-right
+  4. 右边框：border-right
 
      > border-right-color
      >
@@ -466,6 +474,7 @@ background: 颜色 图片 平铺 关联 定位;
 
 ### <font color=blue size=4>▲ 内边距：padding</font>
 
+- **内边距是指元素内容到边框的距离**；
 - 内边距首先会考虑到父元素的边界，所以会有垂直方向内边距塌陷现象；
 - 内边距会修改盒子模型的大小
 - 内边距会有背景属性
@@ -481,21 +490,35 @@ padding: 上 右 下 左;
 
 ### <font color=blue size=4>▲ 外边距：margin</font>
 
-- 在默认布局的垂直方向的外边距，默认情况下外边距是不会叠加，会出现合并现象，哪个盒子的外边距大以哪个为主；
-- 盒子水平居中：设置左右方向为auto：`margin 垂直距离 auto`
+- **外边距是指元素与元素之间的距离**；
 
-```css
-margin: 上 右 下 左;
-```
+  ```css
+  margin: 上 右 下 左;
+  ```
 
-1. margin-bottom
-2. margin-left
-3. margin-right
-4. margin-top
+  1. margin-bottom
+  2. margin-left
+  3. margin-right
+  4. margin-top
+
+- **外边距合并现象**
+
+  - **平级盒子**：在默认布局的垂直方向的外边距，默认情况下外边距是不会叠加，会出现合并现象，哪个盒子的外边距大以哪个为主；尽量避免：在垂直方向只给一个盒子设置外边距；
+  - **嵌套盒子**：嵌套盒子在垂直方式同时设置外边距会出现外边距塌陷现象：子盒子的外边距会影响到父盒子的位置；
+    - 给父盒子设置边框或者内边距进行限制子元素；
+    - 根据BFC机制：为父盒子设置溢出隐藏（overflow:hidden）属性；
+
+- **盒子水平居中**：设置左右方向为auto：`margin 垂直距离 auto`
+
+  ```css
+  margin: 0 auto;
+  ```
 
 ### <font color=blue size=4>▲ 容器最终尺寸：box-sizing</font>
 
-- 默认修改盒子模型的属性会改变盒子的大小，box-sizing用于规定容器的最终尺寸模式。
+- 默认的盒子尺寸计算方式是外盒尺寸：即修改盒子模型的属性会改变盒子的大小，box-sizing用于修改容器的最终尺寸计算模式为内盒尺寸（根据width和height属性确定尺寸）
+  - 外盒尺寸：空间宽高 = 内容 + padding + border + margin
+  - 内盒尺寸：width/height = 内容 + padding + border
 
 | 值          | 说明                                                         |
 | :---------- | :----------------------------------------------------------- |
@@ -534,8 +557,6 @@ margin: 上 右 下 左;
 | table-caption      | 此元素会作为一个表格标题显示（类似 <caption>）               |
 | inherit            | 规定应该从父元素继承 display 属性的值。                      |
 
-
-
 ## 第六章 浮动属性
 
 ### <font color=blue size=4>▲ 浮动元素：float</font>
@@ -560,6 +581,8 @@ margin: 上 右 下 左;
 | inherit | 规定应该从父元素继承 clear 属性的值。 |
 
 # 第四部分 CSS布局
+
+​		网页中展示的元素是文字、图片、音频、视频；网页布局就是要合理的分配这样网页元素，网页布局的本质就是将页面元素放置在不同的盒子里，通过CSS对盒子的排列布局从而实现网页的搭建；
 
 ## 第一章 标准流
 
