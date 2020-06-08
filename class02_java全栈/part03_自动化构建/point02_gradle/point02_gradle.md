@@ -698,7 +698,7 @@ gradle tasks		# 查看当前工程下的task以及相关描述
   | overwrite   | 重写Task          |
   | action      | 执行逻辑          |
 
-- **Task配置格式一** : 在Task名称后使用参数的格式设置属性与值
+- **Task配置格式一** : 在Task名称后使用参数的格式设置属性与值；推荐在定义Task时候定义task属性
 
   ```groovy
   task Task名称("属性名":"值"){
@@ -716,7 +716,7 @@ gradle tasks		# 查看当前工程下的task以及相关描述
 
 ## 8.2 Task执行顺序
 
-​		在Project的配置阶段中，gradle中的配置代码都会被执行到，所以在配置阶段所有的Task中的代码都会执行到，但是不会执行Task的逻辑，Task逻辑的执行是在执行阶段完成的，Task的执行逻辑是在doFirst和doLast代码块中；
+​		在Project的配置阶段中，gradle中的配置代码都会被执行到，所以在配置阶段所有的Task中的代码都会执行到，但是不会执行Task的逻辑，Task逻辑的执行是在执行阶段完成的，执行逻辑需要定义在task的在doFirst和doLast代码块中；
 
 - **配置Task在执行阶段执行doFirst或doLast的特点**
   
@@ -846,13 +846,24 @@ gradle tasks		# 查看当前工程下的task以及相关描述
 
 ## 6.1 Setting类作用
 
-​		在Gradle的初始化阶段会执行build.gradle文件构建Project对象，在此之前会加载settings.gradle文件构建Settings对象，settings.gradle主要作用是决定项目的哪些project要被Gradle管理。
+​		在Gradle的初始化阶段会执行build.gradle文件构建Project对象，在此之前会加载settings.gradle文件构建Settings对象，settings.gradle主要作用是决定项目的哪些project要被Gradle管理。在Gradle的初始化阶段就是在执行settings.gradle相关配置
 
 - **include(String... var1)**：引入程序中的项目交由Gradle管理
 
 ## 6.2 SourceSet类讲解
 
+​		Gradle从读取源码从src/mian中读取的的原因是因为这个配置默认是定义在SourceSet这个类中；可以通过修改SourceSet默认配置修改约定的结构；
+
 ## 6.3 Pluging的定义和使用
+
+​		plugin主要体现的封装的作用，将定义好的多个Task封装为一个Plugin，每个Plugin可以完成一个特定的流程或功能；
+
+1. 创建一个Plugin的工程：定义在工程的buildSrc目录中
+   - 与Java程序不同是在main文件夹中是groovy包而不是java包
+   - 在build.gradle文件中配置SourceSet说明groovy包和source包的位置
+2. 定义Plugin类：继承Plugin<Project>作为泛型表示当前引入这个插件的Project
+3. 在resources中定义插件的标识
+4. 在其他工程中引入自定义的plugin
 
 ## 6.4 Android插件对Gradle的扩展
 

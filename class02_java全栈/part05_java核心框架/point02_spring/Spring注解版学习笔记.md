@@ -32,6 +32,54 @@
    new AnnotationConfigApplicationContext(Class<?>... componentClasses);
    ```
 
+   - Bean的生命周期相关配置：默认是由Spring容器管理，当时Bean的创建和销毁方法可以自定义，Spring管理声明周期时候会调用初始化或销毁方法；多实例的Bean容器不会负责执行销毁方法；
+
+     ```java
+     @Bean(initMethod="",destoryMethod="")
+     ```
+
+   - Bean的初始化和销毁方法有两个接口需要自定义Bean实现，可以完成初始化方法
+
+     ```java
+     @Component
+     class Xxx implements InitializingBean {
+         public void afterPropertiesSet()throw Exception {
+         }
+     }
+     
+     //  单实例的Bean的销毁会被容器调用
+     @Component
+     class Xxx implements DisposableBean {
+         void destory() throw Exception {
+             
+         }
+     }
+     ```
+
+   - 根据JSR250规范中定义的注解实现Bean的初始化方法：@PostConstructor-在Bean创建完成并且属性赋值完成来初始化方法；@PreDestory-在Bean移除容器之前会调用的方法；在Bean的方法中添加指定注解
+
+     ```java
+     @Component
+     class Xxx {
+         @PostConstructor
+         public void postConstructor()  {
+         }
+         
+         @PreDestory
+         void destory() throw Exception {
+         }
+     }
+     ```
+
+   - Spring提供的BeanPostProcessor-Bean的后置处理器，在Bean的初始化前后进行一些处理工作，
+
+     ```java
+     @Component
+     class Xxx implements BeanPostProcessor{
+         // 两个实现方法,一个初始化之前,一个初始化之后
+     }
+     ```
+
 3. @ComponentScan：在xml配置文件中使用`<context:component-scan>`标签，用于扫描Spring中的组件实现自动注入，使用注解的方式是在配置类上添加`@ComponentScan`注解：需要指定需要扫描的包，就可以实现自动扫描注入；查看注解源码可以看到用法和xml标签的相同，可以排除或扫描指定的bean；`@Repeatable(ComponentScans.class)`表示可以重复定义
 
    ```java
@@ -92,6 +140,85 @@
 
 6. @Conditional：条件构造器，作用是根据指定的条件向Spring容器中注入Bean
 
+7. @Import：向容器注册组件的方式：第一种是自己写的代码上添加自动注入标签完成自动注入；第二种方式是通过@Bean在配置文件中注入单个组件，也可以是第三方包中的组件；@Import是导入的意思，可以快速的给容器中导入组件
+
+   ```java
+   // 方式一:组件ID默认是组件的全类名,可以添加多个组件
+   @Import({组件.class,...})  	
+   @Configuration
+   public class ConfigClass {
+   
+   }
+   
+   // 方式二:根据选择器导入组件
+   // 1. 自定义组件选择器类实现ImportSelector
+   class XxxImportSelector implements ImplotSelector{
+   	@Override
+       public String[] selectImports(AnnotationMetadata anno){
+           // AnnotationMetadata 可以获取到标注了@Import类的相关注解信息
+           return String[];// 返回值是需要导入到组件的类的字符串全类名的数组
+       }
+   }
+   
+   // 2. 导入时候指明导入选择器
+   @Import({XxxSelector.class,...})  	
+   @Configuration
+   public class ConfigClass {
+   
+   }
+   
+   // 方式三:. ImportDefinitionRegistrar:接口通过向
+   class XxxBeanRegistrar implements ImportBeanDefinitionRegistrar{
+   	@Override
+       public void registrarBeanDefinition(AnnotationMetadata anno,
+                                           BeanDefinitionRegistrar re){
+           // AnnotationMetadata 可以获取到标注了@Import类的相关注解信息
+           // BeanDefinitionRegistrar: 收到向注册器中注册组件
+       }
+   }
+   @Import({XxxBeanRegistrar.class,...})  	
+   @Configuration
+   public class ConfigClass {
+   
+   }
+   ```
+
+8. 使用Spring提供的`FactorBean<T>`接口实现Bean的定义，自定义类实现`FactorBean<T>`
+
+   ```java
+   class XxxBean implements FactorBean<Xxx>{
+       public Xxx getObject(){
+           return Xxx
+       }
+       public Class<?> getType(){
+           return Xxx的类型;
+       }
+       public Boolean isSingleton(){
+           return 是否是单例;
+       }
+   }
+   
+   // 将XxxBean注入到Spring容器中,默认获取的是工厂创建的对象
+   ```
+
+9. @PropertiesSource：引入外部的properties配置文件
+
 第二部分 扩展原理
+
+1. @Value：可以赋值基本数据注重类型；可以使用Spel表达式#{}；获取配置文件中的变量${}；
+
+   ```java
+   applicationContext.getEnvironment();	// SpringIOC容器获取环境变量
+   environment.getProperties("key");		// 获取配置文件中的属性
+   ```
+
+2. @Autowire：自动注入，注入Bean中指定的名称；required表示是否必须注入，没有注入也可以；
+
+   - @Qualifier：明确指定需要装配的组件ID
+   - @Primary：如果容器中相同的多个组件，可以使用给核心的Bean上添加@Primary表示是首选的Bean
+
+3. @Resource：JSR250规范中的注解，属于Java规范的注解
+
+4. @Inject：JSR330规范中的注解，属于Java规范的注解
 
 第三部分 WEB支持
