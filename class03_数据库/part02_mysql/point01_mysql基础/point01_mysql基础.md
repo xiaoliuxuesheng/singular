@@ -4,7 +4,7 @@
 
    | 时间         | 特点                                           |
    | ------------ | ---------------------------------------------- |
-   | 20世纪90年代 | 数据库引擎的创建                               |
+   | 20世纪90年代 | MySQL的由来；数据库引擎的创建                  |
    | 2000年       | 采用GLP协议：成为开源软件                      |
    | 2001年       | 引入InnoDB存储引擎                             |
    | 2002年       | MySQL全面支持事务：ACID；外键                  |
@@ -19,9 +19,143 @@
 2. Max：除Standard的所有内容外，还有一些附加新特性，未通过正式的测试发布
 3. Debug：和Standard类似，但是会包含一些调试信息，会影响性能
 
-## 1.2 Windows系统的安装与配置
+## 1.2 MySQL安装与配置
 
-- 
+1. Wiindows系统安装
+
+   - 官网下载：https://dev.mysql.com/downloads/installer/
+   - 安装msi版本：自定义选择service和workbatch
+
+2. Linux系统安装
+
+   - **使用PRM包安装**
+
+     - 下载清华镜像源：https://mirror.tuna.tsinghua.edu.cn
+
+     - 新建MySQL目录：存放MySQL下载文件及解压文件
+
+     - 解压下载的MySQL的RPM包：common、libs、client、server主要安装这四个包
+
+       ```sh
+       [root@localhost mysql]# tar xvf mysql-5.7.28-1.el6.x86_64.rpm-bundle.tar 
+       mysql-community-server-5.7.28-1.el6.x86_64.rpm
+       mysql-community-client-5.7.28-1.el6.x86_64.rpm
+       mysql-community-embedded-devel-5.7.28-1.el6.x86_64.rpm
+       mysql-community-common-5.7.28-1.el6.x86_64.rpm
+       mysql-community-test-5.7.28-1.el6.x86_64.rpm
+       mysql-community-libs-5.7.28-1.el6.x86_64.rpm
+       mysql-community-devel-5.7.28-1.el6.x86_64.rpm
+       mysql-community-embedded-5.7.28-1.el6.x86_64.rpm
+       mysql-community-libs-compat-5.7.28-1.el6.x86_64.rpm
+       
+       ```
+
+     - CentOS安装会报错，需要安装numactl
+
+       ```sh
+       yum -y install numactl
+       ```
+
+     - rpm安装：
+
+       ```sh
+       rpm -ivh mysql-community-common-5.7.28-1.el6.x86_64.rpm
+       rpm -ivh mysql-community-libs-5.7.28-1.el6.x86_64.rpm
+       rpm -ivh mysql-community-client-5.7.28-1.el6.x86_64.rpm
+       rpm -ivh mysql-community-server-5.7.28-1.el6.x86_64.rpm
+       ```
+
+       
+
+     - 配置MySQL
+
+       ```sh
+       # 启动数据库
+       service mysql start
+       
+       # 查看数据库状态
+       service mysql status
+       
+       # 登录数据库
+       mysql -u root -p
+       
+       # 赋值权限
+       GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
+       flush privileges;
+       
+       exit
+       ```
+
+   - 使用yum安装MySQL
+
+     - 下载yum包：https://dev.mysql.com/downloads/repo/yum/
+
+     - 使用wget下载安装包
+
+       ```sh
+       wget https://repo.mysql.com//mysql80-community-release-el7-3.noarch.rpm
+       ```
+
+     - 本地配置yum
+
+       ```sh
+       yum localinstall Xxx.rpm
+       ```
+
+     - 检查mysql源是否安装成功
+
+       ```sh
+       [root@localhost Downloads]# yum repolist enabled | grep mysql
+       mysql-connectors-community/x86_64       MySQL Connectors Community           153
+       mysql-tools-community/x86_64            MySQL Tools Community                110
+       mysql80-community/x86_64                MySQL 8.0 Community Server           177
+       ```
+
+     - 安装MySQL
+
+       ```sh
+       yum install mysql-community-server
+       ```
+
+     - 启动MySQL
+
+       ```sh
+       systemctl start mysqld
+       ```
+
+     - 查看MySQL状态
+
+       ```sh
+       systemctl status mysqld
+       ```
+
+     - 开机启动
+
+       ```sh
+       systemctl enable mysqld
+       systemctl daemon-reload
+       ```
+
+     - 修改root本地登录密码，mysql安装完成之后，在/var/log/mysqld.log文件中给root生成了一个默认密码
+     
+       ```sh
+       grep 'temporary password' /var/log/mysqld.log
+       
+       mysql -u root -p
+       ALTER USER 'root'@'localhost' IDENTIFIED BY '@Panda03lxd'; 
+       ```
+     
+     - 开启3306端口
+     
+       ```sh
+       firewall-cmd --zone=public --add-port=3306/tcp --permanent 
+       ```
+     
+       
+
+3. Mac系统安装
+
+4. Docker安装
 
 # 第二章 SQL基础
 

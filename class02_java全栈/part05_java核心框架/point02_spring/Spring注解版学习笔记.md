@@ -144,43 +144,43 @@
 
    ```java
    // 方式一:组件ID默认是组件的全类名,可以添加多个组件
-   @Import({组件.class,...})  	
-   @Configuration
-   public class ConfigClass {
+       @Import({组件.class,...})  	
+       @Configuration
+       public class ConfigClass {
    
-   }
+       }
    
    // 方式二:根据选择器导入组件
-   // 1. 自定义组件选择器类实现ImportSelector
-   class XxxImportSelector implements ImplotSelector{
-   	@Override
-       public String[] selectImports(AnnotationMetadata anno){
-           // AnnotationMetadata 可以获取到标注了@Import类的相关注解信息
-           return String[];// 返回值是需要导入到组件的类的字符串全类名的数组
+       // 1. 自定义组件选择器类实现ImportSelector
+       class XxxImportSelector implements ImplotSelector{
+           @Override
+           public String[] selectImports(AnnotationMetadata anno){
+               // AnnotationMetadata 可以获取到标注了@Import类的相关注解信息
+               return String[];// 返回值是需要导入到组件的类的字符串全类名的数组
+           }
        }
-   }
    
-   // 2. 导入时候指明导入选择器
-   @Import({XxxSelector.class,...})  	
-   @Configuration
-   public class ConfigClass {
+       // 2. 导入时候指明导入选择器
+       @Import({XxxSelector.class,...})  	
+       @Configuration
+       public class ConfigClass {
    
-   }
+       }
    
    // 方式三:. ImportDefinitionRegistrar:接口通过向
-   class XxxBeanRegistrar implements ImportBeanDefinitionRegistrar{
-   	@Override
-       public void registrarBeanDefinition(AnnotationMetadata anno,
-                                           BeanDefinitionRegistrar re){
-           // AnnotationMetadata 可以获取到标注了@Import类的相关注解信息
-           // BeanDefinitionRegistrar: 收到向注册器中注册组件
+       class XxxBeanRegistrar implements ImportBeanDefinitionRegistrar{
+           @Override
+           public void registrarBeanDefinition(AnnotationMetadata anno,
+                                               BeanDefinitionRegistrar re){
+               // AnnotationMetadata 可以获取到标注了@Import类的相关注解信息
+               // BeanDefinitionRegistrar: 收到向注册器中注册组件
+           }
        }
-   }
-   @Import({XxxBeanRegistrar.class,...})  	
-   @Configuration
-   public class ConfigClass {
+       @Import({XxxBeanRegistrar.class,...})  	
+       @Configuration
+       public class ConfigClass {
    
-   }
+       }
    ```
 
 8. 使用Spring提供的`FactorBean<T>`接口实现Bean的定义，自定义类实现`FactorBean<T>`
@@ -216,9 +216,14 @@
 
    - @Qualifier：明确指定需要装配的组件ID
    - @Primary：如果容器中相同的多个组件，可以使用给核心的Bean上添加@Primary表示是首选的Bean
+   - @Autowire标注在方法上，Spring容器创建对象时候回调用方法完成赋值；而且方法中参数是自定义类型会从IOC容器中获取；
+   - @Autowire标注在构造器中，容器启动会调用构造器完成创建对象，定义在构造器中容器就会对容器参数进行初始化完成赋值操作，构造器中的参数会从容器中获取；
+   - @Autowire标注在构造器的参数上，效果和标注在构造器上是一样的；
 
 3. @Resource：JSR250规范中的注解，属于Java规范的注解
 
 4. @Inject：JSR330规范中的注解，属于Java规范的注解
+
+5. 
 
 第三部分 WEB支持
