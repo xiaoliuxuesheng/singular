@@ -87,7 +87,159 @@
 
 ## 2.3 插件安装
 
-1. Localization: Chinese (Simplified)：中文汉化Jenkins
+## 2.1. Local
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011084828756-539547536.png)
+
+ 
+
+## 2.2. Folders
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011084901354-1989607774.png)
+
+ 
+
+## 2.3. OWASP Markup Formatter
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011084928609-215218197.png)
+
+ 
+
+## 2.4. Build Timeout
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011084953592-1552442965.png)
+
+ 
+
+## 2.5. Credentials Binding
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085016602-16746464.png)
+
+ 
+
+## 2.6. Timestamper
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085043953-788783863.png)
+
+ 
+
+## 2.7. Workspace Cleanup
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085114607-893754165.png)
+
+ 
+
+## 2.8. Ant
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085138954-1169578111.png)
+
+ 
+
+## 2.9. Gradle
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085203432-581717800.png)
+
+ 
+
+## 2.10. Maven Integration
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085231710-1989117219.png)
+
+ 
+
+## 2.11. Pipeline
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085302292-180260326.png)
+
+ 
+
+## 2.12. GitHub Branch Source
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085330560-858088069.png)
+
+ 
+
+## 2.13. Pipeline: GitHub Groovy Libraries
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085401274-1981975852.png)
+
+ 
+
+## 2.14. Git
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085429593-212101206.png)
+
+ 
+
+## 2.15. Subversion
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085453842-324921183.png)
+
+ 
+
+## 2.16. SSH Slaves
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085525151-155488883.png)
+
+ 
+
+## 2.17. Matrix Authorization Strategy
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011085555232-1276536491.png)
+
+ 
+
+## 2.18. PAM Authentication
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011091046691-974185007.png)
+
+ 
+
+## 2.19. LDAP
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011091114534-395445021.png)
+
+ 
+
+## 2.20. Email Extension
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011091141094-296755677.png)
+
+ 
+
+## 2.21. GitLab
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181011091213121-1237607021.png)
+
+ 
+
+## 2.22. Ansible
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181012084755564-1205702932.png)
+
+ 
+
+## 2.23. SaltStack
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181012084821881-438184983.png)
+
+ 
+
+## 2.24. Parameterized Trigger
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181014200025091-1592353039.png)
+
+ 
+
+## 2.25. Build Pipeline
+
+![img](https://img2018.cnblogs.com/blog/1395193/201810/1395193-20181015085341148-547846022.png)
+
+ 
+
+## 2.26. Build Authorization Token Root
+
+ ![img](https://img2018.cnblogs.com/blog/1395193/201811/1395193-20181103154719833-479496433.png)
 
 
 
