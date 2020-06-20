@@ -26,10 +26,10 @@
     $!define
     
     ##使用宏定义设置回调（保存位置与文件后缀）
-    #save("/model/PO", "PO.java")
+    #save("/model/po", "PO.java")
     
     ##使用宏定义设置包后缀
-    #setPackageSuffix("model.PO")
+    #setPackageSuffix("model.po")
     
     ##使用全局变量实现默认包导入
     $!autoImport
@@ -71,8 +71,9 @@
     
     #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}mapper;
     
-    import $!{tableInfo.savePackageName}.model.PO.$!{tableInfo.name}PO;
+    import $!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO;
     
+    import org.apache.ibatis.annotations.Mapper;
     import org.springframework.stereotype.Component;
     import org.apache.ibatis.annotations.Param;
     import java.util.List;
@@ -83,6 +84,7 @@
      * @author $!author
      * @since $!time.currTime()
      */
+    @Mapper
     @Component
     public interface $!{tableName} {
     
@@ -127,11 +129,11 @@
          * @return 影响行数
          */
         int update($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name}));
-    }
+  }
     ```
 
   - service.java
-
+  
     ```java
     ##定义初始变量
     #set($tableName = $tool.append($tableInfo.name, "Service"))
@@ -146,7 +148,7 @@
     
     #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}service;
     
-    import $!{tableInfo.savePackageName}.model.PO.$!{tableInfo.name}PO;
+    import $!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO;
     import java.util.List;
     
     /**
@@ -189,11 +191,11 @@
          * @return 实例对象
          */
         $!{tableInfo.name}PO update($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name}));
-    }
+  }
     ```
 
   - serviceImpl.java
-
+  
     ```java
     ##定义初始变量
     #set($tableName = $tool.append($tableInfo.name, "ServiceImpl"))
@@ -208,7 +210,7 @@
     
     #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}service.impl;
     
-    import $!{tableInfo.savePackageName}.model.PO.$!{tableInfo.name}PO;
+    import $!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO;
     import $!{tableInfo.savePackageName}.mapper.$!{tableInfo.name}Mapper;
     import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
     import org.springframework.beans.factory.annotation.Autowired;
@@ -272,11 +274,11 @@
             this.$!{tool.firstLowerCase($!{tableInfo.name})}Mapper.update($!tool.firstLowerCase($!{tableInfo.name}));
             return this.queryById($!{tool.firstLowerCase($!{tableInfo.name})}.get$!tool.firstUpperCase($pk.name)());
         }
-    }
+  }
     ```
 
   - controller.java
-
+  
     ```java
     ##定义初始变量
     #set($tableName = $tool.append($tableInfo.name, "Controller"))
@@ -290,7 +292,7 @@
     
     #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}controller;
     
-    import $!{tableInfo.savePackageName}.model.PO.$!{tableInfo.name}PO;
+    import $!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO;
     import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
     import org.springframework.web.bind.annotation.*;
     import org.springframework.beans.factory.annotation.Autowired;
@@ -321,11 +323,11 @@
             return this.$!{tool.firstLowerCase($tableInfo.name)}Service.queryById(id);
         }
     
-    }
+  }
     ```
 
   - mapper.xml
-
+  
     ```java
     ##引入mybatis支持
     $!mybatisSupport
@@ -343,7 +345,7 @@
     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     <mapper namespace="$!{tableInfo.savePackageName}.mapper.$!{tableInfo.name}Mapper">
     
-        <resultMap id="$!{tableInfo.name}Map" type="$!{tableInfo.savePackageName}.model.PO.$!{tableInfo.name}PO">
+        <resultMap id="$!{tableInfo.name}Map" type="$!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO">
     #foreach($column in $tableInfo.fullColumn)
             <result property="$!column.name" column="$!column.obj.name" jdbcType="$!column.ext.jdbcType"/>
     #end
@@ -401,7 +403,7 @@
             where $!pk.obj.name = #{$!pk.name}
         </update>
     
-    </mapper>
+  </mapper>
     ```
-
+  
     

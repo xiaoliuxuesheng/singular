@@ -19,9 +19,9 @@
 ### <font size=4 color=blue>**2. MongoDB的安装**</font>
 
 - **Windows系统的安装**
-  - 注意点：安装时候**"install mongoDB compass"** 不勾选，需要单独安装
-  - 可以将MongoDB服务加入Windows服务，这样就不用每次手动启动MongoDB服务了，不建议这样做
-    - 使用mongod.exe的--install选项来安装服务，使用--config选项来指定之前创建的配置文件
+  - 下载MongoDB的mis安装包；
+  - 注意点：安装时候**"install mongoDB compass"** 不勾选，需要单独安装；
+  - 在Windows系统中安装MongoDB后会自动将mongoDB服务添加到Windows服务中；
 - **Linux系统**
 - **Docker镜像**
 - **MongoDB云**
@@ -204,64 +204,64 @@
 
 #### 数组运算符
 
-| 名称                                                         | 描述                                                         |
-| :----------------------------------------------------------- | :----------------------------------------------------------- |
-| [`$`](https://mongodb.net.cn/manual/reference/operator/update/positional/#up._S_) | 充当占位符，以更新与查询条件匹配的第一个元素。               |
-| [`$[\]`](https://mongodb.net.cn/manual/reference/operator/update/positional-all/#up._S_[]) | 充当占位符，以更新匹配查询条件的文档的数组中的所有元素。     |
-| [`$[\]`](https://mongodb.net.cn/manual/reference/operator/update/positional-filtered/#up._S_[]) | 充当占位符，以更新`arrayFilters`与查询条件匹配的文档中所有与条件匹配的元素。 |
-| [`$addToSet`](https://mongodb.net.cn/manual/reference/operator/update/addToSet/#up._S_addToSet) | 仅当元素不存在于集合中时才将它们添加到数组中。               |
-| [`$pop`](https://mongodb.net.cn/manual/reference/operator/update/pop/#up._S_pop) | 删除数组的第一项或最后一项。                                 |
-| [`$pull`](https://mongodb.net.cn/manual/reference/operator/update/pull/#up._S_pull) | 删除所有与指定查询匹配的数组元素。                           |
-| [`$push`](https://mongodb.net.cn/manual/reference/operator/update/push/#up._S_push) | 将项目添加到数组。                                           |
-| [`$pullAll`](https://mongodb.net.cn/manual/reference/operator/update/pullAll/#up._S_pullAll) | 从数组中删除所有匹配的值。                                   |
+| 名称      | 描述                                                         |
+| --------- | ------------------------------------------------------------ |
+| $         | 充当占位符，以更新与查询条件匹配的第一个元素。               |
+| $[\\]     | 充当占位符，以更新匹配查询条件的文档的数组中的所有元素。     |
+| $[\\]     | 充当占位符，以更新`arrayFilters`与查询条件匹配的文档中所有与条件匹配的元素。 |
+| $addToSet | 仅当元素不存在于集合中时才将它们添加到数组中。               |
+| $pop      | 删除数组的第一项或最后一项。                                 |
+| $pull     | 删除所有与指定查询匹配的数组元素。                           |
+| $push     | 将项目添加到数组。                                           |
+| $pullAll  | 从数组中删除所有匹配的值。                                   |
 
 #### 修饰符
 
-| 名称                                                         | 描述                                                         |
-| :----------------------------------------------------------- | :----------------------------------------------------------- |
-| [`$each`](https://mongodb.net.cn/manual/reference/operator/update/each/#up._S_each) | 修改[`$push`](https://mongodb.net.cn/manual/reference/operator/update/push/#up._S_push)和[`$addToSet`](https://mongodb.net.cn/manual/reference/operator/update/addToSet/#up._S_addToSet)运算符以附加多个项以进行数组更新。 |
-| [`$position`](https://mongodb.net.cn/manual/reference/operator/update/position/#up._S_position) | 修改[`$push`](https://mongodb.net.cn/manual/reference/operator/update/push/#up._S_push)运算符以指定要添加元素的数组中的位置。 |
-| [`$slice`](https://mongodb.net.cn/manual/reference/operator/update/slice/#up._S_slice) | 修改[`$push`](https://mongodb.net.cn/manual/reference/operator/update/push/#up._S_push)运算符以限制更新数组的大小。 |
-| [`$sort`](https://mongodb.net.cn/manual/reference/operator/update/sort/#up._S_sort) | 修改[`$push`](https://mongodb.net.cn/manual/reference/operator/update/push/#up._S_push)运算符以对存储在数组中的文档重新排序。 |
+| 名称      | 描述                                                       |
+| :-------- | :--------------------------------------------------------- |
+| $each     | 修改`$push`和`$addToSet`运算符以附加多个项以进行数组更新。 |
+| $position | 修改`$push`运算符以指定要添加元素的数组中的位置。          |
+| $slice    | 修改`$push`运算符以限制更新数组的大小。                    |
+| $sort     | 修改`$push`运算符以对存储在数组中的文档重新排序。          |
 
 #### 按位
 
-| 名称                                                         | 描述                                     |
-| :----------------------------------------------------------- | :--------------------------------------- |
-| [`$bit`](https://mongodb.net.cn/manual/reference/operator/update/bit/#up._S_bit) | 执行按位`AND`，`OR`和`XOR`整数值的更新。 |
+| 名称 | 描述                                     |
+| :--- | :--------------------------------------- |
+| $bit | 执行按位`AND`，`OR`和`XOR`整数值的更新。 |
 
 ### <font size=4 color=blue>**3. 聚合管道阶段**</font>
 
-| 阶段                                                         | 描述                                                         |
-| :----------------------------------------------------------- | :----------------------------------------------------------- |
-| [`$addFields`](https://mongodb.net.cn/manual/reference/operator/aggregation/addFields/#pipe._S_addFields) | 将新字段添加到文档。与相似 [`$project`](https://mongodb.net.cn/manual/reference/operator/aggregation/project/#pipe._S_project)，[`$addFields`](https://mongodb.net.cn/manual/reference/operator/aggregation/addFields/#pipe._S_addFields)重塑流中的每个文档；具体而言，通过向输出文档添加新字段，该文档既包含输入文档中的现有字段，又包含新添加的字段。[`$set`](https://mongodb.net.cn/manual/reference/operator/aggregation/set/#pipe._S_set)是的别名[`$addFields`](https://mongodb.net.cn/manual/reference/operator/aggregation/addFields/#pipe._S_addFields)。 |
-| [`$bucket`](https://mongodb.net.cn/manual/reference/operator/aggregation/bucket/#pipe._S_bucket) | 根据指定的表达式和存储区边界将传入文档分类为多个组，称为存储区。 |
-| [`$bucketAuto`](https://mongodb.net.cn/manual/reference/operator/aggregation/bucketAuto/#pipe._S_bucketAuto) | 根据指定的表达式将传入文档分类为特定数量的组，称为存储桶。自动确定存储区边界，以尝试将文档平均分配到指定数量的存储区中。 |
-| [`$collStats`](https://mongodb.net.cn/manual/reference/operator/aggregation/collStats/#pipe._S_collStats) | 返回有关集合或视图的统计信息。                               |
-| [`$count`](https://mongodb.net.cn/manual/reference/operator/aggregation/count/#pipe._S_count) | 返回聚合管道此阶段的文档数计数。                             |
-| [`$facet`](https://mongodb.net.cn/manual/reference/operator/aggregation/facet/#pipe._S_facet) | 在同一阶段的同一组输入文档上处理多个[聚合管道](https://mongodb.net.cn/manual/core/aggregation-pipeline/#id1)。支持在一个阶段中创建能够表征多维或多面数据的多面聚合。 |
-| [`$geoNear`](https://mongodb.net.cn/manual/reference/operator/aggregation/geoNear/#pipe._S_geoNear) | 根据与地理空间点的接近程度返回有序的文档流。包含 [`$match`](https://mongodb.net.cn/manual/reference/operator/aggregation/match/#pipe._S_match)，[`$sort`](https://mongodb.net.cn/manual/reference/operator/aggregation/sort/#pipe._S_sort)和[`$limit`](https://mongodb.net.cn/manual/reference/operator/aggregation/limit/#pipe._S_limit)用于地理空间数据的功能。输出文档包括附加距离字段，并且可以包括位置标识符字段。 |
-| [`$graphLookup`](https://mongodb.net.cn/manual/reference/operator/aggregation/graphLookup/#pipe._S_graphLookup) | 对集合执行递归搜索。向每个输出文档添加一个新的数组字段，其中包含对该文档的递归搜索的遍历结果。 |
-| [`$group`](https://mongodb.net.cn/manual/reference/operator/aggregation/group/#pipe._S_group) | 按指定的标识符表达式对输入文档进行分组，并将累加器表达式（如果指定）应用于每个组。消耗所有输入文档，并在每个不同的组中输出一个文档。输出文档仅包含标识符字段，如果指定，还包含累积字段。 |
-| [`$indexStats`](https://mongodb.net.cn/manual/reference/operator/aggregation/indexStats/#pipe._S_indexStats) | 返回有关集合每个索引使用情况的统计信息。                     |
-| [`$limit`](https://mongodb.net.cn/manual/reference/operator/aggregation/limit/#pipe._S_limit) | 将未修改的前*n个*文档传递到管道，其中*n*是指定的限制。对于每个输入文档，输出一个文档（对于前*n个*文档）或零文档（在前*n个*文档之后）。 |
-| [`$listSessions`](https://mongodb.net.cn/manual/reference/operator/aggregation/listSessions/#pipe._S_listSessions) | 列出所有活动时间已经足够长以传播到`system.sessions`集合的会话。 |
-| [`$lookup`](https://mongodb.net.cn/manual/reference/operator/aggregation/lookup/#pipe._S_lookup) | 对*同一*数据库中的另一个集合执行左外部 联接，以过滤“联接”集合中的文档以进行处理。 |
-| [`$match`](https://mongodb.net.cn/manual/reference/operator/aggregation/match/#pipe._S_match) | 筛选文档流，以仅允许匹配的文档未经修改地传递到下一个管道阶段。 [`$match`](https://mongodb.net.cn/manual/reference/operator/aggregation/match/#pipe._S_match)使用标准的MongoDB查询。对于每个输入文档，输出一个文档（匹配）或零文档（不匹配）。 |
-| [`$merge`](https://mongodb.net.cn/manual/reference/operator/aggregation/merge/#pipe._S_merge) | 将聚合管道的结果文档写入集合。该阶段可以将结果合并（插入新文档，合并文档，替换文档，保留现有文档，使操作失败，使用自定义更新管道处理文档）将结果合并到输出集合中。要使用该[`$merge`](https://mongodb.net.cn/manual/reference/operator/aggregation/merge/#pipe._S_merge)阶段，它必须是管道中的最后一个阶段。4.2版中的新功能。 |
-| [`$out`](https://mongodb.net.cn/manual/reference/operator/aggregation/out/#pipe._S_out) | 将聚合管道的结果文档写入集合。要使用该[`$out`](https://mongodb.net.cn/manual/reference/operator/aggregation/out/#pipe._S_out)阶段，它必须是管道中的最后一个阶段。 |
-| [`$planCacheStats`](https://mongodb.net.cn/manual/reference/operator/aggregation/planCacheStats/#pipe._S_planCacheStats) | 返回集合的[计划缓存](https://mongodb.net.cn/manual/core/query-plans/)信息。 |
-| [`$project`](https://mongodb.net.cn/manual/reference/operator/aggregation/project/#pipe._S_project) | 重塑流中的每个文档，例如通过添加新字段或删除现有字段。对于每个输入文档，输出一个文档。另请参阅[`$unset`](https://mongodb.net.cn/manual/reference/operator/aggregation/unset/#pipe._S_unset)删除现有字段。 |
-| [`$redact`](https://mongodb.net.cn/manual/reference/operator/aggregation/redact/#pipe._S_redact) | 通过基于文档本身中存储的信息限制每个文档的内容，来重塑流中的每个文档。包含[`$project`](https://mongodb.net.cn/manual/reference/operator/aggregation/project/#pipe._S_project)和的功能 [`$match`](https://mongodb.net.cn/manual/reference/operator/aggregation/match/#pipe._S_match)。可用于实施字段级修订。对于每个输入文档，输出一个或零个文档。 |
-| [`$replaceRoot`](https://mongodb.net.cn/manual/reference/operator/aggregation/replaceRoot/#pipe._S_replaceRoot) | 用指定的嵌入式文档替换文档。该操作将替换输入文档中的所有现有字段，包括该`_id`字段。指定嵌入在输入文档中的文档以将嵌入的文档提升到顶层。[`$replaceWith`](https://mongodb.net.cn/manual/reference/operator/aggregation/replaceWith/#pipe._S_replaceWith)是[`$replaceRoot`](https://mongodb.net.cn/manual/reference/operator/aggregation/replaceRoot/#pipe._S_replaceRoot)舞台的别名 。 |
-| [`$replaceWith`](https://mongodb.net.cn/manual/reference/operator/aggregation/replaceWith/#pipe._S_replaceWith) | 用指定的嵌入式文档替换文档。该操作将替换输入文档中的所有现有字段，包括该`_id`字段。指定嵌入在输入文档中的文档以将嵌入的文档提升到顶层。[`$replaceWith`](https://mongodb.net.cn/manual/reference/operator/aggregation/replaceWith/#pipe._S_replaceWith)是[`$replaceRoot`](https://mongodb.net.cn/manual/reference/operator/aggregation/replaceRoot/#pipe._S_replaceRoot)舞台的别名 。 |
-| [`$sample`](https://mongodb.net.cn/manual/reference/operator/aggregation/sample/#pipe._S_sample) | 从其输入中随机选择指定数量的文档。                           |
-| [`$set`](https://mongodb.net.cn/manual/reference/operator/aggregation/set/#pipe._S_set) | 将新字段添加到文档。与相似 [`$project`](https://mongodb.net.cn/manual/reference/operator/aggregation/project/#pipe._S_project)，[`$set`](https://mongodb.net.cn/manual/reference/operator/aggregation/set/#pipe._S_set)重塑流中的每个文档；具体而言，通过向输出文档添加新字段，该文档既包含输入文档中的现有字段，又包含新添加的字段。[`$set`](https://mongodb.net.cn/manual/reference/operator/aggregation/set/#pipe._S_set)是[`$addFields`](https://mongodb.net.cn/manual/reference/operator/aggregation/addFields/#pipe._S_addFields)舞台的别名。 |
-| [`$skip`](https://mongodb.net.cn/manual/reference/operator/aggregation/skip/#pipe._S_skip) | 跳过前*n个*文档，其中*n*是指定的跳过编号，并将其余未修改的文档传递到管道。对于每个输入文档，输出零个文档（对于前*n个*文档）或一个文档（如果在前*n个*文档之后）。 |
-| [`$sort`](https://mongodb.net.cn/manual/reference/operator/aggregation/sort/#pipe._S_sort) | 通过指定的排序键对文档流重新排序。只有顺序改变；这些文档保持不变。对于每个输入文档，输出一个文档。 |
-| [`$sortByCount`](https://mongodb.net.cn/manual/reference/operator/aggregation/sortByCount/#pipe._S_sortByCount) | 根据指定表达式的值对传入文档进行分组，然后计算每个不同组中的文档数。 |
-| [`$unset`](https://mongodb.net.cn/manual/reference/operator/aggregation/unset/#pipe._S_unset) | 从文档中删除/排除字段。[`$unset`](https://mongodb.net.cn/manual/reference/operator/aggregation/unset/#pipe._S_unset)是[`$project`](https://mongodb.net.cn/manual/reference/operator/aggregation/project/#pipe._S_project)删除字段的阶段的别名。 |
-| [`$unwind`](https://mongodb.net.cn/manual/reference/operator/aggregation/unwind/#pipe._S_unwind) | 从输入文档中解构一个数组字段，以输出*每个*元素的文档。每个输出文档用元素值替换数组。对于每个输入文档，输出*n个*文档，其中*n*是数组元素的数量，对于空数组可以为零。 |
+| 阶段            | 描述                                                         |
+| :-------------- | :----------------------------------------------------------- |
+| $addFields      | 将新字段添加到文档。与相似 [`$project`](https://mongodb.net.cn/manual/reference/operator/aggregation/project/#pipe._S_project)，[`$addFields`](https://mongodb.net.cn/manual/reference/operator/aggregation/addFields/#pipe._S_addFields)重塑流中的每个文档；具体而言，通过向输出文档添加新字段，该文档既包含输入文档中的现有字段，又包含新添加的字段。[`$set`](https://mongodb.net.cn/manual/reference/operator/aggregation/set/#pipe._S_set)是的别名[`$addFields`](https://mongodb.net.cn/manual/reference/operator/aggregation/addFields/#pipe._S_addFields)。 |
+| $bucket         | 根据指定的表达式和存储区边界将传入文档分类为多个组，称为存储区。 |
+| $bucketAuto     | 根据指定的表达式将传入文档分类为特定数量的组，称为存储桶。自动确定存储区边界，以尝试将文档平均分配到指定数量的存储区中。 |
+| $collStats      | 返回有关集合或视图的统计信息。                               |
+| $count          | 返回聚合管道此阶段的文档数计数。                             |
+| $facet          | 在同一阶段的同一组输入文档上处理多个[聚合管道](https://mongodb.net.cn/manual/core/aggregation-pipeline/#id1)。支持在一个阶段中创建能够表征多维或多面数据的多面聚合。 |
+| $geoNear        | 根据与地理空间点的接近程度返回有序的文档流。包含 [`$match`](https://mongodb.net.cn/manual/reference/operator/aggregation/match/#pipe._S_match)，[`$sort`](https://mongodb.net.cn/manual/reference/operator/aggregation/sort/#pipe._S_sort)和[`$limit`](https://mongodb.net.cn/manual/reference/operator/aggregation/limit/#pipe._S_limit)用于地理空间数据的功能。输出文档包括附加距离字段，并且可以包括位置标识符字段。 |
+| $graphLookup    | 对集合执行递归搜索。向每个输出文档添加一个新的数组字段，其中包含对该文档的递归搜索的遍历结果。 |
+| $group          | 按指定的标识符表达式对输入文档进行分组，并将累加器表达式（如果指定）应用于每个组。消耗所有输入文档，并在每个不同的组中输出一个文档。输出文档仅包含标识符字段，如果指定，还包含累积字段。 |
+| $indexStats     | 返回有关集合每个索引使用情况的统计信息。                     |
+| $limit          | 将未修改的前*n个*文档传递到管道，其中*n*是指定的限制。对于每个输入文档，输出一个文档（对于前*n个*文档）或零文档（在前*n个*文档之后）。 |
+| $listSessions   | 列出所有活动时间已经足够长以传播到`system.sessions`集合的会话。 |
+| $lookup         | 对*同一*数据库中的另一个集合执行左外部 联接，以过滤“联接”集合中的文档以进行处理。 |
+| $match          | 筛选文档流，以仅允许匹配的文档未经修改地传递到下一个管道阶段。`$match`使用标准的MongoDB查询。对于每个输入文档，输出一个文档（匹配）或零文档（不匹配）。 |
+| $merge          | 将聚合管道的结果文档写入集合。该阶段可以将结果合并（插入新文档，合并文档，替换文档，保留现有文档，使操作失败，使用自定义更新管道处理文档）将结果合并到输出集合中。要使用该`$merge`阶段，它必须是管道中的最后一个阶段。4.2版中的新功能。 |
+| $out            | 将聚合管道的结果文档写入集合。要使用该`$out`阶段，它必须是管道中的最后一个阶段。 |
+| $planCacheStats | 返回集合的计划缓存信息。                                     |
+| $project        | 重塑流中的每个文档，例如通过添加新字段或删除现有字段。对于每个输入文档，输出一个文档。另请参阅`$unset`删除现有字段。 |
+| $redact         | 通过基于文档本身中存储的信息限制每个文档的内容，来重塑流中的每个文档。包含`$project`和的功能 `$match`。可用于实施字段级修订。对于每个输入文档，输出一个或零个文档。 |
+| $replaceRoot    | 用指定的嵌入式文档替换文档。该操作将替换输入文档中的所有现有字段，包括该`_id`字段。指定嵌入在输入文档中的文档以将嵌入的文档提升到顶层。`$replaceWith`是`$replaceRoot`舞台的别名 。 |
+| $replaceWith    | 用指定的嵌入式文档替换文档。该操作将替换输入文档中的所有现有字段，包括该`_id`字段。指定嵌入在输入文档中的文档以将嵌入的文档提升到顶层。`$replaceWith`是`$replaceRoot`舞台的别名 。 |
+| $sample         | 从其输入中随机选择指定数量的文档。                           |
+| $set            | 将新字段添加到文档。与相似`$project`，`$set`重塑流中的每个文档；具体而言，通过向输出文档添加新字段，该文档既包含输入文档中的现有字段，又包含新添加的字段。`$set`是`$addFields`舞台的别名。 |
+| $skip           | 跳过前*n个*文档，其中*n*是指定的跳过编号，并将其余未修改的文档传递到管道。对于每个输入文档，输出零个文档（对于前*n个*文档）或一个文档（如果在前*n个*文档之后）。 |
+| $sort           | 通过指定的排序键对文档流重新排序。只有顺序改变；这些文档保持不变。对于每个输入文档，输出一个文档。 |
+| $sortByCount    | 根据指定表达式的值对传入文档进行分组，然后计算每个不同组中的文档数。 |
+| $unset          | 从文档中删除/排除字段。`$unset`是`$project`删除字段的阶段的别名。 |
+| $unwind         | 从输入文档中解构一个数组字段，以输出*每个*元素的文档。每个输出文档用元素值替换数组。对于每个输入文档，输出*n个*文档，其中*n*是数组元素的数量，对于空数组可以为零。 |
 
 ### <font size=4 color=blue>**4. 表达式运算符**</font>
 
