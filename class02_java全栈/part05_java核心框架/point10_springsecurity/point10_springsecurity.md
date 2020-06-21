@@ -371,8 +371,9 @@ spring:
 ## 2.9 Security认证失败处理器
 
 - **自定义错误响应页面**
-  - 自定义错误响应页面，在项目的根路径中新建`resources/error`的文件夹，新建错误码同名的html页面，SpringBoot如果响应的html格式的页面，则会先匹配`resources/error`中错误码对应的错误页面。
-
+  
+- 自定义错误响应页面，在项目的根路径中新建`resources/error`的文件夹，新建错误码同名的html页面，SpringBoot如果响应的html格式的页面，则会先匹配`resources/error`中错误码对应的错误页面。
+  
 - **自定义认证失败处理器**
   - 自定义认证失败处理器继承Security认证失败处理器
 
@@ -391,11 +392,39 @@ spring:
     }  
     ```
 
-## 2.10 图形验证码扩展用户名密码
+## 2.10 获取用户认证信息
 
-## 2.11 自定义认证-短信登陆
+1. 从线程变量的SecurityContextHolder中获取线程中的用户信息
 
-## 2.12 自定义认证-jwt
+   ```java
+   SecurityContextHolder.getContext().getAuthentication()
+   ```
+
+2. 在Controller的参数中添加Authentication参数，Security会自动将认证信息传递给参数
+
+   ```java
+   @GetMapping(value = "me2")
+   public R<Authentication> getCurrentUser2(Authentication authentication) {
+       return R.success(authentication);
+   }
+   ```
+
+3. 使用注解`@AuthenticationPrincipal`获取controller参数Authentication中的UserDetails信息
+
+   ```java
+   @GetMapping(value = "me3")
+   public R<UserDetails> getCurrentUser3(@AuthenticationPrincipal UserDetails userDetails) {
+       return R.success(userDetails);
+   }
+   ```
+
+## 2.11 图形验证码扩展用户名密码
+
+## 2.12 自定义认证-短信登陆
+
+## 2.13 自定义认证-jwt
+
+# 第三章 Security第三方认证
 
 
 

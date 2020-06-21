@@ -43,8 +43,8 @@
   mongodump  [选项] [参数]
   ```
 
-  - 默认备份所有数据到 bin/dump/ 目录中
-  - `--host 主机 --port 端口号`：备份指定主机的MongoDB数据
+  - 缺省参数执行`mongodump`命令，默认是备份文件是在该命令所在目录的`dump` 目录中
+  - `--host 主机 --port 端口号`，`-h 主机:端口号`：备份指定主机的MongoDB数据
   - `--dbpath 数据文件路径`：备份指定路径文件中的MongoDB数据
   - `-out 备份目录`： 备份指定数据库到指定目录
   - `--collection 集合 --db 数据库`： 备份指定数据库的集合
@@ -71,13 +71,21 @@
 
 - **mongotop：进程监控**
 
+### <font size=4 color=blue>**4. MongoDB内置数据库**</font>
+
+| 数据库 | 说明                                                         |
+| ------ | ------------------------------------------------------------ |
+| admin  | root数据库，保存新增的用户信息，这个用户自动继承所有数据库的权限 |
+| local  | 这个数据库永远不会被复制，用于存储限于本地单台服务器相关集合 |
+| config | 当mongo用作分片设置时，用于保存分片相关信息                  |
+
 ## 1.3 MongoDB客户端工具
 
-1. MongoShell 
+1. **MongoShell**：bin目录中mongod命令程序
 
-2. MongoDB Compass 
-3. Studio 3T：[下载地址](https://www.mongodb.com/download-center/compass)
-4. DataGrip
+2. **MongoDB Compass** ：Mongo官方可视化桌面程序
+3. **Studio 3T**：[下载地址](https://www.mongodb.com/download-center/compass)
+4. **DataGrip**：
 
 ## 1.4 MongoDB相关概念
 
@@ -85,10 +93,11 @@
 
   |          | MongoDB      | 关系型数据库 |
   | -------- | ------------ | ------------ |
-  | 数据库   |              | database     |
+  | 数据库   | database     | database     |
   | 数据表   | collection   | table        |
   | 行       | document     | row          |
   | 列       | field        | column       |
+  | 索引     | index        | index        |
   | 数据模型 | json         | 关系模型     |
   | 高可用   | 复制集       | 集群模式     |
   | 横向扩展 | 原生分片支持 | 数据分区     |
@@ -141,9 +150,9 @@
 
 | 名称           | 描述                                                         |
 | :------------- | :----------------------------------------------------------- |
-| $geoIntersects | 选择与[GeoJSON](https://mongodb.net.cn/manual/reference/glossary/#term-geojson)几何形状相交的几何形状。该[2dsphere](https://mongodb.net.cn/manual/core/2dsphere/)索引支持 [`$geoIntersects`](https://mongodb.net.cn/manual/reference/operator/query/geoIntersects/#op._S_geoIntersects)。 |
-| $geoWithin     | 选择边界[GeoJSON](https://mongodb.net.cn/manual/reference/geojson/#geospatial-indexes-store-geojson)几何内的[几何](https://mongodb.net.cn/manual/reference/geojson/#geospatial-indexes-store-geojson)。该[2dsphere](https://mongodb.net.cn/manual/core/2dsphere/)和[2D](https://mongodb.net.cn/manual/core/2d/)指标支持 [`$geoWithin`](https://mongodb.net.cn/manual/reference/operator/query/geoWithin/#op._S_geoWithin)。 |
-| $near          | 返回点附近的地理空间对象。需要地理空间索引。该[2dsphere](https://mongodb.net.cn/manual/core/2dsphere/)和[2D](https://mongodb.net.cn/manual/core/2d/)指标支持 [`$near`](https://mongodb.net.cn/manual/reference/operator/query/near/#op._S_near)。 |
+| $geoIntersects | 选择与`GeoJSON`几何形状相交的几何形状。该`2dsphere`索引支持 `$geoIntersects`。 |
+| $geoWithin     | 选择边界`GeoJSON`几何内的`几何`。该`2dsphere`和`2D`指标支持 `$geoWithin`。 |
+| $near          | 返回点附近的地理空间对象。需要地理空间索引。该`2dsphere`和`2D`指标支持 `$near`。 |
 | $nearSphere    | 返回球体上某个点附近的地理空间对象。需要地理空间索引。该[2dsphere](https://mongodb.net.cn/manual/core/2dsphere/)和[2D](https://mongodb.net.cn/manual/core/2d/)指标支持[`$nearSphere`](https://mongodb.net.cn/manual/reference/operator/query/nearSphere/#op._S_nearSphere)。 |
 | $box           | 使用传统坐标对指定一个用于[`$geoWithin`](https://mongodb.net.cn/manual/reference/operator/query/geoWithin/#op._S_geoWithin)查询的矩形框 。所述[2D](https://mongodb.net.cn/manual/core/2d/)指数支撑 [`$box`](https://mongodb.net.cn/manual/reference/operator/query/box/#op._S_box)。 |
 | $center        | [`$geoWithin`](https://mongodb.net.cn/manual/reference/operator/query/geoWithin/#op._S_geoWithin)使用平面几何时，使用旧坐标对指定圆以进行 查询。所述[2D](https://mongodb.net.cn/manual/core/2d/)指数支撑[`$center`](https://mongodb.net.cn/manual/reference/operator/query/center/#op._S_center)。 |
@@ -530,44 +539,78 @@
 | :----------------------------------------------------------- | :------------------------------------------------------- |
 | $natural | 一种特殊的排序顺序，使用磁盘上的文档顺序对文档进行排序。 |
 
-## 1.6 MongoDB基本操作
+## 1.6 MongoDB的相关操作
 
-### <font size=4 color=blue>**1. 数据库的相关操作**</font>
+### <font size=4 color=blue>**1. 数据库**</font>
 
-- 创建数据库
-- 删除数据库
+- 创建数据库：如果数据库不存在，则会在内存中创建一个数据库并激活改数据库，当数据库中有文档数据则会持久化到磁盘上；
 
-# 第二章：从熟练到精通的开发之路
+  ```sql
+  use 数据库名称;
+  ```
 
-## 2.1 命令行操作MongoDB
+- 删除数据库：删除当前已激活的数据库，需要在命令行可以执行，在部分图形化界面工具中无法使用该命令删除数据库
 
-### <font size=4 color=blue>**1. Database相关操作**</font>
+  ```sql
+  db.dropDatabase();
+  ```
+
+- 查看当前正在使用的数据库
+
+  ```sql
+  db;
+  ```
 
 - 查看所有数据库
 
-  ```sh
+  ```sql
   show dbs;
+  show databases;
   ```
 
-- 激活使用数据库
+### <font size=4 color=blue>**2. 集合 - 创建**</font>
 
-  ```sh
-  use <数据库名称>;
+- 集合的显式创建：`name`是要创建的集合名称，`options`是一个文档，用于指定集合的配置。
+
+  ```sql
+  db.createCollection(name, options)
   ```
 
-- 查看数据库下所有集合（数据表）
+  > - option可用选项列表
+  >
+  >   | 字段   | 类型    | 描述                                                         |
+  >   | ------ | ------- | ------------------------------------------------------------ |
+  >   | capped | Boolean | 如果为真，则启用有上限的集合。封顶集合是一个固定大小的集合，当它达到最大大小时自动覆盖其最老的条目。 **如果指定为真，还需要指定size参数。** |
+  >   | size   | number  | 为有上限的集合指定最大字节大小                               |
+  >   | max    | number  | 指定上限集合中允许的最大文档数量                             |
 
-  ```sh
-  show collections;
+- 集合的隐式创建：当插入文档时，MongoDB自动创建集合
+
+  ```sql
+  db.集合名称.insert(文档);
   ```
 
-### <font size=4 color=blue>**2. 新增文档**</font>
+### <font size=4 color=blue>**3. 集合 - 删除**</font>
 
-- 新增文档不需要指定集合名称，如果插入时集合不存在，插入操作会创建该集合。
+```sql
+db.集合名称.drop();
+```
 
-- **insert()**：新增一条或多条文档，单条插入时返回 写入结果 对象。批量插入时返回 批量插入结果 对象。
+### <font size=4 color=blue>**4. 集合 - 新增文档**</font>
 
-  ```sh
+- **说明**：新增文档不需要指定集合名称，如果插入时集合不存在，插入操作会创建该集合。
+
+- **新增文档API**
+
+  | API              | 说明                                                         |
+  | ---------------- | ------------------------------------------------------------ |
+  | **insert()**     | 新增一条或多条文档，单条插入时返回 写入结果 对象。批量插入时返回 批量插入结果 对象。 |
+  | **insertOne()**  | 新增一条文档                                                 |
+  | **insertMany()** | 新增多条文档                                                 |
+
+- **基本语法**
+
+  ```sql
   db.collection.insert(
      <文档或文档集合>,
      {
@@ -580,30 +623,7 @@
   > - **writeConcern**：
   > - **ordered**：默认为true表示有序插入，如果其中一条执行错误则停止新增；false表示无需插入，如果其中有文档执行错误则会继续处理其他文档
 
-- **insertOne()**：新增一条文档
-
-  ```sh
-  db.collection.insertOne(
-     <document>,
-     {
-        writeConcern: <document>
-     }
-  )
-  ```
-
-- **insertMany()**：新增多条文档
-
-  ```sh
-  db.collection.insertMany(
-     { [ <document 1> , <document 2>, ... ] },
-     {
-        writeConcern: <document>,
-        ordered: <boolean>
-     }
-  )
-  ```
-
-### <font size=4 color=blue>**3. 删除文档**</font>
+# 第二章：从熟练到精通的开发之路
 
 13 | 模型设计基础
 
