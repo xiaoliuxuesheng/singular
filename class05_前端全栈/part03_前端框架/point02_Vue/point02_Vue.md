@@ -10,17 +10,15 @@
 | **modifier**  | /ˈmɑːdɪfaɪər/ | n. [助剂] 改性剂；[语] 修饰语；修正的人                      |
 | **compute**   | /kəmˈpjuːt/   | vt. 计算；估算；用计算机计算<br />vi. 计算；估算；推断<br />n. 计算；估计；推断 |
 
-
-
-#第一章 Vue概述
+# 第一章 Vue概述
 
 ## 1.1 Vue特点
 
  		Vue是一个JavaScript的渐进式框架：Vue框架提供了部分的基础服务和API；渐进式：声明式渲染 → 组件系统 → 客户端路由 → 集中式状态管理 → 项目管理，可以使用使用方案中的一部分或者全部，意味着Vue可以作为项目的一部分嵌入其中，或者希望在更多的功能上使用Vue技术，那么可以使用Vue逐渐替换原来的技术功能；
 
 - 易用：熟悉HTML、CSS、JavaScript便可以快速上手Vue
-- 灵活：在一个JavaScript库和前端框架之间可以做到伸缩自如
-- 高效：20K的运行大小，超快高效虚拟DOM
+- 灵活：在一个JavaScript库和前端框架之间可以做到伸缩自如，也可以用于APP项目开发
+- 高效：20K的运行大小，超快高效虚拟DOM，较少不必要的DOM操作
 
 ​		Vue 只关注视图层， 采用自底向上增量开发的设计。Vue 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件；Vue中还具备WEB开发中的高级功能：
 
@@ -29,6 +27,7 @@
 - 前端路由技术
 - 状态管理
 - 虚拟DOM
+
 
 ## 1.3 Vue的安装
 
@@ -227,13 +226,17 @@ npm install vue
 
 ### 1. 差值表达式
 
-- 差值表达式的基本格式
+- 差值表达式的格式
 
   ```js
-  {{模型对象中的key}}
+  {{data对象中的key}}
   ```
 
-- **差值表达式的特点**：差值表达式闪烁，浏览器加载模型对象中数据的过程中，首先是会加载HTML页面的DOM元素，所以首先会在页面显示`{{差值表达式}}`字符串，其次会加载外部的Vue的脚本文件，最后会new Vue对象，并且将对象中模型中的值赋值给产值表达式，最终完成数据展示。
+- **差值表达式的特点**：
+
+  - 差值表达式加载过程：浏览器加载模型对象中数据的过程中，首先是会加载HTML页面的DOM元素，所以首先会在页面显示`{{差值表达式}}`字符串，其次会加载外部的Vue的脚本文件，最后会new Vue对象，并且将对象中模型中的值赋值给产值表达式，最终完成数据展示，如果加载Vue延迟会在浏览器中显示出差值表达式。
+  - 差值表达式会将data对象中的值以纯文本的方式加载到页面中；
+  - 可以在差值表达式的前后任意添加字符串
 
 ### 2. 指令v-cloak
 
@@ -247,7 +250,7 @@ npm install vue
   </style>
   ```
 
-- 在差值表达式的DOM元素上定义v-cloak指令
+- 在差值表达式的DOM元素上定义v-cloak属性，并设置该属性的显示样式为none，当Vue初始化并加载完成后，Vue对象会将改区域中具有改属性的显示样式删除，从而解决差值表达式的闪烁问题；
 
   ```html
   <div v-cloak>{{msg}}</div>
@@ -255,7 +258,7 @@ npm install vue
 
 ### 3. 数据绑定指令
 
-- <font size=4 color=blue>**v-text**</font>：纯文本填充，相比差值表达式更简洁，指定标签中的文本会被属性值替换
+- <font size=4 color=blue>**v-text**</font>：纯文本填充，相比差值表达式更简洁，**指定标签中的文本会被属性值替换**
 
   ```html
   <div v-text='Model属性名称'></div>
@@ -286,7 +289,7 @@ npm install vue
   <input type="text" v-model='Model属性名称'>
   ```
 
-### 3. 事件绑定
+### 4. 事件绑定
 
 - <font size=4 color=blue>**事件绑定**</font>
 
@@ -466,21 +469,19 @@ npm install vue
        <input v-on:keyup.建码名称="clear">
        ```
 
-### 4. 属性绑定
+### 5. 属性绑定
 
-- <font size=4 color=blue>**v-bind:属性名称='值'**</font>：
+- 绑定格式
 
   ```html
   <img v-bind:src="imageSrc">
-  ```
-
-- <font size=4 color=blue>**:属性名称='值'**</font>：属性绑定简写格式
-
-  ```html
   <img :src="imageSrc">
   ```
 
-### 5. 样式绑定
+- 属性绑定说明：b-bind冒号指令后的key表示为该标签添加的一个属性，key对应的value表示是一个JavaScript表达式（可以读取data对象中的数据，也可以对data对象中的数据做合法的运算）
+
+
+### 6. 样式绑定
 
 - <font size=4 color=blue>**通过class样式处理**</font>：样式绑定的本质是为元素绑定class属性，
 
@@ -549,7 +550,7 @@ npm install vue
      <div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"></div>
      ```
 
-### 6.分支结构
+### 7.分支结构
 
 - <font size=4 color=blue>**v-if='条件值'**</font>：控制元素是否在HTML结构中渲染
 
@@ -574,7 +575,7 @@ npm install vue
   <h1 v-show="ok">Hello!</h1>
   ```
 
-### 7. 循环结构
+### 8. 循环结构
 
 - <font size=4 color=blue>**遍历数组-基本类型元素**</font>：v-for默认第一个参数的列表中的单个元素，第二个参数是元素的索引
 
