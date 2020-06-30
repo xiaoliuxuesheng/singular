@@ -2,22 +2,22 @@
 
 ## 1.1 EasyExcel概述
 
-​		EasyExcel是一个基于Java的简单、省内存的读写Excel的开源项目。在尽可能节约内存的情况下支持读写百M的Excel。
+​        EasyExcel是一个基于Java的简单、省内存的读写Excel的开源项目。在尽可能节约内存的情况下支持读写百M的Excel。
 
-​		Java解析、生成Excel比较有名的框架有Apache poi、jxl。但他们都存在一个严重的问题就是非常的耗内存，poi有一套SAX模式的API可以一定程度的解决一些内存溢出的问题，但POI还是有一些缺陷，比如07版Excel解压缩以及解压后存储都是在内存中完成的，内存消耗依然很大。
+​        Java解析、生成Excel比较有名的框架有Apache poi、jxl。但他们都存在一个严重的问题就是非常的耗内存，poi有一套SAX模式的API可以一定程度的解决一些内存溢出的问题，但POI还是有一些缺陷，比如07版Excel解压缩以及解压后存储都是在内存中完成的，内存消耗依然很大。
 
-​		easyexcel重写了poi对07版Excel的解析，能够原本一个3M的excel用POI sax依然需要100M左右内存降低到几M，并且再大的excel不会出现内存溢出，03版依赖POI的sax模式。在上层做了模型转换的封装，让使用者更加简单方便。
+​        easyexcel重写了poi对07版Excel的解析，能够原本一个3M的excel用POI sax依然需要100M左右内存降低到几M，并且再大的excel不会出现内存溢出，03版依赖POI的sax模式。在上层做了模型转换的封装，让使用者更加简单方便。
 
 ## 1.2 EasyExcel的基本使用
 
 1. 添加EasyExcel依赖
 
    ```xml
-    <dependency>
-   	  <groupId>com.alibaba</groupId>
-   	  <artifactId>easyexcel</artifactId>
-   	  <version>1.1.2-beat1</version>
-    </dependency>
+   <dependency>
+       <groupId>com.alibaba</groupId>
+       <artifactId>easyexcel</artifactId>
+       <version>2.1.6</version>
+   </dependency>
      
     <dependency>
    	  <groupId>org.projectlombok</groupId>
@@ -26,12 +26,11 @@
     </dependency>
    ```
 
-   > - Lombok是在学校坏境中的必备神器，简化代码，降低学习成本，
-   > - 在生产开发中大佬是不建议使用Lombok插件的，**切记**
-
+   > - Lombok是在学校坏境中的必备神器，简化代码，降低学习成本
+   
 2. EasyExcel的基本用法
 
-   - EasyExcel的使用需要为准备读取的数据添加一个配置信息注释类，在这个注释类中包含了Excel文件中国的数据属性，并且在这个注释类中可以会用内置的标签作为读取或写入的Excel的配置信息；
+   - EasyExcel的使用需要为准备读取的数据添加一个配置信息注释类，在这个注释类中包含了Excel文件中的数据属性，并且在这个注释类中可以会用内置的标签作为读取或写入的Excel的配置信息；
 
      - 准备一个测试用的Excel文件，并且为这个文件准备配置类
 
@@ -87,56 +86,6 @@
      
      ```
 
-3. EasyExcel读取和写入源码
-
-   - 读取
-   
-     ```java
-     /**
-      * 构建ExcelReaderBuilder读取Excel
-      *
-      * @param pathName	 需要读取的文件(流)的路径
-      *           
-      * @param head  配信息的注释类
-      *            
-      * @param readListener	 读取监听器
-      *           
-      * @return Excel reader builder.
-      */
-     public static ExcelReaderBuilder read(
-         String pathName, 
-         Class head, 
-         ReadListener readListener) {
-         ... ...  
-    }
-     
-     // 需要指定要读取的sheet页
-     public ExcelReaderSheetBuilder sheet(String sheetName) {
-         return sheet(null, sheetName);
-     }
-     
-     // 开始读取
-     ExcelReaderSheetBuilder.doRead();
-     ```
-   
-   - 写入
-   
-     ```java
-     /**
-      * 构建ExcelWriterBuilder将数据写出Excel
-      *
-      * @param pathName  需要写出的文件(流)的路径
-      *            
-      * @param head  配信息的注释类
-      *            
-      * @return ExcelWriterBuilder
-      */
-     public static ExcelWriterBuilder write(String pathName, Class head) {
-     }
-     
-     // 将集合属性写出
-     ExcelWriterBuilder.doWrite(List data);
-     ```
 
 ## 1.3 快速感受
 
@@ -875,9 +824,7 @@ public void download(HttpServletResponse response) throws IOException {
 
 ```
 
-
-
-## 六、详解填充样板写入
+# 六、详解填充样板写入
 
 这里的案例填充都是模板向下，如果需要横向填充只需要模板设置好就可以。
 
@@ -994,6 +941,99 @@ public void complexFill() {
 
 
 # 七、API
+
+## 7.1 关于常见类解析
+
+- EasyExcel 入口类，用于构建开始各种操作
+- ExcelReaderBuilder ExcelWriterBuilder 构建出一个 ReadWorkbook WriteWorkbook，可以理解成一个excel对象，一个excel只要构建一个
+- ExcelReaderSheetBuilder ExcelWriterSheetBuilder 构建出一个 ReadSheet WriteSheet对象，可以理解成excel里面的一页,每一页都要构建一个
+- ReadListener 在每一行读取完毕后都会调用ReadListener来处理数据
+- WriteHandler 在每一个操作包括创建单元格、创建表格等都会调用WriteHandler来处理数据
+- 所有配置都是继承的，Workbook的配置会被Sheet继承，所以在用EasyExcel设置参数的时候，在EasyExcel...sheet()方法之前作用域是整个sheet,之后针对单个sheet
+
+## 7.2 读
+
+### 1. 注解
+
+- `ExcelProperty` 指定当前字段对应excel中的那一列。可以根据名字或者Index去匹配。当然也可以不写，默认第一个字段就是index=0，以此类推。千万注意，要么全部不写，要么全部用index，要么全部用名字去匹配。千万别三个混着用，除非你非常了解源代码中三个混着用怎么去排序的。
+- `ExcelIgnore` 默认所有字段都会和excel去匹配，加了这个注解会忽略该字段
+- `DateTimeFormat` 日期转换，用`String`去接收excel日期格式的数据会调用这个注解。里面的`value`参照`java.text.SimpleDateFormat`
+- `NumberFormat` 数字转换，用`String`去接收excel数字格式的数据会调用这个注解。里面的`value`参照`java.text.DecimalFormat`
+- `ExcelIgnoreUnannotated` 默认不加`ExcelProperty` 的注解的都会参与读写，加了不会参与
+
+### 2. 参数
+
+#### 通用参数
+
+`ReadWorkbook`,`ReadSheet` 都会有的参数，如果为空，默认使用上级。
+
+- `converter` 转换器，默认加载了很多转换器。也可以自定义。
+- `readListener` 监听器，在读取数据的过程中会不断的调用监听器。
+- `headRowNumber` 需要读的表格有几行头数据。默认有一行头，也就是认为第二行开始起为数据。
+- `head`  与`clazz`二选一。读取文件头对应的列表，会根据列表匹配数据，建议使用class。
+- `clazz` 与`head`二选一。读取文件的头对应的class，也可以使用注解。如果两个都不指定，则会读取全部数据。
+- `autoTrim` 字符串、表头等数据自动trim
+- `password` 读的时候是否需要使用密码
+
+#### ReadWorkbook（理解成excel对象）参数
+
+- `excelType` 当前excel的类型 默认会自动判断
+- `inputStream` 与`file`二选一。读取文件的流，如果接收到的是流就只用，不用流建议使用`file`参数。因为使用了`inputStream` easyexcel会帮忙创建临时文件，最终还是`file`
+- `file` 与`inputStream`二选一。读取文件的文件。
+- `autoCloseStream` 自动关闭流。
+- `readCache` 默认小于5M用 内存，超过5M会使用 `EhCache`,这里不建议使用这个参数。
+- `useDefaultListener` `@since 2.1.4` 默认会加入`ModelBuildEventListener` 来帮忙转换成传入`class`的对象，设置成`false`后将不会协助转换对象，自定义的监听器会接收到`Map<Integer,CellData>`对象，如果还想继续接听到`class`对象，请调用`readListener`方法，加入自定义的`beforeListener`、 `ModelBuildEventListener`、 自定义的`afterListener`即可。
+
+#### ReadSheet（就是excel的一个Sheet）参数
+
+- `sheetNo` 需要读取Sheet的编码，建议使用这个来指定读取哪个Sheet
+- `sheetName` 根据名字去匹配Sheet,excel 2003不支持根据名字去匹配
+
+## 7.3 写
+
+### 1. 注解
+
+- `ExcelProperty` index 指定写到第几列，默认根据成员变量排序。`value`指定写入的名称，默认成员变量的名字，多个`value`可以参照快速开始中的复杂头
+- `ExcelIgnore` 默认所有字段都会写入excel，这个注解会忽略这个字段
+- `DateTimeFormat` 日期转换，将`Date`写到excel会调用这个注解。里面的`value`参照`java.text.SimpleDateFormat`
+- `NumberFormat` 数字转换，用`Number`写excel会调用这个注解。里面的`value`参照`java.text.DecimalFormat`
+- `ExcelIgnoreUnannotated` 默认不加`ExcelProperty` 的注解的都会参与读写，加了不会参与
+
+### 2. 参数
+
+#### 通用参数
+
+`WriteWorkbook`,`WriteSheet` ,`WriteTable`都会有的参数，如果为空，默认使用上级。
+
+- `converter` 转换器，默认加载了很多转换器。也可以自定义。
+- `writeHandler` 写的处理器。可以实现`WorkbookWriteHandler`,`SheetWriteHandler`,`RowWriteHandler`,`CellWriteHandler`，在写入excel的不同阶段会调用
+- `relativeHeadRowIndex` 距离多少行后开始。也就是开头空几行
+- `needHead` 是否导出头
+- `head`  与`clazz`二选一。写入文件的头列表，建议使用class。
+- `clazz` 与`head`二选一。写入文件的头对应的class，也可以使用注解。
+- `autoTrim` 字符串、表头等数据自动trim
+
+#### WriteWorkbook（理解成excel对象）参数
+
+- `excelType` 当前excel的类型 默认`xlsx`
+- `outputStream` 与`file`二选一。写入文件的流
+- `file` 与`outputStream`二选一。写入的文件
+- `templateInputStream` 模板的文件流
+- `templateFile` 模板文件
+- `autoCloseStream` 自动关闭流。
+- `password` 写的时候是否需要使用密码
+- `useDefaultStyle` 写的时候是否是使用默认头
+
+#### WriteSheet（就是excel的一个Sheet）参数
+
+- `sheetNo` 需要写入的编码。默认0
+- `sheetName` 需要些的Sheet名称，默认同`sheetNo`
+
+#### WriteTable（就把excel的一个Sheet,一块区域看一个table）参数
+
+- `tableNo` 需要写入的编码。默认0
+
+
 
 详细参数介绍
 关于常见类解析
