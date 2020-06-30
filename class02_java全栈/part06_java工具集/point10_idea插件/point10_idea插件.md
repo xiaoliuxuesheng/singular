@@ -281,54 +281,88 @@
   
     ```java
     ##定义初始变量
-    #set($tableName = $tool.append($tableInfo.name, "Controller"))
+    #set($tableName = $tool.append($tableInfo.name, "ServiceImpl"))
     ##设置回调
     $!callback.setFileName($tool.append($tableName, ".java"))
-    $!callback.setSavePath($tool.append($tableInfo.savePath, "/controller"))
+    $!callback.setSavePath($tool.append($tableInfo.savePath, "/service/impl"))
+    
     ##拿到主键
     #if(!$tableInfo.pkColumn.isEmpty())
         #set($pk = $tableInfo.pkColumn.get(0))
     #end
     
-    #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}controller;
+    #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}service.impl;
     
     import $!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO;
+    import $!{tableInfo.savePackageName}.mapper.$!{tableInfo.name}Mapper;
     import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
-    import org.springframework.web.bind.annotation.*;
     import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.stereotype.Service;
+    import java.util.List;
     
     /**
-     * $!{tableInfo.comment}($!{tableInfo.name})表控制层
+     * $!{tableInfo.comment}($!{tableInfo.name})表服务实现类
      *
      * @author $!author
      * @since $!time.currTime()
      */
-    @RestController
-    @RequestMapping("/$!tool.firstLowerCase($tableInfo.name)")
-    public class $!{tableName} {
-        /**
-         * 服务对象
-         */
+    @Service
+    public class $!{tableName} implements $!{tableInfo.name}Service {
         @Autowired
-        private $!{tableInfo.name}Service $!tool.firstLowerCase($tableInfo.name)Service;
+        private $!{tableInfo.name}Mapper $!tool.firstLowerCase($!{tableInfo.name})Mapper;
     
         /**
-         * 通过主键查询单条数据
+         * 通过ID查询单条数据
          *
-         * @param id 主键
-         * @return 单条数据
+         * @param $!pk.name 主键
+         * @return 实例对象
          */
-        @GetMapping("/selectOne")
-        public $!{tableInfo.name}PO selectOne(@RequestParam("id")$!pk.shortType id) {
-            return this.$!{tool.firstLowerCase($tableInfo.name)}Service.queryById(id);
+        @Override
+        public $!{tableInfo.name}PO queryById($!pk.shortType $!pk.name) {
+            return this.$!{tool.firstLowerCase($!{tableInfo.name})}Mapper.queryById($!pk.name);
         }
     
-  }
+      /**
+         * 查询多条数据
+         *
+       * @param offset 查询起始位置
+         * @param limit 查询条数
+         * @return 对象列表
+         */
+        @Override
+        public List<$!{tableInfo.name}PO> queryAllByLimit(int offset, int limit) {
+            return this.$!{tool.firstLowerCase($!{tableInfo.name})}Mapper.queryAllByLimit(offset, limit);
+        }
+    
+        /**
+         * 新增数据
+         *
+         * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+         * @return 实例对象
+         */
+        @Override
+        public $!{tableInfo.name}PO insert($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name})) {
+            this.$!{tool.firstLowerCase($!{tableInfo.name})}Mapper.insert($!tool.firstLowerCase($!{tableInfo.name}));
+            return $!tool.firstLowerCase($!{tableInfo.name});
+        }
+    
+        /**
+         * 修改数据
+         *
+         * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+         * @return 实例对象
+         */
+        @Override
+        public $!{tableInfo.name}PO update($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name})) {
+            this.$!{tool.firstLowerCase($!{tableInfo.name})}Mapper.update($!tool.firstLowerCase($!{tableInfo.name}));
+            return this.queryById($!{tool.firstLowerCase($!{tableInfo.name})}.get$!tool.firstUpperCase($pk.name)());
+        }
+    }
     ```
-
+    
   - mapper.xml
   
-    ```java
+    ```xml
     ##引入mybatis支持
     $!mybatisSupport
     
@@ -338,7 +372,7 @@
     
     ##拿到主键
     #if(!$tableInfo.pkColumn.isEmpty())
-        #set($pk = $tableInfo.pkColumn.get(0))
+    #set($pk = $tableInfo.pkColumn.get(0))
     #end
     
     <?xml version="1.0" encoding="UTF-8"?>
@@ -346,15 +380,15 @@
     <mapper namespace="$!{tableInfo.savePackageName}.mapper.$!{tableInfo.name}Mapper">
     
         <resultMap id="$!{tableInfo.name}Map" type="$!{tableInfo.savePackageName}.model.po.$!{tableInfo.name}PO">
-    #foreach($column in $tableInfo.fullColumn)
+            #foreach($column in $tableInfo.fullColumn)
             <result property="$!column.name" column="$!column.obj.name" jdbcType="$!column.ext.jdbcType"/>
-    #end
+            #end
         </resultMap>
     
         <!--查询单个-->
         <select id="queryById" resultMap="$!{tableInfo.name}Map">
             select
-              #allSqlColumn()
+            #allSqlColumn()
     
             from $!{tableInfo.obj.parent.name}.$!tableInfo.obj.name
             where $!pk.obj.name = #{$!pk.name}
@@ -363,7 +397,7 @@
         <!--查询指定行数据-->
         <select id="queryAllByLimit" resultMap="$!{tableInfo.name}Map">
             select
-              #allSqlColumn()
+            #allSqlColumn()
     
             from $!{tableInfo.obj.parent.name}.$!tableInfo.obj.name
             limit #{offset}, #{limit}
@@ -372,15 +406,15 @@
         <!--通过实体作为筛选条件查询-->
         <select id="queryAll" resultMap="$!{tableInfo.name}Map">
             select
-              #allSqlColumn()
+            #allSqlColumn()
     
             from $!{tableInfo.obj.parent.name}.$!tableInfo.obj.name
             <where>
-    #foreach($column in $tableInfo.fullColumn)
+                #foreach($column in $tableInfo.fullColumn)
                 <if test="$!column.name != null#if($column.type.equals("java.lang.String")) and $!column.name != ''#end">
                     and $!column.obj.name = #{$!column.name}
                 </if>
-    #end
+                #end
             </where>
         </select>
     
@@ -394,16 +428,18 @@
         <update id="update">
             update $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}
             <set>
-    #foreach($column in $tableInfo.otherColumn)
+                #foreach($column in $tableInfo.otherColumn)
                 <if test="$!column.name != null#if($column.type.equals("java.lang.String")) and $!column.name != ''#end">
                     $!column.obj.name = #{$!column.name},
                 </if>
-    #end
+                #end
             </set>
             where $!pk.obj.name = #{$!pk.name}
         </update>
     
-  </mapper>
+    </mapper>
     ```
+  
+    
   
     

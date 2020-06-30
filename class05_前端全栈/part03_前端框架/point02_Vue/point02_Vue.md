@@ -10,17 +10,15 @@
 | **modifier**  | /ˈmɑːdɪfaɪər/ | n. [助剂] 改性剂；[语] 修饰语；修正的人                      |
 | **compute**   | /kəmˈpjuːt/   | vt. 计算；估算；用计算机计算<br />vi. 计算；估算；推断<br />n. 计算；估计；推断 |
 
-
-
-#第一章 Vue概述
+# 第一章 Vue概述
 
 ## 1.1 Vue特点
 
  		Vue是一个JavaScript的渐进式框架：Vue框架提供了部分的基础服务和API；渐进式：声明式渲染 → 组件系统 → 客户端路由 → 集中式状态管理 → 项目管理，可以使用使用方案中的一部分或者全部，意味着Vue可以作为项目的一部分嵌入其中，或者希望在更多的功能上使用Vue技术，那么可以使用Vue逐渐替换原来的技术功能；
 
 - 易用：熟悉HTML、CSS、JavaScript便可以快速上手Vue
-- 灵活：在一个JavaScript库和前端框架之间可以做到伸缩自如
-- 高效：20K的运行大小，超快高效虚拟DOM
+- 灵活：在一个JavaScript库和前端框架之间可以做到伸缩自如，也可以用于APP项目开发
+- 高效：20K的运行大小，超快高效虚拟DOM，较少不必要的DOM操作
 
 ​		Vue 只关注视图层， 采用自底向上增量开发的设计。Vue 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件；Vue中还具备WEB开发中的高级功能：
 
@@ -29,6 +27,7 @@
 - 前端路由技术
 - 状态管理
 - 虚拟DOM
+
 
 ## 1.3 Vue的安装
 
@@ -62,14 +61,14 @@ npm install vue
 1. 下载插件工具包
 
    ```sh
-   git clone https://github.com/vuejs/vue-devtools.git
+   https://codeload.github.com/vuejs/vue-devtools/zip/master
    ```
 
 2. NPM初始化并构建插件
 
    ```sh
-   cnpm install
-   cnpm run build
+   npm install
+   npm run build
    ```
 
 3. 修改配置文件：**chrome** 文件夹下的**manifest.json** 文件
@@ -157,7 +156,7 @@ npm install vue
                    
             }
            }
-    },
+    	},
        computed:{
            计算属性名称:function(){
            	return 计算结果;
@@ -227,13 +226,17 @@ npm install vue
 
 ### 1. 差值表达式
 
-- 差值表达式的基本格式
+- 差值表达式的格式
 
   ```js
-  {{模型对象中的key}}
+  {{data对象中的key}}
   ```
 
-- **差值表达式的特点**：差值表达式闪烁，浏览器加载模型对象中数据的过程中，首先是会加载HTML页面的DOM元素，所以首先会在页面显示`{{差值表达式}}`字符串，其次会加载外部的Vue的脚本文件，最后会new Vue对象，并且将对象中模型中的值赋值给产值表达式，最终完成数据展示。
+- **差值表达式的特点**：
+
+  - 差值表达式加载过程：浏览器加载模型对象中数据的过程中，首先是会加载HTML页面的DOM元素，所以首先会在页面显示`{{差值表达式}}`字符串，其次会加载外部的Vue的脚本文件，最后会new Vue对象，并且将对象中模型中的值赋值给产值表达式，最终完成数据展示，如果加载Vue延迟会在浏览器中显示出差值表达式。
+  - 差值表达式会将data对象中的值以纯文本的方式加载到页面中；
+  - 可以在差值表达式的前后任意添加字符串
 
 ### 2. 指令v-cloak
 
@@ -247,7 +250,7 @@ npm install vue
   </style>
   ```
 
-- 在差值表达式的DOM元素上定义v-cloak指令
+- 在差值表达式的DOM元素上定义v-cloak属性，并设置该属性的显示样式为none，当Vue初始化并加载完成后，Vue对象会将改区域中具有改属性的显示样式删除，从而解决差值表达式的闪烁问题；在标签内部使用差值表达式获取到model对象中的指定属性名称的数据，可以在数据前后添加其他字符；
 
   ```html
   <div v-cloak>{{msg}}</div>
@@ -255,7 +258,7 @@ npm install vue
 
 ### 3. 数据绑定指令
 
-- <font size=4 color=blue>**v-text**</font>：纯文本填充，相比差值表达式更简洁，指定标签中的文本会被属性值替换
+- <font size=4 color=blue>**v-text**</font>：纯文本填充，相比差值表达式更简洁，**指定标签中的文本会被属性值替换**
 
   ```html
   <div v-text='Model属性名称'></div>
@@ -286,7 +289,7 @@ npm install vue
   <input type="text" v-model='Model属性名称'>
   ```
 
-### 3. 事件绑定
+### 4. 事件绑定
 
 - <font size=4 color=blue>**事件绑定**</font>
 
@@ -304,32 +307,22 @@ npm install vue
 
 - <font size=4 color=blue>**事件函数的调用方式**</font>
 
-  1. **直接绑定函数名称**
+  1. **直接绑定函数名称**：函数默认只有一个参数就是事件对象；
 
      ```sh
      <button v-on:click='函数名称'>按钮</button>
      ```
 
-  2. **采用函数调用的格式**：可以在函数调用中传递Vue模型中的属性
+  2. **采用函数调用的格式**：可以在函数调用中传递Vue模型中的属性；传递事件需要显示声明，固定参数名称：**$event**；
 
      ```sh
      <button @click='函数名称()'>按钮</button>
      ```
 
-  3. **传递普通参数**
+  3. **传递普通参数**：如果传递多个参数，事件参数必须放在最后
 
      ```sh
      <button @click='函数名称("普通参数")'>按钮</button>
-     ```
-
-  4. **传递事件对象**
-
-     - 如果采用函数名称调用函数，则函数默认第一个参数就是事件对象；
-     - 如果才是函数调用的方式，实际参数和形式参数必须匹配；
-     - 如果在参数调用时需要传递事件，事件**实际参数固定是（$event）**
-
-     ```sh
-     <button @click='函数名称(..., $event)'>按钮</button>
      ```
 
 - <font size=4 color=blue>**事件修饰符**</font>
@@ -340,33 +333,31 @@ npm install vue
      | ---------------------- | ------------------------------------------------------------ |
      | .stop                  | 调用 `event.stopPropagation()`，阻止冒泡事件                 |
      | .prevent               | 调用 `event.preventDefault()`，阻止默认事件                  |
-     | .capture               | 添加事件侦听器时使用 capture 模式                            |
      | .self                  | 只当事件是从侦听器绑定的元素本身触发时才触发回调。           |
-     | .{keyCode 或 keyAlias} | 只当事件是从特定键触发时才触发回调                           |
-     | .native                | 监听组件根元素的原生事件                                     |
      | .once                  | 只触发一次回调                                               |
      | .left                  | (2.2.0) 只当点击鼠标左键时触发                               |
      | .right                 | (2.2.0) 只当点击鼠标右键时触发                               |
      | .middle                | (2.2.0) 只当点击鼠标中键时触发                               |
+     | .capture               | 添加事件侦听器时使用 capture 模式                            |
+     | .{keyCode 或 keyAlias} | 只当事件是从特定键触发时才触发回调                           |
      | .passive               | (2.3.0) 以 `{ passive: true }` 模式添加侦听器,事件将会立即触发 |
+     | .native                | 监听组件根元素的原生事件                                     |
 
   2. **事件修饰使用实例**
 
      ```html
-     <!-- 方法处理器 -->
+     <!-- 格式：方法处理器 -->
      <button v-on:click="doThis"></button>
+     <button @click="doThis"></button>
      
      <!-- 动态事件 (2.6.0+) -->
      <button v-on:[event]="doThis"></button>
+     <button @[event]="doThis"></button>
      
      <!-- 内联语句 -->
      <button v-on:click="doThat('hello', $event)"></button>
      
-     <!-- 缩写 -->
-     <button @click="doThis"></button>
      
-     <!-- 动态事件缩写 (2.6.0+) -->
-     <button @[event]="doThis"></button>
      
      <!-- 停止冒泡 -->
      <button @click.stop="doThis"></button>
@@ -374,10 +365,13 @@ npm install vue
      <!-- 阻止默认行为 -->
      <button @click.prevent="doThis"></button>
      
-     <!-- 阻止默认行为，没有表达式 -->
+     <!-- 仅阻止默认行为，没有表达式 -->
      <form @submit.prevent></form>
      
-     <!--  串联修饰符 -->
+     <!-- 点击回调只会触发一次 -->
+     <button @click.once="doThis"></button>
+     
+     <!--  修饰符串联 -->
      <button @click.stop.prevent="doThis"></button>
      
      <!-- 键修饰符，键别名 -->
@@ -385,9 +379,6 @@ npm install vue
      
      <!-- 键修饰符，键代码 -->
      <input @keyup.13="onEnter">
-     
-     <!-- 点击回调只会触发一次 -->
-     <button v-on:click.once="doThis"></button>
      
      <!-- 对象语法 (2.4.0+) -->
      <button v-on="{ mousedown: doThis, mouseup: doThat }"></button>
@@ -398,7 +389,7 @@ npm install vue
      <!-- Ctrl + Click -->
      <div v-on:click.ctrl="doSomething">Do something</div>
      ```
-
+  
 - <font size=4 color=blue>**按键修饰符**</font>
 
   1. **常用的按键码的别名**
@@ -426,7 +417,7 @@ npm install vue
      | .exact   | 允许你控制由精确的系统修饰符组合触发的事件                   |
 
      ```html
-     <!-- 即使 Alt 或 Shift 被一同按下时也会触发 -->
+     <!-- 选中后 Ctrl + 单机  -->
      <button v-on:click.ctrl="onClick">A</button>
      
      <!-- 有且只有 Ctrl 被按下的时候才触发 -->
@@ -466,73 +457,96 @@ npm install vue
        <input v-on:keyup.建码名称="clear">
        ```
 
-### 4. 属性绑定
+### 5. 属性绑定
 
-- <font size=4 color=blue>**v-bind:属性名称='值'**</font>：
+- 绑定格式：b-bind冒号指令后的key表示为该标签添加的一个属性，key对应的value表示是一个JavaScript表达式（可以读取data对象中的数据，也可以对data对象中的数据做合法的运算）
 
   ```html
   <img v-bind:src="imageSrc">
-  ```
-
-- <font size=4 color=blue>**:属性名称='值'**</font>：属性绑定简写格式
-
-  ```html
   <img :src="imageSrc">
   ```
 
-### 5. 样式绑定
+### 6. 样式绑定
 
-- <font size=4 color=blue>**通过class样式处理**</font>：样式绑定的本质是为元素绑定class属性，
+- <font size=4 color=blue>**通过class样式处理**</font>：样式绑定的本质是为元素绑定class属性，class属性绑定语法也可以与普通的class属性共存
 
-  1. **对象语法**：class属性绑定语法也可以与普通的 class attribute 共存，对象中的key是定义在样式文件中的样式名称；
+  1. **样式名称绑定**：本质也是属性绑定，绑定的属性的class，属性的值如果是样式的名称需要使用引号，如果不使用引号则会表示为vue的model中的数据，没有会报错
+
+     ```html
+     <style>
+         .size{
+             font-size: 40px;
+         }
+     </style>
+     <div id="app">
+         <span :class="'size'">我是个span</span>
+     </div>
+     ```
+
+  2. **样式值的绑定**：需要在Vue对象的数据model中定义样式变量并且为其制定指定的样式值；
+
+     ```html
+     <style>
+         .color{
+             color: red;
+         }
+     </style>
+     <div id="app">
+         <span :class="size">我是个span</span>
+     </div>
+     <script>
+         let vm = new Vue({
+             el:"#app",
+             data:{
+                 size:"color"
+             }
+         })
+     </script>
+     ```
+
+  3. **数组/对象语法**：class属性绑定语法也可以与普通的 class attribute 共存，对象中的key是定义在样式文件中的样式名称；
+
+     - 对象绑定的特点是：对于已定义的样式只能通过对象的属性值的true|false来控制样式是否有效
+     - 数组绑定的特点是：数组中属性可以是model中的属性，属性值中包含的样式可以动态指定
 
      ```htm
      <div class='static' v-bind:class="{ active: true }"></div>
      
-     渲染结果
-     <div class="static active"></div>
-     ```
-
-  2. **数组语法**：我们可以把一个数组传给 `v-bind:class`，以应用一个 class 列表
-
-     - 可以在数据中添加对象语法
-
-     ```html
      <div v-bind:class="[activeClass, errorClass]"></div>
-     
-     data: {
-       activeClass: 'active',
-       errorClass: 'text-danger'
-     }
-     
-     渲染结果
-     <div class="active text-danger"></div>
      ```
 
-  3. **样式数据**：可以将样式相关的对象或者数组定义在Vue模型对象中，在绑定class时候使用模型对象中的数据
+  4. **样式数据**：可以将样式相关的对象或者数组定义在Vue模型对象中，在绑定class时候使用模型对象中的数据
 
-- <font size=4 color=blue>**通过style样式处理**</font>：样式绑定的本质是为元素绑定style属性
+- <font size=4 color=blue>**内联样式style属性绑定**</font>：样式绑定的本质是为元素绑定style属性
 
   1. **对象语法**：看着非常像 CSS，但其实是一个 JavaScript 对象。CSS property 名可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用引号括起来) 来命名
 
      ```html
      <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
-     
-     data: {
-       activeColor: 'red',
-       fontSize: 30
-     }
+     <script>
+         let vm = new Vue({
+             el:"#app",
+             data: {
+               activeColor: 'red',
+               fontSize: 30
+           }
+         })
+     </script>
      ```
-
-     ```js
+  
+     ```html
      <div v-bind:style="styleObject"></div>
-     
-     data: {
-       styleObject: {
-         color: 'red',
-         fontSize: '13px'
-       }
-     }
+     <script>
+         let vm = new Vue({
+             el:"#app",
+             data: {
+               styleObject: {
+                 	color: 'red',
+               	fontSize: '13px'
+               	}
+             }
+         })
+   </script>
      ```
 
   2. **数组语法**：可以将多个样式对象应用到同一个元素上
@@ -540,16 +554,16 @@ npm install vue
      ```html
      <div v-bind:style="[baseStyles, overridingStyles]"></div>
      ```
-
+  
   3. **自动添加前缀**：当 v-bind:style 使用需要添加浏览器引擎前缀的 CSS property 时，如 transform，Vue.js 会自动侦测并添加相应的前缀。
-
+  
   4. **多重值**：从 2.3.0 起你可以为 `style` 绑定中的 property 提供一个包含多个值的数组，常用于提供多个带前缀的值
-
+  
      ```html
      <div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"></div>
      ```
 
-### 6.分支结构
+### 7.分支结构
 
 - <font size=4 color=blue>**v-if='条件值'**</font>：控制元素是否在HTML结构中渲染
 
@@ -574,34 +588,92 @@ npm install vue
   <h1 v-show="ok">Hello!</h1>
   ```
 
-### 7. 循环结构
+### 8. 循环结构
 
-- <font size=4 color=blue>**遍历数组-基本类型元素**</font>：v-for默认第一个参数的列表中的单个元素，第二个参数是元素的索引
+- <font size=4 color=blue>**遍历数组**</font>：基本类型数组、对象类型数组
+
+  1. **遍历数组**：遍历表达式有两个参数，第一个表示列表中的元素；第二个是可选参数，表示元素对应的索引；
+
+     ```html
+     <div id="app">
+         <p v-for="(item,index) in list">{{item}}--{{index}}</p>
+     </div>
+     <script>
+         let vm = new Vue({
+             el:"#app",
+             data:{
+                 list:[1,2,3,4,5,6,7]
+             }
+         })
+     </script>
+     ```
+
+  2. **遍历数组对象**：遍历表达式有两个参数，第一个表示列表中的元素（对象），使用差值表达式获取对象元素中的属性；第二个是可选参数，表示元素对应的索引；
+
+     ```html
+     <div id="app">
+         <p v-for="(item,index) in listMap">{{index}}--{{item.id}}--{{item.name}}</p>
+     </div>
+     <script>
+         let vm = new Vue({
+             el:"#app",
+             data:{
+                 listMap:[
+                     {id:1,name:"aa"},
+                     {id:2,name:"bb"},
+                     {id:3,name:"cc"},
+                     {id:4,name:"dd"},
+                     {id:5,name:"ee"}
+                 ]
+             }
+         })
+     </script>
+     ```
+
+- <font size=4 color=blue>**遍历对象**</font>：遍历对象可以根据参数的数量灵活的获取对象相关的值
 
   ```html
-  <div id="app-4">
-    <ol>
-      <li v-for="todo in todos">
-        {{ todo.text }}
-      </li>
-    </ol>
+  格式一:遍历获取单个参数，第一个参数表示对象属性的对应的value
+  <ul>
+    <li v-for="value in object">
+      {{ value }}
+    </li>
+  </ul>
+  
+  
+  格式二:遍历获取两个参数，第一参数标识对象的属性的value, 第二个参数标识对象属性的名称
+  <div v-for="(value, key) in object">
+    {{ key }}: {{ value }}
   </div>
+  
+  格式三:遍历获取两个参数，最后一个参数表示索引
+  <div v-for="(value, name, index) in object">
+    {{ index }}. {{ name }}: {{ value }}
+  </div>
+  <script>
+      let vm = new Vue({
+          el:"#app",
+          data:{
+              object: {
+                title: 'How to do lists in Vue',
+                author: 'Jane Doe',
+                publishedAt: '2016-04-10'
+              }
+          }
+      })
+  </script>
   ```
 
-  ```js
-  var app4 = new Vue({
-    el: '#app-4',
-    data: {
-      todos: [
-        { text: '学习 JavaScript' },
-        { text: '学习 Vue' },
-        { text: '整个牛项目' }
-      ]
-    }
-  })
+- <font size=4 color=blue>**遍历范围**</font>：范围是值遍历的可迭代是一个数值，遍历从1开始，步长为1；参数设置和遍历数组是相同的
+
+  ```html
+  <div v-for="i in 10">{{i}}</div>
+  <div v-for="(i,index) in 10">{{i}}-{{index}}</div>
   ```
 
-- <font size=4 color=blue>**遍历数组-对象类型元素**</font>：v-for默认第一个参数的列表中的单个元素，使用差值表达式获取对象元素中的属性，第二个参数是元素的索引
+### 9. 循环特性
+
+- <font size=4 color=blue>**遍历绑定key属性**</font>：key属性用户标识列表中每一条元素，是唯一值；**key属性的值来自与单个元素中**
 
   ```html
   <ul id="example-1">
@@ -611,19 +683,7 @@ npm install vue
   </ul>
   ```
 
-  ```js
-  var example1 = new Vue({
-    el: '#example-1',
-    data: {
-      items: [
-        { message: 'Foo' },
-        { message: 'Bar' }
-      ]
-    }
-  })
-  ```
-
-- <font size=4 color=blue>**遍历数组-作用域**</font>：在 v-for 块中，我们可以访问所有父作用域的 property
+- <font size=4 color=blue>**遍历数据的作用域**</font>：在 v-for 块中，我们可以访问所有列表之外是数据的 property
 
   ```html
   <ul id="example-2">
@@ -631,65 +691,20 @@ npm install vue
       {{ parentMessage }} - {{ index }} - {{ item.message }}
     </li>
   </ul>
+  <script>
+      var example2 = new Vue({
+        el: '#example-2',
+        data: {
+          parentMessage: 'Parent',
+          items: [
+            { message: 'Foo' },
+            { message: 'Bar' }
+        }
+      })
+  </script>
   ```
 
-  ```js
-  var example2 = new Vue({
-    el: '#example-2',
-    data: {
-      parentMessage: 'Parent',
-      items: [
-        { message: 'Foo' },
-        { message: 'Bar' }
-      ]
-    }
-  })
-  ```
-
-- <font size=4 color=blue>**遍历数组-绑定key属性**</font>：key属性用户标识列表中每一条元素，是唯一值；**key属性的值来自与单个元素中**
-
-  ```html
-  <ul id="example-1">
-    <li v-for="item in items" :key="item.message">
-      {{ item.message }}
-    </li>
-  </ul>
-  ```
-
-- <font size=4 color=blue>**遍历对象**</font>：可以用 `v-for` 来遍历一个对象的 property。
-
-  ```html
-  格式一:直接迭代对象
-  <ul id="v-for-object" class="demo">
-    <li v-for="value in object">
-      {{ value }}
-    </li>
-  </ul>
   
-  
-  格式二:第一参数标识对象的属性的value, 第二个参数标识对象属性的名称
-  <div v-for="(value, key) in object">
-    {{ key }}: {{ value }}
-  </div>
-  
-  格式三:三个参数,最后一个参数表示索引
-  <div v-for="(value, name, index) in object">
-    {{ index }}. {{ name }}: {{ value }}
-  </div>
-  ```
-
-  ```js
-  new Vue({
-    el: '#v-for-object',
-    data: {
-      object: {
-        title: 'How to do lists in Vue',
-        author: 'Jane Doe',
-        publishedAt: '2016-04-10'
-      }
-    }
-  })
-  ```
 
 ## 2.3 Vue常用特性
 
@@ -709,15 +724,32 @@ npm install vue
 
 ### 2. 自定义指令 
 
-- <font size=4 color=blue>**自定义指令的语法规则**</font>：可以使用v-model完成数据双向绑定
+- <font size=4 color=blue>**自定义指令的语法规则**</font>
 
-  ```js
-  Vue.directive('指令名称',{
-      钩子函数: function(el){
-          
-      }
-  })
-  ```
+  - 自定义全局指令
+
+    ```js
+    Vue.directive('指令名称',{
+        钩子函数: function(钩子函数参数){
+            
+        }
+    })
+    ```
+
+  - 自定义局部指令
+
+    ```js
+    let vm = new Vue({
+        el: '#app',
+        directives:{
+            指令名称:{
+                钩子函数: function(钩子函数参数){
+            		
+        		}
+            }
+        }
+    })
+    ```
 
 - <font size=4 color=blue>**钩子函数说明**</font>：一个指令定义对象可以提供如下几个钩子函数
 
@@ -746,13 +778,12 @@ npm install vue
   <input v-指令名称/>
   ```
 
-  
 
 ### 3. 计算属性 
 
 - <font size=4 color=blue>**计算属性的使用**</font>：计算属性是指表达式的技术逻辑可能会比较复杂，使用计算属性使模板内容更加简洁
 
-- <font size=4 color=blue>**计算属性的定义**</font>：在计算属性的函数中可以获取到模型对象中的数据
+- <font size=4 color=blue>**计算属性的定义**</font>：在计算属性的函数中可以获取到模型对象中的数据，技术属性是依赖与model中的数据；
 
   ```js
   let vue = new Vue({
@@ -867,6 +898,8 @@ npm install vue
 
 ​		但是这个Web Components标准没有被浏览器广泛支持，但是Vue部分实现了Web Components开发标准。把不同的功能在不同的组件中开发，通过组件组合的方式实现功能的同一实现。
 
+​		组件设计是将不同的功能封装在不同的组件中，通过组件的整合形成完整意义上的一个应用；
+
 ## 3.2 组件注册与使用
 
 <font size=4 color=blue>**1. 全局组件注册**</font>
@@ -904,6 +937,8 @@ let vue = new Vue({
 - 局部组件只能在父组件中使用，不能在全局组件中使用
 
 ## 3.3 组件的数据交互方式
+
+
 
 ## 3.4 组件插槽
 
