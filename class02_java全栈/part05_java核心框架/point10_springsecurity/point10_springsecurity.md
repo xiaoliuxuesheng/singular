@@ -420,6 +420,9 @@ spring:
 
 ## 2.11 图形验证码扩展用户名密码
 
+1. **OncePerRequestFilter**：顾名思义，它能够确保在一次请求中只通过一次filter，而需要重复的执行。大家常识上都认为，一次请求本来就只filter一次，为什么还要由此特别限定呢，往往我们的常识和实际的实现并不真的一样，此方法是为了兼容不同的web container，也就是说并不是所有的container都与我们期望的只过滤一次，servlet版本不同，执行过程也不同，因此，为了兼容各种不同运行环境和版本，默认filter继承OncePerRequestFilter是一个比较稳妥的选择。
+2. **InitializingBean**：接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候都会执行该方法。
+
 ## 2.12 自定义认证-短信登陆
 
 ## 2.13 自定义认证-jwt
