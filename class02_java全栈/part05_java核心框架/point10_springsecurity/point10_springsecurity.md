@@ -223,9 +223,9 @@ spring:
    
    ⑥ - 登陆失败后跳转的链接；
    
-   ⑦ - 登陆成功处理器，可以记录登录相关信息；
+   ⑦ - [登陆成功处理器](##2.8 Security认证成功处理器)，可以记录登录相关信息；
    
-   ⑧ - 登陆失败处理器，可以记录登录失败等相关日志或其他信息；
+   ⑧ - [登陆失败处理器](##2.9 Security认证失败处理器)，可以记录登录失败等相关日志或其他信息；
    
    ⑨ - 表示是请求授权相关配置
    
@@ -420,14 +420,88 @@ spring:
 
 ## 2.11 图形验证码扩展用户名密码
 
-1. **OncePerRequestFilter**：顾名思义，它能够确保在一次请求中只通过一次filter，而需要重复的执行。大家常识上都认为，一次请求本来就只filter一次，为什么还要由此特别限定呢，往往我们的常识和实际的实现并不真的一样，此方法是为了兼容不同的web container，也就是说并不是所有的container都与我们期望的只过滤一次，servlet版本不同，执行过程也不同，因此，为了兼容各种不同运行环境和版本，默认filter继承OncePerRequestFilter是一个比较稳妥的选择。
-2. **InitializingBean**：接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候都会执行该方法。
+1. **基础回顾**：Spring中的过滤器的用法和涉及到的Spring其他核心对象
+
+   - **OncePerRequestFilter**：它能够确保在一次请求中只通过一次filter，而需要重复的执行。大家常识上都认为，一次请求本来就只filter一次，加此特别限定，此方法是为了兼容不同的web container，也就是说并不是所有的container都与我们期望的只过滤一次，servlet版本不同，执行过程也不同，因此，为了兼容各种不同运行环境和版本，默认filter继承OncePerRequestFilter是一个比较稳妥的选择。
+   - **InitializingBean**：接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候都会执行该方法。过滤器类中的功能类中可以在初始化时候预备一些相关信息。
+
+2. **Security用验证码扩展户名密码认证**：Security的本质由是一系列的过滤器组成，使用验证码扩展用户名认证，本质上的认证方式还是用户名密码认证：即核心任然是`UsernamePasswordAuthenticationFilter`过滤器，扩展方式是在`UsernamePasswordAuthenticationFilter`之前添加一个验证码过滤器，通过了验证码之后才能实现用户名密码认证，核心配置在Security的配置类中实现
+
+   ```java
+   @Override
+   protected void configure(HttpSecurity http) throws Exception {
+       http
+           // ... ...
+           .and()
+           .addFilterBefore(new 验证码拦截器,UsernamePasswordAuthenticationFilter.class)
+   }
+   ```
+
+   > HttpSecurity中添加过滤器其他API
+   >
+   > - addFilterAfter：在指定过滤器之后添加过滤器
+   >
+   > - addFilterBefore：在指定过滤器之前添加过滤器
+   > - addFilter：在过滤器链最后添加过滤器
+   > - addFilterAt：将过滤器设置在指定过滤器的同一位置，但是顺序是不固定的，根据class排序
 
 ## 2.12 自定义认证-短信登陆
 
 ## 2.13 自定义认证-jwt
 
 # 第三章 Security第三方认证
+
+
+
+# 第四章 Security授权
+
+## 4.1 Security授权原理
+
+1. Security的是一系列的拦截器：除了用户登录校验相关的过滤器,最后还包含了鉴权功能的过滤器,还有匿名资源访问的过滤器链`FilterSecurityInterceptor`：是一个方法级的权限过滤器, 基本位于过滤链的最底部
+
+   <img src="https://s1.ax1x.com/2020/07/03/NOE0eK.png" alt="NOE0eK.png" border="0" />
+
+   - 权限控制方式一：在方法上加注释实现，需先在具体的配置里开启此类配置（可以在方法上开启或者在全局配置类中开启）EnableGlobalMethodSecurity
+
+     ```java
+     // 开启权限注解功能
+     @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+     
+     // 在Controller方法配置权限注解
+     @Secured("ROLE_ADMIN")
+     ... ...
+     ```
+
+   - 权限控制方式二：在configure配置中配置，使用时权限会自动加前缀`ROLE_`，用于简单权限系统
+
+     ```java
+     .antMatchers("your match rule").hasRole("ADMIN") 
+     ```
+
+   - 权限控制方式二：把过滤的规则放到更为灵活的位置，数据库/本地文件/等等.
+
+2. Security权限验证原理
+
+   <img src="https://s1.ax1x.com/2020/07/03/NOzwJx.png" alt="NOzwJx.png" border="0" />
+
+   - SecurityConfig：主要封装了Security配置类中自定义的配置信息
+   - SecurityContextHolder：表示用户认证通过后保存在认证Context中用户信息
+   - FilterSecurityInterceptor：表示当前的服务请求，包含了当前请求的相关信息；主要是将当前请求对应的三方信息交给AccessDecisionManager（投票管理者）
+   - AccessDecisionManager：投票管理者调用AccessDecisionVoter的投票者最终来判断是过还是不过（也就是有没有权限）有两种可能
+
+   ## 4.2 权限表达式
+
+   1. **基于API的权限表达式**
+
+      <img src="https://s1.ax1x.com/2020/07/03/NX9jfI.png" alt="NX9jfI.png" border="0" />
+
+   2. **注解方式权限表达式**
+
+   ##4.3 权限控制案例
+
+   1. 基于配置的权限控制
+   2. 基于注解的权限控制
+   3. 自定义权限控制规则
 
 
 
