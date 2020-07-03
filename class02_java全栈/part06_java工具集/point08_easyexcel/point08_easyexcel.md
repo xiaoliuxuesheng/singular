@@ -216,52 +216,193 @@
   
   ```
 
-# 四、详解读取Excel
+# 第二章 读取Excel
 
-## 4.1 简单读取
+## 2.1 简单读取
 
-- 格式一：使用EasyExcelFactory读取，文件流会自动关闭
+1. 准备需要读取的Excel数据
 
-  ```java
-  @Test
-  public void simpleRead1() {
-      String fileName = "demo.xlsx";
-      EasyExcel.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
-  }
-  ```
+   | 字符串标题 | 日期标题        | 数字标题 |
+   | ---------- | --------------- | -------- |
+   | id001      | 2020/6/3 12:23  | 1        |
+   | id002      | 2020/6/4 12:23  | 2        |
+   | id003      | 2020/6/5 12:23  | 3        |
+   | id004      | 2020/6/6 12:23  | 4        |
+   | id005      | 2020/6/7 12:23  | 5        |
+   | id006      | 2020/6/8 12:23  | 6        |
+   | id007      | 2020/6/9 12:23  | 7        |
+   | id008      | 2020/6/10 12:23 | 8        |
+   | id009      | 2020/6/11 12:23 | 9        |
+   | id010      | 2020/6/12 12:23 | 10       |
+   | id011      | 2020/6/13 12:23 | 11       |
 
-- 格式二：使用ExcelReader读取Excel，一定要记得关闭ExcelReader，读会创建临时文件，到时磁盘会崩的
+2. 根据标题的数据类型定义对应的实体类
 
-  ```java
-  @Test
-  public void simpleRead2() {
-      String fileName = "demo.xlsx";
-       ExcelReader excelReader = EasyExcel.read(fileName, DemoData.class, 
-                                                new DemoDataListener()).build();
-      ReadSheet readSheet = EasyExcel.readSheet(0).build();
-      excelReader.read(readSheet);
-      excelReader.finish();
-  }
-  ```
+   ```java
+   @Data
+   public class UserEntity1 {
+       private String string;
+       private Date date;
+       private Double doubleData;
+   }
+   ```
 
-## 4.2指定列的下标或名称
+3. 根据当前实体类定义对应的读取监听器：**重点 - **读取监听器不能被spring管理，要每次读取excel都要new，所以如果需要用Spring组件参与到Excel的读取过程，在监听器的构造器中加入对应的Spring组件作为参数。
 
-- > - 用名字去匹配，这里需要注意，如果名字重复，会导致只有一个字段读取到数据
+   ```java
+   @Slf4j
+   public class UserExcelListenerRead extends AnalysisEventListener<UserEntity1> {
+       /**
+        * 每隔5条存储数据库，实际使用中可以3000条，然后清理list ，方便内存回收
+        */
+       private static final int BATCH_COUNT = 5;
+       List<UserEntity1> list = new ArrayList<UserEntity1>();
+       /**
+        * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
+        */
+       private UserDao dao;
+   
+       /**
+        * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
+        *
+        * @param dao
+        */
+       public UserExcelListenerRead(UserDao dao) {
+           this.dao = dao;
+       }
+       /**
+        * 这个每一条数据解析都会来调用
+        *
+        * @param data
+        *            one row value. Is is same as {@link AnalysisContext#readRowHolder()}
+        * @param context
+        */
+       @Override
+       public void invoke(UserEntity1 data, AnalysisContext context) {
+           log.info("解析到一条数据:{}", data);
+           list.add(data);
+           // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
+           if (list.size() >= BATCH_COUNT) {
+               saveData();
+               // 存储完成清理 list
+               list.clear();
+           }
+       }
+       /**
+        * 所有数据解析完成了 都会来调用
+        *
+        * @param context
+        */
+       @Override
+       public void doAfterAllAnalysed(AnalysisContext context) {
+           // 这里也要保存数据，确保最后遗留的数据也存储到数据库
+           saveData();
+           log.info("所有数据解析完成！");
+       }
+       /**
+        * 加上存储数据库
+        */
+       private void saveData() {
+           log.info("{}条数据，开始存储数据库！", list.size());
+           dao.save(list);
+           log.info("存储数据库成功！");
+       }
+   }
+   ```
 
-- 读取Excel
+4. 测试读取Excel
 
-  ```java
-  @Test
-  public void indexOrNameRead() {
-      String fileName = "demo.xlsx";
-      // 这里默认读取第一个sheet
-      EasyExcel.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
-  }
-  ```
+   ```java
+   @Autowired
+   private UserDao userDao;
+   
+   // 格式一：使用EasyExcelFactory读取，文件流会自动关闭
+   @Test
+   public void test1() throws Exception{
+       String fileName = "read.xlsx";
+       // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭
+       EasyExcel.read(fileName, UserEntity1.class, new UserExcelListenerRead(userDao)).sheet().doRead();
+   }
+   
+   // 格式二：使用ExcelReader读取Excel，一定要记得关闭ExcelReader，读会创建临时文件，到时磁盘会崩的
+   @Test
+   public void test2() throws Exception{
+       String fileName = "read.xlsx";
+       ExcelReader excelReader = null;
+       try {
+           excelReader = EasyExcel.read(fileName, 
+                                        UserEntity1.class, 
+                                        new UserExcelListenerRead(userDao)).build();
+           ReadSheet readSheet = EasyExcel.readSheet(0).build();
+           excelReader.read(readSheet);
+       } finally {
+           if (excelReader != null) {
+               // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
+               excelReader.finish();
+           }
+       }
+   }
+   ```
 
-## 4.3 读取多个sheet
+## 2.2指定列的下标或名称
 
-- **读取全部sheet**
+1. 定义实体类，使用EasyExcel的注解标注下标或者Excel的标题名称
+
+   ```java
+   @Data
+   public class UserEntity2 {
+       /**
+        * 强制读取第三个 这里不建议 index 和 name 同时用，要么一个对象只用index，要么一个对象只用name去匹配
+        */
+       @ExcelProperty(index = 2)
+       private Double doubleData;
+       /**
+        * 用名字去匹配，这里需要注意，如果名字重复，会导致只有一个字段读取到数据
+        */
+       @ExcelProperty("字符串标题")
+       private String string;
+       @ExcelProperty("日期标题")
+       private Date date;
+   }
+   ```
+
+2. 每一个实体类都要定义自己的读取事件监听器，定义一个简单的
+
+   ```java
+   @Slf4j
+   public class UserExcelListenerName extends AnalysisEventListener<UserEntity2> {
+   
+       List<UserEntity2> list = new ArrayList<>();
+   
+       @Override
+       public void invoke(UserEntity2 data, AnalysisContext analysisContext) {
+           log.info("解析到一条数据:{}", data);
+           list.add(data);
+       }
+   
+       @Override
+       public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+           log.info("所有数据解析完成！");
+           for (UserEntity2 u : list) {
+               System.out.println("u = " + u);
+           }
+       }
+   }
+   ```
+
+3. 测试根据名称和下标读取Excel
+
+   ```java
+   @Test
+   public void test3() throws Exception{
+       String fileName = "read.xlsx";
+       EasyExcel.read(fileName, UserEntity2.class, new UserExcelListenerName()).sheet().doRead();
+   }
+   ```
+
+## 2.3 读取多个sheet
+
+- **读取全部sheet**：如果每个sheet页中的数据属性都相同，即可以使用一个Listener进行读取，可以使用ExcelReader.doReadAll()：DemoDataListener的doAfterAllAnalysed 会在每个sheet读取完毕后调用一次；然后所有sheet都会往同一个DemoDataListener里面写
 
   ```java
   @Test
@@ -271,10 +412,7 @@
   }
   ```
 
-  > - DemoDataListener的doAfterAllAnalysed 会在每个sheet读取完毕后调用一次。
-  > - 然后所有sheet都会往同一个DemoDataListener里面写
-
-- **读取部分sheet**
+- **读取部分sheet**：如果sheet也中是数据有差异，需要为每个sheet也指定一个Listener进行读取，可以为每个sheet定义ReadSheet，然后再用ExcelReader一次读取多个ReadSheet，**ExcelReader最后一定要手动关闭**
 
   ```java
   @Test
@@ -298,7 +436,7 @@
   }
   ```
 
-## 4.4 自定义格式转换
+## 2.4 自定义格式转换
 
 - 在属性配置类中使用格式转换器：**@ExcelProperty.**converter
 
@@ -340,42 +478,33 @@
       /**
        * 这里读的时候会调用
        *
-       * @param cellData
-       *            NotNull
-       * @param contentProperty
-       *            Nullable
-       * @param globalConfiguration
-       *            NotNull
+       * @param cellData            NotNull
+       * @param contentProperty     Nullable
+       * @param globalConfiguration NotNull
        * @return
        */
       @Override
-      public String convertToJavaData(CellData cellData, 
-                                      ExcelContentProperty contentProperty,
-          GlobalConfiguration globalConfiguration) {
+      public String convertToJavaData(CellData cellData, ExcelContentProperty contentProperty,
+                                      GlobalConfiguration globalConfiguration) {
           return "自定义：" + cellData.getStringValue();
       }
   
       /**
        * 这里是写的时候会调用 不用管
        *
-       * @param value
-       *            NotNull
-       * @param contentProperty
-       *            Nullable
-       * @param globalConfiguration
-       *            NotNull
+       * @param value               NotNull
+       * @param contentProperty     Nullable
+       * @param globalConfiguration NotNull
        * @return
        */
       @Override
-      public CellData convertToExcelData(String value, 
-                                         ExcelContentProperty contentProperty,
-          GlobalConfiguration globalConfiguration) {
+      public CellData convertToExcelData(String value, ExcelContentProperty contentProperty,
+                                         GlobalConfiguration globalConfiguration) {
           return new CellData(value);
       }
-  
   }
   ```
-
+  
 - **测试代码**
 
   ```java
