@@ -10,7 +10,7 @@
 | **modifier**  | /ˈmɑːdɪfaɪər/ | n. [助剂] 改性剂；[语] 修饰语；修正的人                      |
 | **compute**   | /kəmˈpjuːt/   | vt. 计算；估算；用计算机计算<br />vi. 计算；估算；推断<br />n. 计算；估计；推断 |
 
-# 第一章 Vue概述
+# 第一章 Vue基础
 
 ## 1.1 Vue特点
 
@@ -117,114 +117,185 @@ npm install vue
 2. Vue编程范式说明：声明式编程：只需要声明{{数据属性}}，就可以显示模型中的数据
 
    - VM：在编程中首先需要引入Vue，并构建Vue对象，并指明需要关联的页面区域元素，这个Vue对象便可以作为数据Model和View视图的调度者
+   
    - V：表示页面中的一个HTML元素，这个元素会在页面中展示特定的区域，这个区域中的数据会交给VM对象
+   
    - M：数据模型，会定义在当前元素对应的VM对象中，可能会包括基本数据，事件方法等数据
+   
+   - ## 
+   
+     ## 
+   
+     name
+     delimiters
+     functional
+     model
+     inheritAttrs
+     comments
+   
+   
+     
+     
 
-# 第二章 Vue基础语法
+# 第二章 Vue与实例属性
 
-## 2.1 Vue对象的参数解析
+| 全局配置              | 使用说明 |      | 选项 / 数据             | 使用说明     |      | 选项 / 资源      | 使用说明 |
+| --------------------- | -------- | ---- | ----------------------- | ------------ | ---- | ---------------- | -------- |
+| keyCodes              |          |      | data                    |              |      | directives       |          |
+| silent                |          |      | props                   |              |      | filters          |          |
+| optionMergeStrategies |          |      | propsData               |              |      | components       |          |
+| devtools              |          |      | computed                |              |      | **选项 / 组合**  |          |
+| errorHandler          |          |      | methods                 |              |      | parent           |          |
+| warnHandler           |          |      | watch                   |              |      | mixins           |          |
+| ignoredElements       |          |      | **选项 / DOM**          | **使用说明** |      | extends          |          |
+| performance           |          |      | el                      |              |      | provide / inject |          |
+| productionTip         |          |      | template                |              |      |                  |          |
+| **全局API**           |          |      | render                  |              |      |                  |          |
+| Vue.filter            |          |      | renderError             |              |      |                  |          |
+| Vue.directive         |          |      | **选项 / 生命周期钩子** |              |      |                  |          |
+| Vue.extend            |          |      | beforeCreate            |              |      |                  |          |
+| Vue.component         |          |      | created                 |              |      |                  |          |
+| Vue.set               |          |      | beforeMount             |              |      |                  |          |
+| Vue.delete            |          |      | mounted                 |              |      |                  |          |
+| Vue.nextTick          |          |      | beforeUpdate            |              |      |                  |          |
+| Vue.use               |          |      | updated                 |              |      |                  |          |
+| Vue.mixin             |          |      | activated               |              |      |                  |          |
+| Vue.compile           |          |      | deactivated             |              |      |                  |          |
+| Vue.observable        |          |      | beforeDestroy           |              |      |                  |          |
+| Vue.version           |          |      | destroyed               |              |      |                  |          |
+| 选项 / 其它           |          |      | errorCaptured           |              |      |                  |          |
 
-1. **Vue指令**
 
-   - 自定义属性：传统JS的自定属性是`data-属性名称`的形式定义自定义属性
-   - Vue指令本质也是自定义属性，其基本格式是`v-指定名称`，是定义在Vue挂载的DOM元素之上
 
-2. **数据响应式**
-
-   - **响应式**：在HTML中的响应式表示屏幕尺寸的编号会导致样式的变化，而数据响应式则表示数据的变化会导致页面内容的变化，**即修改数据在页面中是即时生效的**
-   - **数据绑定**：就是将Vue对象的模型数据填充到DOM标签中
-
-3. **Vue对象**
+1. <font size=4 color=blue>** 侦听器作用**</font>：监听数据模型中的数据，数据一旦发生变化，就通知侦听器所绑定的方法；使用场景是数据变化时候执行异步并或开销大的操作
 
    ```js
    let vue = new Vue({
-       el:"#app",
-       data:{
-           msg:"值"
-       },
-       methods:{
-           函数名称:function(){
-               ... ...
-           },
-           函数名称(){
-               ... ...
-           }
-       },
-       directives:{
-           指令名称:{
-            钩子函数:function(el){
-                   
-            }
-           }
-    	},
-       computed:{
-           计算属性名称:function(){
-           	return 计算结果;
-           }
-       },
+       ... ...
        watch:{
            监听属性名称:function(变化后的值){
                
            }
-       },
-       filters:{
-           过滤器名称:function(value){
-               return 处理结果
-           }
-       }，
-       beforeCreate(){
-           console.log("beforeCreate")
-       },
-       created(){
-           console.log("created")
-       },
-       beforeMount(){
-       	console.log("beforeMount")
-       },
-       mounted(){
-           console.log("mounted")
-       },
-       beforeUpdate(){
-           console.log("beforeUpdate")
-       },
-       updated(){
-           console.log("updated")
-       },
-       activated(){
-           console.log("activated")
-       },
-       deactivated(){
-           console.log("deactivated")
-       },
-       beforeDestroy(){
-           console.log("beforeDestroy")
-       },
-       destroyed(){
-           console.log("destroyed")
-       },
-       errorCaptured(){
-           console.log("destroyed")
        }
    })
    ```
-   
-   <font size=4 color=blue>**:dash: el**</font>：是View Model对象挂载的DOM区域，采用JavaScript的元素选择器
-   
-   <font size=4 color=blue>**:dash: data**</font>：是数据模型对象，对照的值是key：value的格式
-   
-   <font size=4 color=blue>**:dash: methods**</font>：是函数对象，主要是定义针对Vue对象的一些函数，函数的定义是JavaScript语法
-   
-   <font size=4 color=blue>**:dash: directive**</font>：局部指令，可以定义多个指令；指令详情参考2.3.2的全局指令
-   
-   <font size=4 color=blue>**:dash: computed**</font>：计算属性，用于简化属性值绑定的表达式
-   
-   <font size=4 color=blue>**:dash: watch**</font>：侦听器，用于侦听data区域的属性数据的变化，触发值执行的逻辑
-   
-   <font size=4 color=blue>**:dash: filters**</font>：过滤器，主要用户数据格式化
 
-## 2.2 Vue模板语法
 
-### 1. 差值表达式
+
+<img src="https://s1.ax1x.com/2020/05/03/JxfufH.png" alt="JxfufH.png" border="0" />
+
+
+
+- <font size=4 color=blue>**挂载**</font>：初始化相关属性
+  1. **beforeCreate**：在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用
+  2. **created**：在实例创建完成后被立即调用。在这一步，实例已完成以下的配置：数据观测 (data observer)，property 和方法的运算，watch/event 事件回调。然而，挂载阶段还没开始，`$el` property 目前尚不可用。
+  3. **beforeMount**：在挂载开始之前被调用：相关的 render 函数首次被调用，**该钩子在服务器端渲染期间不被调用**
+  4. **mounted**：实例被挂载后调用，这时 `el` 被新创建的 `vm.$el` 替换了。如果根实例挂载到了一个文档内的元素上，当 `mounted` 被调用时 `vm.$el` 也在文档内。**该钩子在服务器端渲染期间不被调用**
+- <font size=4 color=blue>**更新**</font>：元素或组件的变更操作
+  1. **beforeUpdate**：数据更新时调用，发生在虚拟 DOM 打补丁之前。这里适合在更新之前访问现有的 DOM，比如手动移除已添加的事件监听器。**该钩子在服务器端渲染期间不被调用，因为只有初次渲染会在服务端进行。**
+  2. **updated**：由于数据更改导致的虚拟 DOM 重新渲染和打补丁，在这之后会调用该钩子。当这个钩子被调用时，组件 DOM 已经更新，所以你现在可以执行依赖于 DOM 的操作。然而在大多数情况下，你应该避免在此期间更改状态。如果要相应状态改变，通常最好使用计算属性或 watcher 取而代之。
+  3. **activated**：被 keep-alive 缓存的组件激活时调用。**该钩子在服务器端渲染期间不被调用。**
+- <font size=4 color=blue>**销毁**</font>：销毁相关属性
+  1. **deactivated**：被 keep-alive 缓存的组件停用时调用。**该钩子在服务器端渲染期间不被调用。**
+  2. **beforeDestroy**：实例销毁之前调用。在这一步，实例仍然完全可用。**该钩子在服务器端渲染期间不被调用。**
+  3. **destroyed**：实例销毁后调用。该钩子被调用后，对应 Vue 实例的所有指令都被解绑，所有的事件监听器被移除，所有的子实例也都被销毁。**该钩子在服务器端渲染期间不被调用。**
+- <font size=4 color=blue>**异常**</font>：
+  1. **errorCaptured**：当捕获一个来自子孙组件的错误时被调用。此钩子会收到三个参数：错误对象、发生错误的组件实例以及一个包含错误来源信息的字符串。此钩子可以返回 false 以阻止该错误继续向上传播。
+
+- <font size=4 color=blue>**过滤器的作用**</font>：主要是用于格式化数据
+
+- <font size=4 color=blue>**自定义过滤器**</font>：过滤器函数中的参数表示通过管道符传递过来的参数
+
+  1. **全局过滤器**
+
+     ```js
+     Vue.filter('过滤器名称',function(value){
+         // 业务逻辑
+         return 处理结果
+     })
+     ```
+
+  2. **局部过滤器**
+
+     ```js
+     let vue = new Vue({
+     	... ...
+         filters:{
+             过滤器名称:function(value){
+                 return 处理结果
+             }
+         }
+     })
+     ```
+
+- <font size=4 color=blue>**过滤器的使用**</font>：|可以理解为管道符，作用是把管道符左边的值交给过滤器进行处理
+
+  ```html
+  在差值表达式中使用
+  <div>{{属性名称 | 过滤器名称}}</div>
+  
+  在属性绑定中使用
+  <div v-bind='属性名称 | 过滤器名称'></div>
+  ```
+
+- <font size=4 color=blue>**过滤器的参数**</font>：在定义过滤器和使用过滤器时候可以传递参数，默认是从第二个参数开始赋值
+
+  ```js
+  Vue.filter('过滤器名称',function(value,形参){
+      // 业务逻辑
+      return 处理结果
+  })
+  ```
+
+  ```js
+  <div v-bind='属性名称 | 过滤器名称(实参)'></div>
+  ```
+
+## 
+
+1. 
+
+
+
+
+
+## 2.9 实例 property
+vm.$data
+vm.$props
+vm.$el
+vm.$options
+vm.$parent
+vm.$root
+vm.$children
+vm.$slots
+vm.$scopedSlots
+vm.$refs
+vm.$isServer
+vm.$attrs
+vm.$listeners
+
+## 2.10 实例方法 / 数据
+vm.$watch
+vm.$set
+vm.$delete
+
+## 2.11 实例方法 / 事件
+vm.$on
+vm.$once
+vm.$off
+vm.$emit
+
+## 2.12 实例方法 / 生命周期
+vm.$mount
+vm.$forceUpdate
+vm.$nextTick
+vm.$destroy
+
+## 2.13 指令
+
+v-slot
+
+### 1. 差值表达式 
 
 - 差值表达式的格式
 
@@ -238,7 +309,7 @@ npm install vue
   - 差值表达式会将data对象中的值以纯文本的方式加载到页面中；
   - 可以在差值表达式的前后任意添加字符串
 
-### 2. 指令v-cloak
+### 2. 指令 v-cloak
 
 - 解决差值表达式闪烁的问题：定义v-cloak样式中隐藏元素的显示，在内存中替换数据后完成数据展示
 
@@ -256,7 +327,7 @@ npm install vue
   <div v-cloak>{{msg}}</div>
   ```
 
-### 3. 数据绑定指令
+### 3. 数据绑定指令 v-bind v-text v-html v-model v-pre v-once
 
 - <font size=4 color=blue>**v-text**</font>：纯文本填充，相比差值表达式更简洁，**指定标签中的文本会被属性值替换**
 
@@ -289,7 +360,7 @@ npm install vue
   <input type="text" v-model='Model属性名称'>
   ```
 
-### 4. 事件绑定
+### 4. 事件绑定 v-on
 
 - <font size=4 color=blue>**事件绑定**</font>
 
@@ -389,7 +460,7 @@ npm install vue
      <!-- Ctrl + Click -->
      <div v-on:click.ctrl="doSomething">Do something</div>
      ```
-  
+
 - <font size=4 color=blue>**按键修饰符**</font>
 
   1. **常用的按键码的别名**
@@ -533,7 +604,7 @@ npm install vue
          })
      </script>
      ```
-  
+
      ```html
      <div v-bind:style="styleObject"></div>
      <script>
@@ -546,7 +617,7 @@ npm install vue
                	}
              }
          })
-   </script>
+      </script>
      ```
 
   2. **数组语法**：可以将多个样式对象应用到同一个元素上
@@ -554,16 +625,16 @@ npm install vue
      ```html
      <div v-bind:style="[baseStyles, overridingStyles]"></div>
      ```
-  
+
   3. **自动添加前缀**：当 v-bind:style 使用需要添加浏览器引擎前缀的 CSS property 时，如 transform，Vue.js 会自动侦测并添加相应的前缀。
-  
+
   4. **多重值**：从 2.3.0 起你可以为 `style` 绑定中的 property 提供一个包含多个值的数组，常用于提供多个带前缀的值
-  
+
      ```html
      <div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"></div>
      ```
 
-### 7.分支结构
+### 7.分支结构`v-if`、`v-else`、`v-else-if`、`v-show`
 
 - <font size=4 color=blue>**v-if='条件值'**</font>：控制元素是否在HTML结构中渲染
 
@@ -588,7 +659,7 @@ npm install vue
   <h1 v-show="ok">Hello!</h1>
   ```
 
-### 8. 循环结构
+### 8. 循环结构 `v-for`
 
 - <font size=4 color=blue>**遍历数组**</font>：基本类型数组、对象类型数组
 
@@ -706,6 +777,125 @@ npm install vue
 
   
 
+## 2.14 特殊 attribute
+key
+ref
+is
+slot
+slot-scope
+scope
+
+## 2.15 内置的组件
+component
+transition
+transition-group
+keep-alive
+slot
+
+## 2.1 Vue对象的参数解析
+
+1. **Vue指令**
+
+   - 自定义属性：传统JS的自定属性是`data-属性名称`的形式定义自定义属性
+   - Vue指令本质也是自定义属性，其基本格式是`v-指定名称`，是定义在Vue挂载的DOM元素之上
+
+2. **数据响应式**
+
+   - **响应式**：在HTML中的响应式表示屏幕尺寸的编号会导致样式的变化，而数据响应式则表示数据的变化会导致页面内容的变化，**即修改数据在页面中是即时生效的**
+   - **数据绑定**：就是将Vue对象的模型数据填充到DOM标签中
+
+3. **Vue对象**
+
+   ```js
+   let vue = new Vue({
+       el:"#app",
+       data:{
+           msg:"值"
+       },
+       methods:{
+           函数名称:function(){
+               ... ...
+           },
+           函数名称(){
+               ... ...
+           }
+       },
+       directives:{
+           指令名称:{
+            钩子函数:function(el){
+                   
+            }
+           }
+    	},
+       computed:{
+           计算属性名称:function(){
+           	return 计算结果;
+           }
+       },
+       watch:{
+           监听属性名称:function(变化后的值){
+               
+           }
+       },
+       filters:{
+           过滤器名称:function(value){
+               return 处理结果
+           }
+       }，
+       beforeCreate(){
+           console.log("beforeCreate")
+       },
+       created(){
+           console.log("created")
+       },
+       beforeMount(){
+       	console.log("beforeMount")
+       },
+       mounted(){
+           console.log("mounted")
+       },
+       beforeUpdate(){
+           console.log("beforeUpdate")
+       },
+       updated(){
+           console.log("updated")
+       },
+       activated(){
+           console.log("activated")
+       },
+       deactivated(){
+           console.log("deactivated")
+       },
+       beforeDestroy(){
+           console.log("beforeDestroy")
+       },
+       destroyed(){
+           console.log("destroyed")
+       },
+       errorCaptured(){
+           console.log("destroyed")
+       }
+   })
+   ```
+   
+   <font size=4 color=blue>**:dash: el**</font>：是View Model对象挂载的DOM区域，采用JavaScript的元素选择器
+   
+   <font size=4 color=blue>**:dash: data**</font>：是数据模型对象，对照的值是key：value的格式
+   
+   <font size=4 color=blue>**:dash: methods**</font>：是函数对象，主要是定义针对Vue对象的一些函数，函数的定义是JavaScript语法
+   
+   <font size=4 color=blue>**:dash: directive**</font>：局部指令，可以定义多个指令；指令详情参考2.3.2的全局指令
+   
+   <font size=4 color=blue>**:dash: computed**</font>：计算属性，用于简化属性值绑定的表达式
+   
+   <font size=4 color=blue>**:dash: watch**</font>：侦听器，用于侦听data区域的属性数据的变化，触发值执行的逻辑
+   
+   <font size=4 color=blue>**:dash: filters**</font>：过滤器，主要用户数据格式化
+
+## 2.2 Vue模板语法
+
+- 
+
 ## 2.3 Vue常用特性
 
 ### 1. 表单操作 
@@ -804,91 +994,36 @@ npm install vue
 
 - <font size=4 color=blue>**计算属性与方法的区别**</font>：计算属性是基于他们的依赖进行缓存的，方法不存在缓存
 
-### 4. 过滤器 
+## 2.4 Vue实例属性
 
-- <font size=4 color=blue>**过滤器的作用**</font>：主要是用于格式化数据
+### <font size=4 color=blue>**1. 实例方法 / 事件**</font>
 
-- <font size=4 color=blue>**自定义过滤器**</font>：过滤器函数中的参数表示通过管道符传递过来的参数
+- **vm.$on( event, callback )**：监听当前实例上的自定义事件。事件可以由 `vm.$emit` 触发。回调函数会接收所有传入事件触发函数的额外参数。
 
-  1. **全局过滤器**
-
-     ```js
-     Vue.filter('过滤器名称',function(value){
-         // 业务逻辑
-         return 处理结果
-     })
-     ```
-
-  2. **局部过滤器**
-
-     ```js
-     let vue = new Vue({
-     	... ...
-         filters:{
-             过滤器名称:function(value){
-                 return 处理结果
-             }
-         }
-     })
-     ```
-
-- <font size=4 color=blue>**过滤器的使用**</font>：|可以理解为管道符，作用是把管道符左边的值交给过滤器进行处理
-
-  ```html
-  在差值表达式中使用
-  <div>{{属性名称 | 过滤器名称}}</div>
+  ```js
+  // 定义好的Vue实例或者组件
+  let vm = new Vue({...});
+                    
+  // 在当前实例上定义事件
+  vm.$on('自定义事件名称', function (msg) {
+    console.log(msg)
+  });
   
-  在属性绑定中使用
-  <div v-bind='属性名称 | 过滤器名称'></div>
+  // $emit触发自定义的事件
+  vm.$emit('自定义事件名称', '传递参数');
   ```
 
-- <font size=4 color=blue>**过滤器的参数**</font>：在定义过滤器和使用过滤器时候可以传递参数，默认是从第二个参数开始赋值
+- **vm.$once( event, callback )**：监听一个自定义事件，但是只触发一次。一旦触发之后，监听器就会被移除。
 
-  ```js
-  Vue.filter('过滤器名称',function(value,形参){
-      // 业务逻辑
-      return 处理结果
-  })
-  ```
+- **vm.$off( [event, callback] )**：移除自定义事件监听器。
 
-  ```js
-  <div v-bind='属性名称 | 过滤器名称(实参)'></div>
-  ```
+  - 如果没有提供参数，则移除所有的事件监听器；
+  - 如果只提供了事件，则移除该事件所有的监听器；
+  - 如果同时提供了事件与回调，则只移除这个回调的监听器。
 
-### 5. 侦听器 
+- **vm.$emit( eventName, […args] )**：触发当前实例上的事件。附加参数都会传给监听器回调。
 
-- <font size=4 color=blue>**侦听器作用**</font>：监听数据模型中的数据，数据一旦发生变化，就通知侦听器所绑定的方法；使用场景是数据变化时候执行异步并或开销大的操作
 
-  ```js
-  let vue = new Vue({
-      ... ...
-      watch:{
-          监听属性名称:function(变化后的值){
-              
-          }
-      }
-  })
-  ```
-
-### 6. 生命周期
-
-<img src="https://s1.ax1x.com/2020/05/03/JxfufH.png" alt="JxfufH.png" border="0" />
-
-- <font size=4 color=blue>**挂载**</font>：初始化相关属性
-  1. **beforeCreate**：在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用
-  2. **created**：在实例创建完成后被立即调用。在这一步，实例已完成以下的配置：数据观测 (data observer)，property 和方法的运算，watch/event 事件回调。然而，挂载阶段还没开始，`$el` property 目前尚不可用。
-  3. **beforeMount**：在挂载开始之前被调用：相关的 render 函数首次被调用，**该钩子在服务器端渲染期间不被调用**
-  4. **mounted**：实例被挂载后调用，这时 `el` 被新创建的 `vm.$el` 替换了。如果根实例挂载到了一个文档内的元素上，当 `mounted` 被调用时 `vm.$el` 也在文档内。**该钩子在服务器端渲染期间不被调用**
-- <font size=4 color=blue>**更新**</font>：元素或组件的变更操作
-  1. **beforeUpdate**：数据更新时调用，发生在虚拟 DOM 打补丁之前。这里适合在更新之前访问现有的 DOM，比如手动移除已添加的事件监听器。**该钩子在服务器端渲染期间不被调用，因为只有初次渲染会在服务端进行。**
-  2. **updated**：由于数据更改导致的虚拟 DOM 重新渲染和打补丁，在这之后会调用该钩子。当这个钩子被调用时，组件 DOM 已经更新，所以你现在可以执行依赖于 DOM 的操作。然而在大多数情况下，你应该避免在此期间更改状态。如果要相应状态改变，通常最好使用计算属性或 watcher 取而代之。
-  3. **activated**：被 keep-alive 缓存的组件激活时调用。**该钩子在服务器端渲染期间不被调用。**
-- <font size=4 color=blue>**销毁**</font>：销毁相关属性
-  1. **deactivated**：被 keep-alive 缓存的组件停用时调用。**该钩子在服务器端渲染期间不被调用。**
-  2. **beforeDestroy**：实例销毁之前调用。在这一步，实例仍然完全可用。**该钩子在服务器端渲染期间不被调用。**
-  3. **destroyed**：实例销毁后调用。该钩子被调用后，对应 Vue 实例的所有指令都被解绑，所有的事件监听器被移除，所有的子实例也都被销毁。**该钩子在服务器端渲染期间不被调用。**
-- <font size=4 color=blue>**异常**</font>：
-  1. **errorCaptured**：当捕获一个来自子孙组件的错误时被调用。此钩子会收到三个参数：错误对象、发生错误的组件实例以及一个包含错误来源信息的字符串。此钩子可以返回 false 以阻止该错误继续向上传播。
 
 # 第三章 组件化开发
 
@@ -902,11 +1037,39 @@ npm install vue
 
 ## 3.2 组件基础
 
-### <font size=4 color=blue>**1. 组件注册**</font>
+### <font size=4 color=blue>**1. 组件开发基本步骤**</font>
 
-- **全局组件注册**
+- 创建组件对象：在新版本的Vue中，组件对象不再单独创建，由ES新的语法糖进行组件对象的应用，其源码底层也是调用了组件创建方法，即组件的创建和注册是一起实现的；在Vue组件本质也是一个Vue实例，拥有Vue对象的全部属性：如data、methods等等；
 
   ```js
+  let component = Vue.extend({
+      data:function(){
+          return {
+              组件数据属性:组件数据值
+          }
+      },
+      methods:{
+          组件中函数
+      },
+      template: '组件内容的模板'
+  })
+  ```
+
+- 注册组件：组件注册实际上是将定义好的组件绑定到Vue实例中，可以将组件定义在Vue对象（java中称类）上，称为全局组件，这样所有的vue实例都可以使用该组件；如果将组件定义在Vue实例上，称为局部组件，可以在当前Vue实例范围内使用；
+
+  ```js
+  // 全局组件
+  Vue.component('组件名称',组件对象)
+  
+  // 局部组件
+  let vm = new Vue({
+  	el:"实例范围",
+      components:{
+          组件名称:组件对象
+      }
+  })
+  
+  // 组件定义语法糖
   Vue.component('组件名称',{
       data:function(){
           return {
@@ -920,28 +1083,63 @@ npm install vue
   })
   ```
 
-  > **组件名称**：在定义组件时候可以使用呢驼峰格式或者中划线的格式，在template中引用组件时候可以使用驼峰或者中划线的方式，但是**在html结构的Vue组件中引用组件必须使用中划线格式**；
-  >
-  > **data**：在Vue对象中的data是个对象，对象中的数据模型在整个Vue组件中都可用，但是在自定义组件中，data是个函数，函数的返回值表示自定义注解的数据模型，其作用是起到闭包的作用，使组件之间的数据相互独立
-  >
-  > **template**：表示是html结构的模板内容，可以使用模板字符串格式化编辑模板内容，**模块内容必须只有单个根元素**；其他全局组的template中也可以引入其他的全局组件；
+- 组件的使用：将组件名称当做一个自定义的html标签，组件中的template就会替换改标签对应的页面区域，可以重复使用该自定义标签实现组件的复用；
 
-- **局部组件注册**
-
-  ```js
-  let vue = new Vue({
-  	... ...
-      components:{
-          '组件名称':组件对象
-      }
-  })
+  ```html
+  <组件名称></组件名称>
+  ... ...
+  <组件名称></组件名称>
   ```
 
-  > 局部组件中可以定义多个组件
-  >
-  > 局部组件只能在父组件中使用，不能在全局组件中使用
+### <font size=4 color=blue>**2. 组件属性详解**</font>
 
-### <font size=4 color=blue>**2. 组件的使用**</font>
+- **组件名称**：在定义组件时候可以使用呢驼峰格式或者中划线的格式，在template中引用组件时候可以使用驼峰或者中划线的方式，但是**在html结构的Vue组件中引用组件必须使用中划线格式**；
+
+- **data**：在Vue对象中的data是个对象，对象中的数据模型在整个Vue组件中都可用，但是在自定义组件中，data是个函数，函数的返回值表示自定义注解的数据模型，其作用是起到闭包的作用，使组件之间的数据相互独立
+
+- **template**：表示是html结构的模板内容，可以使用模板字符串格式化编辑模板内容，模块内容必须只有单个根元素；其他全局组的template中也可以引入其他的全局组件；
+
+  - 字符串格式的template：使用简单，但是代码结构混乱
+
+    ```html
+    <script>
+        let component = Vue.extend({
+       	 	template: '<div>这是组件</div>'
+    	})
+    </script>
+    ```
+
+  - 使用script分离模板内容：使用script作为模板的根标签，script标签的type必须是`text/x-template`
+
+    ```html
+    <script type="text/x-template" id="自定义组件模板名称">
+        <div>
+        	组件内容
+        </div>
+    </script>
+    <script>
+        let component = Vue.extend({
+       	 	template: '#自定义组件模板名称'
+    	})
+    </script>
+    ```
+
+  - 使用`<template>`标签作为组件根标签
+
+    ```html
+    <template id="自定义组件模板名称">
+        <div>组件内容</div>
+    </template>
+    <script>
+        let component = Vue.extend({
+       	 	template: '#自定义组件模板名称'
+    	})
+    </script>
+    ```
+
+- **其他属性**：Vue组件本质也是一个Vue实例，Vue实例中的其他属性组件中的用法和在Vue实例中的用法相同；
+
+- **父子组件**：在Vue实例的component属性中定义的组件，称为这个实例的子组件；特点是这个子组件可以在这个Vue实例的template中使用；
 
 
 
