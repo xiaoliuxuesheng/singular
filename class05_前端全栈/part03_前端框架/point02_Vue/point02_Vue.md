@@ -127,53 +127,83 @@ npm install vue
 
 ## 2.1 API
 
-| 全局配置                | 说明      | 选项 / DOM        | 说明     | 实例方法 / 事件         | 说明     |
-| ----------------------- | --------- | ----------------- | -------- | ----------------------- | -------- |
-| keyCodes                | 键盘键码  | el                |          | vm.$on                  | 定义事件 |
-| optionMergeStrategies   |           | template          |          | vm.$once                | 监听单次 |
-| devtools                |           | render            |          | vm.$off                 | 移除事件 |
-| errorHandler            |           | renderError       |          | vm.$emit                | 触发事件 |
-| warnHandler             |           | **选项 / 资源**   | **说明** | **实例方法 / 生命周期** | **说明** |
-| ignoredElements         |           | directives        |          | vm.$mount               |          |
-| silent                  |           | filters           | 使得啊   | vm.$forceUpdate         |          |
-| performance             |           | components        |          | vm.$nextTick            |          |
-| productionTip           |           | **选项 / 组合**   | **说明** | vm.$destroy             |          |
-| **全局 API**            | **说明**  | parent            |          | **指令**                | **说明** |
-| Vue.extend              | 组件构造  | mixins            |          | v-text                  | 文本填充 |
-| Vue.component           | 组件注册  | extends           |          | v-html                  | html填充 |
-| Vue.directive           |           | provide / inject  |          | v-show                  | 是否显示 |
-| Vue.set                 |           | **选项 / 其它**   | **说明** | v-if                    | 是否渲染 |
-| Vue.delete              |           | name              |          | v-else                  |          |
-| Vue.filter              |           | delimiters        |          | v-else-if               |          |
-| Vue.nextTick            |           | functional        |          | v-for                   | 迭代     |
-| Vue.use                 |           | model             |          | v-on                    | 事件绑定 |
-| Vue.mixin               |           | inheritAttrs      |          | v-bind                  | 属性绑定 |
-| Vue.compile             |           | comments          |          | v-model                 | 双向绑定 |
-| Vue.observable          |           | **实例 property** | **说明** | v-slot                  |          |
-| Vue.version             |           | vm.$data          |          | v-pre                   |          |
-| **选项 / 数据**         | **说明**  | vm.$props         |          | v-cloak                 |          |
-| data                    | model数据 | vm.$el            |          | v-once                  |          |
-| props                   |           | vm.$options       |          | **特殊 attribute**      | **说明** |
-| propsData               |           | vm.$parent        |          | key                     |          |
-| computed                | 属性计算  | vm.$root          |          | ref                     |          |
-| methods                 | 方法/函数 | vm.$children      |          | is                      |          |
-| watch                   | 监听器    | vm.$slots         |          | slot                    |          |
-| **选项 / 生命周期钩子** | **说明**  | vm.$scopedSlots   |          | slot-scope              |          |
-| beforeCreate            |           | vm.$refs          |          | scope                   |          |
-| created                 |           | vm.$isServer      |          | **内置的组件**          | **说明** |
-| beforeMount             |           | vm.$attrs         |          | component               |          |
-| mounted                 |           | vm.$listeners     |          | transition              |          |
-| beforeUpdate            |           | 实例方法 / 数据   | **说明** | transition-group        |          |
-| updated                 |           | vm.$watch         |          | keep-alive              |          |
-| activated               |           | vm.$set           |          | slot                    |          |
-| deactivated             |           | vm.$delete        |          |                         |          |
-| beforeDestroy           |           |                   |          |                         |          |
-| destroyed               |           |                   |          |                         |          |
-| errorCaptured           |           |                   |          |                         |          |
+| 全局配置                | 说明      | 选项 / DOM                                        | 说明     | 实例方法 / 事件         | 说明     |
+| ----------------------- | --------- | ------------------------------------------------- | -------- | ----------------------- | -------- |
+| keyCodes                | 键盘键码  | [el](###<font size=4 color=blue>**1. el**</font>) |          | vm.$on                  | 定义事件 |
+| optionMergeStrategies   |           | template                                          |          | vm.$once                | 监听单次 |
+| devtools                |           | render                                            |          | vm.$off                 | 移除事件 |
+| errorHandler            |           | renderError                                       |          | vm.$emit                | 触发事件 |
+| warnHandler             |           | **选项 / 资源**                                   | **说明** | **实例方法 / 生命周期** | **说明** |
+| ignoredElements         |           | directives                                        |          | vm.$mount               |          |
+| silent                  |           | filters                                           | 使得啊   | vm.$forceUpdate         |          |
+| performance             |           | components                                        |          | vm.$nextTick            |          |
+| productionTip           |           | **选项 / 组合**                                   | **说明** | vm.$destroy             |          |
+| **全局 API**            | **说明**  | parent                                            |          | **指令**                | **说明** |
+| Vue.extend              | 组件构造  | mixins                                            |          | v-text                  | 文本填充 |
+| Vue.component           | 组件注册  | extends                                           |          | v-html                  | html填充 |
+| Vue.directive           |           | provide / inject                                  |          | v-show                  | 是否显示 |
+| Vue.set                 |           | **选项 / 其它**                                   | **说明** | v-if                    | 是否渲染 |
+| Vue.delete              |           | name                                              |          | v-else                  |          |
+| Vue.filter              |           | delimiters                                        |          | v-else-if               |          |
+| Vue.nextTick            |           | functional                                        |          | v-for                   | 迭代     |
+| Vue.use                 |           | model                                             |          | v-on                    | 事件绑定 |
+| Vue.mixin               |           | inheritAttrs                                      |          | v-bind                  | 属性绑定 |
+| Vue.compile             |           | comments                                          |          | v-model                 | 双向绑定 |
+| Vue.observable          |           | **实例 property**                                 | **说明** | v-slot                  |          |
+| Vue.version             |           | vm.$data                                          |          | v-pre                   |          |
+| **选项 / 数据**         | **说明**  | vm.$props                                         |          | v-cloak                 |          |
+| data                    | model数据 | vm.$el                                            |          | v-once                  |          |
+| props                   |           | vm.$options                                       |          | **特殊 attribute**      | **说明** |
+| propsData               |           | vm.$parent                                        |          | key                     |          |
+| computed                | 属性计算  | vm.$root                                          |          | ref                     |          |
+| methods                 | 方法/函数 | vm.$children                                      |          | is                      |          |
+| watch                   | 监听器    | vm.$slots                                         |          | slot                    |          |
+| **选项 / 生命周期钩子** | **说明**  | vm.$scopedSlots                                   |          | slot-scope              |          |
+| beforeCreate            |           | vm.$refs                                          |          | scope                   |          |
+| created                 |           | vm.$isServer                                      |          | **内置的组件**          | **说明** |
+| beforeMount             |           | vm.$attrs                                         |          | component               |          |
+| mounted                 |           | vm.$listeners                                     |          | transition              |          |
+| beforeUpdate            |           | 实例方法 / 数据                                   | **说明** | transition-group        |          |
+| updated                 |           | vm.$watch                                         |          | keep-alive              |          |
+| activated               |           | vm.$set                                           |          | slot                    |          |
+| deactivated             |           | vm.$delete                                        |          |                         |          |
+| beforeDestroy           |           |                                                   |          |                         |          |
+| destroyed               |           |                                                   |          |                         |          |
+| errorCaptured           |           |                                                   |          |                         |          |
 
-## 2.2 
+## 2.2 Vue实例
 
-1. <font size=4 color=blue>** 侦听器作用**</font>：监听数据模型中的数据，数据一旦发生变化，就通知侦听器所绑定的方法；使用场景是数据变化时候执行异步并或开销大的操作
+​        <font size=4 color=blue>**创建Vue实例**</font>：一个 Vue 应用由一个通过 new Vue 创建的根 Vue 实例，当创建一个 Vue 实例时，你可以传入一个选项对象，可以通过这些选项来创建你想要的行为，虽然没有完全遵循 MVVM 模型，但是通过Vue选项的功能可以高效是完成MVVM模式开发。
+
+```js
+var vm = new Vue({
+  // 选项
+})
+```
+
+## 2.2 Vue选项 - DOM
+
+### <font size=4 color=blue>**1. el**</font>
+
+​        该选项的值是一个js选择器：提供一个在页面上已存在的 DOM 元素作为 Vue 实例的挂载目标，在实例挂载之后，元素可以用 `vm.$el` 访问；如果 `render` 函数和 `template` property 都不存在，挂载 DOM 元素的 HTML 会被提取出来用作模板；
+
+```js
+var vm = new Vue({
+  el:'#app'
+})
+```
+
+### <font size=4 color=blue>**2. template**</font>
+
+​        
+
+
+
+1. 
+
+
+
+1. <font size=4 color=blue>**侦听器作用**</font>：监听数据模型中的数据，数据一旦发生变化，就通知侦听器所绑定的方法；使用场景是数据变化时候执行异步并或开销大的操作
 
    ```js
    let vue = new Vue({
@@ -208,7 +238,7 @@ npm install vue
 - <font size=4 color=blue>**异常**</font>：
   
 1. **errorCaptured**：当捕获一个来自子孙组件的错误时被调用。此钩子会收到三个参数：错误对象、发生错误的组件实例以及一个包含错误来源信息的字符串。此钩子可以返回 false 以阻止该错误继续向上传播。
-  
+
 - <font size=4 color=blue>**过滤器的作用**</font>：主要是用于格式化数据
 
 - <font size=4 color=blue>**自定义过滤器**</font>：过滤器函数中的参数表示通过管道符传递过来的参数
