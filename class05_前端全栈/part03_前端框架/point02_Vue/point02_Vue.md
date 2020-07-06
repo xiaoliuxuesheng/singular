@@ -14,22 +14,19 @@
 
 ## 1.1 Vue特点
 
- 		Vue是一个JavaScript的渐进式框架：Vue框架提供了部分的基础服务和API；渐进式：声明式渲染 → 组件系统 → 客户端路由 → 集中式状态管理 → 项目管理，可以使用使用方案中的一部分或者全部，意味着Vue可以作为项目的一部分嵌入其中，或者希望在更多的功能上使用Vue技术，那么可以使用Vue逐渐替换原来的技术功能；
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vue是一个JavaScript的渐进式框架：Vue框架提供了部分的基础服务和API；渐进式：声明式渲染 → 组件系统 → 客户端路由 → 集中式状态管理 → 项目管理，可以使用使用方案中的一部分或者全部，意味着Vue可以作为项目的一部分嵌入其中，或者希望在更多的功能上使用Vue技术，那么可以使用Vue逐渐替换原来的技术功能；
 
 - 易用：熟悉HTML、CSS、JavaScript便可以快速上手Vue
 - 灵活：在一个JavaScript库和前端框架之间可以做到伸缩自如，也可以用于APP项目开发
 - 高效：20K的运行大小，超快高效虚拟DOM，较少不必要的DOM操作
 
-​		Vue 只关注视图层， 采用自底向上增量开发的设计。Vue 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件；Vue中还具备WEB开发中的高级功能：
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vue 只关注视图层， 采用自底向上增量开发的设计。Vue 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件；Vue中还具备WEB开发中的高级功能：
 
 - 解耦视图和数据
 - 可复用组件
 - 前端路由技术
 - 状态管理
 - 虚拟DOM
-
-
-## 1.3 Vue的安装
 
 <font size=4 color=blue>**1. 使用CDN引入**</font>
 
@@ -127,53 +124,53 @@ npm install vue
 
 ## 2.1 API
 
-| 全局配置                | 说明      | 选项 / DOM                                        | 说明     | 实例方法 / 事件         | 说明     |
-| ----------------------- | --------- | ------------------------------------------------- | -------- | ----------------------- | -------- |
-| keyCodes                | 键盘键码  | [el](###<font size=4 color=blue>**1. el**</font>) |          | vm.$on                  | 定义事件 |
-| optionMergeStrategies   |           | template                                          |          | vm.$once                | 监听单次 |
-| devtools                |           | render                                            |          | vm.$off                 | 移除事件 |
-| errorHandler            |           | renderError                                       |          | vm.$emit                | 触发事件 |
-| warnHandler             |           | **选项 / 资源**                                   | **说明** | **实例方法 / 生命周期** | **说明** |
-| ignoredElements         |           | directives                                        |          | vm.$mount               |          |
-| silent                  |           | filters                                           | 使得啊   | vm.$forceUpdate         |          |
-| performance             |           | components                                        |          | vm.$nextTick            |          |
-| productionTip           |           | **选项 / 组合**                                   | **说明** | vm.$destroy             |          |
-| **全局 API**            | **说明**  | parent                                            |          | **指令**                | **说明** |
-| Vue.extend              | 组件构造  | mixins                                            |          | v-text                  | 文本填充 |
-| Vue.component           | 组件注册  | extends                                           |          | v-html                  | html填充 |
-| Vue.directive           |           | provide / inject                                  |          | v-show                  | 是否显示 |
-| Vue.set                 |           | **选项 / 其它**                                   | **说明** | v-if                    | 是否渲染 |
-| Vue.delete              |           | name                                              |          | v-else                  |          |
-| Vue.filter              |           | delimiters                                        |          | v-else-if               |          |
-| Vue.nextTick            |           | functional                                        |          | v-for                   | 迭代     |
-| Vue.use                 |           | model                                             |          | v-on                    | 事件绑定 |
-| Vue.mixin               |           | inheritAttrs                                      |          | v-bind                  | 属性绑定 |
-| Vue.compile             |           | comments                                          |          | v-model                 | 双向绑定 |
-| Vue.observable          |           | **实例 property**                                 | **说明** | v-slot                  |          |
-| Vue.version             |           | vm.$data                                          |          | v-pre                   |          |
-| **选项 / 数据**         | **说明**  | vm.$props                                         |          | v-cloak                 |          |
-| data                    | model数据 | vm.$el                                            |          | v-once                  |          |
-| props                   |           | vm.$options                                       |          | **特殊 attribute**      | **说明** |
-| propsData               |           | vm.$parent                                        |          | key                     |          |
-| computed                | 属性计算  | vm.$root                                          |          | ref                     |          |
-| methods                 | 方法/函数 | vm.$children                                      |          | is                      |          |
-| watch                   | 监听器    | vm.$slots                                         |          | slot                    |          |
-| **选项 / 生命周期钩子** | **说明**  | vm.$scopedSlots                                   |          | slot-scope              |          |
-| beforeCreate            |           | vm.$refs                                          |          | scope                   |          |
-| created                 |           | vm.$isServer                                      |          | **内置的组件**          | **说明** |
-| beforeMount             |           | vm.$attrs                                         |          | component               |          |
-| mounted                 |           | vm.$listeners                                     |          | transition              |          |
-| beforeUpdate            |           | 实例方法 / 数据                                   | **说明** | transition-group        |          |
-| updated                 |           | vm.$watch                                         |          | keep-alive              |          |
-| activated               |           | vm.$set                                           |          | slot                    |          |
-| deactivated             |           | vm.$delete                                        |          |                         |          |
-| beforeDestroy           |           |                                                   |          |                         |          |
-| destroyed               |           |                                                   |          |                         |          |
-| errorCaptured           |           |                                                   |          |                         |          |
+| 全局配置                | 说明      | 选项 / DOM        | 说明     | 实例方法 / 事件         | 说明     |
+| ----------------------- | --------- | ----------------- | -------- | ----------------------- | -------- |
+| keyCodes                | 键盘键码  | el                |          | vm.$on                  | 定义事件 |
+| optionMergeStrategies   |           | template          |          | vm.$once                | 监听单次 |
+| devtools                |           | render            |          | vm.$off                 | 移除事件 |
+| errorHandler            |           | renderError       |          | vm.$emit                | 触发事件 |
+| warnHandler             |           | **选项 / 资源**   | **说明** | **实例方法 / 生命周期** | **说明** |
+| ignoredElements         |           | directives        |          | vm.$mount               |          |
+| silent                  |           | filters           | 使得啊   | vm.$forceUpdate         |          |
+| performance             |           | components        |          | vm.$nextTick            |          |
+| productionTip           |           | **选项 / 组合**   | **说明** | vm.$destroy             |          |
+| **全局 API**            | **说明**  | parent            |          | **指令**                | **说明** |
+| Vue.extend              | 组件构造  | mixins            |          | v-text                  | 文本填充 |
+| Vue.component           | 组件注册  | extends           |          | v-html                  | html填充 |
+| Vue.directive           |           | provide / inject  |          | v-show                  | 是否显示 |
+| Vue.set                 |           | **选项 / 其它**   | **说明** | v-if                    | 是否渲染 |
+| Vue.delete              |           | name              |          | v-else                  |          |
+| Vue.filter              |           | delimiters        |          | v-else-if               |          |
+| Vue.nextTick            |           | functional        |          | v-for                   | 迭代     |
+| Vue.use                 |           | model             |          | v-on                    | 事件绑定 |
+| Vue.mixin               |           | inheritAttrs      |          | v-bind                  | 属性绑定 |
+| Vue.compile             |           | comments          |          | v-model                 | 双向绑定 |
+| Vue.observable          |           | **实例 property** | **说明** | v-slot                  |          |
+| Vue.version             |           | vm.$data          |          | v-pre                   |          |
+| **选项 / 数据**         | **说明**  | vm.$props         |          | v-cloak                 |          |
+| data                    | model数据 | vm.$el            |          | v-once                  |          |
+| props                   |           | vm.$options       |          | **特殊 attribute**      | **说明** |
+| propsData               |           | vm.$parent        |          | key                     |          |
+| computed                | 属性计算  | vm.$root          |          | ref                     |          |
+| methods                 | 方法/函数 | vm.$children      |          | is                      |          |
+| watch                   | 监听器    | vm.$slots         |          | slot                    |          |
+| **选项 / 生命周期钩子** | **说明**  | vm.$scopedSlots   |          | slot-scope              |          |
+| beforeCreate            |           | vm.$refs          |          | scope                   |          |
+| created                 |           | vm.$isServer      |          | **内置的组件**          | **说明** |
+| beforeMount             |           | vm.$attrs         |          | component               |          |
+| mounted                 |           | vm.$listeners     |          | transition              |          |
+| beforeUpdate            |           | 实例方法 / 数据   | **说明** | transition-group        |          |
+| updated                 |           | vm.$watch         |          | keep-alive              |          |
+| activated               |           | vm.$set           |          | slot                    |          |
+| deactivated             |           | vm.$delete        |          |                         |          |
+| beforeDestroy           |           |                   |          |                         |          |
+| destroyed               |           |                   |          |                         |          |
+| errorCaptured           |           |                   |          |                         |          |
 
 ## 2.2 Vue实例
 
-​        <font size=4 color=blue>**创建Vue实例**</font>：一个 Vue 应用由一个通过 new Vue 创建的根 Vue 实例，当创建一个 Vue 实例时，你可以传入一个选项对象，可以通过这些选项来创建你想要的行为，虽然没有完全遵循 MVVM 模型，但是通过Vue选项的功能可以高效是完成MVVM模式开发。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**创建Vue实例**：一个 Vue 应用由一个通过 new Vue 创建的根 Vue 实例，当创建一个 Vue 实例时，你可以传入一个选项对象，可以通过这些选项来创建你想要的行为，虽然没有完全遵循 MVVM 模型，但是通过Vue选项的功能可以高效是完成MVVM模式开发。
 
 ```js
 var vm = new Vue({
@@ -183,27 +180,50 @@ var vm = new Vue({
 
 ## 2.2 Vue选项 - DOM
 
-### <font size=4 color=blue>**1. el**</font>
+1. <font size=4 style="color:blue">**el**</font>：该选项的值是一个js选择器：提供一个在页面上已存在的 DOM 元素作为 Vue 实例的挂载目标，在实例挂载之后，元素可以用 `vm.$el` 访问；如果 `render` 函数和 `template` property 都不存在，挂载 DOM 元素的 HTML 会被提取出来用作模板；
 
-​        该选项的值是一个js选择器：提供一个在页面上已存在的 DOM 元素作为 Vue 实例的挂载目标，在实例挂载之后，元素可以用 `vm.$el` 访问；如果 `render` 函数和 `template` property 都不存在，挂载 DOM 元素的 HTML 会被提取出来用作模板；
+   ```js
+   var vm = new Vue({
+     el:'#app'
+   })
+   ```
 
-```js
-var vm = new Vue({
-  el:'#app'
-})
-```
+2. <font size=4 color=blue>**template**</font>：该选项值是字符串，可以是html字符串实例、或者是`<template>`标签的id选择符、用 `<script type="x-template">` 包含模板。用作组件化开发
 
-### <font size=4 color=blue>**2. template**</font>
+## 2.3 Vue选项 - 数据
 
-​        
+1. <font size=4 color=blue>**data**</font>：Vue 实例的数据对象（含有零个或多个的 key/value 对），Vue 将会递归将 data 的 property 转换为 getter/setter，从而让 data 的 property 能够响应数据变化；实例创建之后，可以通过 `vm.$data` 访问原始数据对象；以 `_` 或 `$` 开头的 property **不会**被 Vue 实例代理，因为它们可能和 Vue 内置的 property、API 方法冲突。你可以使用例如 `vm.$data._property` 的方式访问这些 property；当一个**组件**被定义，`data` 必须声明为返回一个初始数据对象的函数
 
+   ```js
+   // Vue 实例
+   var vm = new Vue({
+     data: { a: 1 }
+   })
+   
+   // Vue组件
+   var Component = Vue.extend({
+     data: function () {
+       return { a: 1 }
+     }
+   })
+   ```
 
+2. <font size=4 color=blue>**methods**</font>：定义方法到 Vue 实例中。可以直接通过 VM 实例访问这些方法，或者在指令表达式中使用。方法中的 this 自动绑定为 Vue 实例。注意，不应该使用箭头函数来定义 method 函数 (例如 plus: () => this.a++)。理由是箭头函数绑定了父级作用域的上下文，所以 this 将不会按照期望指向 Vue 实例，this.a 将是 undefined。
 
-1. 
+   ```js
+   var vm = new Vue({
+     data: { a: 1 },
+     methods: {
+       plus: function () {
+         this.a++
+       }
+     }
+   })
+   vm.plus()
+   vm.a // 2
+   ```
 
-
-
-1. <font size=4 color=blue>**侦听器作用**</font>：监听数据模型中的数据，数据一旦发生变化，就通知侦听器所绑定的方法；使用场景是数据变化时候执行异步并或开销大的操作
+3. <font size=4 color=blue>**watch**</font>：监听数据模型中的数据，数据一旦发生变化，就通知侦听器所绑定的方法；使用场景是数据变化时候执行异步并或开销大的操作；Vue 实例将会在实例化时调用 `$watch()`，遍历 watch 对象的每一个 property。
 
    ```js
    let vue = new Vue({
@@ -216,11 +236,34 @@ var vm = new Vue({
    })
    ```
 
+4. <font size=4 color=blue>**computed**</font>：
 
+   - **计算属性的使用**：计算属性是指表达式的技术逻辑可能会比较复杂，使用计算属性使模板内容更加简洁
+
+   - **计算属性的定义**：在计算属性的函数中可以获取到模型对象中的数据，技术属性是依赖与model中的数据；
+
+     ```js
+     let vue = new Vue({
+         ... ...
+         computed:{
+             计算属性名称:function(){
+             	return 计算结果;
+             }
+         }
+     })
+     ```
+
+   - **计算属性的使用**：直接使用函数名称即可，不可以使用函数调用的格式
+
+     ```js
+     {{计算属性名称}}
+     ```
+
+   - **计算属性与方法的区别**：计算属性是基于他们的依赖进行缓存的，方法不存在缓存
+
+## 2.4 Vue选项 - 生命周期钩子
 
 <img src="https://s1.ax1x.com/2020/05/03/JxfufH.png" alt="JxfufH.png" border="0" />
-
-
 
 - <font size=4 color=blue>**挂载**</font>：初始化相关属性
   1. **beforeCreate**：在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用
@@ -236,101 +279,11 @@ var vm = new Vue({
   2. **beforeDestroy**：实例销毁之前调用。在这一步，实例仍然完全可用。**该钩子在服务器端渲染期间不被调用。**
   3. **destroyed**：实例销毁后调用。该钩子被调用后，对应 Vue 实例的所有指令都被解绑，所有的事件监听器被移除，所有的子实例也都被销毁。**该钩子在服务器端渲染期间不被调用。**
 - <font size=4 color=blue>**异常**</font>：
-  
-1. **errorCaptured**：当捕获一个来自子孙组件的错误时被调用。此钩子会收到三个参数：错误对象、发生错误的组件实例以及一个包含错误来源信息的字符串。此钩子可以返回 false 以阻止该错误继续向上传播。
-
-- <font size=4 color=blue>**过滤器的作用**</font>：主要是用于格式化数据
-
-- <font size=4 color=blue>**自定义过滤器**</font>：过滤器函数中的参数表示通过管道符传递过来的参数
-
-  1. **全局过滤器**
-
-     ```js
-     Vue.filter('过滤器名称',function(value){
-         // 业务逻辑
-         return 处理结果
-     })
-     ```
-
-  2. **局部过滤器**
-
-     ```js
-     let vue = new Vue({
-     	... ...
-         filters:{
-             过滤器名称:function(value){
-                 return 处理结果
-             }
-         }
-     })
-     ```
-
-- <font size=4 color=blue>**过滤器的使用**</font>：|可以理解为管道符，作用是把管道符左边的值交给过滤器进行处理
-
-  ```html
-  在差值表达式中使用
-  <div>{{属性名称 | 过滤器名称}}</div>
-  
-  在属性绑定中使用
-  <div v-bind='属性名称 | 过滤器名称'></div>
-  ```
-
-- <font size=4 color=blue>**过滤器的参数**</font>：在定义过滤器和使用过滤器时候可以传递参数，默认是从第二个参数开始赋值
-
-  ```js
-  Vue.filter('过滤器名称',function(value,形参){
-      // 业务逻辑
-      return 处理结果
-  })
-  ```
-
-  ```js
-  <div v-bind='属性名称 | 过滤器名称(实参)'></div>
-  ```
-
-## 
-
-1. 
+  1. **errorCaptured**：当捕获一个来自子孙组件的错误时被调用。此钩子会收到三个参数：错误对象、发生错误的组件实例以及一个包含错误来源信息的字符串。此钩子可以返回 false 以阻止该错误继续向上传播。
 
 
 
-
-
-## 2.9 实例 property
-vm.$data
-vm.$props
-vm.$el
-vm.$options
-vm.$parent
-vm.$root
-vm.$children
-vm.$slots
-vm.$scopedSlots
-vm.$refs
-vm.$isServer
-vm.$attrs
-vm.$listeners
-
-## 2.10 实例方法 / 数据
-vm.$watch
-vm.$set
-vm.$delete
-
-## 2.11 实例方法 / 事件
-vm.$on
-vm.$once
-vm.$off
-vm.$emit
-
-## 2.12 实例方法 / 生命周期
-vm.$mount
-vm.$forceUpdate
-vm.$nextTick
-vm.$destroy
-
-## 2.13 指令
-
-v-slot
+## 2.5 Vue指令
 
 ### 1. 差值表达式 
 
@@ -812,144 +765,59 @@ v-slot
   </script>
   ```
 
+
+## 2.6 Vue资源 - 过滤器
+
+- <font size=4 color=blue>**过滤器的作用**</font>：主要是用于格式化数据
+
+- <font size=4 color=blue>**自定义过滤器**</font>：过滤器函数中的参数表示通过管道符传递过来的参数
+
+  1. **全局过滤器**
+
+     ```js
+     Vue.filter('过滤器名称',function(value){
+         // 业务逻辑
+         return 处理结果
+     })
+     ```
+
+  2. **局部过滤器**
+
+     ```js
+     let vue = new Vue({
+     	... ...
+         filters:{
+             过滤器名称:function(value){
+                 return 处理结果
+             }
+         }
+     })
+     ```
+
+- <font size=4 color=blue>**过滤器的使用**</font>：|可以理解为管道符，作用是把管道符左边的值交给过滤器进行处理
+
+  ```html
+  在差值表达式中使用
+  <div>{{属性名称 | 过滤器名称}}</div>
   
+  在属性绑定中使用
+  <div v-bind='属性名称 | 过滤器名称'></div>
+  ```
 
-## 2.14 特殊 attribute
-key
-ref
-is
-slot
-slot-scope
-scope
+- <font size=4 color=blue>**过滤器的参数**</font>：在定义过滤器和使用过滤器时候可以传递参数，默认是从第二个参数开始赋值
 
-## 2.15 内置的组件
-component
-transition
-transition-group
-keep-alive
-slot
+  ```js
+  Vue.filter('过滤器名称',function(value,形参){
+      // 业务逻辑
+      return 处理结果
+  })
+  ```
 
-## 2.1 Vue对象的参数解析
+  ```js
+  <div v-bind='属性名称 | 过滤器名称(实参)'></div>
+  ```
 
-1. **Vue指令**
-
-   - 自定义属性：传统JS的自定属性是`data-属性名称`的形式定义自定义属性
-   - Vue指令本质也是自定义属性，其基本格式是`v-指定名称`，是定义在Vue挂载的DOM元素之上
-
-2. **数据响应式**
-
-   - **响应式**：在HTML中的响应式表示屏幕尺寸的编号会导致样式的变化，而数据响应式则表示数据的变化会导致页面内容的变化，**即修改数据在页面中是即时生效的**
-   - **数据绑定**：就是将Vue对象的模型数据填充到DOM标签中
-
-3. **Vue对象**
-
-   ```js
-   let vue = new Vue({
-       el:"#app",
-       data:{
-           msg:"值"
-       },
-       methods:{
-           函数名称:function(){
-               ... ...
-           },
-           函数名称(){
-               ... ...
-           }
-       },
-       directives:{
-           指令名称:{
-            钩子函数:function(el){
-                   
-            }
-           }
-    	},
-       computed:{
-           计算属性名称:function(){
-           	return 计算结果;
-           }
-       },
-       watch:{
-           监听属性名称:function(变化后的值){
-               
-           }
-       },
-       filters:{
-           过滤器名称:function(value){
-               return 处理结果
-           }
-       }，
-       beforeCreate(){
-           console.log("beforeCreate")
-       },
-       created(){
-           console.log("created")
-       },
-       beforeMount(){
-       	console.log("beforeMount")
-       },
-       mounted(){
-           console.log("mounted")
-       },
-       beforeUpdate(){
-           console.log("beforeUpdate")
-       },
-       updated(){
-           console.log("updated")
-       },
-       activated(){
-           console.log("activated")
-       },
-       deactivated(){
-           console.log("deactivated")
-       },
-       beforeDestroy(){
-           console.log("beforeDestroy")
-       },
-       destroyed(){
-           console.log("destroyed")
-       },
-       errorCaptured(){
-           console.log("destroyed")
-       }
-   })
-   ```
-   
-   <font size=4 color=blue>**:dash: el**</font>：是View Model对象挂载的DOM区域，采用JavaScript的元素选择器
-   
-   <font size=4 color=blue>**:dash: data**</font>：是数据模型对象，对照的值是key：value的格式
-   
-   <font size=4 color=blue>**:dash: methods**</font>：是函数对象，主要是定义针对Vue对象的一些函数，函数的定义是JavaScript语法
-   
-   <font size=4 color=blue>**:dash: directive**</font>：局部指令，可以定义多个指令；指令详情参考2.3.2的全局指令
-   
-   <font size=4 color=blue>**:dash: computed**</font>：计算属性，用于简化属性值绑定的表达式
-   
-   <font size=4 color=blue>**:dash: watch**</font>：侦听器，用于侦听data区域的属性数据的变化，触发值执行的逻辑
-   
-   <font size=4 color=blue>**:dash: filters**</font>：过滤器，主要用户数据格式化
-
-## 2.2 Vue模板语法
-
-- 
-
-## 2.3 Vue常用特性
-
-### 1. 表单操作 
-
-- <font size=4 color=blue>**常用表单操作**</font>：可以使用v-model完成数据双向绑定
-  - input：单行文本：
-  - textarea：多行文本：
-  - select：下拉选：
-  - redio：单选框：
-  - checkbook：多选框：
-
-- <font size=4 color=blue>**表单域修饰符**</font>：修饰v-model输入域
-  - v-model.number：转换为数值，input:type=number的输入框
-  - v-model.trim：去掉开始和结尾的空格
-  - v-model.lazy：将input事件切换为change事件
-
-### 2. 自定义指令 
+## 2.7 Vue资源 - 自定义指令
 
 - <font size=4 color=blue>**自定义指令的语法规则**</font>
 
@@ -1005,33 +873,28 @@ slot
   <input v-指令名称/>
   ```
 
+## 2.8 Vue基础特性
 
-### 3. 计算属性 
+1. **Vue指令**
+   - 自定义属性：传统JS的自定属性是`data-属性名称`的形式定义自定义属性
+   - Vue指令本质也是自定义属性，其基本格式是`v-指定名称`，是定义在Vue挂载的DOM元素之上
+2. **数据响应式**
 
-- <font size=4 color=blue>**计算属性的使用**</font>：计算属性是指表达式的技术逻辑可能会比较复杂，使用计算属性使模板内容更加简洁
+   - **响应式**：在HTML中的响应式表示屏幕尺寸的编号会导致样式的变化，而数据响应式则表示数据的变化会导致页面内容的变化，**即修改数据在页面中是即时生效的**
+   - **数据绑定**：就是将Vue对象的模型数据填充到DOM标签中
+3.  **表单操作** 
+   - **常用表单操作**：可以使用v-model完成数据双向绑定
+     - input：单行文本：
+     - textarea：多行文本：
+     - select：下拉选：
+     - redio：单选框：
+     - checkbook：多选框：
+   - **表单域修饰符**：修饰v-model输入域
+     - v-model.number：转换为数值，input:type=number的输入框
+     - v-model.trim：去掉开始和结尾的空格
+     - v-model.lazy：将input事件切换为change事件
 
-- <font size=4 color=blue>**计算属性的定义**</font>：在计算属性的函数中可以获取到模型对象中的数据，技术属性是依赖与model中的数据；
-
-  ```js
-  let vue = new Vue({
-      ... ...
-      computed:{
-          计算属性名称:function(){
-          	return 计算结果;
-          }
-      }
-  })
-  ```
-
-- <font size=4 color=blue>**计算属性的使用**</font>：直接使用函数名称即可，不可以使用函数调用的格式
-
-  ```html
-  {{计算属性名称}}
-  ```
-
-- <font size=4 color=blue>**计算属性与方法的区别**</font>：计算属性是基于他们的依赖进行缓存的，方法不存在缓存
-
-## 2.4 Vue实例属性
+## 2.9 Vue高级特性
 
 ### <font size=4 color=blue>**1. 实例方法 / 事件**</font>
 
