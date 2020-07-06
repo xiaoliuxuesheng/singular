@@ -1,3 +1,13 @@
+1. 环境搭建
+2. html
+3. css
+4. js基础
+5. js高级
+6. 移动端开发
+7. 前端框架
+8. node
+9. 工程化
+
 # 前言 
 
 1. 自学练习经典网站
@@ -8,10 +18,68 @@
    - [小米官网](https://www.mi.com/)
    - [京东首页](https://www.jd.com/)
    - [考拉海购](https://www.kaola.com/)
+   
 2. 前端学习体系
    - React + Native：可以开发IOS、Android、移动端
    - Weex + Vue：可以开发IOS、Android、移动端
    - Flutter（Dart语言）：可以开发IOS、Android、移动端、PC端
+   
+3. 前端环境搭建
+
+   - 右击桌面我的电脑 | 高级系统设置 | 高级 > 设置 > 视觉效果 > 调整为最佳性能
+   - 文件夹设置：①列表显示②显示隐藏文件③显示文件扩展名
+   - 任务栏设置为小图标
+
+4. Windows系统快捷键
+
+   | 快捷键     | 说明                 |
+   | ---------- | -------------------- |
+   | Win + D    | 显示桌面             |
+   | Win + E    | 打开资源管理器       |
+   | Win + R    | 运行                 |
+   | Win + L    | 锁定桌面             |
+   | Win + 数字 | 打开任务栏对应的程序 |
+
+5. VSCode的使用
+
+   | 辅助插件               | 说明           |
+   | ---------------------- | -------------- |
+   | Chinese (Simplified)   | 中文工具包     |
+   | vscode-icons           | 文件图标       |
+   | Bracket Pair Colorizer | 彩虹括号       |
+   | Highlight Matching Tag | 标签匹配       |
+   | **开发插件**           | **说明**       |
+   | View In Browser        | 在浏览器打开   |
+   | Live Server            | 临时服务器     |
+   | Python                 | python语法提示 |
+   | Go                     | GoLang语法     |
+   | Path Autocomplete      | 文件路径提示   |
+   |                        |                |
+   | GitLens                | Git代码提示    |
+
+   
+
+6. WEB相关概念
+
+   - 浏览器引擎
+
+     | 引擎    | 内核       | 常见浏览器                               |
+     | ------- | ---------- | ---------------------------------------- |
+     | Blink   | Chrome     | Chrome、360极速浏览器、360安全浏览器     |
+     |         | Chromium   | QQ浏览器、搜狗高速浏览器、Opera          |
+     | Gecko   | Firefox    | Firefox（火狐浏览器）                    |
+     | Webkit  | Safari     | Safari、Android 默认浏览器               |
+     |         | U3（国产） | UC浏览器                                 |
+     | Trident | Edge       | Microsoft Edge                           |
+     |         | IE 内核    | IE6 - IE11、360极速浏览器、360安全浏览器 |
+
+   - http请求与服务器
+
+7. 网页的基本组成
+
+   - 页面的结构：html
+   - 页面的样式：css
+   - 页面的行为：JavaScript
 
 # 第一章 HTML基础
 
@@ -22,18 +90,6 @@
 ​		HTML文本是由HTML命令组成的描述性文本，HTML命令可以说明文字，图形、动画、声音、表格、链接等。
 
 ## 1.2 HTML的发展
-
-## 1.3 浏览器引擎
-
-| 引擎    | 内核       | 常见浏览器                               |
-| ------- | ---------- | ---------------------------------------- |
-| Blink   | Chrome     | Chrome、360极速浏览器、360安全浏览器     |
-|         | Chromium   | QQ浏览器、搜狗高速浏览器、Opera          |
-| Gecko   | Firefox    | Firefox（火狐浏览器）                    |
-| Webkit  | Safari     | Safari、Android 默认浏览器               |
-|         | U3（国产） | UC浏览器                                 |
-| Trident | Edge       | Microsoft Edge                           |
-|         | IE 内核    | IE6 - IE11、360极速浏览器、360安全浏览器 |
 
 ## 1.4 HTML标签的分类
 
@@ -72,6 +128,8 @@
 </body>
 </html>
 ```
+
+- DOCTYPE：位于文档最前面，向浏览器说明当前文档使用的HTML标准规范，默认为html表示为html5的文档规范，
 
 - lang="en"：可以删除，如果不删除的，用谷歌之类打开，它会认为是英文的，会提示翻译，可以改成zh-cn表示中文网站，就不会提示翻译了；
 
