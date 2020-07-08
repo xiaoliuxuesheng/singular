@@ -1,13 +1,3 @@
-1. 环境搭建
-2. html
-3. css
-4. js基础
-5. js高级
-6. 移动端开发
-7. 前端框架
-8. node
-9. 工程化
-
 # 前言 
 
 1. 自学练习经典网站
@@ -88,6 +78,8 @@
 ​		HTML文本是由HTML命令组成的描述性文本，HTML命令可以说明文字，图形、动画、声音、表格、链接等。
 
 ## 1.2 HTML的发展
+
+- **xml**
 
 - **h5**
   - h5不是新增的语言，是html语言第五次重大修改版本
@@ -294,7 +286,11 @@
     </script>
     ```
 
-  - 方式二：引入第三方插件（html5shiv.js）
+  - 方式二：引入第三方插件（html5shiv.js）:[下载地址](https://cdn.bootcdn.net/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js)
+  
+    ```html
+    <script src="https://cdn.bootcdn.net/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
+    ```
 
 # 第三章 列表标签
 
@@ -384,9 +380,7 @@
 
 ## 5.3 button
 
-
-
-## 5.4 process
+## 5.4 <del>process</del>
 
 1. **进度条（process）**：用于显示某个特定任务的时间进度这个任务的时间上限是可以确定的值，如播放一段音乐的时间；或者是不可确定的值，如上传一个文件到服务器上；max表示进度条的最大值，value表是进度条的当前进度值；
 
@@ -396,7 +390,7 @@
 
 2. **使用说明**：在2020年的建议是这个标签仅供娱乐，慎用；不同的浏览器有不同的样式，而且样式还特别难看；兼容性还不好，Android、iOS、浏览器中使用不统一；
 
-## 5.5 meter
+## 5.5 <del>meter</del>
 
 1. **度量器（meter）**：与process类型，不同之处在于，它的最小值和最大值必须是确定的
 
@@ -414,8 +408,4 @@
 
 ## 6.1 audio
 
-
-
 ## 6.2 video
-
-1. 
