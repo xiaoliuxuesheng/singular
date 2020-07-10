@@ -408,4 +408,222 @@
 
 ## 6.1 audio
 
+```html
+<audio>
+    <source></source>
+</audio>
+```
+
+- src
+- controls
+- autoplay
+- loop
+
 ## 6.2 video
+
+```html
+<video>
+    <source></source>
+</video>
+```
+
+- src
+- controls
+- autoplay
+- loop
+- width
+- height
+- post
+
+# 第七章 HTML5中的API
+
+1. 查询元素
+
+   ```js
+   // 根据标签的选择器选择元素对应的DOM对象, 返回满足条件的第一个元素
+   document.querySelector("选择器名称")
+   
+   // 根据标签的选择器选择元素对应的DOM对象, 返回满足条件的所有元素
+   document.querySelectorAll("选择器名称")
+   ```
+
+2. 操作元素class样式
+
+   ```js
+   // 获取DOM对象的class对象属性
+   DOM.classList
+   
+   // class对象添加样式属性,一个add只能添加一个样式
+   DOM.classList.add("样式名称")
+   
+   // class对象移除指定名称样式属性,一次只能移除一个样式
+   DOM.classList.remove("样式名称")
+   
+   // class对象切换样式,有则删除
+   DOM.classList.toggle("样式名称")
+   
+   // 判断是否包含指定名称的样式
+   DOM.classList.contain("样式名称")
+   
+   // 获取class对象的样式列表
+   DOM.classList.item(索引)
+   ```
+
+3. 自定义属性
+
+   ```html
+   1. 定义属性:小写字母、数字、中横线，不以数字开头
+   <标签名称 data-自定义属性名="属性值"></标签名称>
+   
+   2. 获取自定义属性:获取自定义属性时候,必须将中横线转为驼峰格式
+   DOM.dataset[自定义属性名]
+   ```
+
+4. 网络状态接口事件
+
+   ```js
+   // online:网络连接时触发
+   window.addEventListener("online",function(){
+       // 回调函数
+   })
+   // onoffline
+   window.addEventListener("onoffline",function(){
+       // 回调函数
+   })
+   ```
+
+5. 全屏接口:不同浏览器的支持不同\
+
+   - chrome:webkit
+   - Firefox:moz
+   - ie:ms
+   - Opera:o 
+
+   ```js
+   // 1. 开启全屏显示:requestFullScreen(), 全屏是针对某个DOM而言所以需要DOM对象调用
+   DOM.webkitRequestFullScreen()
+   DOM.mozRequestFullScreen()
+   DOM.msRequestFullScreen()
+   DOM.oRequestFullScreen()
+   
+   // 2. 退出全屏显示:cancelFullScreen(),退出全屏是Document对象的属性
+   document.webkitRequestFullScreen()
+   document.mozRequestFullScreen()
+   document.msRequestFullScreen()
+   document.oRequestFullScreen()
+   
+   // 4. 判断是否全屏:fullScreenElement
+   document.fullScreenElement()
+   
+   ```
+
+6. FileRead：接口读取文件内容
+
+   ```js
+   1. readAsText()  读取文本文件内容
+   
+   2. readAsBinaryString() 读取任意类型文件,返回二进制字符串,用于存储
+   
+   3. readAsDataURL() 读取文件获取data开头的URL,将文件嵌入文档的方案
+   
+   4. abort()  中断读取
+   ```
+
+   - 文件读取事件
+
+     ```js
+     let reader = new FileReader();
+     reader.onabort=读取文件中断时触发
+     reader.onerror=读取文件错误时触发
+     reader.onload=文件读取成功时触发
+     reader.onloadend=文件读取完成时触发
+     reader.onloadstart=文件读取开始时触发
+     reader.onprogress=文件读取时持续触发
+     ```
+
+7. 拖拽事件
+
+   - 在h5中要拖拽元素需要给元素添加一个属性，dragable=“true”（图片和超链接默认可以拖拽）
+
+   - 学习拖拽重点是是拖拽事件：一类是被拖拽元素的事件；另一类是拖拽目标元素事件
+
+     ```js
+     // 拖拽元素事件
+     ondrag	应用于拖拽元素,整个拖拽过程都会被调用
+     ondragstart	应用于拖拽元素,当拖拽事件开始时调用
+     ondragleave	应用于拖拽元素,当鼠标离开拖拽元素后调用
+     ondragend	应用于拖拽元素,当拖拽完成后调用
+     
+     // 拖拽目标事件
+     ondragenter	应用于目标元素,当拖拽元素进入时调用
+     ondragover 	应用于目标元素,当拖拽元素覆盖目标时调用
+     ondrop		应用于目标元素,当拖拽元素松开鼠标时调用,浏览器默认会阻止这个行为,必须在dragover中阻拦默认行为
+     ondragleave	应用于目标元素,当鼠标离开目标元素时调用
+     ```
+
+   - 使用步骤
+
+     ```js
+     // 阻止默认行为
+     DOM.ondragover=function(e){
+         e.preventDefault();
+     }
+     
+     // document的拖拽事件,通过事件元素的target属性获取目标元素
+     document.ondrag=function(e){
+         let el = e.target;
+     }
+     // 事件源参数属性可以设置值和取值
+     document.ondrag=function(e){
+         /**
+         	format:指数据类型:text/html    text/uri-list
+         	data:数据一般是字符串值,
+         */
+     	e.dataTransfer.setData(format,data)
+     }
+     
+     // 通过dataTransfer存储的值,只能在ondrop事件中取值
+     document.ondrop=function(){
+         e.dataTransfer.getData("text/html")
+     }
+     ```
+
+8. 地理定位接口
+
+   - 获取位置的方式:浏览器默认会自动获取位置信息,并且默认是阻止获取位置信息
+
+     | 数据源     | 优点                                | 缺点                                 |
+     | ---------- | ----------------------------------- | ------------------------------------ |
+     | IP地址     | 任何地方都可以用,在服务器端处理     | 不精确,只能定位到城市级别,运算成本大 |
+     | GPS        | 很精确                              | 定位时间长,耗电大,需要硬件支持       |
+     | WIFI       | 精确,可以在室内使用                 | wifi斯奥的地方无法使用               |
+     | 手机信号   | 相当精确,简单,快速                  | 需要可以访问手机或其他定位设备       |
+     | 用户自定义 | 可以获得非常精确的位置,用户自动输入 | 用户变更后位置更新难                 |
+
+   - 获取地理信息测试
+
+     ```js
+     function getLocation(){
+         if(navigator.geolocation){
+             navigation.geolocation.getCurrentPosition(success回调,error回调,获取位置信息的参数)
+         }
+     }
+     
+     // 成功
+     function success(position){
+         position.coords.latitude;			// 经度
+         position.coords.longitude;			// 纬度
+         position.coords.accuracy; 			// 精度
+         position.coords.altitude;			// 海拔高度
+     }
+     
+     // 失败
+     function err(err){
+     	
+     }   
+     ```
+
+     
+
+
+
