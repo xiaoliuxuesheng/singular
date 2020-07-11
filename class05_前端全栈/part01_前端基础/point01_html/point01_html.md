@@ -435,7 +435,140 @@
 - height
 - post
 
-# 第七章 HTML5中的API
+# 第七章 HTML内联框架
+
+## 7.1 iframe
+
+1. iframe的作用：可以在一个页面区域显示一个或多个其他页面的内容；内联框架的特征是在同域中的页面可以自由操作iframe和父框架内容的，如果是跨域只能实现页面跳转功能；
+
+   | 属性        | 说明                                                         |
+   | ----------- | ------------------------------------------------------------ |
+   | name        | 框架的名称，window.frames[name]时专用的属性                  |
+   | src         | 内框架的地址，可以使页面地址，也可以是图片的地址             |
+   | frameborder | 是否显示边框，1(yes),0(no)                                   |
+   | height      | 框架作为一个普通元素的高度                                   |
+   | width       | 框架作为一个普通元素的宽度                                   |
+   | scrolling   | 框架的是否滚动。yes,no,auto                                  |
+   | srcdoc      | 用来替代原来HTML body里面的内容。但是IE不支持, 不过也没什么卵用 |
+   | sandbox     | 对iframe进行一些列限制，IE10+支持                            |
+
+2. iframe的使用
+
+   - 基本用法：根据定义src实现页面的内联功能
+
+     ```html
+     <iframe src="demo_iframe_sandbox.htm"></iframe>
+     ```
+
+   - 基本用法二：定义超链接的跳转地址为内联框架
+
+     ```html
+     1. 定义内联框架并制定框架名称
+     <iframe name="框架名称"></iframe>
+     
+     2. 定义超链接的跳转链接
+     <a href="应用页面的地址" target="框架名称">引用</a> 
+     ```
+
+3. iframe相关API
+
+   ```js
+   let iframe = document.getElementById("id值");
+   let iframe = window.frames['name值']
+   
+   let iwindow = iframe.contentWindow;		//获取iframe的window对象
+   let idoc = iwindow.document; 			//获取iframe的document
+   let element = idoc.documentElement;		//获取iframe的html
+   let html = idoc.head;					//获取head
+   let body = idoc.body;					//获取body
+   
+   window.parent; 		// 获取上一级的window对象，如果还是iframe则是该iframe的window对象
+   window.top; 		// 获取最顶级容器的window对象，即，就是你打开页面的文档
+   window.self; 		// 返回自身window的引用。可以理解 window===window.self(脑残)
+   ```
+
+4. iframe安全性探索：iframe出现安全性有两个方面，一个是你的网页被别人iframe,一个是你iframe别人的网页。
+
+   - 防嵌套网页：使用iframe来 拦截click事件。因为iframe享有着click的最优先权
+
+     ```js
+     // 主要用途是限定你的网页不能嵌套在任意网页内
+     if(window != window.top){
+         window.top.location.href = correctURL;
+     }
+     // 如果你想引用同域的框架的话，可以判断域名。
+     if (top.location.host != window.location.host) {
+     　　top.location.href = window.location.href;
+     }
+     //如果你网页不同域名的话，上述就会报错。所以，这里可以使用try...catch...进行错误捕获。如果发生错误，则说明不同域，表示你的页面被盗用了。可能有些浏览器这样写是不会报错，所以需要降级处理。
+     try{
+     　　top.location.hostname;  //检测是否出错
+     　　//如果没有出错，则降级处理
+     　　if (top.location.hostname != window.location.hostname) { 
+     　　　　top.location.href =window.location.href;
+     　　}
+     }
+     catch(e){
+     　　top.location.href = window.location.href;
+     }
+     ```
+
+   - X-Frame-Options：是一个相应头，主要是描述服务器的网页资源的iframe权限。目前的支持度是IE8+(已经很好了啊喂)有3个选项
+
+     - `X-Frame-Options:DENY`：拒绝任何iframe的嵌套请求
+  - `X-Frame-Options:SAMEORIGIN`：iframe页面的地址只能为同源域名下的页面
+     - `X-Frame-Options:ALLOW-FROM 源`：可以在指定的origin url的iframe中加载
+
+   - CSP之页面防护：和X-Frames-Options一样，都需要在服务器端设置好相关的Header. CSP 的作用， 真的是太大了，他能够极大的防止你的页面被XSS攻击，而且可以制定js,css,img等相关资源的origin，防止被恶意注入。不过他的兼容性，也是渣的一逼。使用主要是在后端服务器上配置，在前端，我们可以观察Response Header 里是否有这样的一个Header
+   
+     ```html
+  Content-Security-Policy: default-src 'self'
+     ```
+   
+5. 跨域消息传递：希望不要直接传Object。 可以使用是JSON.stringify进行转化。这样能保证不会出bug
+
+   - window.postMessage(message, targetOrigin)
+     - message: 就是传递给iframe的内容;
+     - targetOrigin: 接受你传递消息的域名，可以设置绝对路径，也可以设置"*"或者"/"。* 表示任意域名都行，"/"表示只能传递给同域域名。
+
+   ```html
+   <iframe src="http://tuhao.com" name="sendMessage"></iframe>
+   
+   // 当前脚本
+   <script>
+   let ifr = window.frames['sendMessage'];
+   //使用iframe的window向iframe发送message。
+   ifr.postmessage('give u a message', "http://tuhao.com");
+   </script>
+   
+   // tuhao.com的脚本
+   <script>
+   window.addEventListener('message', receiver, false);
+   function receiver(e) {
+       if (e.origin == 'http://tuhao.com') {
+           if (e.data == 'give u a message') {
+               e.source.postMessage('received', e.origin);  //向原网页返回信息
+           } else {
+               alert(e.data);
+           }
+       }
+   }
+   </script>
+   ```
+
+## 7.1 frameset
+
+- 是一对标签，它和`<body>`标签是不能同时使用的，除非浏览器不支持框架时，要加`<noframes>`标签时，里面的要添加文本的话，就要在`<body>`标签里进行编写
+
+  ```html
+  <frameset>
+  　　<frame src="html的路径加名称"></frame>
+  </frameset>
+  ```
+
+- 刷新框架指定区域：第一步：在指定的feame中指定name属性值；第二步：在超链接部分指定target的值为那个的属性值
+
+# 第八章 HTML5中的API
 
 1. 查询元素
 
@@ -605,8 +738,14 @@
      ```js
      function getLocation(){
          if(navigator.geolocation){
-             navigation.geolocation.getCurrentPosition(success回调,error回调,获取位置信息的参数)
+             navigation.geolocation.getCurrentPosition(success回调,error回调,{选项对象})
          }
+     }
+     // 选项对象属性说明:设置获取数据的方式
+     {
+         "abableHightAccuracy":是否使用高精度,耗时  耗电
+         "timeout":超时时间
+         "maximumAge":设置浏览器重新获取地理信息的时间间隔
      }
      
      // 成功
@@ -616,14 +755,169 @@
          position.coords.accuracy; 			// 精度
          position.coords.altitude;			// 海拔高度
      }
-     
+
      // 失败
      function err(err){
-     	
+     	err.PERMISSION_DENIED    	// 用户不允许
+         err.POSITION_UNAVAILABLE 	// 获取定位失败
+         err.TIME_OUT				// 超时
+         err.UNKINOW_ERROR			// 未知错误
      }   
      ```
-
      
+   - 使用第三方的地图接口
+     - 百度地图
+     - 高德地图
+   
+9. WEB存储
+
+   - SessionStoryage：存储数据到本地，存储容量大概是5兆，数据是存储在当前页面的会话中，生命周期为是当前页面
+
+     ```js
+     // 设置数据
+     window.sessionStorage.setItem(key,value)
+     
+     // 获取数据
+     window.sessionStorage.getItem(key)
+     
+     // 删除数据
+     window.sessionStorage.remove(key)
+     
+     // 清空数据
+     window.sessionStorage.clear()
+     ```
+
+   - localStoryage：存储容量约20兆，在不同浏览器中的数据不共享，相同浏览器的不同窗口中共享数据，localStoryage数据是存储在磁盘中，永久生效，如果要删除需要手动清除
+
+     ```js
+     // 设置数据
+     window.localStoryage.setItem(key,value)
+     
+     // 获取数据
+     window.localStoryage.getItem(key)
+     
+     // 删除数据
+     window.localStoryage.removeItem(key)
+     
+     // 清空数据
+     window.localStoryage.clear()
+     ```
+
+10. 应用缓存
+
+   - 浏览器缓存特征，缓存页面所有内容或者不缓存，html5体统应用缓存功能，可以缓存需要的数据：通过创建cache manifest文件可以轻松创建web应用的离线版本
+
+     - 可以配置需要缓存的资源
+     - 网络无连接任然可用
+     - 本地读取缓存资源，提示访问速度增强用户体验
+     - 减少请求，缓解服务器负担
+
+   - 使用cache manifest基础
+
+     - 需要开启应用程序缓存，在文档的html标签中包含manifest属性
+
+       ```html
+       <html manifest="缓存文件清单的文件路径">
+           // 建议文件的扩展名是appcache,这个文件的本质是文本文件
+       </html>
+       ```
+
+     - manifest文件：是一个简单的文本文件，它需要告知浏览器被缓存的内容以及不缓存的内容
+
+       - CACHE MANIFEST - 开始
+
+       - CACHE 在此标题下列出文件在首次下载后进行缓存
+
+       - NETWORK - 在此标题下列出文件需要与服务器的链接,且不会被缓存
+
+       - FALLBACK - 在此标题下列出的文件规定当前页面无法访问时的回退页面
+
+         ```txt
+         CACHE MANIFEST
+         # 必须是第一句
+         
+         CACHE:   # 1. 配置需要缓存的文件清单列表 # 在CHACHE: 下写需要缓存的文件列表
+         
+         NETWORK: # 2. 配置每次都要从服务器获取的文件清单列表
+         
+         FALLBACK: # 3. 如果文件无法获取指定的文件进行替换
+         源文件		替換文件
+         ```
+
+     - windows下的MIME类型
+
+11. 多媒体接口：使用多媒体接口控制播放器在不同浏览器中的显示效果相同
+
+    - audio/video方法
+
+      | 方法           | 描述                                    |
+      | :------------- | :-------------------------------------- |
+      | addTextTrack() | 向音频/视频添加新的文本轨道             |
+      | canPlayType()  | 检测浏览器是否能播放指定的音频/视频类型 |
+      | load()         | 重新加载音频/视频元素                   |
+      | play()         | 开始播放音频/视频                       |
+      | pause()        | 暂停当前播放的音频/视频                 |
+
+    - audio/video属性
+
+      | 属性                | 描述                                                       |
+      | :------------------ | :--------------------------------------------------------- |
+      | audioTracks         | 返回表示可用音轨的 AudioTrackList 对象                     |
+      | autoplay            | 设置或返回是否在加载完成后随即播放音频/视频                |
+      | buffered            | 返回表示音频/视频已缓冲部分的 TimeRanges 对象              |
+      | controller          | 返回表示音频/视频当前媒体控制器的 MediaController 对象     |
+      | controls            | 设置或返回音频/视频是否显示控件（比如播放/暂停等）         |
+      | crossOrigin         | 设置或返回音频/视频的 CORS 设置                            |
+      | currentSrc          | 返回当前音频/视频的 URL                                    |
+      | currentTime         | 设置或返回音频/视频中的当前播放位置（以秒计）              |
+      | defaultMuted        | 设置或返回音频/视频默认是否静音                            |
+      | defaultPlaybackRate | 设置或返回音频/视频的默认播放速度                          |
+      | duration            | 返回当前音频/视频的长度（以秒计）                          |
+      | ended               | 返回音频/视频的播放是否已结束                              |
+      | error               | 返回表示音频/视频错误状态的 MediaError 对象                |
+      | loop                | 设置或返回音频/视频是否应在结束时重新播放                  |
+      | mediaGroup          | 设置或返回音频/视频所属的组合（用于连接多个音频/视频元素） |
+      | muted               | 设置或返回音频/视频是否静音                                |
+      | networkState        | 返回音频/视频的当前网络状态                                |
+      | paused              | 设置或返回音频/视频是否暂停                                |
+      | playbackRate        | 设置或返回音频/视频播放的速度                              |
+      | played              | 返回表示音频/视频已播放部分的 TimeRanges 对象              |
+      | preload             | 设置或返回音频/视频是否应该在页面加载后进行加载            |
+      | readyState          | 返回音频/视频当前的就绪状态                                |
+      | seekable            | 返回表示音频/视频可寻址部分的 TimeRanges 对象              |
+      | seeking             | 返回用户是否正在音频/视频中进行查找                        |
+      | src                 | 设置或返回音频/视频元素的当前来源                          |
+      | startDate           | 返回表示当前时间偏移的 Date 对象                           |
+      | textTracks          | 返回表示可用文本轨道的 TextTrackList 对象                  |
+      | videoTracks         | 返回表示可用视频轨道的 VideoTrackList 对象                 |
+      | volume              | 设置或返回音频/视频的音量                                  |
+
+    - audio/video事件
+
+      | 事件           | 描述                                         |
+      | :------------- | :------------------------------------------- |
+      | abort          | 当音频/视频的加载已放弃时                    |
+      | canplay        | 当浏览器可以播放音频/视频时                  |
+      | canplaythrough | 当浏览器可在不因缓冲而停顿的情况下进行播放时 |
+      | durationchange | 当音频/视频的时长已更改时                    |
+      | emptied        | 当目前的播放列表为空时                       |
+      | ended          | 当目前的播放列表已结束时                     |
+      | error          | 当在音频/视频加载期间发生错误时              |
+      | loadeddata     | 当浏览器已加载音频/视频的当前帧时            |
+      | loadedmetadata | 当浏览器已加载音频/视频的元数据时            |
+      | loadstart      | 当浏览器开始查找音频/视频时                  |
+      | pause          | 当音频/视频已暂停时                          |
+      | play           | 当音频/视频已开始或不再暂停时                |
+      | playing        | 当音频/视频在已因缓冲而暂停或停止后已就绪时  |
+      | progress       | 当浏览器正在下载音频/视频时                  |
+      | ratechange     | 当音频/视频的播放速度已更改时                |
+      | seeked         | 当用户已移动/跳跃到音频/视频中的新位置时     |
+      | seeking        | 当用户开始移动/跳跃到音频/视频中的新位置时   |
+      | stalled        | 当浏览器尝试获取媒体数据，但数据不可用时     |
+      | suspend        | 当浏览器刻意不获取媒体数据时                 |
+      | timeupdate     | 当目前的播放位置已更改时                     |
+      | volumechange   | 当音量已更改时                               |
+      | waiting        | 当视频由于需要缓冲下一帧而停止               |
 
 
 
