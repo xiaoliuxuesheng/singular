@@ -785,24 +785,283 @@ rpm 选项 [参数] [包名]
 
 ## 5.1 用户与组概述
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户管理的作用：在成产开发中，引用部署在Linux服务器中，而且每台服务器的管理员可以有多个，并且每个管理员的权限设置需要有所区别，这样就存在资源共享与隔离的问题，所有必要的用户管理和权限配置就必不可少；用户权限配置主要是为了防范内部人员误操作；
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linux原生的权限管理机制是基于用户角色的管理机制，也就是UGO+RWX/ACL权限控制。其中UGO是User、Group和Other的简称；RWX则是Read、Write和eXecute的简称；ACL是Access Control List的简称。Linux原生的访问控制称为自主访问控制；
+
+- **自主访问控制（Discretionary Access Control）**：是指对象(比如程序、文件、进程)的拥有者可以任意修改或者授予此对象相应的权限。
+- **基于标签的访问控制**：比如我们给程序和其访问的资源打上标签，这样程序就可以访问有标签的资源，对于没有标签的资源则不能访问。这种模式并非基于用户，而是基于许可。这种策略被称作强制访问控制（Mandatory Access Control ，简称MAC）。其中SELinux就是强制访问控制。
+
 ## 5.2 用户组相关文件
 
-### <font color=blue size=4>:anchor: 用户信息文件</font>
-### <font color=blue size=4>:anchor: 用户密码文件</font>
+### <font color=blue size=4>1. ​用户信息文件：/etc/passwd</font>
 
-### <font color=blue size=4>:anchor: 组信息文件</font>
+- `/etc/passwd`：在这个文件中，其中的每一行代表一个用户，每一行用冒号分隔为7列，如下：
 
-### <font color=blue size=4>:anchor: 组密码文件</font>
+  ```sh
+  panda:x:1000:1000:panda:/home/panda:/bin/bash
+    ①   ②   ③    ④    ⑤        ⑥          ⑦    
+  ```
 
-### <font color=blue size=4>:anchor: 用户家目录文件</font>
+- 用户信息文件字段说明
 
-### <font color=blue size=4>:anchor: 用户邮箱文件</font>
+  | 字段列号 | 作用                                                         |
+  | -------- | ------------------------------------------------------------ |
+  | 1        | 用户名称                                                     |
+  | 2        | 密码位（密码表示），代表这个用户有密码，真正的密码在/etc/shadow中 |
+  | 3        | 是用户UID：Linux系统根据UID区分用户 <br />- 超级用户的UID：0 - <br />系统用户的UID：1-499，不能用来登陆，主要是用于运行系统或服务 <br />- 普通用户的UID：500-65535， |
+  | 4        | 是用户的组ID，添加用户时如果不指定所属组，会建立和用户同名的组 |
+  | 5        | 用户说明                                                     |
+  | 6        | 用户家目录                                                   |
+  | 7        | 登陆的shell                                                  |
 
-### <font color=blue size=4>:anchor: 用户模板目录</font>
+### <font color=blue size=4>2. 用户密码文件：/etc/shadow</font>
+
+- `/etc/shadow`：在这个文件中，每一行代表一个用户的信息，每一行用冒号分为9列，如下：
+
+  ```sh
+  panda:$pwd:  : 0 :99999: 7 :   :   :  
+    ①     ②   ③  ④    ⑤     ⑥   ⑦   ⑧    ⑨
+  ```
+
+- 用户密码文件字段说明
+
+  | 字段列号 | 说明                                                         |
+  | -------- | ------------------------------------------------------------ |
+  | 1        | 用户名                                                       |
+  | 2        | 用户加密后的密码（SHA512）<br />在密码前加！！或*字符表示当前用户密码失效无法登陆 |
+  | 3        | 更新密码的时间：格式是时间戳（距离的天数）                   |
+  | 4        | 两次修改密码的时间间隔（和字段③相比）：不建议修改            |
+  | 5        | 时间的有效期（和字段③相比）                                  |
+  | 6        | 密码失效前的警告天数（和字段⑤相比）                          |
+  | 7        | 密码到期后的宽限天数（和字段⑤相比），默认值是-1              |
+  | 8        | 密码有保质时间，到期即失效                                   |
+  | 9        | 保留                                                         |
+
+### <font color=blue size=4>3. 组信息文件：/etc/grop</font>
+
+- `/etc/grop`：被冒号分隔为4列
+
+  ```sh
+  panda:x:1000:panda
+    ①   ②   ③    ④
+  ```
+
+- 组信息文件字段说明
+
+  | 列   | 说明                                                         |
+  | ---- | ------------------------------------------------------------ |
+  | 1    | 组名                                                         |
+  | 2    | 组密码位：不建议设置                                         |
+  | 3    | 组ID：GID                                                    |
+  | 4    | 此组中支持的其他用户，附加组是此组的用户<br />- 初始组：每个用户的初始组只有一个，一般是和用户同名的组为初始组，不建议修改初始组<br />- 附加组：每个用户可以有多个附加组，把用户加入其他组就是加入其他组的附加组 |
+
+### <font color=blue size=4>4. ​组密码文件：不建议设置</font>
+
+- `/etc/gshadow`：如果给用户设定了组管理员并设置的组密码，组密码就会保存在这个文件中，组管理员就可以利用这个密码管理用户组了，
+
+  ```sh
+  panda:!!:  :panda
+    ①    ②  ③   ④
+  ```
+
+- 组密码文件字段说明
+
+  | 列   | 说明 |
+  | ---- | ---- |
+  | 1    |      |
+  | 2    |      |
+  | 3    |      |
+  | 4    |      |
+
+### <font color=blue size=4>5. 用户家目录</font>
+
+- 默认没新增一个用户，都为为这个用户新建一个同名文件夹作为这个用户的家目录
+
+### <font color=blue size=4>6. 用户邮箱文件：/var/spool/mail</font>
+
+- 为每一个登陆用户在/var/spool/mail下创建一个同名文件夹作为邮箱目录
+
+### <font color=blue size=4>7. ​用户模板目录：/etc/skel</font>
+
+- 默认新增用户都会给用户家目录中添加一些默认隐藏文件，这些文件就是从这个目录拷贝过去
+- 这些模板文件主要记录用户的初始操作环境：是环境变量配置文件
 
 ## 5.3 用户管理
 
+### <font color=blue size=4>1. 添加用户：useradd</font>
 
+- **命令格式**
+
+  ```sh
+   useradd [选项] 用户名
+  ```
+
+- **选项说明**
+
+  | 选项     | 说明                                                         |
+  | -------- | ------------------------------------------------------------ |
+  | -u UID   | **不建议指定**：手动指定用户UID                              |
+  | -g 组名  | **不建议指定**：指定用户初始组，默认是用户同名的组           |
+  | -G 组名  | 为用户添加附加组                                             |
+  | -c 说明  | 为用户添加说明                                               |
+  | -d 目录  | **不建议指定**：手动指定用户家目录路径，默认是和用户名同名的目录 |
+  | -s shell | **不建议指定**：默认是：/bin/shell                           |
+
+- **useradd的默认值**
+
+  - /etc/default/useradd：配置了添加用户的相关默认信息
+
+    ```sh
+    # useradd defaults file
+    GROUP=100
+    HOME=/home
+    INACTIVE=-1
+    EXPIRE=
+    SHELL=/bin/bash
+    SKEL=/etc/skel
+    CREATE_MAIL_SPOOL=yes
+    ```
+
+  - /etc/login.defs：配置了shadow-utils下的默认行为
+
+    ```sh
+    # 目录中存放邮箱的目录
+    MAIL_DIR        /var/spool/mail
+    
+    
+    PASS_MAX_DAYS   99999	# 密码可以使用的最大天数。
+    PASS_MIN_DAYS   0		# 码更改之间允许的最小天数。
+    PASS_MIN_LEN    5		# 最小可接受密码长度。
+    PASS_WARN_AGE   7		# 密码过期前警告的天数。
+    
+    
+    # 用户ID的最大值和最小值
+    UID_MIN                  1000
+    UID_MAX                 60000
+    # System accounts
+    SYS_UID_MIN               201
+    SYS_UID_MAX               999
+    
+    
+    # GID的最大值和最小值
+    GID_MIN                  1000
+    GID_MAX                 60000
+    # System accounts
+    SYS_GID_MIN               201
+    SYS_GID_MAX               999
+    
+    
+    # 删除用户时运行此命令
+    #USERDEL_CMD    /usr/sbin/userdel_local
+    
+    # 默认应该为用户创建家目录
+    CREATE_HOME     yes
+    
+    # The permission mask is initialized to this value. If not specified, 
+    # the permission mask will be initialized to 022.
+    UMASK           077
+    
+    # 是否运行删除不存在成员的用户组：删除用户时候删除组
+    USERGROUPS_ENAB yes
+    
+    # 使用SHA512加密
+    ENCRYPT_METHOD SHA512 
+    ```
+
+### <font color=blue size=4>2. 设置密码：passwd</font>
+
+- **命令格式**：如果不带用户名，默认是修改当前用户的密码
+
+  ```sh
+  passwd [选项] [用户名]
+  ```
+
+- **选项说明**
+
+  | 选项    | 说明                                   |
+  | ------- | -------------------------------------- |
+  | -l      | 暂时锁定用户，只能root用户可以用       |
+  | -u      | 解锁用户，只能root用户可以用           |
+  | --stdin | 可以将通过管道符输出的数据作为用户密码 |
+
+- **扩展技巧**：通过修改密码的修改日期（/etc/shadow中的第三项）归零，保证新建用户登录就要修改密码
+
+  ```sh
+  chage -d 0 用户名
+  ```
+
+### <font color=blue size=4>3. 修改用户信息：usermod</font>
+
+- **命令说明**：修改已添加的用户信息
+
+  ```sh
+  usermod [选项] 用户名
+  ```
+
+- **选项说明**
+
+  | 选项        | 说明                                      |
+  | ----------- | ----------------------------------------- |
+  | -u UID      | **不建议指定**：修改用户的UID             |
+  | -d 目录     | **不建议指定**：修改用户家目录            |
+  | -c 用户说明 | **不建议指定**：修改用户说明              |
+  | -g 组名     | **不建议指定**：修改用户初始组            |
+  | -G 组名     | 修改用户附加组                            |
+  | -s shell    | **不建议指定**：修改用户登录shell         |
+  | -e 日期     | 修改用户失效日期：格式是“YYYY-MM-DD”      |
+  | -L          | **不建议指定**：临时锁定用户  = passwd -l |
+  | -U          | **不建议指定**：解锁用户 = passwd -u      |
+
+### <font color=blue size=4>4. 删除用户：userdel</font>
+
+- **删除命令**：默认删除用户不会删除用户家目录；选项-r表示删除用户的同时删除用户的家目录
+
+  ```sh
+  userdel -r 用户名
+  ```
+
+### <font color=blue size=4>5. 切换用户：su</font>
+
+- **切换用户命令**：切换用户后，默认用户的环境变量不会被切换，-号表示连带环境变量一起切换
+
+  ```sh
+  su - 用户名
+  ```
+
+## 5.4 组管理
+
+### <font color=blue size=4>1. 添加组：groupadd</font>
+
+```sh
+groupadd [-g 组ID] 组名 
+```
+
+### <font color=blue size=4>2. 删除组：groupdel</font>
+
+```sh
+# 如果组的初始用户存在，则不允许删除组
+groupdel 组名
+```
+
+### <font color=blue size=4>3. 添加/删除用户到组：gpasswd</font>
+
+- **添加用户到组**：改命令操作是用户的附加组，推荐使用该命令操作用户的组
+
+  ```sh
+  gpasswd [选项] 组名
+  ```
+
+- **选项说明**
+
+  | 选项      | 说明           |
+  | --------- | -------------- |
+  | -a 用户名 | 把用户添加到组 |
+  | -d 用户名 | 把用户从组删除 |
+
+### <font color=blue size=4>4. 改变有效组：newgrp</font>
+
+- **命令说明**：
 
 # 第六章 文件系统管理
 
