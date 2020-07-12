@@ -41,7 +41,17 @@
 
 ### 1.5 编写第一个程序
 
-1. 在HTML页面中嵌入JavaScript脚本：在 HTML 页面中嵌入 JavaScript 脚本需要使用 `<script> `标签，用户可以在` <script> `标签中直接编写 JavaScript 代码
+1. 在html标签中定义JavaScript代码
+
+   ```html
+   1. 在事件中使用JavaScript代码
+   <button onclick="alter(1);">按钮</button>
+   
+   2. 在超链接中定义JavaScript代码
+   <a href="javascript:alter(1);">超链接</a>
+   ```
+   
+2. 在HTML页面中嵌入JavaScript脚本：在 HTML 页面中嵌入 JavaScript 脚本需要使用 `<script> `标签，用户可以在` <script> `标签中直接编写 JavaScript 代码
 
    ```html
    <!DOCTYPE html>
@@ -58,7 +68,7 @@
    </html>
    ```
 
-2. 在HTML页面中引入外部的JavaScript脚本文件
+3. 在HTML页面中引入外部的JavaScript脚本文件
 
    - 定义JavaScript脚本文件：xxx.js
 
@@ -90,7 +100,18 @@
 
 ## 第二章 JavaScript基础
 
-### 2.1 JS标识符/关键字/保留字
+### 2.1 JavaScript语法基础
+
+1. 注释
+   - 单行注释
+   - 多行注释
+
+2. JavaScript语句使用分号结尾：建议使用分号结尾，良好的编码规范；
+3. JavaScript严格区分大小写；
+
+4. JavaScript代码中会忽略空格和换行
+
+### 2.2 JavaScript标识符/关键字/保留字
 
 1. **标识符**：就是名称的专业术语。JavaScript 标识符包括变量名、函数名、参数名和属性名
 
@@ -131,9 +152,35 @@
      | **decodeURL**          | **EvalError**          | **Math**     | **RangeError**     | **undefined**   |
      | **decodeURLComponent** | **Function**           | **NaN**      | **ReferenceError** | **URLError**    |
 
-### 2.2 变量
+### 2.2 变量和变量
 
+1. 字面量：指值不可以变的
 
+2. 变量
+
+   - **变量的声明**
+
+     ```js
+     var 变量名;
+     let 变量名;
+     const 变量名;
+     ```
+
+     - **var**：var命令会发生“变量提升”现象，即变量可以在声明之前使用，值为`undefined`；
+     - **let**：①let所声明的变量只在let命令所在的代码块内有效；②let命令不存在变量提升；③let声明变量存在暂时性死区（即变量会绑定某个区域，不受外部影响）
+     - **const**：①声明一个只读的常量；②一旦声明，常量的值就不能改变，一旦声明变量，就必须立即初始化，不能留到以后赋值；③`const`的作用域与`let`命令相同：只在声明所在的块级作用域内有效。
+
+   - **变量的赋值**：值可以是字面量或者是其他变量
+
+     ```js
+     变量名 = 值;
+     ```
+
+   - **变量的声明并赋值**：值可以是字面量或者是其他变量
+
+     ```js
+     var 变量 = 值;
+     ```
 
 ### 2.3 JavaScript中数据类型
 
@@ -153,7 +200,7 @@
 5. boolean
 6. object
 
-### 2.4 操作符
+### 2.4 JavaScript运算符
 
 1. 算术运算符
 2. 逻辑运算符
@@ -164,14 +211,215 @@
 7. 逗号运算符
 8. void 是一元运算符：在任意类型的操作数之前执行操作数，返回一个 undefined
 
-### 2.5 JavaScript语句
+### 2.5 JavaScript流程控制
 
-1. 声明
-2. 分支控制
-3. 循环控制
-4. 流程控制
-5. 异常处理
-6. 其他
+#### <font size=4 color='blue'>1. 顺序结构</font>
+
+- 声明语句：变量声明、标签声明
+- 表达式语句：变量赋值语句、函数调用语句、属性赋值语句、方法调用语句
+
+#### <font size=4 color='blue'>2. 分支结构</font>
+
+- **if (条件表达式) 语句**
+
+  ```js
+  if (laber< 50) {
+  
+  }
+  ```
+
+- **if (条件表达式) {语句;} else {语句;}**
+
+  ```js
+  if (laber > 50) {
+      //条件为true，执行这个代码块
+  } else {
+      //条件为false，执行这个代码块
+  } 
+  ```
+
+- **if (条件表达式) {语句;} else if (条件表达式) {语句;} ... else {语句;}**
+
+  ```js
+  var laber = 100;
+  if (laber >= 100) {                        //如果满足条件，不会执行下面任何分支
+      alert('甲');
+  } else if (laber>= 90) {
+      alert('乙');
+  } else if (laber >= 80) {
+      alert('丙');
+  } else if (laber >= 70) {
+      alert('丁');
+  } else if (laber >= 60) {
+      alert('及格');
+  } else {                                //如果以上都不满足，则输出不及格
+      alert('不及格');
+  }
+  ```
+
+- **switch...case**：语句是多重条件判断，用于多个值相等的比较
+
+  ```js
+  var laber = 1;
+  switch ( laber) {                            //用于判断box相等的多个值
+      case 1 :
+          alert('one');
+          break;                        		//break;用于防止语句的穿透
+      case 2 : 
+          alert('two');
+          break;
+      case 3 : 
+          alert('three');
+          break;
+  
+      default :                            	//相当于if语句里的else，否则的意思
+          alert('error');
+  }
+  ```
+
+#### <font size=4 color='blue'>3. 循环结构</font>
+
+- **for**：是一种先判断，后运行的循环语句。但它具有在执行循环之前初始变量和定义循环后要执行代码的能力。
+
+  ```js
+  // 第一步，声明变量var laber = 1;
+  // 第二步，判断laber <= 5
+  // 第三步，alert(laber )
+  // 第四步，laber ++
+  // 第五步，从第二步再来，直到判断为false
+  for (var laber = 1; laber <= 5 ; laber ++) {        
+      alert(laber );                                  
+  }                                         
+  ```
+
+- **for...in**：是一种精准的迭代语句，可以用来枚举对象的属性。
+
+  ```js
+  var laber = {                            	//创建一个对象
+      'name' : 'moxiaobo',                    //键值对，左边是属性名，右边是值
+      'age' : 28,
+      'height' : 178
+  };
+  for (var p in laber) {                     	//列举出对象的所有属性
+      alert(p);
+  }
+  ```
+
+- **while**：是一种先判断，后运行的循环语句。也就是说，必须满足条件了之后，方可运行循环体。
+
+  ```js
+  var laber = 1;        
+  // 先判断，再执行
+  while (laber <= 5) {                        
+      alert(laber);
+      laber++;
+  }
+  ```
+
+- **do...while**：是一种先运行，后判断的循环语句。也就是说，不管条件是否满足，至少先运行一次循环体。
+
+  ```js
+  var laber = 1;
+  
+  // 先运行一次，再判断
+  do {
+      alert(laber);
+      laber++;
+  } while (laber<= 5);                        
+  ```
+
+#### <font size=4 color='blue'>4. 流程控制</font>
+
+- **return**：终止当前流程的执行，无论是分支结构还是循环结构或顺序结构；
+
+- **break**：用于在循环中精确地控制代码的执行。break语句会立即退出循环，强制继续执行循环体后面的语句
+
+  ```js
+  for (var laber = 1; laber <= 10; laber++) {
+      //如果laber 是5，就退出循环
+      if (laber == 5) break;                        
+      document.write(laber );
+      document.write('<br />');
+  }
+  ```
+
+- **continue**：用于在循环中精确地控制代码的执行。continue语句退出当前循环，继续后面的循环。
+
+  ```js
+  for (var laber = 1; laber <= 10; laber++) {
+      // 如果laber 是5，就退出当前循环
+      if (laber == 5) continue;                    
+      document.write(laber );
+      document.write('<br />');
+  }
+  ```
+
+- **throw**：
+
+  - **ECMA-262 规范了 7 种错误类型，具体说明如下。其中 Error 是基类，其他 6 种错误类型是子类，都继承 Error 基类**。
+
+    - Error：普通异常。主要用途是自定义错误对象。属性 name 可以读写异常类型，message 属性可以读写详细错误信息。
+    - EvalError：不正确的使用 eval() 方法时抛出。
+    - SyntaxError：出现语法错误时抛出。
+    - RangeError：数字超出合法范围时抛出、
+    - ReferenceError：读取不存在的变量时抛出。
+    - TypeError：值得类型发生错误时抛出。
+    - URIError：URI 编码和解码错误时抛出。
+
+  - **throw**：能够主动抛出异常
+
+    ```js
+    throw new 异常类();
+    ```
+
+#### <font size=4 color='blue'>5. 异常结构</font>
+
+- **try {} catch () {}** 
+
+  ```js
+  try{
+  	var age=5;
+  }catch(e){
+      throw new Error("年龄太小啦")
+  }
+  ```
+
+- **try {} catch () {} finally {}**
+
+  ```js
+  try{
+  	var age=5;
+  }catch(e){//e是异常的封装对象
+  	document.write("出错："+e.message);
+  }finally{
+  	document.write("总会执行的finally块");
+  }
+  ```
+
+#### <font size=4 color='blue'>6. 其他</font>
+
+- 空语句
+
+- **with**：作用是将代码的作用域设置到一个特定的对象中。
+
+  ```js
+  var laber = {                                	//创建一个对象
+      'name' : 'moxiaobo', 
+      'age' : 28,
+      'height' : 178
+  };
+  
+  var n = laber.name;                            //从对象里取值赋给变量
+  var a = laber.age;
+  var h = laber.height;
+  
+  
+  with (laber) {                                //可以将上面的三段赋值操作改写成with语句：省略了laber对象名
+      var n = name;
+      var a = age;
+      var h = height;
+  }
+  ```
 
 ## 第四章 JavaScript面向对象
 
@@ -193,5 +441,5 @@
 
 # 第三部分 BOM
 
-#第四部分 Ajax
+# 第四部分 Ajax
 
