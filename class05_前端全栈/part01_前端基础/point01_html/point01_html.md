@@ -179,6 +179,7 @@
   | **COPYRIGHT**     |                     | 设置网站的版权信息的                                         |
   | **revisit-after** | 30day               | 设置网站的重访，30day代表30天                                |
   | **viewport**      |                     | 它是来控制浏览器窗口的大小和缩放的,影响布局                  |
+  |                   |                     |                                                              |
   | **http-equiv**    |                     | 相当于 HTTP 的文件头的设置                                   |
   |                   | Page-Enter          | 设定进入页面时的特殊效果                                     |
   |                   | Page-Exit           | 设定离开页面时的特殊效果                                     |
@@ -273,8 +274,8 @@
 | `header`  | 表示页眉：可以定义在每个模块中   |
 | `footer`  | 表示页脚：可以定义在每个模块中   |
 | `main`    | 文档主要内容，每个模块都可以定义 |
-| `article` | 文章                             |
 | `aside`   | 主题之外的内容                   |
+| `article` | 文章                             |
 
 - **语义标签的兼容处理**：
 
@@ -516,15 +517,14 @@
    - X-Frame-Options：是一个相应头，主要是描述服务器的网页资源的iframe权限。目前的支持度是IE8+(已经很好了啊喂)有3个选项
 
      - `X-Frame-Options:DENY`：拒绝任何iframe的嵌套请求
-  - `X-Frame-Options:SAMEORIGIN`：iframe页面的地址只能为同源域名下的页面
+     - `X-Frame-Options:SAMEORIGIN`：iframe页面的地址只能为同源域名下的页面
      - `X-Frame-Options:ALLOW-FROM 源`：可以在指定的origin url的iframe中加载
-
+     
    - CSP之页面防护：和X-Frames-Options一样，都需要在服务器端设置好相关的Header. CSP 的作用， 真的是太大了，他能够极大的防止你的页面被XSS攻击，而且可以制定js,css,img等相关资源的origin，防止被恶意注入。不过他的兼容性，也是渣的一逼。使用主要是在后端服务器上配置，在前端，我们可以观察Response Header 里是否有这样的一个Header
    
      ```html
-  Content-Security-Policy: default-src 'self'
+       Content-Security-Policy: default-src 'self'
      ```
-   
 5. 跨域消息传递：希望不要直接传Object。 可以使用是JSON.stringify进行转化。这样能保证不会出bug
 
    - window.postMessage(message, targetOrigin)
