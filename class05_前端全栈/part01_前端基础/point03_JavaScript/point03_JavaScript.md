@@ -289,7 +289,7 @@
 | + - +                              | 加法、减法、字符串连接                       |
 | << >> >>>                          | 移位                                         |
 | < <= > >= instanceof               | 小于、小于等于、大于、大于等于、instanceof   |
-| == != === !==                      | 等于、不等于、严格相等、非严格相等           |
+| ==  !=  \===    !==                | 等于、不等于、严格相等、非严格相等           |
 | &                                  | 按位与                                       |
 | ^                                  | 按位异或                                     |
 | \|                                 | 按位或                                       |
@@ -641,9 +641,26 @@
 
 <font size=4 color=blue>1. 创建Object对象</font>：创建Object对象，通过对创建的对象的属性扩展完成对象的自定义
 
+```js
+var obj = new Object();
+```
+
 <font size=4 color=blue>2. 构造函数创建对象</font>：通过构造函数创建的对象是同一类型的对象，在面向对象对象的概念中，创建同一种类型的对象的构造函数称为类，由类new出来的对象称为改类的实例对象
 
+```js
+function Person(){
+    this.name = null;
+}
+var person = new Person();
+```
+
 <font size=4 color=blue>3. 对象字面量创建对象</font>：`{}` - 一对花括号称为对象字面量
+
+```js
+var obj = {
+    name:"value"
+}
+```
 
 ### 4.3 对象的操作
 
