@@ -1023,6 +1023,27 @@ Boolean(value);		//转换函数
 
 ### 1.1 DOM概述
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**DOM（Document Object Model）**：文档对象模型是将 web 页面与到脚本或编程语言连接起来，HTML、XML文档机构的建模并不是JavaScript语言的一部分，JavaScript中定义的DOM模型用一个逻辑树表示一个文档，树的每个分支的终点都是一个节点(node)，每个节点都包含着对象(objects)。DOM的方法(methods)让你可以用特定方式操作这个树，用这些方法你可以改变文档的结构、样式或者内容。节点可以关联上事件处理器，一旦某一事件被触发了，那些事件处理器就会被执行。
+
+<img src="https://s1.ax1x.com/2020/07/17/UsEUSJ.png" alt="UsEUSJ.png" border="0" />
+
+- **DOM节点类型**
+
+  | 节点名称         | nodeType                            | nodeName | nodeValue |
+  | ---------------- | ----------------------------------- | -------- | --------- |
+  | 元素节点         | Node.ELEMENT_NODE(1)                |          |           |
+  | 属性节点         | Node.ATTRIBUTE_NODE(2)              |          |           |
+  | 文本节点         | Node.TEXT_NODE(3)                   |          |           |
+  | CDATA节点        | Node.CDATA_SECTION_NODE(4)          |          |           |
+  | 实体引用名称节点 | Node.ENTRY_REFERENCE_NODE(5)        |          |           |
+  | 实体名称节点     | Node.ENTITY_NODE(6)                 |          |           |
+  | 处理指令节点     | Node.PROCESSING_INSTRUCTION_NODE(7) |          |           |
+  | 注释节点         | Node.COMMENT_NODE(8)                |          |           |
+  | 文档节点         | Node.DOCUMENT_NODE(9)               |          |           |
+  | 文档类型节点     | Node.DOCUMENT_TYPE_NODE(10)         |          |           |
+  | 文档片段节点     | Node.DOCUMENT_FRAGMENT_NODE(11)     |          |           |
+  | DTD声明节点      | Node.NOTATION_NODE(12)              |          |           |
+
 ### 1.2 Document 对象集合
 
 | 集合      | 描述                                                         |
@@ -1061,16 +1082,6 @@ Boolean(value);		//转换函数
 ## 第二章 DOM Element
 
 ## 2.1 Element概述
-
-- 在 HTML DOM （文档对象模型）中，每个部分都是节点
-  - 文档本身是文档节点
-  - 所有 HTML 元素是元素节点
-  - 所有 HTML 属性是属性节点
-  - HTML 元素内的文本是文本节点
-  - 注释是注释节点
-- Element 对象表示 HTML 元素
-  - Element 可以拥有类型为元素节点、文本节点、注释节点的子节点
-  - NodeList 对象表示节点列表，比如 HTML 元素的子节点集合
 
 ## 2.2 属性和方法
 
