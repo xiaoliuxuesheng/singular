@@ -4,30 +4,49 @@
 
 - File | Settings | Build, Execution, Deployment | Compiler | **Build project automaticcally=true**
 
-## 2. 忽略大小写开关
+## 2. 代码提示不区分大小写
 
-- File | Settings | Editor | General | Code Completion | **Match case = All letters**
+- File | Settings | Editor | General | Code Completion = NONE
 
-Translation
+## 3. 自动导入与删除
 
-MyBatisCodeHelperPro
+- File | Settings | Editor | General | Auto Import
+  - √ Add UNambiguous imports on the fly
+  - √ Optimize imports on the fly (for current project)
 
-Mybatisx
+## 4. 鼠标控制字体
 
-VisualVM Launche
+- File | Settings | Editor | General
+  - Change font size
 
-GsonFormat
+## 5. 文件Tab多行显示
 
-FindBugs-IDEA
+- File | Settings | Editor | General | Editor Tabs
+  - Show tab in one row
 
-ignore
+## 6. java行首注释格式
 
-lombok
+- File | Settings | Editor | Code Style | Java | Gode Generation
+  - Comment Code
 
-Rainbow Brackets
+# 快捷键
 
-SonarLint
+| 名称               | 描述               | 建议快捷键       |
+| ------------------ | ------------------ | ---------------- |
+| Split Vertically   | 垂直分屏           |                  |
+| Split Horizontally | 水平分屏           |                  |
+| Recent Files       | 最近打开的文件     | Ctrl + E         |
+| Recent Locations   | 最近编辑的位置预览 | Ctrl + Shift + E |
+| Last Edit Location | 上次遍历的文件位置 | Ctrl + Q         |
 
-RESTfulTookit
+# 插件
 
-Background Image plusm
+1. lombok
+2. SonarLint
+3. Mybatisx
+4. EasyCode
+5. ignore
+6. Rainbow Brackets
+7. RandomBackground
+
+

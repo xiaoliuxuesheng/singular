@@ -1,4 +1,4 @@
-# 第一部分 EcmaScript
+# **F**第一部分 EcmaScript
 
 ## 第一章 JavaScript入门
 
@@ -817,13 +817,437 @@
 
 ## 第一章 Window
 
+### 1.1 Window 对象
+
+- 所有浏览器都支持 window对象。它代表浏览器的窗口。
+
+- 所有全局 JavaScript 对象，函数和变量自动成为 window 对象的成员。
+
+- 全局变量是 window 对象的属性。
+
+- 全局函数是 window 对象的方法。
+
+- 甚至（HTML DOM 的）document 对象也是 window 对象属性：
+
+  ```js
+  window.document.getElementById("header");
+  // 等价于
+  document.getElementById("header");
+  ```
+
+### 1.2 Window对象相关API
+
+1. **窗口尺寸**：Window对象有两个属性用于确定窗口尺寸，这个尺寸不包含工具栏和滚动条
+
+   - 非IE浏览器的尺寸属性
+
+     ```js
+     window.innerHeight
+     window.innerWidth
+     ```
+
+   - IE6/7/8浏览器的尺寸属性
+
+     ```js
+     document.documentElement.clientHeight
+     document.documentElement.clientWidth
+     
+     // 或者
+     
+     document.body.clientHeight
+     document.body.clientWidth
+     ```
+
+2. **获取窗口尺寸浏览器兼容解决方案**
+
+   ```js
+   var w = window.innerWidth
+   || document.documentElement.clientWidth
+   || document.body.clientWidth;
+   
+   var h = window.innerHeight
+   || document.documentElement.clientHeight
+   || document.body.clientHeight; 
+   ```
+
 ## 第二章 Navigator
+
+- 包含有关访问者的信息
+- **navigator 数据可被浏览器使用者更改**
+- **一些浏览器对测试站点会识别错误**
+- **浏览器无法报告晚于浏览器发布的新操作系统**
 
 ## 第三章 Screen
 
-## 第四章 History
+### 3.1 Screen对象
 
-## 第五章 Location
+- window.screen 对象包含有关用户屏幕的信息
+
+### 3.2 Screen相关API
+
+| API                | 描述                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| screen.width       | 返回以像素计的访问者屏幕宽度                                 |
+| screen.height      | 返回以像素计的访问者屏幕高度                                 |
+| screen.availWidth  | 返回访问者屏幕的宽度，以像素计，减去诸如窗口工具条之类的界面特征 |
+| screen.availHeight | 返回访问者屏幕的高度，以像素计，减去诸如窗口工具条之类的界面特征 |
+| screen.colorDepth  | 返回用于显示一种颜色的比特数                                 |
+| screen.pixelDepth  | 返回屏幕的像素深度                                           |
+
+## 第四章 Location
+
+| History对象属性      | 描述                                     |
+| -------------------- | ---------------------------------------- |
+| location.href        | 返回当前页面的 URL                       |
+| location.protocol    | 返回所使用的 web 协议（http: 或 https:） |
+| location.hostname    | 返回 web 主机的域名                      |
+| location.port        | 返回 web 主机的端口 （80 或 443）        |
+| location.pathname    | 返回当前页面的路径和文件名               |
+| **History对象API**   | **描述**                                 |
+| location.assign(url) | 加载新的文档                             |
+
+## 第五章 History
+
+- history.back() - 与在浏览器点击后退按钮相同
+- history.forward() - 与在浏览器中点击向前按钮相同
+
+## 第六章 弹窗
+
+- **window.alert()** ：警告框经常用于确保用户可以得到某些信息
+
+- **window.confirm()** ：确认框通常用于验证是否接受用户操作，点击 "确认", 确认框返回 true， 如果点击 "取消", 确认框返回 false
+
+- **window.prompt()** ：提示框经常用于提示用户在进入页面前输入某个值，输入某个值，然后点击确认或取消按钮才能继续操纵。
+
+  如果用户点击确认，那么返回值为输入的值。如果用户点击取消，那么返回值为 null。
+
+## 第七章 计时器
+
+### 1. 设置间隔计时器
+
+```js
+var 计时器名称 = window.setInterval("javascript function",milliseconds);
+```
+
+- 第一个参数触发执行函数（function）
+- 第二个参数间隔的毫秒数
+
+### 2. 定时器
+
+ ```js
+var 定时器名称 = window.setTimeout("javascript function", milliseconds);
+ ```
+
+### 3. 停止计时
+
+```js
+window.clearTimeout(计时器名称);
+```
 
 # 第四部分 Ajax
 
+## 第一章 Ajax概述
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AJAX即“Asynchronous Javascript And XML”（异步JavaScript和XML），是指一种创建交互式网页应用的网页开发技术。AJAX 最大的优点是在不重新加载整个页面的情况下，可以与服务器交换数据并更新部分网页内容。AJAX 不需要任何浏览器插件，但需要用户允许JavaScript在浏览器上执行。
+
+| 浏览器的普通交互方式                                | 浏览器的Ajax交互方式                                |
+| --------------------------------------------------- | --------------------------------------------------- |
+| ![img](https://img-blog.csdn.net/20150716193857795) | ![img](https://img-blog.csdn.net/20150716193904120) |
+
+## 第二章 Ajax基本步骤
+
+1. **创建Ajax对象**：XMLHttpRequest 是 AJAX 的基础，现代浏览器均支持 XMLHttpRequest 对象，例外是IE5 和 IE6 使用 ActiveXObject
+
+   ```js
+   var ajax;
+   if (window.XMLHttpRequest){
+       ajax = new XMLHttpRequest();					// IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+   }else{
+       ajax = new ActiveXObject("Microsoft.XMLHTTP");	// IE6, IE5 浏览器执行代码
+   }
+   ```
+
+2. **配置请求**：ajax.open("请求方式","url","异步:true | 同步:false")
+
+   ```js
+   ajax.open("GET","/try/ajax/demo_get.php",true);
+   ```
+
+3. **发送请求**
+
+   ```js
+   ajax.send([data])
+   ```
+
+4. **获取响应**
+
+   - `ajax.responseText`：获得字符串形式的响应数据。
+   - `ajax.responseXML`：获得 XML 形式的响应数据。
+
+5. **响应成功回调函数**
+
+   - 方式一：根据响应成功回调函数
+
+     ```js
+     ajax.onload = function(){
+         // 从ajax属性中获取响应结果
+     }
+     ```
+
+   - 方式二：根据响应请求和响应状态码
+
+     ```js
+     ajax.onreadystatechange=function(){
+       if (ajax.readyState==4 && ajax.status==200){
+           // 从ajax属性中获取响应结果
+       }
+     }
+     ```
+
+## 第三章 XMLHttpRequest 对象详解
+
+### 3.1 **创建XHR对象**
+
+| 方法                                   | 说明                                        |
+| -------------------------------------- | ------------------------------------------- |
+| new ActiveXObject(“Microsoft.XMLHTTP”) | 适用于i支持window.ActiveXObject的ie5和ie6等 |
+| new XMLHttpRequest()                   | 适用于ie7+/ff/chrome/safari/opera等         |
+
+### 3.2 **XMLHttpRequest 对象说明**
+
+| 属性                        | 说明                                                         |
+| --------------------------- | ------------------------------------------------------------ |
+| readyState                  | 通信状态，取值0~4<br /> - 0	代表一个未初始化的状态。以创建未初始化的XHR对象<br/> - 1	代表连接状态。已经调用了open方法，准备发送请求<br/> - 2	代表发送状态。已经调用了send方法，尚未得到响应数据<br/> - 3	代表正在接收状态，已经接收了HTTP响应的头部信息，正在接收响应内容<br/>-  4	代表已经加载状态，此时响应内容已经被完全接收 |
+| status                      | 状态码，如100，200,404,500等                                 |
+| statusText                  | 状态码对应的文本（OK/Not Found)                              |
+| responseText                | 服务器返回的文本格式文档                                     |
+| responseXML                 |                                                              |
+| **方法**                    | **说明**                                                     |
+| abort()                     | 中止当前请求                                                 |
+| open(method,url,sync)       | 打开一个请求                                                 |
+| send(args)                  | 发送请求：post参数需要在请求体中                             |
+| setRequestHeader(key,value) | 设置请求的头部                                               |
+| getResponseHeader(key)      | 获取响应的头部值                                             |
+| getAllResponseHeaders()     | 以键值对形式返回所有头部信息                                 |
+| **回调函数**                | **说明**                                                     |
+| onreadystatechange          | IE的script 元素只支持onreadystatechange事件，不支持onload事件 |
+| onload                      | FF的script 元素不支持onreadystatechange事件，只支持onload事件 |
+| onerror                     | 当加载js文件报错的时候会被调用，比如文件路径错误、网络不可用等情况 |
+| upload                      | 返回一个 XMLHttpRequestUpload对象，用来表示上传的进度。<br /> - onloadstart	获取开始<br/> - onprogress	数据传输进行中<br/> - onabort	获取操作终止<br/> - onerror	获取失败<br/> - onload	获取成功<br/> - ontimeout	获取操作在用户规定的时间内未完成<br/> - onloadend	获取完成（不论成功与否） |
+
+### 3.3 **setRequestHeader请求头**
+
+- **Content-Type说明**：MediaType，即是Internet Media Type，互联网媒体类型；也叫做MIME类型，在Http协议消息头中，使用Content-Type来表示具体请求中的媒体类型信息。
+
+  | 常见的媒体格式类型                  | 说明                                          |
+  | ----------------------------------- | --------------------------------------------- |
+  | text/html                           | HTML格式                                      |
+  | text/plain                          | 纯文本格式                                    |
+  | text/xml                            | XML格式                                       |
+  | image/gif                           | gif图片格式                                   |
+  | image/jpeg                          | jpg图片格式                                   |
+  | image/png                           | png图片格式                                   |
+  | **常见的application开头的媒体格式** | **说明**                                      |
+  | application/xhtml+xml               | XHTML格式                                     |
+  | application/xml                     | XML数据格式                                   |
+  | application/atom+xml                | Atom XML聚合格式                              |
+  | application/json                    | JSON数据格式                                  |
+  | application/pdf                     | pdf格式                                       |
+  | application/msword                  | Word文档格式                                  |
+  | application/octet-stream            | 二进制流数据（如常见的文件下载）              |
+  | application/x-www-form-urlencoded   | form表单数据被编码为key/value格式发送到服务器 |
+  | **上传文件之时**                    | **说明**                                      |
+  | multipart/form-data                 | 在表单中进行文件上传时                        |
+
+## 第四章 Ajax请求案例
+
+### 4.1 **GET请求**
+
+```html
+<script>
+    // 1. 创建ajax对象
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        xmlhttp=new XMLHttpRequest();
+    } else {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    // 2. 配置GET请求
+    xmlhttp.open("GET","/try/ajax/demo_get.php",true);
+	xmlhttp.send();
+    // 3. 处理响应结果
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        var result = xmlhttp.responseText;
+    }
+</script>
+```
+
+### 4.2 **POST请求**
+
+```html
+<script>
+    // 1. 创建ajax对象
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        xmlhttp=new XMLHttpRequest();
+    } else {
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    // 2. 配置GET请求
+    xmlhttp.open("POST","/try/ajax/demo_post2.php",true);
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.send("fname=Henry&lname=Ford");
+    // 3. 处理响应结果
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        var result = xmlhttp.responseText;
+    }
+}
+</script>
+```
+
+# 第五部分 JavaScript高级
+
+## 第一章 核心对象扩展
+
+### 1.  Formdate对象
+
+- **Formdate对象基本介绍**： FormData类型是XMLHttpRequest 2级定义的，它是为序列化表以及创建与表单格式相同的数据提供便利。与普通Ajax相比，使用FormData的最大**优点**：可以异步上传二进制文件。
+  - 作用1：利用一些键值对来模拟一系列表单控件：即将form中的所有表单元素的**name**和**value**组装成一个queryString；
+  - 作用2：异步上传二进制文件
+
+- **Formdate API说明**
+
+  | 创建FormData                       | 描述                                                         |
+  | ---------------------------------- | ------------------------------------------------------------ |
+  | let formdata = new FormData();     | 创建一个空的FormData对象，可以使用formdata.append(key,value)来添加数据 |
+  | let formdata = new FormData(form); | 使用已有的表单来初始化一个FormData对象。                     |
+  | **FormData API**                   | **描述**                                                     |
+  | formdata.get(key)                  | 获取数据                                                     |
+  | formdata.append(key,value)         | 添加数据                                                     |
+  | formdata.set(key,value)            | 设置/修改数据 如果key不存在则新增一条数据，如果存在，则会修改对应的value值。 |
+  | formdata.has(key)                  | 判断是否存在某条数据                                         |
+  | formdata.delete(key)               | 删除数据                                                     |
+  | entries() values()                 | 遍历获取一个遍历器                                           |
+
+- **使用FormData上传文件**
+
+  ```html
+  <form id="advForm">
+      <p>广告名称：<input type="text" name="advName" value="xixi"></p>
+      <p>广告类别：<select name="advType">
+          <option value="1">轮播图</option>
+          <option value="2">轮播图底部广告</option>
+          <option value="3">热门回收广告</option>
+          <option value="4">优品精选广告</option>
+      </select></p>
+      <p>广告图片：<input type="file" name="advPic"></p>
+      <p>广告地址：<input type="text" name="advUrl"></p>
+      <p>广告排序：<input type="text" name="orderBy"></p>
+      <p><input type="button" id="btn" value="添加"></p>
+  </form>
+  <script>
+  var btn=document.querySelector("#btn");
+  btn.onclick=function(){
+      var formdata=new FormData(document.getElementById("advForm"));
+      var xhr=new XMLHttpRequest();
+      xhr.open("post","http://127.0.0.1/adv");
+      xhr.send(formdata);
+      xhr.onload=function(){
+          if(xhr.status==200){
+              //...
+          }
+      }
+  }
+  </script>
+  ```
+
+### 2. FileReader
+
+- **FileReader对象介绍**： 从文件中读取数据和保存到JS变量中。此API特意设计成跟`XMLHttpRequest` 一样因为都是从外部读取数据。读取过程都是异步的不会造成浏览器阻塞。
+
+- **FileReader API说明**
+
+  | 创建FileReader              | 描述                   |
+  | --------------------------- | ---------------------- |
+  | new FileReader()            | 创建读取文件对象       |
+  | **FileReader接口的方法**    | **描述**               |
+  | readAsBlnaryString(file)    | 将文件取取为二进制编码 |
+  | readAsText(file,[encoding]) | 将文件取取为文本       |
+  | readAsDataURL(file)         | 将文件取取为DataURL    |
+  | abort()                     | 中断读取操作           |
+  | **FileReader接口事件**      | **描述**               |
+  | onabort                     | 中断                   |
+  | onerror                     | 出错                   |
+  | onloadstart                 | 开始                   |
+  | onprogress                  | 正在读取               |
+  | **onload**                  | **成功读取**           |
+  | onloadend                   | 读取完成，无论成功失败 |
+
+- **FileReader读取文件案例**
+
+  ```html
+  <p>  
+      <label>请选择一个文件：</label>  
+      <input type="file" id="file" />  
+      <input type="button" value="读取图像" onclick="readAsDataURL()" />  
+      <input type="button" value="读取二进制数据" onclick="readAsBinaryString()" />  
+      <input type="button" value="读取文本文件" onclick="readAsText()" />  
+  </p>  
+  <div id="result" name="result"></div>
+  <script type="text/javascript">  
+      var result=document.getElementById("result");  
+      var file=document.getElementById("file");  
+  
+      //判断浏览器是否支持FileReader接口  
+      if(typeof FileReader == 'undefined'){  
+          result.InnerHTML="<p>你的浏览器不支持FileReader接口！</p>";  
+          //使选择控件不可操作  
+          file.setAttribute("disabled","disabled");  
+      }  
+  
+      function readAsDataURL(){  
+          //检验是否为图像文件  
+          var file = document.getElementById("file").files[0];  
+          if(!/image\/\w+/.test(file.type)){  
+              alert("看清楚，这个需要图片！");  
+              return false;  
+          }  
+          var reader = new FileReader();  
+          //将文件以Data URL形式读入页面  
+          reader.readAsDataURL(file);  
+          reader.onload=function(e){  
+              var result=document.getElementById("result");  
+              //显示文件  
+              result.innerHTML='<img src="' + this.result +'" alt="" />';  
+          }  
+      }  
+  
+      function readAsBinaryString(){  
+          var file = document.getElementById("file").files[0];  
+          var reader = new FileReader();  
+          //将文件以二进制形式读入页面  
+          reader.readAsBinaryString(file);  
+          reader.onload=function(f){  
+              var result=document.getElementById("result");  
+              //显示文件  
+              result.innerHTML=this.result;  
+          }  
+      }  
+  
+      function readAsText(){  
+          var file = document.getElementById("file").files[0];  
+          var reader = new FileReader();  
+          //将文件以文本形式读入页面  
+          reader.readAsText(file);  
+          reader.onload=function(f){  
+              var result=document.getElementById("result");  
+              //显示文件  
+              result.innerHTML=this.result;  
+          }  
+      }  
+  </script>
+  ```
+
+  
