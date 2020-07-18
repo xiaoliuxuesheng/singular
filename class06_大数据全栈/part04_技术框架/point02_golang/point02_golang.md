@@ -26,7 +26,11 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 ### <font size=4 color=blue>1. Windows系统</font>
 
 - Windows 下可以使用 .msi 后缀的安装包来安装
-- 将安装目录添加到环境变量中：GO+
+- 将安装目录添加到环境变量中
+  - GOLANNG_HOME=安装包根目录
+  - Path=%GOLANNG_HOME%\bin
+  - GOPATH=是 Go语言中使用的一个环境变量，它使用绝对路径提供项目的工作目录
+  - Path=%GOPATH%\bin
 
 ### <font size=4 color=blue>2. Linux系统</font>
 
@@ -36,17 +40,102 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ### <font size=4 color=blue>1. Visual Studio</font>
 
+- 插件安装
+
+  - go
+
+- 公共代理镜像
+
+  ```sh
+  go env -w GO111MODULE=on
+  go env -w GOPROXY=https://goproxy.io,direct		# 学习初期执行这一条就可以
+  
+  # 设置不走 proxy 的私有仓库，多个用逗号相隔（可选）
+  go env -w GOPRIVATE=*.corp.example.com
+  
+  # 设置不走 proxy 的私有组织（可选）
+  go env -w GOPRIVATE=example.com/org_name
+  ```
+
+- go代码片段设置
+
+  1. Ctrl + P 或者 Command+Shift+P：弹出命令输入框
+  2. 输入：>snippets
+  3. 选择：首选项：配置用户代码片段：弹出模块选择窗口
+  4. 输入：g，选择go模板
+  5. 弹出go.json文件，根据注释中模板添加自动以模板
+
+  ```json
+  {
+  	"println":{
+  		"prefix": "pln",
+  		"body":"fmt.Println($0)",
+  		"description": "println"
+  	},
+  	"printf":{
+  		"prefix": "plf",
+  		"body": "fmt.Printf(\"$0\")",
+  		"description": "printf"
+  	}
+  }
+  ```
+
 ### <font size=4 color=blue>2. IntelliJ GoLand</font>
 
-## 1.4 Go语言结构
+## 1.4 Go依赖管理
 
-### <font size=4 color=blue>1. GO语言语法特征</font>
+## 1.5 Go Module
 
-- 没有对象，没有继承和多态，没有泛型，没有try-cache
-- 有接口，有函数式编程，CSP并发模型（gorountine-channel）
-- 有编程经验的来说，go语言是另一种标准（重新树立学习观）
+## 1.6 Go命令
 
-## 1.5 Go命令
+1. go build：表示将源代码编译成可执行文件，可以使用`-o`参数来指定编译后得到的可执行文件的名字
+2. go run go脚本：直接执行脚本中的main函数中的代码
+3. go install：示安装的意思，它先编译源代码得到可执行文件，然后将可执行文件移动到`GOPATH`的bin目录下
+
+## 1.7 跨平台编译
+
+- 只需要指定目标操作系统的平台和处理器架构即可
+
+  ```sh
+  SET CGO_ENABLED=0  // 禁用CGO
+  SET GOOS=linux  // 目标平台是linux
+  SET GOARCH=amd64  // 目标处理器架构是amd64
+  ```
+
+- Mac 下编译 Linux 和 Windows平台 64位 可执行程序
+
+  ```sh
+  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
+  CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build
+  ```
+
+- Linux 下编译 Mac 和 Windows 平台64位可执行程序：
+
+  ```bash
+  CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build
+  CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build
+  ```
+
+- Windows下编译Mac平台64位可执行程序：
+
+  ```bash
+  SET CGO_ENABLED=0
+  SET GOOS=darwin
+  SET GOARCH=amd64
+  go build
+  ```
+
+## 1.8 Hello World
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello World!")
+}
+```
 
 # 第二章 Go语言基础
 
@@ -54,8 +143,9 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ### <font size=4 color=blue>1. Go语言中标识符</font>
 
-- 只能由字母数字和`_`(下划线）组成，
-- 只能以字母和`_`开头
+- 只能由字母数字和`_`(下划线）组成；
+- 只能以字母和`_`开头；
+- go推荐使用驼峰命名的方式定义标识符。
 
 ### <font size=4 color=blue>2. 内置关键字</font>
 
@@ -89,20 +179,20 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ### <font size=4 color=blue>1. 算术运算符</font>
 
-| 运算符 | 描述 |
-| :----- | :--: |
-| +      | 相加 |
-| -      | 相减 |
-| *      | 相乘 |
-| /      | 相除 |
-| %      | 求余 |
+| 运算符 |     描述     |
+| :----- | :----------: |
+| +      |     相加     |
+| -      |     相减     |
+| *      |     相乘     |
+| /      | 相除返回整数 |
+| %      | 求余返回余数 |
 
 ### <font size=4 color=blue>2. 关系运算符</font>
 
 | 运算符 |                             描述                             |
 | :----: | :----------------------------------------------------------: |
 |   ==   |    检查两个值是否相等，如果相等返回 True 否则返回 False。    |
-|   !=   |  检查两个值是否不相等，如果不相等返回 True 否则返回 False。  |
+|   !=   | 检查两 个值是否不相等，如果不相等返回 True 否则返回 False。  |
 |   >    |  检查左边值是否大于右边值，如果是返回 True 否则返回 False。  |
 |   >=   | 检查左边值是否大于等于右边值，如果是返回 True 否则返回 False。 |
 |   <    |  检查左边值是否小于右边值，如果是返回 True 否则返回 False。  |
@@ -144,25 +234,121 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ## 2.3 数据类型
 
-### <font size=4 color=blue>1. 整型</font>
+### <font size=4 color=blue>1.1 整型</font>
+
+- 整型分为以下两个大类： 
+  - 按长度分为：int8、int16、int32、int64 
+  - 对应的无符号整型：uint8、uint16、uint32、uint64
+
+- 其中，`uint8`就是我们熟知的`byte`型，`int16`对应C语言中的`short`型，`int64`对应C语言中的`long`型。
+
+|  类型  | 描述                                                         |
+| :----: | :----------------------------------------------------------- |
+| uint8  | 无符号 8位整型 (0 到 255)                                    |
+| uint16 | 无符号 16位整型 (0 到 65535)                                 |
+| uint32 | 无符号 32位整型 (0 到 4294967295)                            |
+| uint64 | 无符号 64位整型 (0 到 18446744073709551615)                  |
+|  int8  | 有符号 8位整型 (-128 到 127)                                 |
+| int16  | 有符号 16位整型 (-32768 到 32767)                            |
+| int32  | 有符号 32位整型 (-2147483648 到 2147483647)                  |
+| int64  | 有符号 64位整型 (-9223372036854775808 到 9223372036854775807) |
+
+### <font size=4 color=blue>1.2 特殊整型</font>
+
+> 在使用`int`和 `uint`类型时，不能假定它是32位或64位的整型，而是考虑`int`和`uint`可能在不同平台上的差异。
+
+|  类型   | 描述                                                   |
+| :-----: | :----------------------------------------------------- |
+|  uint   | 32位操作系统上就是`uint32`，64位操作系统上就是`uint64` |
+|   int   | 32位操作系统上就是`int32`，64位操作系统上就是`int64`   |
+| uintptr | 无符号整型，用于存放一个指针                           |
 
 ### <font size=4 color=blue>2. 浮点型</font>
 
+| 类型    | 描述                                                         |
+| ------- | ------------------------------------------------------------ |
+| float32 | 最大范围约为 `3.4e38`，可以使用常量定义：`math.MaxFloat32`   |
+| float64 | 最大范围约为 `1.8e308`，可以使用一个常量定义：`math.MaxFloat64` |
+
 ### <font size=4 color=blue>3. 复数</font>
+
+| 类型       | 描述               |
+| ---------- | ------------------ |
+| complex64  | 实部和虚部为32位   |
+| complex128 | 实部和虚部为64位。 |
 
 ### <font size=4 color=blue>4. bool</font>
 
-### <font size=4 color=blue>5. byte</font>
+- `bool`类型进行声明布尔型数据，布尔型数据只有`true（真）`和`false（假）`两个值。
+  - 布尔类型变量的默认值为`false`。
+  - Go 语言中不允许将整型强制转换为布尔型.
+  - 布尔型无法参与数值运算，也无法与其他类型进行转换。
 
-### <font size=4 color=blue>6. rune</font>
+### <font size=4 color=blue>5. string</font>
 
-### <font size=4 color=blue>7. string</font>
+- Go语言中的字符串以原生数据类型出现，字符串的内部实现使用`UTF-8`编码。 字符串的值为`双引号(")`中的内容，可以在Go语言的源码中直接添加非ASCII码字符
 
-### <font size=4 color=blue>8. 数组</font>
+- **字符串转义符**
 
-### <font size=4 color=blue>9. 切片</font>
+  | 转义符 | 含义                               |
+  | :----: | :--------------------------------- |
+  |  `\r`  | 回车符（返回行首）                 |
+  |  `\n`  | 换行符（直接跳到下一行的同列位置） |
+  |  `\t`  | 制表符                             |
+  |  `\'`  | 单引号                             |
+  |  `\"`  | 双引号                             |
+  |  `\\`  | 反斜杠                             |
 
-### <font size=4 color=blue>10. map</font>
+- **多行字符串**：要定义一个多行字符串时，就必须使用`反引号`字符
+
+  ```go
+  s1 := `第一行
+  第二行
+  第三行
+  `
+  ```
+
+- **字符串的常用操作**
+
+  | 方法                                | 介绍           |
+  | :---------------------------------- | :------------- |
+  | len(str)                            | 求长度         |
+  | +或fmt.Sprintf                      | 拼接字符串     |
+  | strings.Split                       | 分割           |
+  | strings.contains                    | 判断是否包含   |
+  | strings.HasPrefix                   | 前缀判断       |
+  | strings.HasSuffix                   | 后缀判断       |
+  | strings.Index()                     | 子串出现的位置 |
+  | strings.LastIndex()                 | 子串出现的位置 |
+  | strings.Join(a[]string, sep string) | join操作       |
+
+### <font size=4 color=blue>6. byte rune</font>
+
+- 组成每个字符串的元素叫做“字符”，可以通过遍历或者单个获取字符串元素获得字符。 字符用单引号（’）包裹起来
+- Go 语言的字符有以下两种
+  - `uint8`类型，或者叫 byte 型，代表了`ASCII码`的一个字符。
+  - `rune`类型，代表一个 `UTF-8字符`，实际是一个`int32`。
+
+```go
+// 遍历字符串
+func traversalString() {
+	s := "hello沙河"
+	for i := 0; i < len(s); i++ { //byte
+		fmt.Printf("%v(%c) ", s[i], s[i])
+	}
+	fmt.Println()
+	for _, r := range s { //rune
+		fmt.Printf("%v(%c) ", r, r)
+	}
+	fmt.Println()
+}
+```
+
+### <font size=4 color=blue>7. 数组</font>
+
+### <font size=4 color=blue>8. 切片</font>
+
+### <font size=4 color=blue>9. map</font>
 
 ## 2.4 基本语法
 
@@ -220,298 +406,113 @@ for i < 10 {
 
 ### <font size=4 color=blue>4. goto</font>
 
+## 2.6 变量与常量
+
+### <font size=4 color=blue>1. 变量声明</font>
 
+>  Go语言中的变量需要声明后才能使用，同一作用域内不支持重复声明。 并且Go语言的变量声明后必须使用。
 
-# 第三章 Go语言函数
+- **标准声明**：关键字`var`开头，变量类型放在变量的后面，行尾无需分号
 
+  ```go
+  var 变量名 变量类型
+  ```
 
+- **批量声明**：
 
-# 第四章 内存模型
+  ```go
+  var (
+      a string
+      b int
+      c bool
+      d float32
+  )
+  ```
 
+- **变量的初始化**：Go语言在声明变量的时候，会自动对变量对应的内存区域进行初始化操作。每个变量会被初始化成其类型的默认值，例如： 整型和浮点型变量的默认值为`0`。 字符串变量的默认值为`空字符串`。 布尔型变量默认为`false`。 切片、函数、指针变量的默认为`nil`。
 
+  ```go
+  // 标准格式初始化
+  var 变量名 类型 = 表达式
+  
+  // 定义初始化的类型推导:将变量的类型省略，这个时候编译器会根据等号右边的值来推导变量的类型完成初始化
+  var name = "Q1mi"
+  var age = 18
+  ```
 
-- 安装：
+- **短变量声明**：在函数内部，可以使用更简略的 `:=` 方式声明并初始化变量
 
-  - Windows系统
+  ```go
+  // 全局变量m
+  var m = 100
+  
+  func main() {
+      // 此处声明局部变量
+  	n := 10
+  	m := 200 
+  	fmt.Println(m, n)
+  }
+  ```
 
-  - Linux系统安装
+- **匿名变量**：在使用多重赋值时，如果想要忽略某个值，可以使用`匿名变量（anonymous variable）`。 匿名变量用一个下划线`_`表示
 
-    - 下载go.xxx.tar.gz文件
+  ```js
+  func main() {
+  	x, _ := 1,2
+  	_, y := 4,7
+  	fmt.Println("x=", x)
+  	fmt.Println("y=", y)
+  }
+  ```
 
-    - 将下载好的文件解压到`/usr/local`目录下
+### <font size=4 color=blue>2. 常量</font>
 
-    - 配置环境变量： Linux下有两个文件可以配置环境变量，其中`/etc/profile`是对所有用户生效的
+- **常量定义**：常量的声明和变量声明非常类似，只是把`var`换成了`const`，常量在定义的时候必须赋值。
 
-      ```sh
-      export GOROOT=/usr/local/go
-      export PATH=$PATH:$GOROOT/bin
-      ```
+  ```go
+  const pi = 3.1415
+  const e = 2.7182
+  onst (
+      pi = 3.1415
+      e = 2.7182
+  )
+  ```
 
-    - Mac系统
+- **常量赋值说明**：const同时声明多个常量时，如果省略了值则表示和上面一行的值相同
 
-      - 下载可执行文件版，直接点击**下一步**安装即可，默认会将go安装到`/usr/local/go`目录下。
-      - 打开终端窗口，输入`go version`命令，查看安装的Go版本
+  ```go
+  // 常量n1、n2、n3的值都是100
+  const (
+      n1 = 100
+      n2
+      n3
+  )
+  ```
 
-  - 环境变量GOROOT和GOPATH
+### <font size=4 color=blue>3. iota</font>
 
-    - GOROOT：是我们安装go开发包的路径
-    - GOPATH：是go项目开发的一个根目录，其中的bin目录是
-    - GOPROXY：Go1.14版本之后，都推荐使用`go mod`模式来管理依赖环境了，也不再强制我们把代码必须写在`GOPATH`下面的src目录了，你可以在你电脑的任意位置编写go代码
+- `iota`是go语言的常量计数器，只能在常量的表达式中使用。
 
-1. 第一个Go程序
+- `iota`在const关键字出现时将被重置为0。const中每新增一行常量声明将使`iota`计数一次(iota可理解为const语句块中的行索引)。 使用iota能简化定义，在定义枚举时很有用。
 
-   - 在GOPATH目录下初始化项目目录：① bin表示二进制可执行文件目录  ② pgk最终文件打包目录 ③ src源码目录
+  ```go
+  const (
+      a, b = iota + 1, iota + 2 //1,2
+      c, d                      //2,3
+      e, f                      //3,4
+  )
+  ```
 
-   - 在src下定义的是公司域名目录
+## 2.7 基础进阶
 
-   - 在公司域名目录下定义的模块目录
+# 第三章 Go常用标准库
 
-   - 早模块下定义go的入口文件：`main.go`文件
 
-     ```go
-     package main  // 声明 main 包，表明当前是一个可执行程序
-     
-     import "fmt"  // 导入内置 fmt 包
-     
-     func main(){  // main函数，是程序执行的入口
-     	fmt.Println("Hello World!")  // 在终端打印 Hello World!
-     }
-     ```
 
-2. `go build`表示将源代码编译成可执行文件，在模块目录中的命令行中执行
+# 第四章 数据库相关
 
-   ```sh
-   go build
-   ```
+# 第五章 Web开发相关
 
-   - 或者在其他目录执行以下命令：o编译器会去 `GOPATH`的src目录下查找你要编译的`模块名称`的项目
+# 第六章 常用组件和技巧
 
-     ```sh
-     go build 模块名称
-     ```
-
-   - 编译得到的可执行文件会保存在执行编译命令的当前目录下
-
-3. `go install`表示安装的意思，它先编译源代码得到可执行文件，然后将可执行文件移动到`GOPATH`的bin目录下
-
-   - 跨平台编译：默认我们`go build`的可执行文件都是当前操作系统可执行的文件，只需要指定目标操作系统的平台和处理器架构即可
-
-     > 使用了cgo的代码是不支持跨平台编译的
-     >
-     > 目标处理器架构是amd64
-
-     - 只需要指定目标操作系统的平台和处理器架构即可
-
-       ```sh
-       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
-       CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build
-       ```
-
-     - Linux 下编译 Mac 和 Windows 平台64位可执行程序：
-
-       ```sh
-       CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build
-       CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build
-       ```
-
-     - Windows下编译Mac平台64位可执行程序：
-
-       ```sh
-       SET CGO_ENABLED=0 SET GOOS=darwin SET GOARCH=amd64 go build
-       SET CGO_ENABLED=0 SET GOOS=linux SET GOARCH=amd64  go build
-       ```
-
-4. go的变量与常量
-
-   - **标识符**：Go语言中标识符由字母数字和`_`(下划线）组成，并且只能以字母和`_`开头。
-
-   - **关键字**：是指编程语言中预先定义好的具有特殊含义的标识符。 关键字和保留字都不建议用作变量名。
-
-     | break        | default         | func       | interface   | select     |
-     | ------------ | --------------- | ---------- | ----------- | ---------- |
-     | **case**     | **defer**       | **go**     | **map**     | **struct** |
-     | **chan**     | **else**        | **goto**   | **package** | **switch** |
-     | **const**    | **fallthrough** | **if**     | **range**   | **type**   |
-     | **continue** | **for**         | **import** | **return**  | **var**    |
-
-   - **保留字**
-
-     - **Constants**：true  false  iota  nil
-     - **Types**：int  int8  int16  int32  int64  
-                         uint  uint8  uint16  uint32  uint64  uintptr
-                         float32  float64  complex128  complex64
-                         bool  byte  rune  string  error
-     - **Functions**：make  len  cap  new  append  copy  close  delete
-                        complex  real  imag
-                        panic  recover
-
-   - **变量**：利用变量将这个数据的内存地址保存起来，以后直接通过这个变量就能找到内存上对应的数据了。同一个作用域的变量不能重复声明
-
-     - 标准声明：以关键字`var`开头，变量类型放在变量的后面，行尾无需分号
-
-       ```go
-       var 变量名 变量类型
-       
-       // 案例
-       var name string
-       var age int
-       var isOk bool
-       ```
-
-     - 批量声明：每声明一个变量就需要写`var`关键字会比较繁琐，go语言中还支持批量变量声明
-
-       ```go
-       var (
-           a string
-           b int
-           c bool
-           d float32
-       )
-       ```
-
-     - 变量初始化：Go语言在声明变量的时候，会自动对变量对应的内存区域进行初始化操作。每个变量会被初始化成其类型的默认值
-
-       ```go
-       var 变量名 类型 = 表达式
-       
-       // 案例一 初始化单个变量
-       var name string = "Q1mi"
-       var age int = 18
-       
-       // 案例二 初始化多个变量
-       var name, age = "Q1mi", 20
-       
-       // 案例三 类型推导.编译器会根据等号右边的值来推导变量的类型完成初始化
-       var name = "Q1mi"
-       var age = 18
-       ```
-
-     - 短变量声明：在函数内部，可以使用更简略的 `:=` 方式声明并初始化变量
-
-       ```go
-       package main
-       
-       import (
-       	"fmt"
-       )
-       // 全局变量m
-       var m = 100
-       
-       func main() {
-       	n := 10
-       	m := 200 // 此处声明局部变量m
-       	fmt.Println(m, n)
-       }
-       ```
-
-     - 匿名变量：在使用多重赋值时，如果想要忽略某个值，可以使用`匿名变量（anonymous variable）`，匿名变量不占用命名空间，不会分配内存，所以匿名变量之间不存在重复声明
-
-       ```go
-       func foo() (int, string) {
-       	return 10, "Q1mi"
-       }
-       func main() {
-       	x, _ := foo()
-       	_, y := foo()
-       	fmt.Println("x=", x)
-       	fmt.Println("y=", y)
-       }
-       ```
-
-   - **常量**：常量是恒定不变的值，多用于定义程序运行期间不会改变的那些值。 常量的声明关键字换成了`const`，常量在定义的时候必须赋值。
-
-     - 标准声明
-
-       ```go
-       const pi = 3.1415
-       ```
-
-     - 批量声明：单独赋值
-
-       ```go
-       const (
-           pi = 3.1415
-           e = 2.7182
-       )
-       ```
-
-     - 批量声明：批量赋相同的值,如果省略了值则表示和上面一行的值相同
-
-       ```go
-       const (
-           n1 = 100
-           n2
-           n3
-       )
-       ```
-
-     - 常量计数器**iota**：只能在常量的表达式中使用，`iota`在const关键字出现时将被重置为0。const中每新增一行常量声明将使`iota`计数一次(iota可理解为const语句块中的行索引)
-
-       ```go
-       // 案例一 产量计数器自增1
-       const (
-       		n1 = iota //0
-       		n2        //1
-       		n3        //2
-       		n4        //3
-       	)
-       
-       
-       // 案例二 常量计数器遇到const重置为0
-       const (
-       		n1 = iota //0
-       		n2 = 100  //100
-       		n3 = iota //2
-       		n4        //3
-       	)
-       	const n5 = iota //0
-       ```
-
-5. 数据类型
-
-   - 整型
-
-     - 根据长度分类：int8（byte）、int16（shot）、int32（int）、int64（long）
-     - 对应的无符号：uint8、uint16、uint32、uint64
-
-   - 浮点型
-
-     - 浮点型类型有：float32、float64
-     - 浮点数常量：math.MaxFolat64、math.MaxFloat32
-
-   - 布尔型bool：go中不允许将true与false强制转为数值型，不参与数值运算
-
-   - 字符串string：使用双引号包裹的字符，内部使用UTF8编码，常见转义字符和正则规则相同
-
-     - 定义单行文本
-
-       ```go
-       var s = "单行文本"
-       ```
-
-     - 定义多行文本
-
-       ```go
-       var s = `
-       	多行文本
-       `
-       ```
-
-     - 字符串相关API
-
-       - len(变量)   查看字符串长度
-       - 字符变量A + 字符变量B    字符串拼接
-         - fmt.Sprintf("%s%s",字符变量A,字符变量B)
-       - 
-
-   - 数组
-
-   - 切片
-
-   - 结构体
-
-   - 函数
-
-   - map
-
-   - 通道
+# 第七章 GORM教程
