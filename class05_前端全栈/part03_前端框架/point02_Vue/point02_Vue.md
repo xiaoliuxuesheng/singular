@@ -281,8 +281,6 @@ var vm = new Vue({
 - <font size=4 color=blue>**异常**</font>：
   1. **errorCaptured**：当捕获一个来自子孙组件的错误时被调用。此钩子会收到三个参数：错误对象、发生错误的组件实例以及一个包含错误来源信息的字符串。此钩子可以返回 false 以阻止该错误继续向上传播。
 
-
-
 ## 2.5 Vue指令
 
 ### 1. 差值表达式 
@@ -923,65 +921,94 @@ var vm = new Vue({
 
 - **vm.$emit( eventName, […args] )**：触发当前实例上的事件。附加参数都会传给监听器回调。
 
-
-
 # 第三章 组件化开发
 
 ## 3.1 组件开发思想
 
-​		前端代码开发中，程序实现是希望尽可能多的做到代码重用，然而前端在代码重用中可能会产生CSS样式和JS业务逻辑的冲突；由此产生的Web Components开发标准：其核心思想是通过创建封装特定功能的定制元素（是一个自定义标签并且具有特定功能），并且能够解决冲突问题；
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;前端代码开发中，程序实现是希望尽可能多的做到代码重用，然而前端在代码重用中可能会产生CSS样式和JS业务逻辑的冲突；由此产生的Web Components开发标准：其核心思想是通过创建封装特定功能的定制元素（是一个自定义标签并且具有特定功能），并且能够解决冲突问题；
 
-​		但是这个Web Components标准没有被浏览器广泛支持，但是Vue部分实现了Web Components开发标准。把不同的功能在不同的组件中开发，通过组件组合的方式实现功能的同一实现。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是这个Web Components标准没有被浏览器广泛支持，但是Vue部分实现了Web Components开发标准。把不同的功能在不同的组件中开发，通过组件组合的方式实现功能的同一实现。
 
-​		组件设计是将不同的功能封装在不同的组件中，通过组件的整合形成完整意义上的一个应用；
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组件设计是将不同的功能封装在不同的组件中，通过组件的整合形成完整意义上的一个应用；
 
-## 3.2 组件基础
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vue中组件分为全局组件和局部组件，在Vue组件本质也是一个Vue实例，拥有Vue对象的全部属性：如data、methods等等；组件注册实际上是将定义好的组件绑定到Vue实例中，可以将组件定义在Vue对象（java中称类）上，称为全局组件，这样所有的vue实例都可以使用该组件；如果将组件定义在Vue实例上，称为局部组件，可以在当前Vue实例范围内使用；
 
-### <font size=4 color=blue>**1. 组件开发基本步骤**</font>
+## 3.2 组件开发
 
-- 创建组件对象：在新版本的Vue中，组件对象不再单独创建，由ES新的语法糖进行组件对象的应用，其源码底层也是调用了组件创建方法，即组件的创建和注册是一起实现的；在Vue组件本质也是一个Vue实例，拥有Vue对象的全部属性：如data、methods等等；
+### <font size=4 color=blue>**1.  创建组件**</font>
+
+- **全局组件**：定义在Vue类上的component属性中的组件对象，**全局组件必须定义在Vue实例对象之前**
+
+  - 方式一：分步式创建组件对象并注册到component属性中
+
+    ```js
+    // 1. 创建组件对象
+    let component = Vue.extend({
+        data:function(){
+            return {
+                组件数据属性:组件数据值
+            }
+        },
+        methods:{
+            组件中函数
+        },
+        template: '组件内容的模板'
+    })
+    
+    // 2. 注册组件到Vue类的component属性中
+    // 全局组件
+    Vue.component('组件名称',组件对象)
+    ```
+
+  - 方式二：创建匿名组件并注册
+
+    ```js
+    Vue.component('组件名称',Vue.extend({
+        data:function(){
+            return {
+                组件数据属性:组件数据值
+            }
+        },
+        methods:{
+            组件中函数
+        },
+        template: '组件内容的模板'
+    }))
+    ```
+
+  - 方式三：在新版本的Vue中，组件对象不再单独创建，由ES新的语法糖进行组件对象的应用，其源码底层也是调用了组件创建方法，即组件的创建和注册是一起实现的；
+
+    ```js
+    let component = Vue.extend({
+        data:function(){
+            return {
+                组件数据属性:组件数据值
+            }
+        },
+        methods:{
+            组件中函数
+        },
+        template: '组件内容的模板'
+    })
+    ```
+
+- **局部组件**：局部组件是定义在Vue实例对象的components属性中的，组件对象的的创建方式和全局组件的创建方式相同
 
   ```js
-  let component = Vue.extend({
-      data:function(){
-          return {
-              组件数据属性:组件数据值
-          }
-      },
-      methods:{
-          组件中函数
-      },
-      template: '组件内容的模板'
-  })
-  ```
-
-- 注册组件：组件注册实际上是将定义好的组件绑定到Vue实例中，可以将组件定义在Vue对象（java中称类）上，称为全局组件，这样所有的vue实例都可以使用该组件；如果将组件定义在Vue实例上，称为局部组件，可以在当前Vue实例范围内使用；
-
-  ```js
-  // 全局组件
-  Vue.component('组件名称',组件对象)
-  
-  // 局部组件
   let vm = new Vue({
   	el:"实例范围",
       components:{
           组件名称:组件对象
       }
   })
-  
-  // 组件定义语法糖
-  Vue.component('组件名称',{
-      data:function(){
-          return {
-              组件数据属性:组件数据值
-          }
-      },
-      methods:{
-          组件中函数
-      },
-      template: '组件内容的模板'
-  })
   ```
+
+### <font size=4 color=blue>**2.  使用组件**</font>
+
+- 组件的命名：
+  - 在创建并定义组件时候，组件名称可以是驼峰命名或传统的标签格式（中横线）命名；
+  - 在使用组件的标签如果在template的字符串中的可以使用驼峰命名或传统的标签格式（中横线）命名；
+  - 在使用组件的标签如果在父组件的标签内必须转换为中横线的命名方式
 
 - 组件的使用：将组件名称当做一个自定义的html标签，组件中的template就会替换改标签对应的页面区域，可以重复使用该自定义标签实现组件的复用；
 
@@ -991,7 +1018,7 @@ var vm = new Vue({
   <组件名称></组件名称>
   ```
 
-### <font size=4 color=blue>**2. 组件属性详解**</font>
+### <font size=4 color=blue>**3. 组件基本属性说明**</font>
 
 - **组件名称**：在定义组件时候可以使用呢驼峰格式或者中划线的格式，在template中引用组件时候可以使用驼峰或者中划线的方式，但是**在html结构的Vue组件中引用组件必须使用中划线格式**；
 
@@ -1009,6 +1036,20 @@ var vm = new Vue({
     </script>
     ```
 
+  - 使用ES的新的模板字符串语法定义带格式的模板字符串
+
+    ```html
+    <script>
+        let component = Vue.extend({
+       	 	template: `
+    			<div>
+        			<a href="#">带格式的字符串模板</a>
+        		</div>
+    		`
+    	})
+    </script>
+    ```
+
   - 使用script分离模板内容：使用script作为模板的根标签，script标签的type必须是`text/x-template`
 
     ```html
@@ -1019,7 +1060,7 @@ var vm = new Vue({
     </script>
     <script>
         let component = Vue.extend({
-       	 	template: '#自定义组件模板名称'
+       	 	template: '#id值'
     	})
     </script>
     ```
@@ -1032,28 +1073,138 @@ var vm = new Vue({
     </template>
     <script>
         let component = Vue.extend({
-       	 	template: '#自定义组件模板名称'
+       	 	template: '#id值'
     	})
     </script>
     ```
 
 - **其他属性**：Vue组件本质也是一个Vue实例，Vue实例中的其他属性组件中的用法和在Vue实例中的用法相同；
 
-- **父子组件**：在Vue实例的component属性中定义的组件，称为这个实例的子组件；特点是这个子组件可以在这个Vue实例的template中使用；
-
-
+- **父子组件**：在Vue的组件模板中如果引用了其他组件的标签作为模板内容的一部分，被应用的组件是这个组件的子组件，应用子组件的组件是这个子组件的父组件；
 
 ## 3.3 组件的数据交互方式
 
+### <font size=4 color=blue>**1. 父组件向子组件传值**</font>
 
+- **第一步**：把父组件的值通过属性设置或属性绑定定义在子组件的标签上
+
+  ```html
+  <组件名称 属性名1="属性值" :属性名2="父组件动态值"></组件名称>
+  ```
+
+- **第二步**：在子组件对象中定义props属性接受标签上绑定的属性，
+
+  - props属性是数组，数组元素是接收父组件传递的属性名，
+  - props中元素可以接受各种数据类型：String、Number、Boolean、Array、Object
+  - props中元素名称可以是驼峰表示，向子传递的属性名必须是中横线的方式
+  - props传递数据原则：单向数据流，子组件操作父组件应用类型数据会导致数据逻辑混乱
+
+  ```js
+  Vue.component('组件名称',Vue.extend({
+      props:["属性名1","属性名2"],
+      data:function(){
+          return {
+              组件数据属性:组件数据值
+          }
+      },
+      methods:{
+          组件中函数
+      },
+      template: '<div>{{属性名1}}{{属性名2}}</div>'
+  }))
+  ```
+
+### <font size=4 color=blue>**2. 同级组件传值**</font>
+
+- **第一步**：定义事件中心，本质是一个空的Vue实例，在Vue实例对象中定义事件与监听事件完整组件之间的传值
+
+  ```js
+  var enent = new Vue({});
+  ```
+
+- **第二步**：监听事件是在组件的生命周期钩子函数
+
+  ```js
+  Vue.component("#sub1",{
+      mounted:{
+          event.$on("事件名称",function(val){
+      		// 监听的回调函数
+  		})
+      }
+  })
+  ```
+
+- **第三步**：再子组件上定义方法，在方法使用$emit触发事件
+
+  ```html
+  <div id="app">
+      <sub1 @click="handle"></sub1>
+  </div>
+  <script>
+  	var vm = new Vue({
+          el:"#app",
+          methods:{
+              handle:function(){
+                  event.$emit("事件名称",[参数])
+              }
+          }
+      })
+  </script>
+  ```
+
+- **销毁事件**
+
+  ```js
+  event.$off("事件名称")
+  ```
+
+<font size=4 color=blue>**3. 子组件向父组件传值**</font>
+
+- **第一步**：在子组件中绑定自定义事件，采用$emit自定义在子组件中定义指定名称的事件
+
+  ```html
+  <template id="自定义组件模板名称">
+      <div @click="$emit('事件名称',[第二个参数是事件传递的值])">组件内容</div>
+  </template>
+  ```
+
+- **第二步**：在父组件中使用子组件标签中监听改名称的事件，监听事件的值中$event是固定值，表示子组件事件传递的参数
+
+  ```html
+  <div id="app">
+      <子组件标签 @事件名称="父组件方法([$event])"></子组件标签>
+  </div>
+  ```
 
 ## 3.4 组件插槽
 
+### <font size=4 color=blue>**1. 插槽概述**</font>
 
 
-# 第四章 Vue CLI详解
+
+### <font size=4 color=blue>**2. 插槽使用-子组件接收内容**</font>
+
+
+
+### <font size=4 color=blue>**3. 插槽使用-具名插槽**</font>
+
+
+
+### <font size=4 color=blue>**4. 插槽使用-子组件返回值**</font>
+
+# 第四章 接口调用
+
+## 4.1 JavaScript原生Ajax
+
+## 4.2 jQuery的Ajax
+
+## 4.3 
 
 # 第五章 vue-router
+
+
+
+# 第六章 Vue CLI详解
 
 # 第六章 Vuex详解
 
