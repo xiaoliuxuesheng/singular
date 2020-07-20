@@ -1158,7 +1158,7 @@ var vm = new Vue({
   event.$off("事件名称")
   ```
 
-<font size=4 color=blue>**3. 子组件向父组件传值**</font>
+### <font size=4 color=blue>**3. 子组件向父组件传值**</font>
 
 - **第一步**：在子组件中绑定自定义事件，采用$emit自定义在子组件中定义指定名称的事件
 
