@@ -43,7 +43,33 @@
 
 ## 1.2 Security核心对象
 
+1. <font size=4 color=red>**Authentication**</font>：通过AuthenticationManager.authenticate(Authentication)方法认证后的Authentication实例对象是Security通行的令牌；
 
+   - Authentication的基类AbstractAuthenticationToken，自定义的认证需要继承这个基类，封装自定义的参数；
+   - 由基类AbstractAuthenticationToken派生出的类表示Security的一种认证方式，每种认证方式都有自己对应的AuthenticationProvider实例进行校验；
+
+2. <font size=4 color=red>**AuthenticationProvider**</font>：用于处理特定的AbstractAuthenticationToken的派生类，每一种认证方式都会有一个AbstractAuthenticationToken以及对应的AuthenticationProvider，这个类主要作用根据请求中的数据作为参数通过UserDetailsService获取到服务器数据库中的UserDetails对象，然后进行与请求的认证信息进行匹配，如果匹配成功则认证通过；
+
+3. <font size=4 color=red>**AuthenticationManager**</font>：这个类是接口，实现类ProviderManager的作用是收集所有的AuthenticationProvider，用于处理与之对应的AbstractAuthenticationToken；
+
+4. <font size=4 color=red>**UserDetailsService**</font>：封装了获取用户的逻辑，由开发者封装用户信息并返回
+
+   ```java
+   public interface UserDetailsService {
+       UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException;
+   }
+   ```
+
+5. <font size=4 color=red>**UserDetails**</font>：接口与Security自定义的用户信息的实现类User
+
+   - UserDetails：是个接口定义了获取用户相关属性的逻辑，Security或根据返回的UserDetails完成校验；
+   - User：是Security默认提供的一个用户的实现，自定义开发可以继承User类或者实现UserDetails接口；
+
+## 1.3 Security配置相关类说明
+
+1. WebSecurityConfigurerAdapter
+2. @EnableWebSecurity
+3. @EnableGlobalMethodSecurity
 
 # 第二章 Security认证
 
@@ -51,7 +77,7 @@
 
 <img src="https://s1.ax1x.com/2020/06/20/NQVVfg.png" alt="NQVVfg.png" border="0" />
 
-## 2.2 使用配置修改登陆信息 
+## 2.2 修改默认配置 
 
 ```yml
 spring:
@@ -113,10 +139,10 @@ spring:
 
 1. **自定义SpringBoot项目resources中静态资源**
 
-   - resources/resources：SpringBoot项目启动默认会读取这个目录中的index.html页面作为首页，引入静态资源的路径是以static为根，比如：
+   - resources/resources：SpringBoot项目启动默认会读取这个目录中的index.html页面作为首页，引入静态资源的路径是以static为根，需要将静态资源分包存储在static目录中，加载静态资源方式例如：
 
      ```html
-     <link rel="stylesheet" href="/css/element-ui.css">
+     <link href="/css/element-ui.css"  rel="stylesheet">
      <script src="/js/vue-2.6.11.js"></script>
      <script src="/js/element-ui.js"></script>
      ```
@@ -202,18 +228,18 @@ spring:
                    .failureHandler(null)           // ⑧
                    .and()
                    .authorizeRequests()            // ⑨
-                   .antMatchers("/css/**", "/js/**", "/fonts/**", "/images/**").permitAll()    // ⑩
-                   .antMatchers("").permitAll()    // ⑪
-                   .anyRequest().authenticated()               // ⑫
+                   .antMatchers("/css/**").permitAll()    	// ⑩
+                   .antMatchers("").permitAll()    		// ⑪
+                   .anyRequest().authenticated()     		// ⑫
                    .and()
-                   .csrf().disable();                          // ⑬
+                   .csrf().disable();                 		// ⑬
        }
    }
    ```
 
-   ① - 用于指定登陆页的链接，在这里指定登陆链接后需要在⑪的授权请求时候需要permitAll，不然跳转登陆页会被Security拦截；
+   ① - 用于指定登陆页的链接，作用是在请求被Security的认证功能拦截后默认会跳转带该配置的链接地址上；并且在这里指定登陆链接后需要在⑪的授权请求时候需要permitAll，否则被Security拦截跳转到的认证链接还会被Security拦截，进入无限重定向异常中；
    
-   ② - 登陆处理URL，默认的登陆url是`/login`，自定义表单登陆可以修改登陆请求，也需要请求授权时permitAll，不然发送登陆请求会被Security拦截；
+   ② - 登陆表单或登录参数时候发送的URL，默认的登陆url是`/login`，自定义表单登陆可以修改登陆请求，也需要请求授权时permitAll，不然发送登陆请求会被Security拦截；
    
    ③ - 修改表单登陆的用户名参数，默认是username；
    
@@ -227,13 +253,30 @@ spring:
    
    ⑧ - [登陆失败处理器](##2.9 Security认证失败处理器)，可以记录登录失败等相关日志或其他信息；
    
-   ⑨ - 表示是请求授权相关配置
+   ⑨ - authorizeRequests表示是请求授权相关配置
    
-   ⑩ - antMatchers表示路径匹配器，如果路径匹配的上则执行之后的操作，permitAll表示该请求允许所有权限无需认证；
+   ⑩ - antMatchers表示路径匹配器，如果路径匹配的上则执行之后权限表达式的处理方式
    
    ⑫ - anyRequest()表示所有请求，这个配置要放在最后，应为这个配置之后再做路径匹配就无效了，authenticated表示需要认证
    
    ⑬ - csrf().disable()表示关闭csrf；
+   
+4. **authorizeRequests权限表达式**
+
+   | 权限API                         | 描述                                                      |
+   | ------------------------------- | --------------------------------------------------------- |
+   | permitAll()                     | 永远返回true                                              |
+   | denyAll()                       | 永远返回false                                             |
+   | anonymous()                     | 匿名用户时候返回true                                      |
+   | rememberMe()                    | 记住我(从token表)认证成功返回true                         |
+   | authentication()                | 当前登录用户的`authentication`对象                        |
+   | fullAuthenticated()             | 当前用户既不是`anonymous`也不是`rememberMe`用户时返回true |
+   | hasRole(role)                   | 用户拥有指定的角色时返回true                              |
+   | hasAnyRole(... role)            | 用户拥有任意一个制定的角色时返回true                      |
+   | hasAuthority(authority)         | 用于设置权限字符串,等同于`hasRole`,但不会带有`ROLE_`前缀  |
+   | hasAnyAuthority(... authority)  | 等同于`hasAnyRole`                                        |
+   | hasIpAddress('192.168.1.0/24')) | 请求发送的IP匹配时返回true                                |
+   | access(string)                  | 改字符会被解析为权限表达式，当做合法代码调用              |
 
 ## 2.5 实现数据库动态登陆
 
@@ -457,61 +500,116 @@ spring:
 
 # 第四章 Security授权
 
-## 4.1 Security授权原理
+## 4.1 权限说明
 
-1. Security的是一系列的拦截器：除了用户登录校验相关的过滤器,最后还包含了鉴权功能的过滤器,还有匿名资源访问的过滤器链`FilterSecurityInterceptor`：是一个方法级的权限过滤器, 基本位于过滤链的最底部
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;认证(Authentication)：确定一个用户的身份的过程（判断你是谁）。授权(Authorization)：判断一个用户是否有访问某个安全对象的权限（判断你能干什么）。
+
+## 4.2 Security授权原理
+
+1. Security核心是一系列的拦截器：除了用户登录校验相关的过滤器,最后还包含了鉴权功能的过滤器,还有匿名资源访问的过滤器链`AnonymousAuthorizationFilter`：是一个方法级的权限过滤器, 位于基本过滤链的最底部。 主要作用是用于判断SecurityContext中是否有Authentication对象，如果没有则会调用AnonymousAuthenticationToken创建AnonymousAuthentication对象并添加到SecurityContext中，会当做匿名用户登录信息
 
    <img src="https://s1.ax1x.com/2020/07/03/NOE0eK.png" alt="NOE0eK.png" border="0" />
-
-   - 权限控制方式一：在方法上加注释实现，需先在具体的配置里开启此类配置（可以在方法上开启或者在全局配置类中开启）EnableGlobalMethodSecurity
-
-     ```java
-     // 开启权限注解功能
-     @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-     
-     // 在Controller方法配置权限注解
-     @Secured("ROLE_ADMIN")
-     ... ...
-     ```
-
-   - 权限控制方式二：在configure配置中配置，使用时权限会自动加前缀`ROLE_`，用于简单权限系统
-
-     ```java
-     .antMatchers("your match rule").hasRole("ADMIN") 
-     ```
-
-   - 权限控制方式二：把过滤的规则放到更为灵活的位置，数据库/本地文件/等等.
 
 2. Security权限验证原理
 
    <img src="https://s1.ax1x.com/2020/07/03/NOzwJx.png" alt="NOzwJx.png" border="0" />
 
-   - SecurityConfig：主要封装了Security配置类中自定义的配置信息
-   - SecurityContextHolder：表示用户认证通过后保存在认证Context中用户信息
-   - FilterSecurityInterceptor：表示当前的服务请求，包含了当前请求的相关信息；主要是将当前请求对应的三方信息交给AccessDecisionManager（投票管理者）
-   - AccessDecisionManager：投票管理者调用AccessDecisionVoter的投票者最终来判断是过还是不过（也就是有没有权限）有两种可能
+- SecurityConfig：主要封装了Security配置类中自定义的配置信息
+- SecurityContextHolder：表示用户认证通过后保存在认证Context中用户信息
+- FilterSecurityInterceptor：表示当前的服务请求，包含了当前请求的相关信息；主要是将当前请求对应的三方信息交给AccessDecisionManager（投票管理者）
+- AccessDecisionManager：投票管理者调用AccessDecisionVoter的投票者最终来判断是过还是不过（也就是有没有权限）有两种可能
 
-   ## 4.2 权限表达式
+## 4.3 Security授权方式
 
-   1. **基于API的权限表达式**
+### 1. 基于认证的授权
 
-      <img src="https://s1.ax1x.com/2020/07/03/NX9jfI.png" alt="NX9jfI.png" border="0" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;授权场景：该方式表示只有登录成功就表示登录用户可以访问当前服务的所有资源，无需对其操作做多余限定。多在业务类型系统服务中，除了系统提供的资源外，业务系统会保存大量的用户数据，为了保护用户数据而添加认证功能，当用户认证后，该用户就可以操作属于自己的相关数据，而不需要做权限操作。
 
-   2. **注解方式权限表达式**
+### 2. 固定角色授权
 
-   ## 4.3 权限控制案例
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在某些业务系统中会添加类似VIP之类的简单角色，而且系统中的部分资源只有拥有改角色的用户才可以访问，并且熊的中的角色基本固定，角色对应的资源也是特定资源，此时只需要为用户配置对应的角色，用Security设置改角色对应的资源的权限访问方式即可，
 
-   1. 基于配置的权限控制
-   2. 基于注解的权限控制
-   3. 自定义权限控制规则
+- **给用户添加角色**：以下案例是基于配置的方式为指定用户添加角色，从数据读取到的方式也是类似：实现用户拥有角色的功能就可以
 
+  ```java
+  @Configuration
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+  
+      @Override
+      protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+          auth
+                  .inMemoryAuthentication()
+                  .withUser("admin").password("{noop}123456").roles("ADMIN")
+                  .and()
+                  .withUser("test").password("{noop}test123").roles("USER");
+      }
+  }
+  ```
 
+- 在Security的配置文件中为该角色配置特点的资源：如下案例
 
+  ```java
+  @Configuration
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+      @Override
+      protected void configure(HttpSecurity http) throws Exception {
+          http
+                  .authorizeRequests()
+                  .antMatchers("/url").hasRole("ADMIN");
+      }
+  }
+  ```
 
+- 或者使用Security注解在对应的Controller资源的方法上添加角色注解
 
+  1. 在配置文件中开启Security注解功能
 
+     ```java
+     @Configuration
+     @EnableWebSecurity
+     @EnableGlobalMethodSecurity(prePostEnabled = true)
+     public class SecurityConfig extends WebSecurityConfigurerAdapter {
+         // ... ...
+     }
+     ```
 
+  2. 在Controller方法需要验证角色的主要添加权限验证
 
+     ```java
+     @PreAuthorize("hasRole('ROLE_ADMIN')")
+     @GetMapping("/user")
+     ```
 
+### 3. 使用编码动态的读取数据库
 
+<img src="https://s1.ax1x.com/2020/07/03/NX9jfI.png" alt="NX9jfI.png" border="0" />
 
+- 使用编码实现权限判断的核心代码：access参数是权限代码字符串表达式
+
+  ```java
+  @Configuration
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+  
+      @Override
+      protected void configure(HttpSecurity http) throws Exception {
+          http.authorizeRequests()
+              .antMatchers("/**")
+              .access("@rbacServictImpl.hasPremise(request,authentication)");
+      }
+  ```
+
+  - @rbacServictImpl：表示Spring的一个组件，需要自定义对应的接口
+  - hasPremise：这个方法是接口中定义的方法，改方法的基本要求
+    1. 返回值是Boolean类型的值
+    2. 方法必须要有参数一：HttpServletRequest request用于获取当前请求的URL
+    3. 方法必须要有参数二：Authentication authentication表示当前已经认证成功的用户信息
+
+### 4. 基于注解动态判断用户权限
+
+- 在Security的配置文件中启用Security注解功能
+
+  ```java
+  
+  ```
+
+- 在对应的Controller资源上添加权限注解
