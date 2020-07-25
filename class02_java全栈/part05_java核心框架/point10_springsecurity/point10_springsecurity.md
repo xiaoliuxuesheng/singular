@@ -490,15 +490,241 @@ spring:
    > - addFilter：在过滤器链最后添加过滤器
    > - addFilterAt：将过滤器设置在指定过滤器的同一位置，但是顺序是不固定的，根据class排序
 
-## 2.12 自定义认证-短信登陆
+## 2.12 自定义认证- 原理
 
-## 2.13 自定义认证-jwt
+<img src="https://s1.ax1x.com/2020/07/25/UxLY8g.png" alt="UxLY8g.png" border="0" />
+
+### 1. 框架内置用户名密码登陆认证逻辑
+
+- 用户名密码登陆请求被UsernamePasswordAuthenticationFilter拦截，获取到请求中相关参数
+- 根据请求参数生成未认证通过的UsernamePasswordAuthenticationToken交给AuthenticationManager
+- AuthenticationManager从一系列中的Provided中找到支持（support）UsernamePasswordAuthenticationToken
+- DaoAuthenticationProvider根据UsernamePasswordAuthenticationToken中的信息调用UserDetailService获取到UserDetail信息
+- 根据获取到的UserDetail重新生成认证通过的UsernamePasswordAuthenticationToken交给后续的Filter
+
+### 2. 自定义认证扩展 - sms
+
+- 首先要定义对应的AuthenticationFilter用于拦截自定义认证的请求
+
+- 每一种的认证方式都有自己的一个AuthenticationToken，用于保存认证相关的特定数据
+
+- 并且要将AuthenticationToken交给AuthenticationManager
+
+- 每一个AuthenticationToken都需要定义对应的Provider，这样AuthenticationManager才能找到Provider
+
+- 自定义的Provider也需要调用UserDetailService获取到UserDetail信息
+
+- 根据获取到的UserDetail重新生成认证通过的AuthenticationToken
+
+- 最后需要将Provider和Filter添加的Security的配置才能将认证通过的AuthenticationToken交给后续的Filter
+
+  1. 为该认证方式定义一个特定的Config
+
+     ```java
+     @Configuration
+     public class Config extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+     
+         @Autowired
+         private SecurityUserDetailService userDetailsService;
+     
+         @Override
+         public void configure(HttpSecurity http) throws Exception {
+             SmsAuthenticationFilter filter = new SmsAuthenticationFilter();
+             
+             filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+     
+             // Provider要根据UserDetailsService获取用户信息
+             SmsAuthenticationProvider provider = new SmsAuthenticationProvider(userDetailsService);
+     
+      		/**
+              *  1. 将Provide添加到全局配置中
+              *  2. 将自定义过滤器添加到添加到过滤器链中 
+              */
+             http.authenticationProvider(provider)
+                     .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class);
+     
+         }
+     }
+     
+     ```
+
+  2. 在将自定义认证方式的Config添加到全局的SecurityConfig中
+
+     ```java
+         @Autowired
+         private SecuritySmsConfig securitySmsConfig;
+         @Override
+         protected void configure(HttpSecurity http) throws Exception {
+             http
+                 // ... ...
+                 .apply(securitySmsConfig);
+         }
+     ```
+
+## 2.13 自定义认证案例 - 短信登陆
+
+1. **初始化验证码获取接口和验证码认证的表单接口**
+
+2. **在Security中配置验证码认证相关请求的认证权限**
+
+3. **后台服务实现获取验证码的功能**：获取验证码通过手机号获取验证码，并把相关信息返回并存储在特定的缓存中，等待认证
+
+4. **实现自定义认证相关类**
+
+   - AbstractAuthenticationToken
+
+     ```java
+     public class SmsAuthenticationToken extends AbstractAuthenticationToken {
+     
+         // 自己的Token中要保存的认证信息
+         private final Object principal;
+     
+         // 未认证通过的Token构造器
+         public SmsAuthenticationToken(Object principal) {
+             super(null);
+             this.principal = principal;
+             setAuthenticated(false);
+         }
+     
+         // 认证通过的Token构造器
+         public SmsAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> aut) {
+             super(aut);
+             this.principal = principal;
+             super.setAuthenticated(true); // 必须调用父类认证
+         }
+     
+         // 用于设置认证没有通过
+         public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+             if (isAuthenticated) {
+                 throw new IllegalArgumentException("认证异常日志");
+             }
+     
+             super.setAuthenticated(false);
+         }
+     
+         // 认证信息中的主体身份
+         public Object getPrincipal() {
+             return this.principal;
+         }
+     
+         // 通常作为密码 的证明性文件
+         public Object getCredentials() {
+             return null;
+         }
+     }
+     ```
+
+   - AbstractAuthenticationProcessingFilter
+
+     ```java
+     public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+     
+         public static final String SPRING_SECURITY_FORM_MOBILE_KEY = "mobile";
+     
+         private String usernameParameter = SPRING_SECURITY_FORM_MOBILE_KEY;
+         private boolean postOnly = true;
+     
+         // 用于拦截自定义认证的请求
+         public SmsAuthenticationFilter() {
+             super(new AntPathRequestMatcher("/authentication/mobile", "POST"));
+         }
+     
+     
+         public Authentication attemptAuthentication(HttpServletRequest request,
+                                                     HttpServletResponse response) throws AuthenticationException {
+             if (postOnly && !request.getMethod().equals("POST")) {
+                 throw new AuthenticationServiceException(
+                         "Authentication method not supported: " + request.getMethod());
+             }
+     
+             String username = obtainUsername(request);
+     
+             if (username == null) {
+                 username = "";
+             }
+     
+     
+             username = username.trim();
+     
+             SmsAuthenticationToken authRequest = new SmsAuthenticationToken(
+                     username);
+     
+             // 提出方法为了给子类提供扩展
+             setDetails(request, authRequest);
+     
+             return this.getAuthenticationManager().authenticate(authRequest);
+         }
+     
+         @Nullable
+         protected String obtainUsername(HttpServletRequest request) {
+             return request.getParameter(usernameParameter);
+         }
+     
+         protected void setDetails(HttpServletRequest request,
+                                   SmsAuthenticationToken authRequest) {
+             authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
+         }
+     
+         public void setUsernameParameter(String usernameParameter) {
+             Assert.hasText(usernameParameter, "Username parameter must not be empty or null");
+             this.usernameParameter = usernameParameter;
+         }
+       	public final String getUsernameParameter() {
+             return usernameParameter;
+         }
+         public void setPostOnly(boolean postOnly) {
+             this.postOnly = postOnly;
+         }
+     }
+     
+     ```
+
+   - AuthenticationProvider
+
+     ```java
+     public class SmsAuthenticationProvider implements AuthenticationProvider {
+     
+         private final UserDetailsService userDetailsService;
+     
+         public SmsAuthenticationProvider(UserDetailsService userDetailsService) {
+             this.userDetailsService = userDetailsService;
+         }
+     
+         @Override
+         public Authentication authenticate(Authentication authen) throws AuthenticationException {
+             SmsAuthenticationToken token = (SmsAuthenticationToken) authentication;
+             UserDetails userDetails = 
+                 userDetailsService.loadUserByUsername(token.getPrincipal().toString());
+             if (userDetails == null) {
+                 throw new RuntimeException("用户信息获取失败");
+             }
+             SmsAuthenticationToken smsAuthenticationToken 
+                 = new SmsAuthenticationToken(userDetails, userDetails.getAuthorities());
+             smsAuthenticationToken.setDetails(smsAuthenticationToken.getDetails());
+             return smsAuthenticationToken;
+         }
+     
+         @Override
+         public boolean supports(Class<?> authentication) {
+             return SmsAuthenticationToken.class.isAssignableFrom(authentication);
+         }
+     }
+     
+     ```
+
+## 2.14 自定义认证案例 - jwt
+
+
 
 # 第三章 Security第三方认证
 
 
 
-# 第四章 Security授权
+# 第四章 第三方认证服务开发
+
+
+
+# 第五章 Security授权
 
 ## 4.1 权限说明
 
@@ -613,3 +839,5 @@ spring:
   ```
 
 - 在对应的Controller资源上添加权限注解
+
+- 注解使用基本条件说明
