@@ -1,3 +1,13 @@
+# 前言
+
+01_混乱的结构和样式
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从HTML发明开始，样式的以各种形式存在，导致HTML结构越来越混乱，为解决这个问题，CSS才诞生，因为之前HTML的各种样式形式，导致现在CSS任然存在兼容性
+
+02_css的作用
+
+- 将HTML的的结构和样式想分离
+
 # 第一部分 CSS基础
 
 ## 第一章 CSS基础语法
@@ -88,6 +98,11 @@
 </style>
 ```
 
+### 1.5 CSS命名规范
+
+- css命令建议用中横线字符
+- 建议使用纯文英文字符，不建议使用中文和
+
 ## 第二章 CSS模型
 
 ### 2.1 CSS元素显示模式
@@ -127,14 +142,14 @@
 
 ## 第二章 结构选择器
 
-| 选择器         | 示例              | 描述                                       |
-| :------------- | ----------------- | :----------------------------------------- |
-| 后代选择器     | 选择器A  选择器B  | 匹配是选择器A内部的所有**选择器B**         |
-| 儿子选择器     | 选择器A > 选择器B | 匹配是选择器A儿子元素为**选择器B**的       |
-| 交集选择器     | 选择器A选择器B    | 匹配是**选择器A**并且并且是**选择器B**元素 |
-| 并集选择器     | 选择器A , 选择器B | 匹配**所有选择器**选中的元素               |
-| 相邻兄弟选择器 | 选择器A + 选择器B | 匹配选择器A**平级的相邻的选择器B**         |
-| 通用兄弟选择器 | 选择器A ~ 选择器B | 匹配选择器A**平级的选择器B**               |
+| 选择器         | 示例              | 描述                                                         |
+| :------------- | ----------------- | :----------------------------------------------------------- |
+| 后代选择器     | 选择器A  选择器B  | 匹配是选择器A内部的所有**选择器B**                           |
+| 儿子选择器     | 选择器A > 选择器B | 匹配是选择器A儿子元素为**选择器B**的                         |
+| 交集选择器     | 选择器A选择器B    | 第一个为标签选择器，第二个为class选择器<br />将匹配是**选择器A**并且并且是**选择器B**元素 |
+| 并集选择器     | 选择器A , 选择器B | 匹配**所有选择器**选中的元素                                 |
+| 相邻兄弟选择器 | 选择器A + 选择器B | 匹配选择器A**平级的相邻的选择器B**                           |
+| 通用兄弟选择器 | 选择器A ~ 选择器B | 匹配选择器A**平级的选择器B**                                 |
 
 ## 第三章 属性选择器
 
@@ -222,10 +237,10 @@
 
 | 值                                                           | 描述                                                         |
 | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| **px**                                                       | 把 font-size 设置为一个固定的像素值。                        |
 | xx-small<br />x-small<br />small<br />medium<br />large<br />x-large<br />xx-large | 把字体的尺寸设置为不同的尺寸，从 xx-small 到 xx-large。<br />默认值：medium。 |
 | smaller                                                      | 把 font-size 设置为比父元素更小的尺寸。                      |
 | larger                                                       | 把 font-size 设置为比父元素更大的尺寸。                      |
-| px                                                           | 把 font-size 设置为一个固定的值。                            |
 | %                                                            | 把 font-size 设置为基于父元素的一个百分比值。                |
 | inherit                                                      | 规定应该从父元素继承字体尺寸。                               |
 
@@ -235,6 +250,7 @@
 | :------ | :----------------------------- |
 | inherit | 规定应该从父元素继承字体系列。 |
 
+- 可以使用字体对应的Unicode的值；
 - 通常会设置多个字体，用逗号分隔，如果前面的字体不匹配会使用后面设置的字体；
 - 英文字体无法解析中文，中文字体可以解析英文；
 - 设置字体必须是系统已安装字体，否则会显示系统默认字体；
@@ -383,7 +399,7 @@ background: 颜色 图片 平铺 关联 定位;
 
 ## 第五章 盒子模型
 
-​		所有的文档标签都是一个矩形框，被称为元素框（element box）：主要是描述了这个文档元素在浏览器中所占的位置大小；**所以每个盒子除了有自己的大小和位置外，还会影响到其他盒子的位置。**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所有的文档标签都是一个矩形框，被称为元素框（element box）：主要是描述了这个文档元素在浏览器中所占的位置大小；**所以每个盒子除了有自己的大小和位置外，还会影响到其他盒子的位置。**
 
 <img src="https://s1.ax1x.com/2020/06/04/twUi2F.jpg" alt="twUi2F.jpg" border="0" />
 
@@ -393,7 +409,11 @@ background: 颜色 图片 平铺 关联 定位;
 
 ### <font color=blue size=4>▲ 边框：border</font>
 
-- **边框圆角：border-redius**
+#### 1. 边框要素属性
+
+> 边框要素的设置顺序是上、右、下、左，如果要省略属性，则省略的属性和对边相同；如果只设置一个属性则四个边框通用这个属性；
+
+- **边框圆角：border-redius**：圆角单位是值边框圆角半径，单位是像素（px）
 
   ```css
   border-redius: 上 右 下 左;
@@ -429,51 +449,29 @@ background: 颜色 图片 平铺 关联 定位;
   border-color: 上 右 下 左;
   ```
 
-- **边框宽度：border-width**
+- **边框宽度：border-width**：宽度单位像素（px）
 
   ```css
   border-width: 上 右 下 左;
   ```
 
-- **边框综合：border**
+
+#### 2. 边框综合属性
+
+- **边框综合：border**：边框的样式不可以省略
 
   ```css
-  border: 宽度 颜色 样式;
+  border: 宽度 样式 颜色;
   ```
 
-- **分别设置边框**
+#### 3. 边框方位属性
 
-  1. 顶部边框：border-top
-
-     > border-top-color
-     >
-     > border-top-style
-     >
-     > border-top-width
-
-  2. 底部边框：border-bottom
-
-     > border-bottom-color
-     >
-     > border-bottom-style
-     >
-     > border-bottom-width
-
-  3. 左边框：border-left
-
-     > border-left-color
-     >
-     > border-left-style
-     >
-     > border-left-width
-
-  4. 右边框：border-right
-
-     > border-right-color
-     >
-     > border-right-style
-     >
-     > border-right-width
+| 边框方位属性            | 属性扩展                                                     |
+| ----------------------- | ------------------------------------------------------------ |
+| 顶部边框：border-top    | border-top-color<br />border-top-style<br />border-top-width |
+| 底部边框：border-bottom | border-bottom-color<br />border-bottom-style<br />border-bottom-width |
+| 左边框：border-left     | border-left-color<br />border-left-style<br />border-left-width |
+| 右边框：border-right    | border-right-color<br />border-right-style<br />border-right-width |
 
 ### <font color=blue size=4>▲ 内边距：padding</font>
 
@@ -636,7 +634,7 @@ padding: 上 右 下 左;
 - 使用伪元素选择器为元素前后添加块级元素：`::before` 或`::after`伪元素的content属性，并且设置`height`属性设置为0，`visibility`属性设置为hidden，`clear`属性设置为both；
 - 使用`overflow: hidden`属性：在IE6中无效，需要添加兼容属性`*zoom:1`值；
 
-## 第三章定位布局
+##  第七章 定位布局
 
 
 
@@ -725,6 +723,8 @@ padding: 上 右 下 左;
 ## 第一章 变形动画
 
 ## 第二章 过渡延迟
+
+
 
 ## 第三章 帧动画
 
