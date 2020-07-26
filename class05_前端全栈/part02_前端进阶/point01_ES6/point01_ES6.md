@@ -1,3 +1,51 @@
+  01.课程介绍.mp4
+   02.ES6-ECMAScript相关名词介绍.mp4
+   03.ES6-let变量声明以及声明特性.mp4
+   04.ES6-let经典案例实践.mp4
+   05.ES6-const声明常量以及特点.mp4
+   06.ES6-变量的解构赋值.mp4
+   07.ES6-模板字符串.mp4
+   08.ES6-对象的简化写法.mp4
+   09.ES6-箭头函数以及声明特点.mp4
+   10.ES6-箭头函数的实践与应用场景.mp4
+   11.ES6-函数参数的默认值设置.mp4
+   12.ES6-rest参数.mp4
+   13.ES6-扩展运算符的介绍.mp4
+   14.ES6-扩展运算符的应用.mp4
+   15.ES6-Symbol的介绍与创建.mp4
+   16.ES6-对象添加Symbol类型的属性.mp4
+   17.ES6-Symbol的内置属性.mp4
+   18.ES6-迭代器介绍.mp4
+   19.ES6-迭代器应用-自定义遍历数据.mp4
+   20.ES6-生成器函数声明与调用.mp4
+   21.ES6-生成器函数的参数传递.mp4
+   22.ES6-生成器函数实例.mp4
+   23.ES6-生成器函数实例-2.mp4
+   24.ES6-Promise介绍与基本使用.mp4
+   25.ES6-Promise封装读取文件.mp4
+   26.ES6-Promise封装AJAX请求.mp4
+   27.ES6-Promise.prototype..then方法.mp4
+   28.ES6-Promise实践练习-多个文件内容读取.mp4
+   29.ES6-Promise对象catch方法.mp4
+   30.ES6-集合介绍与API.mp4
+   31.ES6-集合实践.mp4
+   32.ES6-Map的介绍与API.mp4
+   33.ES6-class介绍与初体验.mp4
+   34.ES6-class静态成员.mp4
+   35.ES6-ES5构造函数继承.mp4
+   36.ES6-class的类继承.mp4
+   37.ES6-子类对父类方法的重写.mp4
+   38.ES6-class中getter和setter设置.mp4
+   39.ES6-ES6的数值扩展.mp4
+   40.ES6-ES6的对象方法扩展.mp4
+   41.ES6-模块化介绍、优势以及产品.mp4
+   42.ES6-浏览器使用ES6模块化引入模块.mp4
+   43.ES6-ES6模块暴露数据语法汇总.mp4
+   44.ES6-ES6引入模块数据语法汇总.mp4
+   45.ES6-浏览器使用ES6模块化方式二.mp4
+   46.ES6-babel对ES6模块化代码转换.mp4
+   47.ES6-ES6模块化引入NPM包.mp4
+
 # ES6
 
 ## 001_变量声明
@@ -148,44 +196,32 @@ Array.prototype.Includes
 
 # ES8
 
-async 和 await
-
-对象扩展
+49.ES8-async函数.mp4
+   50.ES8-await表达式.mp4
+   51.ES8-async与await结合读取文件内容.mp4
+   52.ES8-async与await结合发送AJAX请求.mp4
+   53.ES8-ES8对象方法扩展.mp4
 
 # ES9
 
-rest参数和spread扩展运算符
-
-扩展运算符对对象的扩展
-
-ES9对正则的扩展命名分组
-
-ES9正则反向断言
-
-dotALL模式
+54.ES9-ES9扩展运算符与rest参数.mp4
+   55.ES9-ES9正则扩展-命名捕获分组.mp4
+   56.ES9-ES9正则扩展-反向断言.mp4
+   57.ES9-ES9正则扩展-dotAll模式.mp4
 
 # ES10
 
-Object.formEntries()
-
-Sring.trimStart  String.srimEnd
-
-Array.flat  Array.flatMap
-
-Symbol.prototype.description()
+58.ES10-对象扩展方法Object.fromEntries.mp4
+   59.ES10-字符串方法扩展-trimStart-trimEnd.mp4
+   60.ES10-数组方法扩展-flat与flatMap.mp4
+   61.ES10-Symbol.prototype.description.mp4
 
 # ES11
 
-私有属性
-
-Promise.allSettled
-
-String.prototype.matchAll()
-
-可选链操作符
-
-动态import()
-
-Bigint
-
-绝对全局属性
+   62.ES11-私有属性.mp4
+   63.ES11-Promise.allSettled方法.mp4
+   64.ES11-String.prototype.matchAll方法.mp4
+   65.ES11-可选链操作符.mp4
+   66.ES11-动态import.mp4
+   67.ES11-BigInt类型.mp4
+   68.ES11-绝对全局对象globalThis.mp4
