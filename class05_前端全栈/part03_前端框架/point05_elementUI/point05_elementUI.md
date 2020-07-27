@@ -40,4 +40,17 @@
    - elementUI组件名称都是以`el-`开头
    - 每个组件都有自己的属性，组件的属性必须写在组名标签之上
    - 组件属性值是boolean值的属性默认是true
-   - 
+   - 组件属性值默认是字符串，如果要转为值类型需要使用属性绑定的方式添加属性
+   
+5. elementUI组件 - Basic
+
+   - Button
+   - Link
+   - Layout：基础的为24分栏，布局组件中由row和col标签绝定
+   - container：在页面布局中不会直接使用布局组件，而是需要将布局组件定义在布局容器中
+     - container：只有四个直接子元素
+       - header
+       - aside
+       - main
+       - footer
+     - 容器的嵌套：
