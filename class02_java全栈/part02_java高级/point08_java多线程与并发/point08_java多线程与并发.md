@@ -2,53 +2,57 @@
 
 ## 1.1 并发与高并发相关概念
 
-### 1. 并发
+1. 并发：在单核处理器上同时运行多个线程，多个线程将会交替的换入或换出内存，此时的多线程同时存在于执行中，但是处于执行中的某个状态。
 
-- 并发指在单核处理器上同时拥有两个以上的线程, 多个线程将交替的换入和换出内存的运行方式
-- 并发时的线程同时存在, 但是这些线程都处于执行过程中的某种状态
-- **并发特点** 多个线程操作相同资源, 存在线程安全问题 和 资源合理分配问题
+   >  **重点**： 多个线程操作相同资源，保证线程安全问题 和 资源合理分配问题
 
-### 2. 高并发
+2. 高并发（High Concurrency）：通常是指系统能够同时并行处理很多请求，并且可以保证程序性能，是互联网分布式系统架构设计中必须考虑的因素之一；
 
-- 高并发是指系统可以同时并行处理很多请求, 并且可以保证程序性能
+   > **重点**：服务可以同时处理很多请求，提高程序性能
 
 ## 1.2 CPU多级缓存
 
-### 1. CUP缓存与多级缓存
+1. **CPU内部结构**：CPU的结构主要由运算器、控制器、寄存器三大块组成。运算器就是中央机构里负责执行任务的部门，也就是专门干活的；而控制器就是中央机构的领导小组，针对不同需要，给运算器下达不同的命令；寄存器可以理解为控制器和运算器之间的联络小组，主要工作就是协调控制器和运算器。
 
-- 因为CPU的频率远远大于主存, 在处理器执行周期内, CPU需要等待主存, 浪费资源;
-- CPU缓存的出现是为了缓解CPU和主存之间的速度不匹配的问题
+   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqaNbNPiwAciJTBgHcgViVEX2k3jAoYda2K63QIcEvZ1jT*PsVAwXf2FsO3IAKp7VwohN*XItbZgtzdz9CO*Xul4!/b&bo=oANPAqADTwIDCSw!&rf=viewer_4&t=5' width='70%'/>
 
-### 2. CPU缓存的意义
+2. **CPU多核缓存架构**：为了提高程序运行的性能，现代CPU在很多方面会对程序进行优化。CPU的处理速度是很快的，内存的速度次之，硬盘速度最慢。在cpu处理内存数据中，内存运行速度太慢，就会拖累cpu的速度。为了解决这样的问题，cpu设计了多级缓存策略。
 
-- 时间局部性 : 可能频繁访问统一数据
-- 空间局部性 : 一个属性的相邻属性可能被访问
+   - **L1 Cache (一级缓存)**是CPU第一层高速缓存，分为数据缓存和指令缓存。它是封装在CPU芯片内部的高速缓存，用于暂时存储CPU运算时的部分指令和数据，存取速度与CPU主频相近。内置的L1高速缓存的容量和结构对CPU的性能影响较大，一级缓存容量越大，则CPU处理速度就会越快，对应的CPU价格也就越高。一般服务器的CPU的L1缓存的容量通常在32-4096K
+   - **L2 Cache (二级缓存)**是CPU外部的高速缓存，由于L1高速缓存的容量限制，为了再次提高CPU的运算速度，在CPU外部放置一高速存储器，即二级缓存。像一级缓存一样，二级缓存越大，则CPU处理速度就越快，整台计算机性能也就越好。一级缓存和二级缓存都位于CPU和内存之间，用于缓解高速CPU与慢速内存速度匹配问题。
+   - **L3 Cache (三级缓存)** 都是内置的，它的作用是进一步降低内存延迟，同时提升大数据量计算时处理器的性能。具有较大L3缓存的处理器，能提供更有效的文件系统缓存行为及较短的消息和队列长度。一般多核共享一个L3缓存。
 
-### 3. CPU缓存一致性
+   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqaNbNPiwAciJTBgHcgViVEUEUHnPup62sWfH4ygta4dU*lxF94rlZAKa55BhAI0Vr4SERmZGV4kwNbq2Erk*eZE!/b&bo=2gLxAdoC8QEDCSw!&rf=viewer_4&t=5' width='70%'/>
 
-:anchor: **概念 :** 用于保证多个CPU cache之间缓存共享数据的一致
+3. **为什么要CPU缓存**：CPU的频率太快，快到主存根本跟不上，这样在处理周时钟期内，CPU常常需要等待缓存，严重浪费资源。CPU Cache的出现为了缓解CPU和内存之间速度不匹配的问题；
 
-:anchor: CPU缓存的状态
+4. **CPU缓存的意义**
 
-- **M (Modify) : 被修改**
+   - 时间局部性：如果某个数据被访问，那么不久的将来它很可能再次被访问（**可能频繁访问统一数据**）；
+   - 空间局部性：如果某个数据被访问，那么与他相邻的数据很快也有可能被访问（**个属性的相邻属性可能被访问**）；
 
-- **E (Enclosed) : 独享**
+5. **CPU缓存一致性（MESI）**：用于保证多个CPU cache之间缓存共享数据的一致，因为每个CPU都有自己的缓存，容易导致一种情况就是 如果多个CPU的缓存(多CPU读取同样的数据进行缓存，进行不同运算后，写入内存中)中都有同样一份数据，那这个数据要如何处理呢？已谁的为准？ 这个时候就需要一个缓存同步协议了！**MESI协议** 规定每条缓存都有一个状态位，同时定义了一下四种状态
 
-- **S (Share) : 共享**
+   - **修改态 (Modified)** ：此缓存被修改过，内容与住内存不同，为此缓存专有
+   - **专有态 (Exclusive)** ：此缓存与主内存一致，但是其他CPU中没有
+   - **共享态 (Shared)** ：此缓存与住内存一致，但也出现在其他缓存中。
+   - **无效态 (Invalid)**： 此缓存无效，需要从主内存中重新读取。
 
-- **I (Ivalid) : 失效**
+   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqTU4XoG*alc4FwVTQz3nICE*7lWAdbeV0MZqiLNhywd59XTHHhxSod1JtPwjlL1fEDwyB7Acb7MtW3iiENa5qpY!/b&bo=lgTNAZYEzQEDCSw!&rf=viewer_4&t=5'/>
 
-:anchor: 引起缓存状态改变的方法
+6. **引起缓存状态改变的方法**
 
-- **local read** : 读取本地缓存中数据
-- **local write** : 将数据写到本地缓存中
-- **remote read** : 读取内存数据
-- **remote write** : 将数据写入到主存中
+   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqSt0.XiLZ6**SenSnYT8bjm3USg1VkD2CsAr5OQTfbThbhJFkNN1rOndfzeOr4ZoRN3JZZvOD7zzW2.xQxFO5.E!/b&bo=zwLbAc8C2wEDCSw!&rf=viewer_4&t=5'/>
 
-### 4. CPU乱序执行优化
+   - **local read** : 读取本地缓存中数据
+   - **local write** : 将数据写到本地缓存中
+   - **remote read** : 读取内存数据
+   - **remote write** : 将数据写入到主存中
 
-- 指处理器为了提高运算速度而做出违背代码原有顺序的优化
-- 在多核处理器下, 乱序执行优化有一定风险
+7. **CPU乱序执行优化**
+
+   - 指处理器为了提高运算速度而做出违背代码原有顺序的优化
+   - 在多核处理器下, 乱序执行优化有一定风险
 
 ## 1.3 Java内存模型
 
