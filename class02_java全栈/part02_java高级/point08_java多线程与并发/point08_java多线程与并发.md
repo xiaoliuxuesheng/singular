@@ -22,7 +22,7 @@
    - **L2 Cache (二级缓存)**是CPU外部的高速缓存，由于L1高速缓存的容量限制，为了再次提高CPU的运算速度，在CPU外部放置一高速存储器，即二级缓存。像一级缓存一样，二级缓存越大，则CPU处理速度就越快，整台计算机性能也就越好。一级缓存和二级缓存都位于CPU和内存之间，用于缓解高速CPU与慢速内存速度匹配问题。
    - **L3 Cache (三级缓存)** 都是内置的，它的作用是进一步降低内存延迟，同时提升大数据量计算时处理器的性能。具有较大L3缓存的处理器，能提供更有效的文件系统缓存行为及较短的消息和队列长度。一般多核共享一个L3缓存。
 
-   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqaNbNPiwAciJTBgHcgViVEUEUHnPup62sWfH4ygta4dU*lxF94rlZAKa55BhAI0Vr4SERmZGV4kwNbq2Erk*eZE!/b&bo=2gLxAdoC8QEDCSw!&rf=viewer_4&t=5' width='70%'/>
+   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqaNbNPiwAciJTBgHcgViVEUEUHnPup62sWfH4ygta4dU*lxF94rlZAKa55BhAI0Vr4SERmZGV4kwNbq2Erk*eZE!/b&bo=2gLxAdoC8QEDCSw!&rf=viewer_4&t=5'/>
 
 3. **为什么要CPU缓存**：CPU的频率太快，快到主存根本跟不上，这样在处理周时钟期内，CPU常常需要等待缓存，严重浪费资源。CPU Cache的出现为了缓解CPU和内存之间速度不匹配的问题；
 
@@ -31,11 +31,11 @@
    - 时间局部性：如果某个数据被访问，那么不久的将来它很可能再次被访问（**可能频繁访问统一数据**）；
    - 空间局部性：如果某个数据被访问，那么与他相邻的数据很快也有可能被访问（**个属性的相邻属性可能被访问**）；
 
-5. **CPU缓存一致性（MESI）**：用于保证多个CPU cache之间缓存共享数据的一致，因为每个CPU都有自己的缓存，容易导致一种情况就是 如果多个CPU的缓存(多CPU读取同样的数据进行缓存，进行不同运算后，写入内存中)中都有同样一份数据，那这个数据要如何处理呢？已谁的为准？ 这个时候就需要一个缓存同步协议了！**MESI协议** 规定每条缓存都有一个状态位，同时定义了一下四种状态
+5. **CPU缓存一致性（MESI）**：规定CPU中每个缓存行（caceh line）使用4种状态进行标记（使用额外的两位(bit）表示）；用于保证多个CPU cache之间缓存共享数据的一致，因为每个CPU都有自己的缓存，容易导致一种情况就是：如果多个CPU的缓存（多CPU读取同样的数据进行缓存，进行不同运算后，写入内存中）中都有同样一份数据，那这个数据要如何处理呢？已谁的为准？ 这个时候就需要一个缓存同步协议了！
 
-   - **修改态 (Modified)** ：此缓存被修改过，内容与住内存不同，为此缓存专有
-   - **专有态 (Exclusive)** ：此缓存与主内存一致，但是其他CPU中没有
-   - **共享态 (Shared)** ：此缓存与住内存一致，但也出现在其他缓存中。
+   - **修改态 (Modified)** ：代表该缓存行中的内容被修改了，并且该缓存行只被缓存在该CPU中。这个状态的缓存行中的数据和内存中的不一样，在未来的某个时刻（当其他CPU要读取该缓存行的内容时。或者其他CPU要修改该缓存对应的内存中的内容时）它会被写入到内存中；当被写回主存之后，该缓存行的状态会变成独享（`exclusive`)状态。
+   - **专有态 (Exclusive)** ：代表该缓存行对应内存中的内容只被该CPU缓存，其他CPU没有缓存该缓存对应内存行中的内容。这个状态的缓存行中的内容和内存中的内容一致。该缓存可以在任何其他CPU读取该缓存对应内存中的内容时变成S状态。或者本地处理器写该缓存就会变成M状态。
+   - **共享态 (Shared)** ：该状态意味着数据不止存在本地CPU缓存中，还存在别的CPU的缓存中。这个状态的数据和内存中的数据是一致的。当有一个CPU修改该缓存行对应的内存的内容时会使该缓存行变成 I 状态。
    - **无效态 (Invalid)**： 此缓存无效，需要从主内存中重新读取。
 
    <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqTU4XoG*alc4FwVTQz3nICE*7lWAdbeV0MZqiLNhywd59XTHHhxSod1JtPwjlL1fEDwyB7Acb7MtW3iiENa5qpY!/b&bo=lgTNAZYEzQEDCSw!&rf=viewer_4&t=5'/>
@@ -49,7 +49,16 @@
    - **remote read** : 读取内存数据
    - **remote write** : 将数据写入到主存中
 
-7. **CPU乱序执行优化**
+7. **状态之间的相互转换关系**
+
+   |               |                          local read                          |                         local write                          |                         remote read                          |                         remote write                         |
+   | ------------- | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+   | **Modified**  |     <a href='#' title='从Cache中取数据，状态不变'>M</a>      |    <a href='#' title='修改Cache中的数据，状态不变'>M</a>     | <a href='#' title='这行数据被写到内存中，使其它核能使用到最新的数据，状态变成S'>S</a> | <a href='#' title='这行数据被写到内存中，使其它核能使用到最新的数据，由于其它核会修改这行数据，状态变成I'>I</a> |
+   | **Exclusive** |     <a href='#' title='从Cache中取数据，状态不变'>E</a>      |    <a href='#' title='修改Cache中的数据，状态变成M'>M</a>    |   <a href='#' title='数据和其它核共用，状态变成了S'>S</a>    | <a href='#' title='数据被修改，本Cache line不能再使用，状态变成I'>I</a> |
+   | **Shared**    |     <a href='#' title='从Cache中取数据，状态不变'>S</a>      | <a href='#' title='修改Cache中的数据，状态变成M，其它核共享的Cache line状态变成I'>M</a> |              <a href='#' title='状态不变'>S</a>              | <a href='#' title='数据被修改，本Cache line不能再使用，状态变成I'>I</a> |
+   | **Invalid**   | <a href='#' title='▲ 如果其它Cache没有这份数据，本Cache从内存中取数据到本Cache，Cache line状态变成E；▲ 如果其它Cache有这份数据，且状态为M，则将其他Cache数据更新到内存，本Cache再从内存中取数据，2个Cache 的Cache line状态都变成S；▲ 如果其它Cache有这份数据，且状态为S或者E，本Cache从内存中取数据，这些Cache 的Cache line状态都变成S。'>E/S</a> | <a href='#' title='▲ 从内存中取数据，在Cache中修改，状态变成M；▲ 如果其它Cache有这份数据，且状态为M，则要先将数据更新到内存；▲ 如果其它Cache有这份数据，则其它Cache的Cache line状态变成I'>M</a> | <a href='#' title='既然是Invalid，别的核的操作与它无关'>I</a> | <a href='#' title='既然是Invalid，别的核的操作与它无关'>I</a> |
+
+8. **CPU乱序执行优化**
 
    - 指处理器为了提高运算速度而做出违背代码原有顺序的优化
    - 在多核处理器下, 乱序执行优化有一定风险
@@ -58,11 +67,53 @@
 
 ## 1.4 并发优势与风险
 
+- **优势**
+  - **速度**：同时处理多个请求，响应更快，复杂的操作可以分成多个进程同时进行；
+  - **设计**：程序设计在某些设计下更简单，也可以有更多的选择；
+  - **资源利用**：CPU可以在等待IO时候处理其他事情；
+- **风险**
+  - **安全性**：多个线程共享数据时候可能产生于期望不相符的结果；
+  - **活跃性**：某个操作无法继续进行下去的时候，就会发生活跃性问题：如死锁、饥饿等问题
+  - **性能**：线程过多的时候会使得CPU频繁切换，调度时间增多；同步机制消耗过多内存；
+
 ## 1.5 并发模拟
+
+1. 新建SpringBoot项目
+
+   ```xml
+   <parent>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-parent</artifactId>
+       <version>2.2.1.RELEASE</version>
+   </parent>
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-web</artifactId>
+   </dependency>
+   <dependency>
+       <groupId>org.projectlombok</groupId>
+       <artifactId>lombok</artifactId>
+       <optional>true</optional>
+   </dependency>
+   <dependency>
+       <groupId>junit</groupId>
+       <artifactId>junit</artifactId>
+       <scope>test</scope>
+   </dependency>
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-test</artifactId>
+       <scope>test</scope>
+   </dependency>
+   ```
+
+2. 
 
 # 第二章 多线程并发与线程安全
 
 ## 2.1 线程安全性
+
+
 
 ## 2.2 安全发布对象
 

@@ -75,7 +75,7 @@
 
 ## 2.1 默认的认证方式
 
-<img src="https://s1.ax1x.com/2020/06/20/NQVVfg.png" alt="NQVVfg.png" border="0" />
+<img src="http://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/TmEUgtj9EK6.7V8ajmQrEM0YO7lpT8u8trYpUco7qo7tkCHeV.rBwSSpUzAlC78wFeeqORREfcYB.AeO0pl7yUa0XBvoqAmaV637rkYPzW4!/b&bo=*APoAfwD6AEDKQw!&rf=viewer_4&t=5" alt="NQVVfg.png" border="0" />
 
 ## 2.2 修改默认配置 
 
@@ -347,7 +347,7 @@ spring:
 
 1. Security记住我基本原理
 
-   <img src="https://s1.ax1x.com/2020/06/20/NloT4U.jpg" alt="NloT4U.jpg" border="0" />
+   <img src="https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqVV2CrymWPohSVDazcDzw6I2FpZqs5Rprv3I1YrW85WFddYU2ZwRN*Zns2lVWOBPIbHG5a3kA771wEfovkMVRZQ!/b&bo=1AWAAmkGwAIBCdA!&rf=viewer_4&t=5" alt="NloT4U.jpg" border="0" />
 
 2. **Security记住我相关配置**：RememberMe功能需要将产生的Token存入数据库，Security内置实现是生成数据库与Token查询相关操作，需要配置数据源
 
@@ -492,7 +492,7 @@ spring:
 
 ## 2.12 自定义认证- 原理
 
-<img src="https://s1.ax1x.com/2020/07/25/UxLY8g.png" alt="UxLY8g.png" border="0" />
+<img src="http://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/TmEUgtj9EK6.7V8ajmQrEPY94n6ue4F9mVDRTqkFisNzs87aW8XOIeDDXjv3TGI7gsJaKOZ8KT6C1bqY0iYeqKOnCieQ5mwMnmUHbLgVKvQ!/b&bo=DAZoAwwGaAMDORw!&rf=viewer_4&t=5" border="0" />
 
 ### 1. 框架内置用户名密码登陆认证逻辑
 

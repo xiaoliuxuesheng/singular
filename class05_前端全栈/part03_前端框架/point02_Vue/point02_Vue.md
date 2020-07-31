@@ -1192,24 +1192,14 @@ var vm = new Vue({
 
 ### <font size=4 color=blue>**4. 插槽使用-子组件返回值**</font>
 
-# 第四章 接口调用
+# 第四章 vue-router
 
-## 4.1 JavaScript原生Ajax
+# 第五章 接口调用
 
-## 4.2 jQuery的Ajax
+## 5.1 JavaScript原生Ajax
 
-## 4.3 
+## 5.2 jQuery的Ajax
 
-# 第五章 vue-router
-
-
-
-# 第六章 Vue CLI详解
+## 5.3 
 
 # 第六章 Vuex详解
-
-# 第七章 网络封装
-
-# 第八章 项目实战
-
-# 第九章 项目部署
