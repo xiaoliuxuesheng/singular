@@ -22,8 +22,21 @@
   - 下载MongoDB的mis安装包；
   - 注意点：安装时候**"install mongoDB compass"** 不勾选，需要单独安装；
   - 在Windows系统中安装MongoDB后会自动将mongoDB服务添加到Windows服务中；
+  
 - **Linux系统**
+
+  - 解压tgz安装包
+
+  - 进入安装包中/bin目录中执行mongod命令启动mongo服务
+
+  - 将/bin目录配置到环境变量：修改配置文件`/etc/profile`，并重新加载配置文件`. /etc/profile`
+
+    ```sh
+    export PATH=xxx/bin:$PATH
+    ```
+
 - **Docker镜像**
+
 - **MongoDB云**
   - MongoDB云服务器地址：https://www.mongodb.com/cloud
   - 注册账号：945036446@qq.com & Mongo03lxd
@@ -34,6 +47,20 @@
 - **mongo：客户端程序，连接MongoDB**
 
 - **mongod： 服务端程序，启动MongoDB**
+
+  | 选项        | 说明                                                         |
+  | ----------- | ------------------------------------------------------------ |
+  | --quite     | 安静输出                                                     |
+  | --port      | 指定启动服务端口：默认27017                                  |
+  | --bind      | 绑定指定IP访问                                               |
+  | --dbpath    | 指定mongo数据储存目录：模板是mongo根目录下：/data/db目录中   |
+  | --fork      | 后台守护进程启动，改命令必须指定--logpath选项                |
+  | --logpath   | 指定mongo日志文件位置                                        |
+  | --syslog    | 指定服务日志                                                 |
+  | --logappend | 指定日志追加方式                                             |
+  | --auth      | 用于认证                                                     |
+  | --config    | 指定启动的配置文件：*<span title='① 配置文件可以在任意目录中，扩展名为.conf ② 配置文件用key=value结构 ③ 启动mongo服务使用--config指定配置文件 ④ 特殊配置IP绑定属性是bind_id'>配置文件格式说明</span>* |
+  | --journal   | 启用日志选项：将mongo数据操作记录将会写在journal目录的文件夹中 |
 
 - **mongos：数据分片程序，支持数据的横向扩展**
 
@@ -71,13 +98,139 @@
 
 - **mongotop：进程监控**
 
-### <font size=4 color=blue>**4. MongoDB内置数据库**</font>
+
+
+### <font size=4 color=blue>**4. 关闭MongoDB**</font>
+
+- 使用Ctrl  + C关闭：关闭前置启动的Mongo服务，会等待正在执行的任务完成后才关闭，是一种安全的关闭方式
+
+- 使用kill命令关闭：强制关闭，下次启动需要删除/data/db目录中的mongod.lock文件，否则下次无法启动
+
+- 使用Mongo中提供的函数关闭：此命令需要在admin库中执行
+
+  - db.shutdownServer()
+  - db.runCommand("shutdown")
+
+- 使用mongod命令关闭服务
+
+  ```sh
+  mongod --shutdown --dbpath <数据库目录>
+  ```
+
+### <font size=4 color=blue>**5. MongoDB内置数据库**</font>
 
 | 数据库 | 说明                                                         |
 | ------ | ------------------------------------------------------------ |
 | admin  | root数据库，保存新增的用户信息，这个用户自动继承所有数据库的权限 |
 | local  | 这个数据库永远不会被复制，用于存储限于本地单台服务器相关集合 |
 | config | 当mongo用作分片设置时，用于保存分片相关信息                  |
+
+### <font size=4 color=blue>**6. MongoDB权限和用户**</font>
+
+- MongoDB也提供了安全认证功能，通过创建用户的方式降低数据风险
+
+- MongoDB用户权限列表
+
+  | 权限                 | 说明                                                         |
+  | -------------------- | ------------------------------------------------------------ |
+  | Read                 | 允许用户读取指定数据库                                       |
+  | readWrite            | 允许用户读写指定数据库                                       |
+  | dbAdmin              | 允许用户在指定数据库执行管理函数：如索引创建、删除或访问system.profile |
+  | userAdmin            | 允许用户向system.users集合写入：在指定数据库里创建删除和管理用户 |
+  | clusterAdmin         | 只在Admin数据库中可用，赋予用户所有分片和复制集相关函数权限  |
+  | readAnyDatabase      | 只在Admin数据库中可用，赋予用户所有数据库的读权限            |
+  | readWriteAnyDatabase | 只在Admin数据库中可用，赋予用户所有数据库的读写权限          |
+  | userAdminAnyDatabase | 只在Admin数据库中可用，赋予用户所有数据库的userAdmin权限     |
+  | dbAdminAnyDatabase   | 只在Admin数据库中可用，赋予用户所有数据库的dbAdmin权限       |
+  | root                 | 只在Admin数据库中可用，超级账户,超级权限                     |
+
+- MongoDB的用户使用
+
+  - 创建DB管理用户：MongoDB的用户管理机制：有一个管理用户组，这个组是专门为管理普通用户而设定的，这个组可以称为管理员；管理员通常没有数据库的读写权限，只有操作用户的权限，因此创建管理员时候需要为管理员赋予userAdminAnyDatabase角色即可；管理员账户必须在admin数据库下才可以操作；
+
+  - 在mongo命令行执行：切换到admin数据库
+
+    ```sh
+    use admin
+    ```
+
+  - 在mongo命令行执行：查看当前数据库中的用户
+
+    ```sql
+    db.system.user.find()
+    ```
+
+  - 在mongo命令行执行：创建用户，创建用户后需要重启mongo服务
+
+    ```js
+    db.createUser({
+        user:"panda",
+        pwd:"root",
+        customData:{
+            description:"创建第一个管理员:{panda:root}"
+        },
+        roles:[
+            {role:"userAdminAnyDatabase",db:"admin"}
+        ]
+    });
+    ```
+
+  - 默认MongoDB启动是不开启权限认证方式：启动添加选项auth=true，设计权限后可以登录但是不可以查询，通过认证才可以查询，认证成功返回1，失败返回0
+
+    ```sh
+    db.auth("panda","root")
+    ```
+
+  - 使用管理登录并创建普通用户
+
+     1. 创建数据库
+
+        ```sql
+        use mg_db01
+        ```
+
+    	2. 在该数据库下创建用户
+
+        ```sql
+        db.createUser({
+            user:"lxd01",
+            pwd:"root",
+            customData:{
+                description:"创建第一个用户:{lxd01:root}"
+            },
+            roles:[
+                {role:"readWrite",db:"mg_db01"}
+            ]
+        });
+        ```
+
+  - 更新用户角色：执行命令db.updateUser()，执行该命令的角色需要有userAdminAnyDatabase角色才可以，当前更新的角色会覆盖之前用户拥有的角色，不是追加角色
+
+    ```js
+    db.updateUser("用户名",{
+        "roles":[
+            {"role":"角色",db:"mg_db01"}
+        ]
+    })
+    ```
+
+  - 根据用户密码
+
+    ```js
+    // 方式一:db.updateUser
+    db.updateUser("用户名",{
+        "pwd":"新密码"
+    })
+    
+    // 方式二:db.changeUserPassword()
+    db.changeUserPassword("用户名","新密码")
+    ```
+
+  - 删除用户：必须切换到用户所在的数据库
+
+    ```js
+    db.dropUser("用户名")
+    ```
 
 ## 1.3 MongoDB客户端工具
 
@@ -102,7 +255,26 @@
   | 高可用   | 复制集       | 集群模式     |
   | 横向扩展 | 原生分片支持 | 数据分区     |
 
-## 1.5 MongoDB运算符
+## 1.5 MongoDB数据类型
+
+| 数据类型           | 描述                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| String             | 字符串：最常用的数据类型，在Mongo中只有UTF-8编码的字符是合法的 |
+| Integer            | 整数类型                                                     |
+| Boolean            | 布尔类型                                                     |
+| Double             | 双精度浮点值                                                 |
+| Min/Max keys       | 将一个值与BSON元素的最低值和最高值做对比                     |
+| Array              | 用于将数组或列表或多个值存储为一个键                         |
+| Timestamp          | 时间戳                                                       |
+| Object             | 内嵌文档                                                     |
+| Null               | 创建空值                                                     |
+| Sysbol             | 符号：基本上等同于字符串类型，一般是采用特殊符号的字符串     |
+| Date               | 日期类型：用UNIX时间格式存储当前时间                         |
+| Object ID          | 对象ID，用于创建文档的ID                                     |
+| Binary Data        | 二进制数据：用户存储二进制                                   |
+| Regular Expression | 正则表达式类型：用户存储正则表达式                           |
+
+## 1.6 MongoDB运算符
 
 ### <font size=4 color=blue>**1. 查询运算符**</font>
 
@@ -539,7 +711,7 @@
 | :----------------------------------------------------------- | :------------------------------------------------------- |
 | $natural | 一种特殊的排序顺序，使用磁盘上的文档顺序对文档进行排序。 |
 
-## 1.6 MongoDB的相关操作
+## 1.7 MongoDB的相关操作
 
 ### <font size=4 color=blue>**1. 数据库**</font>
 
