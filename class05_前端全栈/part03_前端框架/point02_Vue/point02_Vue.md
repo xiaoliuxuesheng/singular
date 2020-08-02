@@ -1192,9 +1192,277 @@ var vm = new Vue({
 
 ### <font size=4 color=blue>**4. 插槽使用-子组件返回值**</font>
 
-# 第四章 vue-router
+# 第四章 webpack-vue
 
-# 第五章 接口调用
+## 4.1 前端模块化
+
+1. JavaScript的`<script>`脚本开发：早期的js作为脚本语言，提供简单的交互动作，随着Ajax异步请求出现，前端功能越来越复杂，单独的`<script>`难以维护，需要根据功能拆分出不同的`<script>`进行管理 
+
+   - 多个js脚本中的全局变量同名问题，通过闭包解决全局变量问题
+
+     ```js
+     <script src="m_model_a.js"></script>
+     var ModelName = (function(){
+         var obj = {}
+         obj.flag = true;
+         obj.sum = function(a,b){
+             return a+b
+         }
+         return obj;
+     })()
+     
+     <script src="m_model_b.js"></script>
+     if(ModelName.flag){
+         var res = ModelName.sum(12,23)
+     }
+     ```
+
+2. 前端模块化规范
+
+   - CommonJS规范：
+
+     - **导出**：CommonJS规范规定，每个模块内部，`module`变量代表当前模块。这个变量是一个对象，它的`exports`属性（即`module.exports`）是对外的接口。加载某个模块，其实是加载该模块的`module.exports`属性。
+
+       ```js
+       module.exorts = {
+           
+       }
+       
+       module.exports.x = x;
+       ```
+
+     - **导入**：`require`方法用于加载模块。根据参数的不同格式，`require`命令去不同路径寻找模块文件
+
+       - 如果参数字符串以“/”开头，则表示加载的是一个位于绝对路径的模块文件
+       - 如果参数字符串以“./”开头，则表示加载的是一个位于相对路径的模块文件
+       - 如果参数字符串不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（node_modules）
+
+       ```js
+       var example = require('./example.js');
+       ```
+
+   - AMD
+
+   - CMD
+
+   - ES6Modulles：ES6新增特性；①模块中可以导入和导出各种类型的变量，如函数，对象，字符串，数字，布尔值，类等。②每个模块都有自己的上下文，每一个模块内声明的变量都是局部变量，不会污染全局作用域。③每一个模块只加载一次（是单例的）， 若再去加载同目录下同文件，直接从内存中读取。
+
+     - 导出/导入：入口文件引入`<script type="module"></script>`
+
+       ```js
+       export { myName, myAge, myfn, myClass }
+       import { myName, myAge, myfn, myClass } from "./test.js";
+       
+       export { myName }
+       import { myName as name1 } from "./test1.js";
+       
+       export default var c = "error"; 
+       import b from "./xxx.js"; // 不需要加{}， 使用任意变量接收
+       ```
+
+## 4.3 webpack基础
+
+1. webpack的下载：webpack模块打包工具，是基于Node环境开发，而且Node提供了npm包管理工具
+
+   ```sh
+   # 需要全局安装，因为vue-cli依赖webpack
+   cnpm install webpack webpack-cli
+   
+   # 局部安装，是开发依赖，项目打包后不再依赖了-dev
+   cnpm install webpack --save-dev
+   ```
+
+2. webpack的使用：-o表示打包后输出的位置，--mode表示打包模式有development和production
+
+   ```sh
+   webpack .\src\main.js -o .\dist\main.js --mode=development
+   ```
+
+3. webpack的配置文件：默认文件名称webpack.config.js；通过webpack --config选项重新指定配置文件
+
+   ```js
+   module.exports = {
+       // webpack五大核心属性
+   }
+   ```
+
+## 4.4 el和template
+
+1. 下载Vue包
+
+   ```sh
+   cnpm install vue --save
+   ```
+
+2. 引入Vue
+
+   ```js
+   import Vue from 'vue'
+   
+   let vm = new Vue({
+       el: '#app',
+       data:{
+           msg: "hello"
+       }
+   })
+   ```
+
+3. 在webpack中配置vue版本：（需要配置resolve）vue包中包含了许多版本，默认使用的vue的版本类型是`runtime-only`，该版本特点是不会解析template相关编译代码；而`runtime-compiler `这个版本包含template编译代码，对应的vue版本文件为`vue.esm.js`；
+
+   ```js
+   var path = require('path');
+   
+   module.exports = {
+       entry: './src/main.js',
+       output: {
+           path: path.resolve(__dirname, './dist'),
+           filename: 'build.js'
+       },
+       mode: "development",
+       resolve: {
+           alias: {
+               'vue$': 'vue/dist/vue.esm.js' //内部为正则表达式  vue结尾的
+           }
+       }
+   }
+   ```
+
+4. vue实例中的template和el属性：如果在vue实例中定义了el属性以及对应的区域后再定义template属性，那么在编译过程中，会将el区域替换为template模块的内
+
+   ```js
+   let vm = new Vue({
+       el: '#app',
+       template:`
+           <div>
+               <h1>{{msg}}</h1>
+               <button>{{msg}}</button>
+           </div>
+       `,
+       data:{
+           msg: "hello"
+       }
+   })
+   ```
+
+5. template抽取为组件，并且在vue实例中的template属性引用组件
+
+   ```js
+   const App = {
+       template:`
+           <div>
+               <h1>{{msg}}</h1>
+               <button>{{msg}}</button>
+           </div>
+       `,
+       data() {
+           return {
+               msg: "hello"
+           }
+       },
+   }
+   
+   let vm = new Vue({
+       el: '#app',
+       template: '<App/>',
+       components: {
+           App
+       }
+   })
+   ```
+
+6. 将组件抽取为JavaScript模块并导出
+
+   ```js
+   export  default {
+       template:`
+           <div>
+               <h1>{{msg}}</h1>
+               <button>{{msg}}</button>
+           </div>
+       `,
+       data() {
+           return {
+               msg: "hello"
+           }
+       },
+   }
+   
+   
+   import App from './vue/app.js'
+   let vm = new Vue({
+       el: '#app',
+       template: '<App/>',
+       components: {
+           App
+       }
+   })
+   ```
+
+7. Vue的模板代码与vue实例分离开发：Vue单文件组件（xxx.vye）
+
+   ```sh
+   cnpm install vue-loader vue-template-compiler --save-dev
+   ```
+
+   ```js
+   module.exports = {
+       module:{
+           rules:[
+               {test: /\.vue$/,loader: 'vue-loader'}
+           ]
+       }
+   }
+   ```
+
+   ```vue
+   <template>
+       <div>
+           <h1>{{msg}}</h1>
+           <button>{{msg}}</button>
+       </div>
+   </template>
+   
+   <script>
+   export default {
+       data() {
+           return {
+               msg: "hello"
+           }
+       }
+   }
+   </script>
+   
+   <style scoped>
+   
+   </style>
+   ```
+
+   ```js
+   import App from './components/App.vue'
+   let vm = new Vue({
+       el: '#app',
+       template: '<App/>',
+       components: {
+           App
+       }
+   })
+   ```
+
+## 4.5 配置文件开发
+
+- webpack命令指定配置文件
+
+  ```sh
+  webpack --config 配置文件名称
+  ```
+
+- 
+
+## 4.6 vue-cli
+
+# 第五章 vue-router
+
+# 第六章 接口调用
 
 ## 5.1 JavaScript原生Ajax
 
@@ -1202,4 +1470,4 @@ var vm = new Vue({
 
 ## 5.3 
 
-# 第六章 Vuex详解
+# 第七章 Vuex详解
