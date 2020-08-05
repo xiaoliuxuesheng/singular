@@ -1,7 +1,11 @@
 # 第一章 ElasticStack简介
 
-## 1.1 ES的前身ELK
+## 1.1 ES与ELK
 
+- Elasticsearch是使用Java语言编写的并且基于Lucene编写的搜索引擎框架，他提供了分布式全文搜索功能，提供了一个统一的基于RestFul风格的WEB接口
+  - Lucene：本身就是一个搜索引擎的底层；
+  - Slor：查询死数据时候，速度相对ES而言Slor更快一些，如果数据实时改变的，Slor速度会受很大影响；ES集群更容易搭建；
+  - 分布式：主要是体现在横向扩展能力；
 - ELK是Elasticsearch、Logstash、Kibana三大开源框架首字母大写简称，现在对ELK扩展后市面上也被成为Elastic Stack。
 
 ## 1.2 ElasticStack简介
@@ -25,7 +29,9 @@
 
 ## 2.1 简介
 
-​		Elasticsearch 是一个分布式、RESTful 风格的搜索和数据分析引擎，能够解决不断涌现出的各种用例。 作为 Elastic Stack 的核心，它集中存储您的数据，帮助您发现意料之中以及意料之外的情况。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elasticsearch 是一个分布式、RESTful 风格的搜索和数据分析引擎，能够解决不断涌现出的各种用例。 作为 Elastic Stack 的核心，它集中存储您的数据，帮助您发现意料之中以及意料之外的情况。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;倒排索引：在ElasticSrearch中数据存储在索引中，ElasticSearch会根据索引中的数据进行分词保存在分词库中；当需要检索数据时候，首先会根据检索关键字在分词库中检索出索引ID，再根据检索的索引ID去索引中直接查找对应的数据；
 
 ## 2.2 安装
 
@@ -123,6 +129,16 @@
 
 ## 2.3 基本概念说明
 
+> ES服务中可以创建多个索引
+>
+> 每一个索引默认被分为5片存储
+>
+> 每个分片都会存在至少一个备份分片
+>
+> 备份分片默认不会帮助检索数据，当ES压力特别大时候，备份分片才会检索数据
+>
+> 备份的分片必须放在不同的服务器中
+
 ### 1. 索引
 
 - 索引是ElasticSearch对逻辑数据的存储，所以它可以分为更小的部分
@@ -143,10 +159,190 @@
 ### 4. 文档类型
 
 - 在ElasticSearch中，一个索引对象可以存储很对不同用途的对象。例如：博客中的文章也可以存储评论数据，是根据文档类型进行区分
-- 每个文档类型可以有不同的结构
+- 一个索引下可以有多个类型，每个类型下可以有多个文档，每个文档类型可以有不同的结构
+  - 在ES5.x中一个索引下可能有多个Type
+  - 在ES6.x中一个索引下只有一个Type
+  - 在ES7.x中一个索引下没有Type
 - 不同的文档类型不能为相同的属性设置不同的类型，例如：同一索引中的所有文档类型中，有一个字段title字段的必须具有相同的类型。
 
+### 5.field
+
+- 一个文档中包含多个属性，一行数据中的多个列
+
 ## 2.4 RESTful接口说明
+
+- get请求
+
+  ```http
+  http://ip:端口/index	 				// 查询索引信息
+  http://ip:端口/index/type/dock_id		// 查询指定的文档信息
+  ```
+
+- post请求
+
+  ```http
+  http://ip:端口/index/type/_search			// 查询,请求体包含json参数
+  http://ip:端口/index/type/_update			// 修改,请求体包含json参数
+  ```
+
+- put请求
+
+  ```http
+  http://ip:端口/index					// 创建索引,请求体包含索引信息
+  http://ip:端口/index/type/_mappings	// 代表创建索引时候,指定索引文档存储的属性的信息
+  ```
+
+- delete请求
+
+  ```http
+  http://ip:端口/index					// 删库跑路
+  http://ip:端口/index/type/dock_id		// 删除指定的文档信息
+  ```
+
+### 操作案例
+
+1. 新增索引：number_of_shards分片数据；number_of_replicas备份数
+
+   ```json
+   PUT /person
+   {
+     "settings": {
+       "number_of_shards": 5,
+       "number_of_replicas": 1
+     }
+   }
+   ```
+
+2. 查看索引信息
+
+   ```json
+   GET /person
+   ```
+
+3. 删除索引
+
+   ```json
+   DELETE /person
+   ```
+
+4. es中file可以指定的类型
+
+   | 类型     |               | 说明                                                 |
+   | -------- | ------------- | ---------------------------------------------------- |
+   | 字符串   | text          | 一般被用于全文检索，可以被分词                       |
+   |          | keyword       | 不可以被分词                                         |
+   | 数值     | long          |                                                      |
+   |          | integer       |                                                      |
+   |          | short         |                                                      |
+   |          | byte          |                                                      |
+   |          | double        |                                                      |
+   |          | float         |                                                      |
+   |          | half_float    |                                                      |
+   |          | scaled_float  | long+比例表示一个浮点数                              |
+   | 时间类   | date          | yyyy-MM-dd HH:mm:ss \| yyyy-MM-dd \| epoch-millis    |
+   | 布尔     | boolean       |                                                      |
+   | 二进制   | binary        | 支持base64的字符串                                   |
+   | 范围类型 | long_range    | 赋值时无需指定具体的内容,只需要指定一个范围,gt \| lt |
+   |          | flaot_range   |                                                      |
+   |          | double_range  |                                                      |
+   |          | integer_range |                                                      |
+   |          | date_range    |                                                      |
+   |          | ip_range      |                                                      |
+   | 经纬度   | geo_point     | 用来存储经纬度                                       |
+   | ip类型   | ip            | IPV4 \| IPV6                                         |
+
+5. 创建索引指定数据结构
+
+   ```json
+   PUT /book
+   {
+     "settings": {
+       "number_of_shards": 5,
+       "number_of_replicas": 1
+     },
+     "mappings": {
+       "properties":{
+         "name":{
+           "type":"text"
+         },
+         "author":{
+           "type":"keyword"
+         },
+         "count":{
+           "type":"long"
+         },
+         "onSale":{
+           "type":"date",
+           "format":"yyyy-MM-dd HH:mm:ss||yyyy-MM-dd"
+         },
+         "descr":{
+           "type":"text"
+         }
+       }
+     }
+   }
+   ```
+
+6. 文档操作-新增：文档在es服务中的唯一标识（_index索引   _type类型  _id 主键自动生成）
+
+   ```json
+   # 自动生成_id
+   POST /book/_doc
+   {
+     "name": "盘龙",
+     "author": "土豆",
+     "count": "652354457",
+     "onSale": "2020-12-23",
+     "descr": "为什么不能修改一个字段的type？原因是一个字段的类型修改以后，那么该字段的所有数据都需要重新索引。Elasticsearch底层使用的是lucene库，字段类型修改以后索引和搜索要涉及分词方式等操作，不允许修改类型在我看来是符合lucene机制的。"
+   }
+   ```
+
+7. 文档操作 - 新增 手动指定ID
+
+   ```json
+   POST /book/_doc/1
+   {
+     "name": "凡人修仙",
+     "author": "天蚕",
+     "count": "652354457",
+     "onSale": "2020-12-23",
+     "descr": "我欲成仙"
+   }
+   ```
+
+8.  文档操作 - 覆盖式修改 如果ID存在值则字段全量更新
+
+   ```json
+   POST /book/_doc/1
+   {
+     "name": "凡人修仙",
+     "author": "天蚕",
+     "count": "652354457",
+     "descr": "快乐七天"
+   }
+   ```
+
+9. 文档操作 - 懒修改
+
+   ```json
+   POST /book/_doc/1/_update
+   {
+     "doc":{
+         "count": "652354457",
+         "onSale": "2020-12-23"
+     }
+   }
+   ```
+
+10. 删除文档
+
+    ```json
+    DELETE /book/_doc/87bgvnMBZnIOh5hMwAW5
+    ```
+
+    
+
+## RESTful接口说明接口
 
 > 在ElasticSearch中，提供了丰富的RESTful API的操作完成基本的crud、创建索引、删除索引等
 
@@ -424,3 +620,16 @@
 
 ## 3.7 结构化查询
 
+1. ES介绍
+
+   
+
+2. ES安装
+
+3. ES基本操作
+
+4. ES Java
+
+5. ES练习
+
+6. ES查询进阶
