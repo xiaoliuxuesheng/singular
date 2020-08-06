@@ -340,7 +340,601 @@
     DELETE /book/_doc/87bgvnMBZnIOh5hMwAW5
     ```
 
+
+### 测试数据
+
+- 创建index
+
+  ```json
+  PUT /sms_logs_index
+  {
+    "settings": {
+      "number_of_shards": 5,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "properties": {
+        "createTime":{
+          "type": "date",
+          "format": ["yyyy-MM-dd HH:mm:ss"]
+        },
+        "sendTime":{
+          "type": "date",
+          "format": ["yyyy-MM-dd HH:mm:ss"]
+        },
+        "longCode":{
+          "type": "keyword"
+        },
+        "mobile":{
+          "type": "text"
+        },
+        "cropName":{
+          "type": "text"
+        },
+        "smsContent":{
+          "type": "text"
+        },
+        "status":{
+          "type": "integer"
+        },
+        "operatorId":{
+          "type": "integer"
+        },
+        "province":{
+          "type": "text"
+        },
+        "ipAddr":{
+          "type": "text"
+        },
+        "fee":{
+          "type": "long"
+        }
+      }
+    }
+  }
+  ```
+
+- 添加测数据
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-01 12:00:00",
+    "sendTime":"2020-07-01 12:00:00",
+    "longCode":"2020701120000",
+    "mobile":"18700136671",
+    "cropName":"奇点",
+    "smsContent":"短信激活成功",
+    "status":1,
+    "operatorId":0,
+    "province":"陕西省",
+    "ipAddr":"192.168.0.123",
+    "fee":15
+  }
+  ```
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-02 12:00:00",
+    "sendTime":"2020-07-02 12:00:00",
+    "longCode":"2020702120000",
+    "mobile":"18700131171",
+    "cropName":"奇点",
+    "smsContent":"短信激活失败",
+    "status":1,
+    "operatorId":0,
+    "province":"浙江省",
+    "ipAddr":"192.168.0.124",
+    "fee":25
+  }
+  ```
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-04 12:00:00",
+    "sendTime":"2020-07-04 12:00:00",
+    "longCode":"2020704120000",
+    "mobile":"18700134471",
+    "cropName":"奇点",
+    "smsContent":"短信登陆异常败",
+    "status":1,
+    "operatorId":0,
+    "province":"浙江省",
+    "ipAddr":"192.168.0.144",
+    "fee":35
+  }
+  ```
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-05 12:00:00",
+    "sendTime":"2020-07-05 12:00:00",
+    "longCode":"2020705120000",
+    "mobile":"18700135571",
+    "cropName":"奇点",
+    "smsContent":"短信登陆异常败",
+    "status":1,
+    "operatorId":0,
+    "province":"山西省",
+    "ipAddr":"192.168.0.244",
+    "fee":65
+  }
+  ```
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-07 12:00:00",
+    "sendTime":"2020-07-07 12:00:00",
+    "longCode":"2020707120000",
+    "mobile":"18700137771",
+    "cropName":"奇点",
+    "smsContent":"邮件验证码登陆异常败",
+    "status":1,
+    "operatorId":2,
+    "province":"山东省",
+    "ipAddr":"192.168.0.164",
+    "fee":55
+  }
+  ```
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-08 12:00:00",
+    "sendTime":"2020-07-08 12:00:00",
+    "longCode":"2020708120000",
+    "mobile":"187001378871",
+    "cropName":"奇点",
+    "smsContent":"邮件验证码登陆成功",
+    "status":0,
+    "operatorId":2,
+    "province":"山东省",
+    "ipAddr":"192.168.0.124",
+    "fee":55
+  }
+  ```
+
+  ```json
+  POST /sms_logs_index/_doc
+  {
+    "createTime":"2020-07-10 12:00:00",
+    "sendTime":"2020-07-10 12:00:00",
+    "longCode":"2020710120000",
+    "mobile":"187001377971",
+    "cropName":"奇点",
+    "smsContent":"不知道发什么内容了",
+    "status":1,
+    "operatorId":2,
+    "province":"山东省",
+    "ipAddr":"192.168.0.154",
+    "fee":55
+  }
+  ```
+
+### 查询操作
+
+1. term查询：代表完全匹配，搜索之前不会对搜索关键字进行分词，直接用关键字去文档分词库中去匹配内容
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "from":0,
+     "size":5,
+     "query":{
+       "term":{
+         "longCode": {
+           "value":"2020710120000"
+         }
+       }
+     }
+   }
+   ```
+
+2. terms查询：和term查询机制是一样的，terms针对的是一个字段中包含多个值的的时候使用
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "terms": {
+         "longCode": [
+           "2020701120000",
+           "2020705120000",
+           "2020707120000"
+         ]
+       }
+     }
+   }
+   ```
+
+3. match查询：属于高层查询，会根据查询字段类型的不同，采用不同的查询方式，查询日期或数字时会将字符串形式转为日期或数值
+
+   - 如果查询的的内容是一个不能被分词的内容，match查询不会对指定的查询关键字进行分词查询
+   - 如果查询的内容是一个可以被分词的内容，match查询会将指定的查询关键字进行分词处理
+   - match底层也是term查询，将多个term查询的结果分钟为一个结果
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "match": {
+         "smsContent": "激活"
+       }
+     }
+   }
+   ```
+
+   - operator：表示多个条件的关系:and or
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "match": {
+         "smsContent": {
+           "query": "邮 败",
+           "operator": "and"
+         }
+       }
+     }
+   }
+   ```
+
+4. match_all：查询所有，默认返回10条
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "match_all": {}
+     }
+   }
+   ```
+
+5. multi_match：针对多个filed进行检索
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "multi_match": {
+         "query": "山",
+         "fields": ["province","smsContent"]
+       }
+     }
+   }
+   ```
+
+6. 通过id查询
+
+   ```json
+   GET /sms_logs_index/_doc/ziHIw3MBHuQcg1zLPCJY
+   ```
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "ids": {
+         "values": ["AiHKw3MBHuQcg1zLSSMz","ziHIw3MBHuQcg1zLPCJY"]
+       }
+     }
+   }
+   ```
+
+7. perfix：前缀匹配查询
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "prefix": {
+         "mobile": {
+           "value": "187"
+         }
+       }
+     }
+   }
+   ```
+
+8. fuzzy查询：模糊查询，输入字符的大概就可以查询，查询不稳定
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "fuzzy": {
+         "mobile": {
+           "value": "187",
+           "prefix_length": 3		# 太模糊效率低，指定前三个字符不能错
+         }
+       }
+     }
+   }
+   ```
+
+9. wildcard：和mysql的like是一个套路，在查询关键字中指定通配符*和占位符?
+
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "wildcard": {
+         "smsContent": {
+           "value": "*信"
+         }
+       }
+     }
+   }
+   
+   ```
+
+10. range：只能针对数值类型的查询，字符串范围查询无效
+
+    - gt
+    - gte
+    - lt
+    - lte
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "query": {
+        "range": {
+          "fee": {
+            "gte": 10,
+            "lte": 60
+          }
+        }
+      }
+    }
+    ```
+
+11. regexp：正则查询，prefix、fuzzy、wildcard、regexp查询效率低
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "query": {
+        "regexp": {
+          "mobile": "[0-9]{3}0013[-0-9]{4}"
+        }
+      }
+    }
+    ```
+
+12. scroll
+
+    - 分页：es对form和size查询有限制，如果form和size的范围超过一半，效率是非常非常慢，
+    - scroll是深分页，效率高但是不适合实时查询
+
+    ```json
+    POST /sms_logs_index/_search?scroll=1m
+    {
+      "size": 2, 
+      "sort": [
+        {
+          "createTime": {
+            "order": "asc"
+          }
+        }
+      ], 
+      "query": {
+        "match_all": {}
+      }
+    }
+    ```
+
+    - 根据scroll分页检索：每次查询都会从内存总获取下一页的数据
+
+    ```json
+    POST /_search/scroll
+    {
+      "scroll_id":"内存中的id",
+      "scroll":"1m"
+    }
+    ```
+
+    - 从内存中删除
+
+    ```json
+    DELETE /_search/scroll/scroll_id
+    ```
+
+13. delete-by-qyery：根据各种查询方式删除文档
+
+    ```json
+    POST /sms_logs_index/_delete_by_query
+    {
+      "query": {
+        "range": {
+          "fee": {
+            "gte": 40,
+            "lte": 50
+          }
+        }
+      }
+    }
     
+    ```
+
+14. 符合查询bool：复合过滤器，将多个查询条件，以一定逻辑组合在一起
+
+    - mast：所有条件用mast组合，and
+    - must_not：全部都不匹配，not
+    - should：全部条件组合在一起,or
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "status": {
+                  "value": "1"
+                }
+              }
+            },
+            {
+              "term": {
+                "fee": {
+                  "value": "15"
+                }
+              }
+            }
+          ],
+          "must_not": [
+            {
+              "term": {
+                "operatorId": {
+                  "value": "1"
+                }
+              }
+            }
+          ],
+          "should": [
+            {
+              "match": {
+                "smsContent": "短"
+              }
+            }
+          ]
+        }
+      }
+    }
+    ```
+
+15. 复合查询boosting：帮助查询影响查询结果的scroll分数
+
+    - positive：只有匹配上positive的内容才会放在结果集中
+    - negative：匹配上positive并且匹配上negative，就可以降低文档分数
+    - negative_boost：指定系数，如：必须小于1.0
+
+    - 分数计算
+      - 搜索关键字匹配次数越多，分数越高
+      - 搜索是文档越短，匹配度越高
+      - 搜索关键字被分词，分词的内容被分词库匹配的越多匹配越高
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "query": {
+        "boosting": {
+          "positive": {			# 匹配结果器
+            "term": {
+              "smsContent": {
+                "value": "激"
+              }
+            }
+          },
+          "negative": {			# 匹配结果器并且匹配negative
+            "match": {
+              "fee": "25"
+            }
+          },
+          "negative_boost": 0.2	# 就把这个数据的scroll分数降低0.2
+        }
+      }
+    }
+    ```
+
+16. filter查询：根据查询条件查询文档，不计算分数，filter会对经常过滤的数据进行缓存
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "term": {
+                "smsContent": "短"
+              }
+            },
+            {
+              "range": {
+                "fee": {
+                  "gte": 20,
+                  "lte": 30
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+    ```
+
+17. 高亮显示：query的同级属性heightlight
+
+    - fragment_size：指定高亮展示数据的字符数
+    - pre_tags：指定前缀标签
+    - post_tags：指定后缀标签
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "query": {
+        "match": {
+          "smsContent": "信"
+        }
+      },
+      "highlight": {
+        "fields": {
+          "smsContent":{}
+        }
+      }
+    }
+    ```
+
+18. 聚合查询cardinality
+
+    ```json
+    POST /sms_logs_index/_search
+    {
+      "aggs": {
+        "agg": {
+          "cardinality": {
+            "field": "fee"
+          }
+        }
+      }
+    }
+    ```
+
+19. 聚合查询range
+
+    ```json
+    
+    ```
+
+20. 聚合查询extended_stats
+
+    ```json
+    
+    ```
+
+21. 经纬度
+
+    - 数据准备
+
+      ```json
+      
+      ```
+
+    - 经纬度查询
+
+      ```json
+      
+      ```
+
+      
 
 ## RESTful接口说明接口
 
