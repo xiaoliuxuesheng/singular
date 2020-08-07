@@ -571,7 +571,7 @@ spring:
 
 4. **实现自定义认证相关类**
 
-   - AbstractAuthenticationToken
+   - AbstractAuthenticationToken：自定义认证Token，封装自己的属性
 
      ```java
      public class SmsAuthenticationToken extends AbstractAuthenticationToken {
@@ -614,7 +614,7 @@ spring:
      }
      ```
 
-   - AbstractAuthenticationProcessingFilter
+   - AbstractAuthenticationProcessingFilter：自定义认证的过滤器，被拦截后构建自己的Token，并设置到SecurityManager中
 
      ```java
      public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -679,7 +679,7 @@ spring:
      
      ```
 
-   - AuthenticationProvider
+   - AuthenticationProvider：每一个Token有自己的Provider，用户验证token，重点是在supports方法中指定自己可以处理的Token；
 
      ```java
      public class SmsAuthenticationProvider implements AuthenticationProvider {
@@ -709,12 +709,25 @@ spring:
              return SmsAuthenticationToken.class.isAssignableFrom(authentication);
          }
      }
-     
      ```
+   
+5. 最后需要将自定义的相关类添加到Security的配置中
+
+   - 自定义Filter添加到Security的过滤器链中
+   - 
 
 ## 2.14 自定义认证案例 - jwt
 
+1. jwt认证和图形验证码类似，本质也是用户名和密码的认证方式；和图形验证码的区别是：图形验证码需要校验验证码之成功再根据用户名请求数据库获取用户信息，而jwt是可以直接从jwtToken信息中解析出用户信息，可以将解析出的用户信息构建一个认证成功的UsernamePasswordAuthenticationToken（也可以用解析出的用户信息查询数据库然后用数据库数据构建UsernamePasswordAuthenticationToken），然后保存在SecurityContextHolder中。
 
+   ```java
+   UsernamePasswordAuthenticationToken authentication = 
+       new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+   authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+   SecurityContextHolder.getContext().setAuthentication(authentication);
+   ```
+
+2. 案例代码
 
 # 第三章 Security第三方认证
 
