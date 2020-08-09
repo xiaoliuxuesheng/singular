@@ -2,15 +2,15 @@
 
 ## 1.1 设计模式的理念
 
-​		“设计模式”这个术语最初并不是出现在软件设计中，而是被用于建筑领域的设计中。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设计模式：这个术语最初并不是出现在软件设计中，而是被用于建筑领域的设计中。
 
-​		1995 年，艾瑞克·伽马（ErichGamma）、理査德·海尔姆（Richard Helm）、拉尔夫·约翰森（Ralph Johnson）、约翰·威利斯迪斯（John Vlissides）等 4 位作者合作出版了《设计模式：可复用面向对象软件的基础》（Design Patterns: Elements of Reusable Object-Oriented Software）一书，在本教程中收录了 23 个设计模式，这是设计模式领域里程碑的事件，导致了软件设计模式的突破。这 4 位作者在软件开发领域里也以他们的“四人组”（Gang of Four，GoF）匿名著称。 	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1995 年，艾瑞克·伽马（ErichGamma）、理査德·海尔姆（Richard Helm）、拉尔夫·约翰森（Ralph Johnson）、约翰·威利斯迪斯（John Vlissides）等 4 位作者合作出版了《设计模式：可复用面向对象软件的基础》（Design Patterns: Elements of Reusable Object-Oriented Software）一书，在本教程中收录了 23 个设计模式，这是设计模式领域里程碑的事件，导致了软件设计模式的突破。这 4 位作者在软件开发领域里也以他们的“四人组”（Gang of Four，GoF）匿名著称。
 
-​		直到今天，**狭义的设计模式还是所介绍的 23 种经典设计模式**。
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;直到今天，**狭义的设计模式还是所介绍的 23 种经典设计模式**。
 
 ## 1.2 设计模式的作用
 
-​		在软件开发中，设计模式是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。**它描述了在软件设计过程中的一些不断重复发生的问题**，以及该问题的解决方案。也就是说，它是解决特定问题的一系列套路，是前辈们的代码设计经验的总结，具有一定的普遍性，可以反复使用。其目的是为了提高代码的可重用性、代码的可读性和代码的可靠性。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在软件开发中，设计模式是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。**它描述了在软件设计过程中的一些不断重复发生的问题**，以及该问题的解决方案。也就是说，它是解决特定问题的一系列套路，是前辈们的代码设计经验的总结，具有一定的普遍性，可以反复使用。其目的是为了提高代码的可重用性、代码的可读性和代码的可靠性。
 
 - 可以提高程序员的思维能力、编程能力和设计能力。
 - 使程序设计更加标准化、代码编制更加工程化，使软件开发效率大大提高，从而缩短软件的开发周期。
@@ -19,23 +19,23 @@
 ## 1.3 软件开发相关设计原则
 
 1. **单一职责原则**：不要存在多于一个导致类变更的原因，也就是说每个类应该实现单一的职责，如若不然，就应该把类拆分。
-   
+  
 2. **里氏替换原则（Liskov Substitution Principle）**
 
-   ​        里氏代换原则面向对象设计的基本原则之一。 里氏代换原则中说，任何基类可以出现的地方，子类一定可以出现。 LSP是继承复用的基石，只有当衍生类可以替换掉基类，软件单位的功能不受到影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;里氏代换原则面向对象设计的基本原则之一。 里氏代换原则中说，任何基类可以出现的地方，子类一定可以出现。 LSP是继承复用的基石，只有当衍生类可以替换掉基类，软件单位的功能不受到影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。
 
-   ​        里氏代换原则是对“开-闭”原则的补充。实现“开-闭”原则的关键步骤就是抽象化。而基类与子类的继承关系就是抽象化的具体实现，所以里氏代换原则是对实现抽象化的具体步骤的规范。—— From Baidu 百科
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;里氏代换原则是对“开-闭”原则的补充。实现“开-闭”原则的关键步骤就是抽象化。而基类与子类的继承关系就是抽象化的具体实现，所以里氏代换原则是对实现抽象化的具体步骤的规范。—— From Baidu 百科
 
-   ​        里氏代换原则中，子类对父类的方法尽量不要重写和重载。因为父类代表了定义好的结构，通过这个规范的接口与外界交互，子类不应该随便破坏它。
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;里氏代换原则中，子类对父类的方法尽量不要重写和重载。因为父类代表了定义好的结构，通过这个规范的接口与外界交互，子类不应该随便破坏它。
 
 3. **依赖倒转原则（Dependence Inversion Principle）**：这个是开闭原则的基础，具体内容：面向接口编程，依赖于抽象而不依赖于具体。写代码时用到具体类时，不与具体类交互，而与具体类的上层接口交互。
-   
+  
 4. **接口隔离原则（Interface Segregation Principle）**：这个原则的意思是：每个接口中不存在子类用不到却必须实现的方法，如果不然，就要将接口拆分。使用多个隔离的接口，比使用单个接口（多个接口方法集合到一个的接口）要好。
-   
+  
 5. **迪米特法则（最少知道原则）（Demeter Principle）**
-           就是说：一个类对自己依赖的类知道的越少越好。也就是说无论被依赖的类多么复杂，都应该将逻辑封装在方法的内部，通过public方法提供给外部。这样当被依赖的类变化时，才能最小的影响该类。
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;就是说：一个类对自己依赖的类知道的越少越好。也就是说无论被依赖的类多么复杂，都应该将逻辑封装在方法的内部，通过public方法提供给外部。这样当被依赖的类变化时，才能最小的影响该类。
 
-   ​        最少知道原则的另一个表达方式是：只与直接的朋友通信。类之间只要有耦合关系，就叫朋友关系。耦合分为依赖、关联、聚合、组合等。我们称出现为成员变量、方法参数、方法返回值中的类为直接朋友。局部变量、临时变量则不是直接的朋友。我们要求陌生的类不要作为局部变量出现在类中。
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最少知道原则的另一个表达方式是：只与直接的朋友通信。类之间只要有耦合关系，就叫朋友关系。耦合分为依赖、关联、聚合、组合等。我们称出现为成员变量、方法参数、方法返回值中的类为直接朋友。局部变量、临时变量则不是直接的朋友。我们要求陌生的类不要作为局部变量出现在类中。
 
 6. **合成复用原则（Composite Reuse Principle）**：原则是尽量首先使用合成/聚合的方式，而不是使用继承。
 
@@ -368,292 +368,233 @@
 
 ### 1. 创建单例的各种方式
 
-<font color=blue size=4>**★ - 饿汉式-静态常量**</font>
+<font color=blue size=4>**★ - 饿汉式-静态常量**</font>：使用静态常量的方式将单例对象准备好, 可接获取即可使用
 
-- **实现原理**
+```java
+public class Single {
+    
+    private static final Single INSTANCE = new Single();
 
-  - 使用静态常量的方式将单例对象准备好, 可接获取即可使用
+    public static Single getInstance() {
+        return INSTANCE;
+    }
+    
+    private Single() {
+        if (null != INSTANCE){
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
 
-- **Java**
+    private Object readResolve() {
+        return INSTANCE;
+    }
+}
+```
 
-  ```java
-  public class Single {
-      
-      private static final Single INSTANCE = new Single();
-  
-      public static Single getInstance() {
-          return INSTANCE;
-      }
-      
-      private Single() {
-          if (null != INSTANCE){
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-  
-      private Object readResolve() {
-          return INSTANCE;
-      }
-  }
-  ```
+> - 在类加载的时候就立即初始化，并且创建单例对象
+> - 绝对线程安全，在线程还没出现以前就是实例化了
+> - 类加载的时候就初始化，不管用与不用都占着空间，浪费了内存
 
-- **特点**
+<font color=blue size=4>**★ - 饿汉式-静态代码块**</font>：
 
-  - 在类加载的时候就立即初始化，并且创建单例对象
-  - 绝对线程安全，在线程还没出现以前就是实例化了
-  - 类加载的时候就初始化，不管用与不用都占着空间，浪费了内存
+```java
+public class Single {
+    
+    private static final Single INSTANCE;
+    static {
+        INSTANCE = new Single();
+    }
 
-<font color=blue size=4>**★ - 饿汉式-静态代码块**</font>
+    public static Single getInstance() {
+        return INSTANCE;
+    }
 
-- **实现原理**
+    
+    private Single() {
+        if (null != INSTANCE){
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
+    
+	private Object readResolve() {
+        return INSTANCE;
+    }
+}
+```
 
-- **Java**
-
-  ```java
-  public class Single {
-      
-      private static final Single INSTANCE;
-      static {
-          INSTANCE = new Single();
-      }
-  
-      public static Single getInstance() {
-          return INSTANCE;
-      }
-  
-      
-      private Single() {
-          if (null != INSTANCE){
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-      
-  	private Object readResolve() {
-          return INSTANCE;
-      }
-  }
-  ```
-
-- **特点**
-
-  - 特点和静态常量方式的单例模式相同
+> - 特点和静态常量方式的单例模式相同
 
 <font color=blue size=4>**☆ - 懒汉式-普通**</font>
 
-- **实现原理**
+```java
+public class Single {
+    
+    private static Single instance;
 
-- **Java**
+    public static Single getInstance() {
+        if (null == instance){
+            instance = new Single();
+        }
+        return instance;
+    }
+    
+    private Single() {
+        if (null != instance){
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
+    
+    private Object readResolve() {
+        return instance;
+    }
+}
+```
 
-  ```java
-  public class Single {
-      
-      private static Single instance;
-  
-      public static Single getInstance() {
-          if (null == instance){
-              instance = new Single();
-          }
-          return instance;
-      }
-      
-      private Single() {
-          if (null != instance){
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-      
-      private Object readResolve() {
-          return instance;
-      }
-  }
-  ```
+> - 这样的单例存在线程安全隐患
+> - 不推荐
 
-- **特点**
+<font color=blue size=4>**☆ - 懒汉式-同步方法**</font>：单线程环境下实现懒加载
 
-  - 这样的单例存在线程安全隐患
-  - 不推荐
+```java
+public class Single {
+    
+    private static Single instance;
 
-<font color=blue size=4>**☆ - 懒汉式-同步方法**</font>
+    public static synchronized Single getInstance() {
+        if (null == instance){
+            instance = new Single();
+        }
+        return instance;
+    }
+    
+    private Single() {
+        if (null != instance){
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
 
-- **实现原理**
+    private Object readResolve() {
+        return instance;
+    }
+}
+```
 
-  - 单线程环境下实现懒加载
+> - 加上 synchronized 关键字，使这个方法变成线程同步方法,会导致程序运行性能大幅下降
 
-- **Java**
+<font color=blue size=4>**☆ - 懒汉式-同步代码块**</font>：单线程环境下实现懒加载
 
-  ```java
-  public class Single {
-      
-      private static Single instance;
-  
-      public static synchronized Single getInstance() {
-          if (null == instance){
-              instance = new Single();
-          }
-          return instance;
-      }
-      
-      private Single() {
-          if (null != instance){
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-  
-      private Object readResolve() {
-          return instance;
-      }
-  }
-  ```
+```java
+public class Single {
+    
+    private static SingleSynBlock instance;
+    
+    public static SingleSynBlock getInstance() {
+        if (null == instance) {
+            synchronized (SingleSynBlock.class) {
+                instance = new SingleSynBlock();
+            }
+        }
+        return instance;
+    }
+    
+    
+    private Single() {
+        if (null != instance){
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
 
-- **特点**
+    private Object readResolve() {
+        return instance;
+    }
+}
+```
 
-  - 加上 synchronized 关键字，使这个方法变成线程同步方法,会导致程序运行性能大幅下降
+> - 线程不安全并且效率提升不明显,
+> - 最危险的一种单例模式
 
-<font color=blue size=4>**☆ - 懒汉式-同步代码块**</font>
+<font color=blue size=4>**★ - 懒汉式-双重检查**</font>：解决同步方法的单例模式中出现的问题, 使用双重判断保证单例的实现
 
-- **实现原理**
+```java
+public class Single{
+    
+    private static volatile Single instance = null;
 
-  - 单线程环境下实现懒加载
+    public static Single getInstance() {
+        if (null == instance) {
+            synchronized (Single.class) {
+                if (null == instance) {
+                    instance = new Single();
+                }
+            }
+        }
+        return instance;
+    }
+    
+    private Single() {
+        if (null != instance){
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
 
-- **Java**
+    private Object readResolve() {
+        return instance;
+    }
+}
+```
 
-  ```java
-  public class Single {
-      
-      private static SingleSynBlock instance;
-      
-      public static SingleSynBlock getInstance() {
-          if (null == instance) {
-              synchronized (SingleSynBlock.class) {
-                  instance = new SingleSynBlock();
-              }
-          }
-          return instance;
-      }
-      
-      
-      private Single() {
-          if (null != instance){
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-  
-      private Object readResolve() {
-          return instance;
-      }
-  }
-  ```
+> - 性能相对比较良好
+> - 而且适合多线程环境
+> - 关键字 `volatile` : 保证此变量对所有的线程的可见性，当一个线程修改了这个变量的值，volatile 保证了新值能立即同步到主内存，以及每次使用前立即从主内存刷新。但普通变量做不到这点，普通变量的值在线程间传递均需要通过主内存
 
-- **特点**
+<font color=blue size=4>**★ - 懒汉式-静态内部类**</font>：枚举类中每个值代表该枚举类的一个静态实例对象；它是线程安全的，不可变的，并且很好的解决了序列化中的多实例问题
 
-  - 线程不安全并且效率提升不明显,
-  - 最危险的一种单例模式
+```java
+public class Single{
+    
+    public static Single getInstance() {
+        return InnerClass.INSTANCE;
+    }
+    
+    private static class InnerClass {
+        public static final Single INSTANCE = new Single();
+    }
+    
+    private SingleInnerClass() {
+        if (InnerClass.INSTANCE != null) {
+            throw new RuntimeException("实例对象已存在");
+        }
+    }
 
-<font color=blue size=4>**★ - 懒汉式-双重检查**</font>
+    private Object readResolve() {
+        return InnerClass.INSTANCE;
+    }
+}
+```
 
-- **实现原理**
-
-  - 解决同步方法的单例模式中出现的问题, 使用双重判断保证单例的实现
-
-- **Java**
-
-  ```java
-  public class Single{
-      
-      private static volatile Single instance = null;
-  
-      public static Single getInstance() {
-          if (null == instance) {
-              synchronized (Single.class) {
-                  if (null == instance) {
-                      instance = new Single();
-                  }
-              }
-          }
-          return instance;
-      }
-      
-      private Single() {
-          if (null != instance){
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-  
-      private Object readResolve() {
-          return instance;
-      }
-  }
-  ```
-
-- **特点**
-
-  - 性能相对比较良好
-  - 而且适合多线程环境
-  - 关键字 `volatile` : 保证此变量对所有的线程的可见性，当一个线程修改了这个变量的值，volatile 保证了新值能立即同步到主内存，以及每次使用前立即从主内存刷新。但普通变量做不到这点，普通变量的值在线程间传递均需要通过主内存
-
-<font color=blue size=4>**★ - 懒汉式-静态内部类**</font>
-
-- **实现原理**
-
-  - 枚举类中每个值代表该枚举类的一个静态实例对象,
-  - 它是线程安全的，不可变的，并且很好的解决了序列化中的多实例问题
-
-- **Java**
-
-  ```java
-  public class Single{
-      
-      public static Single getInstance() {
-          return InnerClass.INSTANCE;
-      }
-      
-      private static class InnerClass {
-          public static final Single INSTANCE = new Single();
-      }
-      
-      private SingleInnerClass() {
-          if (InnerClass.INSTANCE != null) {
-              throw new RuntimeException("实例对象已存在");
-          }
-      }
-  
-      private Object readResolve() {
-          return InnerClass.INSTANCE;
-      }
-  }
-  ```
-
-- **特点**
-
-  - 静态内部类不会再外部类加载时候加载, 在使用内部类时候才会被加载
-  - 兼顾饿汉式的内存浪费，也兼顾 synchronized 性能问题。内部类一定是要在方法调用之前初始化，巧妙地避免了线程安全问题
+> - 静态内部类不会再外部类加载时候加载, 在使用内部类时候才会被加载
+> - 兼顾饿汉式的内存浪费，也兼顾 synchronized 性能问题。内部类一定是要在方法调用之前初始化，巧妙地避免了线程安全问题
 
 <font color=blue size=4>**★ - 枚举单例**</font>
 
-- **实现原理**
+```java
+public enum SingleEnum{
+    
+    INSTANCE;
+    
+    private Single single;
 
-- **Java**
+    SingleEnum() {
+        single = new Single();
+    }
 
-  ```java
-  public enum SingleEnum{
-      
-      INSTANCE;
-      
-      private Single single;
-  
-      SingleEnum() {
-          single = new Single();
-      }
-  
-      public Single getInstance() {
-          return single;
-      }
-  }
-  ```
+    public Single getInstance() {
+        return single;
+    }
+}
+```
 
-- **特点**
-
-  - 在 JDK 枚举的语法特殊性，以及反射也为枚举保驾护航，让枚举式单例成为一种比较优雅的实现。###
+> 在 JDK 枚举的语法特殊性，以及反射也为枚举保驾护航，让枚举式单例成为一种比较优雅的实现。
 
 ### 2. 反射破坏单例
 
