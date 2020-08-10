@@ -2,241 +2,415 @@
 
 ## 1.1 SpringBoot简介
 
-​		从 2002 年开始，Spring 一直在飞速的发展，如今已经成为了在Java EE（Java Enterprise Edition）开发中真正意义上的标准，但是随着技术的发展，Java EE使用 Spring 逐渐变得笨重起来，大量的 XML 文件存在于项目之中。**繁琐的配置，整合第三方框架的配置问题，导致了开发和部署效率的降低**。  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从 2002 年开始，Spring 一直在飞速的发展，如今已经成为了在Java EE（Java Enterprise Edition）开发中真正意义上的标准，但是随着技术的发展，Java EE使用 Spring 逐渐变得笨重起来，大量的 XML 文件存在于项目之中。**繁琐的配置，整合第三方框架的配置问题，导致了开发和部署效率的降低**。  
 
-​		2012 年 10 月，Mike Youngstrom 在 Spring jira 中创建了一个功能请求，要求**在 Spring 框架中支持无容器 Web 应用程序体系结构**。这一要求促使了 2013 年初开始的 Spring Boot 项目的研发，到今天，Spring Boot 的版本已经到了 2.0.3 RELEASE。Spring Boot 并不是用来替代 Spring 的解决方案，而**是和 Spring 框架紧密结合用于提升 Spring 开发者体验的工具**。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2012 年 10 月，Mike Youngstrom 在 Spring jira 中创建了一个功能请求，要求**在 Spring 框架中支持无容器 Web 应用程序体系结构**。这一要求促使了 2013 年初开始的 Spring Boot 项目的研发；在2014年伴随着Spring4.0开发出了SpringBoot；Spring Boot 并不是用来替代 Spring 的解决方案，而**是和 Spring 框架紧密结合用于提升 Spring 开发者体验的工具**。
 
-​		SpringBoot是Spring技术栈的一部分，核心特点是快速的创建基于Spring的J2EE的产品级应用。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpringBoot是Spring技术栈的一部分，核心特点是快速的创建基于Spring的J2EE的产品级应用。
 
-## 1.2 Spring Boot的优点
+## 1.2 SpringBoot的特点
 
-<img src="https://s1.ax1x.com/2020/05/08/YnEXGV.png" alt="YnEXGV.png" border="0" />
+|                             优点                             |                             缺点                             |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| 快速构建项目。<br />对主流开发框架的无配置集成。<br />项目可独立运行，无须外部依赖Servlet容器。<br />提供运行时的应用监控。<br />极大地提高了开发、部署效率。<br />与[云计算](http://c.biancheng.net/cloud_computing/)的天然集成。 | 版本迭代速度很快，一些模块改动很大。<br />由于不用自己做配置，报错时很难定位。<br />网上现成的解决方案比较少。 |
 
+## 1.3 SpringBoot与微服务
 
+## 1.4 SpringBoot入门案例
 
-## 1.3 微服务简介
+1. 新建Maven项目，添加SpringBoot依赖
 
+   - **方式一**：通过继承SpringBoot依赖的方式使当前项目具有SpringBoot依赖，而`spring-boot-starter-parent`有是继承自`spring-boot-dependencies`这个pom，所有自定义项目时候也可以采用依赖管理的方式
 
+     ```xml
+     <parent>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-parent</artifactId>
+         <version>xxx.RELEASE</version>
+         <relativePath/>
+     </parent>
+     ```
 
-## 1.4 搭建入门程序
+   - **方式二**：Maven的pom的特点是单继承，在企业开发中，公司一般会有标准parent，有需要SpringBoot环境支持
 
-<font size=4 color=blue>▲  基础坏境准备</font>
+     ```xml
+     <dependencyManagement>
+         <dependencies>
+             <dependency>
+                 <groupId>org.springframework.boot</groupId>
+                 <artifactId>spring-boot-dependencies</artifactId>
+                 <version>xxx.RELEASE</version>
+                 <scope>import</scope>
+                 <type>pom</type>
+             </dependency>
+         </dependencies>
+     </dependencyManagement>
+     ```
 
-1. 环境要求：JDK7+、Maven3.9+、Gradle4.9+、Windows、Linux、Mac
-2. 学习背景：Spring、Mybatis、SpringMVC
-3. IDEA软件配置：JDK配置、Maven设置、文件编码设置
-
-<font size=4 color=blue>▲ ​​使用Maven搭建Helloworld</font>
-
-1. 新建Maven项目
-
-2. 修改pom.xml
-
-   ```xml
-   <parent>
-       <groupId>org.springframework.boot</groupId>
-       <artifactId>spring-boot-starter-parent</artifactId>
-       <version>2.2.2.RELEASE</version>
-   </parent>
-   <dependencies>
-       <dependency>
-           <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter-web</artifactId>
-       </dependency>
-   </dependencies>
-   ```
-
-3. 新增主启动类
+2. 定义主启动类，添加配置@SpringBootApplication
 
    ```java
    @SpringBootApplication
-   public class XXXApplication {
+   public class XxxApplication {
        public static void main(String[] args) {
-           SpringApplication.run(XXXApplication.class, args);
+           SpringApplication.run(XxxApp.class, args);
        }
    }
    ```
 
-4. 定义WEB接口并测试
+3. 添加WEB场景启动器，定义测试Controller启动项目
 
-<font size=4 color=blue>▲ 使用Gradle搭建Helloworld</font>
+   ```xml
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-web</artifactId>
+   </dependency>
+   ```
 
-<font size=4 color=blue>▲ 简化打包部署</font>
+4. 添加SpringBoot内置Maven插件
 
-1. 添加打包插件
+   ```xml
+   <build>
+       <plugins>
+           <plugin>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-maven-plugin</artifactId>
+           </plugin>
+       </plugins>
+   </build>
+   ```
 
-   - maven
+5. 打包项目，使用Java命令行工具运行打包后的项目
 
-     ```xml
-     <build>
-         <plugins>
-             <plugin>
-                 <groupId>org.springframework.boot</groupId>
-                 <artifactId>spring-boot-maven-plugin</artifactId>
-             </plugin>
-         </plugins>
-     </build>
-     ```
-
-   - gradle
-
-     ```groovy
-     
-     ```
-
-2. 执行打包命令
-
-   - maven
-
-     ```sh
-     mvn package
-     ```
-
-   - gradle
-
-     ```sh
-     gradle build
-     ```
-
-3. 将打包好的jar包启动
-
-   ```sh
+   ```js
    java -jar xxx.jar
    ```
 
-## 1.5 SpringBoot自动配置原理
+## 1.5 SpringBoot版本管理
 
-### <font size=4 color=blue>▲  解析pom.xml</font>
+- SpringBoot依赖的父pom中管理着内置场景功能所涉及的依赖以及对应的版本信息，例如SpringBoot2.3.2管理的版本号
 
-1. **spring-boot-starter-parent的作用**
-
-   ​		`spring-boot-starter-parent`的依赖是`spring-boot-dependencies`，在`spring-boot-dependencies`中管理者当前SpringBoot版本中所有依赖的版本，是一个依赖的版本仲裁中心。
-
-2. **spring-boot-starter-xxx的作用**
-
-   ​		`spring-boot-starter-xxx`称为场景启动器，Spring应用中会有非常多的场景，每种场景所依赖的jar都不同，SpringBoot的场景启动器只需要一个入口配置，就可以将特定场景中使用的所有依赖引入项目。
-
-### <font size=4 color=blue>▲  解析主启动类</font>
-
-- **主启动类注解：@SpringBootApplication**
-
-  ```java
-  @SpringBootConfiguration
-  @EnableAutoConfiguration
-  ...
-  public @interface SpringBootApplication {
-  	...
-  }
+  ```xml
+  <properties>
+      <activemq.version>5.15.13</activemq.version>
+      <antlr2.version>2.7.7</antlr2.version>
+      <appengine-sdk.version>1.9.81</appengine-sdk.version>
+      <artemis.version>2.12.0</artemis.version>
+      <aspectj.version>1.9.6</aspectj.version>
+      <assertj.version>3.16.1</assertj.version>
+      <atomikos.version>4.0.6</atomikos.version>
+      <awaitility.version>4.0.3</awaitility.version>
+      <bitronix.version>2.1.4</bitronix.version>
+      <build-helper-maven-plugin.version>3.1.0</build-helper-maven-plugin.version>
+      <byte-buddy.version>1.10.13</byte-buddy.version>
+      <caffeine.version>2.8.5</caffeine.version>
+      <cassandra-driver.version>4.6.1</cassandra-driver.version>
+      <classmate.version>1.5.1</classmate.version>
+      <commons-codec.version>1.14</commons-codec.version>
+      <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
+      <commons-lang3.version>3.10</commons-lang3.version>
+      <commons-pool.version>1.6</commons-pool.version>
+      <commons-pool2.version>2.8.0</commons-pool2.version>
+      <couchbase-client.version>3.0.6</couchbase-client.version>
+      <db2-jdbc.version>11.5.4.0</db2-jdbc.version>
+      <dependency-management-plugin.version>1.0.9.RELEASE</dependency-management-plugin.version>
+      <derby.version>10.14.2.0</derby.version>
+      <dropwizard-metrics.version>4.1.11</dropwizard-metrics.version>
+      <ehcache.version>2.10.6</ehcache.version>
+      <ehcache3.version>3.8.1</ehcache3.version>
+      <elasticsearch.version>7.6.2</elasticsearch.version>
+      <embedded-mongo.version>2.2.0</embedded-mongo.version>
+      <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+      <flatten-maven-plugin.version>1.2.4</flatten-maven-plugin.version>
+      <flyway.version>6.4.4</flyway.version>
+      <freemarker.version>2.3.30</freemarker.version>
+      <git-commit-id-plugin.version>3.0.1</git-commit-id-plugin.version>
+      <glassfish-el.version>3.0.3</glassfish-el.version>
+      <glassfish-jaxb.version>2.3.3</glassfish-jaxb.version>
+      <groovy.version>2.5.13</groovy.version>
+      <gson.version>2.8.6</gson.version>
+      <h2.version>1.4.200</h2.version>
+      <hamcrest.version>2.2</hamcrest.version>
+      <hazelcast.version>3.12.8</hazelcast.version>
+      <hazelcast-hibernate5.version>1.3.2</hazelcast-hibernate5.version>
+      <hibernate.version>5.4.18.Final</hibernate.version>
+      <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+      <hikaricp.version>3.4.5</hikaricp.version>
+      <hsqldb.version>2.5.1</hsqldb.version>
+      <htmlunit.version>2.40.0</htmlunit.version>
+      <httpasyncclient.version>4.1.4</httpasyncclient.version>
+      <httpclient.version>4.5.12</httpclient.version>
+      <httpcore.version>4.4.13</httpcore.version>
+      <infinispan.version>10.1.8.Final</infinispan.version>
+      <influxdb-java.version>2.18</influxdb-java.version>
+      <jackson-bom.version>2.11.1</jackson-bom.version>
+      <jakarta-activation.version>1.2.2</jakarta-activation.version>
+      <jakarta-annotation.version>1.3.5</jakarta-annotation.version>
+      <jakarta-jms.version>2.0.3</jakarta-jms.version>
+      <jakarta-json.version>1.1.6</jakarta-json.version>
+      <jakarta-json-bind.version>1.0.2</jakarta-json-bind.version>
+      <jakarta-mail.version>1.6.5</jakarta-mail.version>
+      <jakarta-persistence.version>2.2.3</jakarta-persistence.version>
+      <jakarta-servlet.version>4.0.4</jakarta-servlet.version>
+      <jakarta-servlet-jsp-jstl.version>1.2.7</jakarta-servlet-jsp-jstl.version>
+      <jakarta-transaction.version>1.3.3</jakarta-transaction.version>
+      <jakarta-validation.version>2.0.2</jakarta-validation.version>
+      <jakarta-websocket.version>1.1.2</jakarta-websocket.version>
+      <jakarta-ws-rs.version>2.1.6</jakarta-ws-rs.version>
+      <jakarta-xml-bind.version>2.3.3</jakarta-xml-bind.version>
+      <jakarta-xml-soap.version>1.4.2</jakarta-xml-soap.version>
+      <jakarta-xml-ws.version>2.3.3</jakarta-xml-ws.version>
+      <janino.version>3.1.2</janino.version>
+      <javax-activation.version>1.2.0</javax-activation.version>
+      <javax-annotation.version>1.3.2</javax-annotation.version>
+      <javax-cache.version>1.1.1</javax-cache.version>
+      <javax-jaxb.version>2.3.1</javax-jaxb.version>
+      <javax-jaxws.version>2.3.1</javax-jaxws.version>
+      <javax-jms.version>2.0.1</javax-jms.version>
+      <javax-json.version>1.1.4</javax-json.version>
+      <javax-jsonb.version>1.0</javax-jsonb.version>
+      <javax-mail.version>1.6.2</javax-mail.version>
+      <javax-money.version>1.0.3</javax-money.version>
+      <javax-persistence.version>2.2</javax-persistence.version>
+      <javax-transaction.version>1.3</javax-transaction.version>
+      <javax-validation.version>2.0.1.Final</javax-validation.version>
+      <javax-websocket.version>1.1</javax-websocket.version>
+      <jaxen.version>1.2.0</jaxen.version>
+      <jaybird.version>3.0.9</jaybird.version>
+      <jboss-logging.version>3.4.1.Final</jboss-logging.version>
+      <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
+      <jdom2.version>2.0.6</jdom2.version>
+      <jedis.version>3.3.0</jedis.version>
+      <jersey.version>2.30.1</jersey.version>
+      <jetty-el.version>8.5.54</jetty-el.version>
+      <jetty-jsp.version>2.2.0.v201112011158</jetty-jsp.version>
+      <jetty-reactive-httpclient.version>1.1.4</jetty-reactive-httpclient.version>
+      <jetty.version>9.4.30.v20200611</jetty.version>
+      <jmustache.version>1.15</jmustache.version>
+      <johnzon.version>1.2.8</johnzon.version>
+      <jolokia.version>1.6.2</jolokia.version>
+      <jooq.version>3.13.3</jooq.version>
+      <json-path.version>2.4.0</json-path.version>
+      <json-smart.version>2.3</json-smart.version>
+      <jsonassert.version>1.5.0</jsonassert.version>
+      <jstl.version>1.2</jstl.version>
+      <jtds.version>1.3.1</jtds.version>
+      <junit.version>4.13</junit.version>
+      <junit-jupiter.version>5.6.2</junit-jupiter.version>
+      <kafka.version>2.5.0</kafka.version>
+      <kotlin.version>1.3.72</kotlin.version>
+      <kotlin-coroutines.version>1.3.8</kotlin-coroutines.version>
+      <lettuce.version>5.3.2.RELEASE</lettuce.version>
+      <liquibase.version>3.8.9</liquibase.version>
+      <log4j2.version>2.13.3</log4j2.version>
+      <logback.version>1.2.3</logback.version>
+      <lombok.version>1.18.12</lombok.version>
+      <mariadb.version>2.6.2</mariadb.version>
+      <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+      <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+      <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+      <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+      <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+      <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+      <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
+      <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+      <maven-help-plugin.version>3.2.0</maven-help-plugin.version>
+      <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
+      <maven-invoker-plugin.version>3.2.1</maven-invoker-plugin.version>
+      <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+      <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+      <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+      <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
+      <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+      <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+      <maven-war-plugin.version>3.2.3</maven-war-plugin.version>
+      <micrometer.version>1.5.3</micrometer.version>
+      <mimepull.version>1.9.13</mimepull.version>
+      <mockito.version>3.3.3</mockito.version>
+      <mongodb.version>4.0.5</mongodb.version>
+      <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
+      <mysql.version>8.0.21</mysql.version>
+      <nekohtml.version>1.9.22</nekohtml.version>
+      <neo4j-ogm.version>3.2.14</neo4j-ogm.version>
+      <netty.version>4.1.51.Final</netty.version>
+      <netty-tcnative.version>2.0.31.Final</netty-tcnative.version>
+      <nio-multipart-parser.version>1.1.0</nio-multipart-parser.version>
+      <oauth2-oidc-sdk.version>7.1.1</oauth2-oidc-sdk.version>
+      <ojdbc.version>19.3.0.0</ojdbc.version>
+      <okhttp3.version>3.14.9</okhttp3.version>
+      <oracle-database.version>19.3.0.0</oracle-database.version>
+      <pooled-jms.version>1.1.1</pooled-jms.version>
+      <postgresql.version>42.2.14</postgresql.version>
+      <prometheus-pushgateway.version>0.9.0</prometheus-pushgateway.version>
+      <quartz.version>2.3.2</quartz.version>
+      <querydsl.version>4.3.1</querydsl.version>
+      <r2dbc-bom.version>Arabba-SR6</r2dbc-bom.version>
+      <rabbit-amqp-client.version>5.9.0</rabbit-amqp-client.version>
+      <reactive-streams.version>1.0.3</reactive-streams.version>
+      <reactor-bom.version>Dysprosium-SR10</reactor-bom.version>
+      <rest-assured.version>3.3.0</rest-assured.version>
+      <rsocket.version>1.0.1</rsocket.version>
+      <rxjava.version>1.3.8</rxjava.version>
+      <rxjava-adapter.version>1.2.1</rxjava-adapter.version>
+      <rxjava2.version>2.2.19</rxjava2.version>
+      <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
+      <saaj-impl.version>1.5.2</saaj-impl.version>
+      <selenium.version>3.141.59</selenium.version>
+      <selenium-htmlunit.version>2.40.0</selenium-htmlunit.version>
+      <sendgrid.version>4.4.8</sendgrid.version>
+      <servlet-api.version>4.0.1</servlet-api.version>
+      <slf4j.version>1.7.30</slf4j.version>
+      <snakeyaml.version>1.26</snakeyaml.version>
+      <solr.version>8.5.2</solr.version>
+      <spring-amqp.version>2.2.9.RELEASE</spring-amqp.version>
+      <spring-batch.version>4.2.4.RELEASE</spring-batch.version>
+      <spring-data-releasetrain.version>Neumann-SR2</spring-data-releasetrain.version>
+      <spring-framework.version>5.2.8.RELEASE</spring-framework.version>
+      <spring-hateoas.version>1.1.0.RELEASE</spring-hateoas.version>
+      <spring-integration.version>5.3.2.RELEASE</spring-integration.version>
+      <spring-kafka.version>2.5.4.RELEASE</spring-kafka.version>
+      <spring-ldap.version>2.3.3.RELEASE</spring-ldap.version>
+      <spring-restdocs.version>2.0.4.RELEASE</spring-restdocs.version>
+      <spring-retry.version>1.2.5.RELEASE</spring-retry.version>
+      <spring-security.version>5.3.3.RELEASE</spring-security.version>
+      <spring-session-bom.version>Dragonfruit-RELEASE</spring-session-bom.version>
+      <spring-ws.version>3.0.9.RELEASE</spring-ws.version>
+      <sqlite-jdbc.version>3.31.1</sqlite-jdbc.version>
+      <sun-mail.version>1.6.5</sun-mail.version>
+      <thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
+      <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
+      <thymeleaf-extras-java8time.version>3.0.4.RELEASE</thymeleaf-extras-java8time.version>
+      <thymeleaf-extras-springsecurity.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity.version>
+      <thymeleaf-layout-dialect.version>2.4.1</thymeleaf-layout-dialect.version>
+      <tomcat.version>9.0.37</tomcat.version>
+      <unboundid-ldapsdk.version>4.0.14</unboundid-ldapsdk.version>
+      <undertow.version>2.1.3.Final</undertow.version>
+      <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
+      <webjars-hal-browser.version>3325375</webjars-hal-browser.version>
+      <webjars-locator-core.version>0.45</webjars-locator-core.version>
+      <wsdl4j.version>1.6.3</wsdl4j.version>
+      <xml-maven-plugin.version>1.0.2</xml-maven-plugin.version>
+      <xmlunit2.version>2.7.0</xmlunit2.version>
+  </properties>
   ```
 
-  ​		这个注解是一个组合注解，主要作用是用于声明当前类是一个SpringBoot应用的启动类，需要执行当前类中的main方法启动SpringBoot应用；
+## 1.6 SpringBoot启动原理
 
-  - **SpringBoot主配置类@SpringBootConfiguration**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**@SpringBootApplication**：用于表示当前类为SringBoot应用的主配置类，运行当前类的main方法启动SpringBoot应用；这个注解是组合注解，源码如下：
 
-    ```java
-    @Configuration
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration 	// 1
+@EnableAutoConfiguration 	// 2
+@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication {
     ...
-    public @interface SpringBootConfiguration {
-    	...
-    }
-    ```
+}
+```
 
-    ​		主配置类的功能是由Spring底层注解`@Configuration`完成，`@Configuration`主要作用是用于标识当前类的Spring的一个配置类；相当于Spring应用的xml配置文件；
+1. **@SpringBootConfiguration**：表示是SpringBoot的配置类，其底层是Spring提供的`@Configuration`：表示当前类是一个配置类（等价于Spring最初的xml配置文件）
 
-  - **启用SpringBoot自动配置：@EnableAutoConfiguration**
+2. **@EnableAutoConfiguration**：开启自动配置功能，在Spring中需要配置的东西，由SpringBoot中完成自动配置，这个注解就是告诉SpringBoot开启自动配置功能；源码如下：
 
-    ```java
-    @AutoConfigurationPackage
-    @Import(AutoConfigurationImportSelector.class)
-    ...
-    public @interface EnableAutoConfiguration {
-    	../
-    }
-    ```
+   ```java
+   @Target(ElementType.TYPE)
+   @Retention(RetentionPolicy.RUNTIME)
+   @Documented
+   @Inherited
+   @AutoConfigurationPackage // a
+   @Import(AutoConfigurationImportSelector.class) // b
+   public @interface EnableAutoConfiguration {
+   	String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
+   	Class<?>[] exclude() default {};
+   	String[] excludeName() default {};
+   }
+   
+   ```
 
-    ​		这个注解是一个组合注解，主要作用是给当前应用的Spring容器中注入组件；
-
-    - **自动配置扫描包：@AutoConfigurationPackage**
+   1. **@AutoConfigurationPackage**：翻译过来就是自动配置包，具体的底层功能是由Spring提供的`@Import`实现，表示给容器中导入组件，导入的组件源码如下：`@Import(AutoConfigurationPackages.Registrar.class)`；`metadata`表示注解的元信息（主启动类上注解@SpringBootApplication的元信息），getPackageNames：获取到主启动类的包名，作用是扫描主启动类所在包以及子包里面所有的组件扫描到Spring容器中；
 
       ```java
+      @Target(ElementType.TYPE)
+      @Retention(RetentionPolicy.RUNTIME)
+      @Documented
+      @Inherited
       @Import(AutoConfigurationPackages.Registrar.class)
       public @interface AutoConfigurationPackage {
+      }
+      ```
+
+      ```java
+      static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
+      
+          @Override
+          public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+              register(registry, new PackageImports(metadata).getPackageNames().toArray(new String[0]));
+          }
+      
+          @Override
+          public Set<Object> determineImports(AnnotationMetadata metadata) {
+              return Collections.singleton(new PackageImports(metadata));
+          }
       
       }
       ```
 
-      ​		自动配置扫描包的功能是由Spring底层的`@Import`标签实现，导入类`AutoConfigurationPackages.Registrar.class0` 的作用是扫描主启动类的包以及子包中的组件并注入Spring容器；
+   2. **@Import(AutoConfigurationImportSelector.class)**：（开启自动导包的选择器）源码如下：核心方法selectImports()，最用是以全类名的字符串
 
-    - **自动配置导入选择器：@Import(AutoConfigurationImportSelector.class)**
+      ```java
+      @Override
+      public String[] selectImports(AnnotationMetadata annotationMetadata) {
+          if (!isEnabled(annotationMetadata)) {
+              return NO_IMPORTS;
+          }
+          AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(annotationMetadata);
+          return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+      }
+      protected AutoConfigurationEntry getAutoConfigurationEntry(AnnotationMetadata annotationMetadata) {
+          if (!isEnabled(annotationMetadata)) {
+              return EMPTY_ENTRY;
+          }
+          AnnotationAttributes attributes = getAttributes(annotationMetadata);
+          List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);
+          configurations = removeDuplicates(configurations);
+          Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+          checkExcludedClasses(configurations, exclusions);
+          configurations.removeAll(exclusions);
+          configurations = getConfigurationClassFilter().filter(configurations);
+          fireAutoConfigurationImportEvents(configurations, exclusions);
+          return new AutoConfigurationEntry(configurations, exclusions);
+      }
+      protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+          /**
+           *  Spring Boot中的SPI机制：core包里定义了SpringFactoriesLoader类，这个类实现了检索META-INF/spring.factories文件
+           *	- 在META-INF/spring.factories文件中配置接口的实现类名称，然后在程序中读取这些配置文件并实例化。
+           *  - 这种自定义的SPI机制是Spring Boot Starter实现的基础
+           */
+          List<String> configurations = SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(),
+                                                                               getBeanClassLoader());
+          Assert.notEmpty(configurations, "No auto configuration classes found in META-INF/spring.factories. If you "
+                          + "are using a custom packaging, make sure that file is correct.");
+          return configurations;
+      }
+      ```
 
-      ​		`AutoConfigurationImportSelector`主要作用是获取类加载器加载当前包中`META-INF/spring.factories`文件，读取`EnableAutoConfiguration`属性的值，这些值是全类名的形式保存，SpringBoot读取到这些全类名并将这些类注入到Spring容器，这些类都是`xxxAutoConfiguration`类，这些类完成的大部分的自动配置。
+# 第二章 SpringBoot配置
 
-### <font size=4 color=blue>▲ 自动配置原理</font>
+## 2.1 SpringBoot配置文件说明
 
-​		`xxxAutoConfiguration`类类中有大量的默认配置属性，完成了自动配置，自动配置类一般需要在一定的条件下才可以生效，使用配置打开debug查看生效的自动配置选项：`debug=true`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;springboot底层实现了大量的自动配置，在自动配置类中配置了当前场景的默认值，配置文件的作用是用来修改SpringBoot自动配置的默认值；
 
-​		如果需要修改SpringBoot中的默认选项，需要查看对应的`xxxAutoConfiguration`类中的属性，将这些属性值在配置文件中指定新值完成修改默认启动选项。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;springboot配置文件的位置和名称是固定的：配置文件位置默认是在项目的根目录下，文件名称默认是`application`（文件类型由两种：`.properties`和`.yml`）。
 
-```java
-@Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(HttpProperties.class)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@ConditionalOnClass(CharacterEncodingFilter.class)
-@ConditionalOnProperty(prefix="spring.http.encoding",value="enabled",matchIfMissing=true)
-public class HttpEncodingAutoConfiguration {
-    @Bean
-	@ConditionalOnMissingBean
-	public CharacterEncodingFilter characterEncodingFilter() {
-		CharacterEncodingFilter filter = new OrderedCharacterEncodingFilter();
-		filter.setEncoding(this.properties.getCharset().name());
-		filter.setForceRequestEncoding(this.properties.shouldForce(Type.REQUEST));
-		filter.setForceResponseEncoding(this.properties.shouldForce(Type.RESPONSE));
-		return filter;
-	}
-}
-```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spring Cloud 构建于 Spring Boot 之上，在 Spring Boot 中有两种上下文，一种是 **bootstrap**, 另外一种是 **application**, bootstrap 是应用程序的父上下文，也就是说 bootstrap 加载优先于 applicaton。bootstrap 主要用于从额外的资源来加载配置信息，还可以在本地外部配置文件中解密属性。这两个上下文共用一个环境，它是任何Spring应用程序的外部属性的来源。bootstrap 里面的属性会优先加载，它们默认也不能被本地相同配置覆盖。
 
-★ **`xxxAutoConfiguration`类中相关注解说明：**
+## 2.2 properties配置文件
 
-​			▲ @Configuration：表示是一个Spring配置类
-
-​			▲ @EnableConfigurationProperties：启用ConfigurationProperties，主要属性被标签指定的类封装，能		配置的属性都在这个XxxProperties类中封装；
-
-​			▲ @ConditionalOnWebApplication：判断当前应用是否是WEB应用，如果是则当前配置类生效
-
-​			▲ @ConditionalOnProperty：条件判断，当前配置属性中是否有这个配置matchIfMissing = true，如果		没有这个属性也判定有效。
-
-​			▲ @Bean：给Spring容器中添加一个组件；
-
-​			▲ @ConditionalOnClass：条件判断，如果当前项目中没有这个类，则启用
-
-​			▲ @ConditionalOnMissingBean：条件搬到，当Spring容器中没有这个Bean将该组件加到Spring容器
-
-★  **@Condition派生注解的功能 **
-
-<img src="https://s1.ax1x.com/2020/05/08/YnVAG6.png" alt="YnVAG6.png" border="0" />
-
-# 第二章 SpringBoot配置文件
-
-## 2.1 配置文件基本用法
-
-### <font size=4 color=blue>▲ 配置文件说明</font>
-
-​		springboot底层实现了大量的自动配置，在自动配置类中配置了当前场景的默认值，配置文件的作用是用来 修改SpringBoot自动配置的默认值；
-
-​		springboot配置文件的位置和名称是固定的：配置文件位置默认是在项目的根目录下，文件名称默认是`application`（文件类型由两种：`.properties`和`.yml`）。
-
-​		Spring Cloud 构建于 Spring Boot 之上，在 Spring Boot 中有两种上下文，一种是 **bootstrap**, 另外一种是 **application**, bootstrap 是应用程序的父上下文，也就是说 bootstrap 加载优先于 applicaton。bootstrap 主要用于从额外的资源来加载配置信息，还可以在本地外部配置文件中解密属性。这两个上下文共用一个环境，它是任何Spring应用程序的外部属性的来源。bootstrap 里面的属性会优先加载，它们默认也不能被本地相同配置覆盖。
-
-### <font size=4 color=blue>▲ application.properties</font>
-
-1. **properties类型文件的特征：**properties文件的内容格式是`键=值`的格式，可以用“#”作为注释，java中提供了配置文件的操作类Properties类（java.util.Properties）读取properties文件的通用方法：根据键得到value；
-
-   ```java
-   Properties prop = new Properties();
-   prop.load(new FileInputStream(filePath));
-   String value = prop.getProperty(key);
-   ```
+1. **properties配置文件特征**：properties文件的内容格式是`键=值`的格式，可以用“#”作为注释，java中提供了配置文件的操作类Properties类（java.util.Properties）读取properties文件的通用方法：根据键得到value；
 
 2. **properties配置文中各种值的书写格式**
 
@@ -256,7 +430,7 @@ public class HttpEncodingAutoConfiguration {
    - **日期Date类型：**默认格式是`yyyy-MM-dd HH:mm:ss `
 
      ```properties
-     date.key=1990/03/12
+     date.key=1999-02-02
      ```
 
    - **使用内置random的api注入随机数**
@@ -300,7 +474,7 @@ public class HttpEncodingAutoConfiguration {
      list=值1,值2,值3
      ```
 
-### <font size=4 color=blue>▲ application.yml</font>
+## 2.3 yml配置文件
 
 1. **yml配置文件特征：**
 
@@ -330,7 +504,7 @@ public class HttpEncodingAutoConfiguration {
    - **日期**：默认格式是`yyyy-MM-dd HH:mm:ss `
 
      ```yml
-     date: 2019/01/01
+     date: 2019-01-01
      ```
 
    - **使用内置random的api注入随机数**
@@ -346,15 +520,15 @@ public class HttpEncodingAutoConfiguration {
      		default: ${com.blog.name:默认值}	  # 如果获取不到属性值,冒号指定默认值
      ```
 
-      - **使用属性占位符获取在前面配置过的属性**
+    - **使用属性占位符获取在前面配置过的属性**
 
-        ```yml
-        com: 
-        	blog: 
-        		name: 博客
-        		uri: 博客地址
-        		title: ${com.blog.name}的地址是${com.blog.uri}
-        ```
+      ```yml
+      com: 
+      	blog: 
+      		name: 博客
+      		uri: 博客地址
+      		title: ${com.blog.name}的地址是${com.blog.uri}
+      ```
 
    - **对象(属性和值)、Map(键值对)**
 
@@ -380,183 +554,142 @@ public class HttpEncodingAutoConfiguration {
      pets: [dog,pig,cat]
      ```
 
-## 2.3 属性注入的方式
+## 2.4 属性注入
 
-### <font size=4 color=blue>▲ @ConfigurationProperties 与 @EnableConfigurationProperties</font>
+1. **读取环境变量 @Value**
 
-- 如果属性配置类不是Spring容器中的组件，而且只使用了@ConfigurationProperties注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用`@EnableConfigurationProperties`注解去指定这个类，这个时候就会让该类上的`@ConfigurationProperties`生效，然后作为bean添加进spring容器中
+   - **为属性注入字面的值**
 
-  ```java
-  /*
-  	@Configuration声明这个类是配置类
-   	@EnableConfigurationProperties使注解中指定的数组中的ConfigurationProperties类生效，并将		它们添加到Spring容器中
-  */
-  @Configuration
-  @EnableConfigurationProperties({XxxProperties.class, YyyProperties.class})
-  public class XxxConfigurationProperties {
-      
-  }
-  
-  // 将XxxProperties类添加到Spring容器，并且属性与配置文件中对应属性完成绑定
-  @ConfigurationProperties(prefix = "配置文件前缀")
-  public class XxxProperties {
-      
-  }
-  
-  // 将YyyProperties，并且属性与配置文件中对应属性完成绑定
-  @ConfigurationProperties(prefix = "配置文件前缀")
-  public class YyyProperties {
-      
-  }
-  ```
+     ```java
+     @Value("字符串")
+     private String key1;
+     
+     @Value("100")
+     private Integer key2;
+     ```
 
-- 属性类只使用了`@ConfigurationProperties`注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用@EnableConfigurationProperties注解去指定这个类，这个时候就会让该类上的@ConfigurationProperties生效，然后作为bean添加进spring容器中
+   - **为属性注入环境变量中的值`${配置文件中key}`：**主要是值配置文件中的key
 
-- 如果该类只使用了@ConfigurationProperties注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用@EnableConfigurationProperties注解去指定这个类，这个时候就会让该类上的@ConfigurationProperties生效，然后作为bean添加进spring容器
+     ```java
+     @Value("${cat.catName}")
+     private String propertiesKey;
+     ```
 
-  ```java
-  // 将属性配置类声明为Spring中的一个组件, 则会自动完成属性绑定工作
-  @Component
-  @ConfigurationProperties(prefix = "配置文件前缀")
-  public class XxxProperties {
-      
-  }
-  ```
+   - **为属性注入Spel运算结果：**`#{Spel表达式}`
 
-### <font size=4 color=blue>▲ @Value</font>
+     ```java
+     @Value("#{10*10}")
+     private String spelValue;
+     ```
 
-- **为属性注入字面的值**
+2. **配置环境变量 @ConfigurationProperties 与 @EnableConfigurationProperties**
 
-  ```java
-  @Value("字符串")
-  private String key1;
-  
-  @Value("100")
-  private Integer key2;
-  ```
+   - 如果属性配置类不是Spring容器中的组件，而且只使用了@ConfigurationProperties注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用`@EnableConfigurationProperties`注解去指定这个类，这个时候就会让该类上的`@ConfigurationProperties`生效，然后作为bean添加进spring容器中
 
-- **为属性注入环境变量中的值`${配置文件中key}`：**主要是值配置文件中的key
+     ```java
+     /*
+     	@Configuration声明这个类是配置类
+      	@EnableConfigurationProperties使注解中指定的数组中的ConfigurationProperties类生效，并将它们添加到Spring容器中
+     */
+     @Configuration
+     @EnableConfigurationProperties({XxxProperties.class, YyyProperties.class})
+     public class XxxConfigurationProperties {
+         
+     }
+     
+     // 将XxxProperties类添加到Spring容器，并且属性与配置文件中对应属性完成绑定
+     @ConfigurationProperties(prefix = "配置文件前缀")
+     public class XxxProperties {
+         
+     }
+     
+     // 将YyyProperties，并且属性与配置文件中对应属性完成绑定
+     @ConfigurationProperties(prefix = "配置文件前缀")
+     public class YyyProperties {
+         
+     }
+     ```
 
-  ```java
-  @Value("${cat.catName}")
-  private String propertiesKey;
-  ```
+   - 属性类只使用了`@ConfigurationProperties`注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用@EnableConfigurationProperties注解去指定这个类，这个时候就会让该类上的@ConfigurationProperties生效，然后作为bean添加进spring容器中
 
-- **为属性注入Spel运算结果：**`#{Spel表达式}`
+   - 如果该类只使用了@ConfigurationProperties注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用@EnableConfigurationProperties注解去指定这个类，这个时候就会让该类上的@ConfigurationProperties生效，然后作为bean添加进spring容器
 
-  ```java
-  @Value("#{10*10}")
-  private String spelValue;
-  ```
+     ```java
+     // 将属性配置类声明为Spring中的一个组件, 则会自动完成属性绑定工作
+     @Component
+     @ConfigurationProperties(prefix = "配置文件前缀")
+     public class XxxProperties {
+         
+     }
+     ```
 
-### <font size=4 color=blue>▲ @ConfigurationProperties与@Value 区别</font>
+3. @ConfigurationProperties与@Value 区别
 
-| 功能                      | @ConfigurationProperties | @Value   |
-| ------------------------- | ------------------------ | -------- |
-| 功能                      | 批量注入                 | 单个属性 |
-| 松散语法(下划线与驼峰)    | 支持                     | 不支持   |
-| Jsr303注入校验(@Validate) | 支持                     | 不支持   |
-| Spel表达式                | 不支持                   | 支持     |
-| 复杂对象封装              | 支持                     | 不支持   |
+   > 涉及到复杂对象的封装必须使用@ConfigurationProperties方式
 
-- 涉及到复杂对象的封装必须使用@ConfigurationProperties方式
+   | 功能                      | @ConfigurationProperties | @Value   |
+   | ------------------------- | ------------------------ | -------- |
+   | 功能                      | 批量注入                 | 单个属性 |
+   | 松散语法(下划线与驼峰)    | 支持                     | 不支持   |
+   | Jsr303注入校验(@Validate) | 支持                     | 不支持   |
+   | Spel表达式                | 不支持                   | 支持     |
+   | 复杂对象封装              | 支持                     | 不支持   |
 
-### <font size=4 color=blue>▲ 属性配置数据校验</font>
+## 2.5 SpringBoot加载外部配置文件
 
-- JSR303校验规范必须配合@ConfigurationProperties才会生效
+1. 方式一：SpringBoot推荐使用@Configuration定义Java编写的配置类
 
-  - 第一步：定义属性配置类
+   ````java
+   @Configuration
+   public class SpringbootConfigApplication {
+   	... ...
+   }
+   ````
 
-  - 第二步：添加@ConfigurationProperties注解指定属性前缀
+2. 方式二：<del>需要在Spring中的一个配置类上添加：@ImportResource注解，一般没人会这样使用</del>
 
-  - 第三步：使属性配置类注入Spring容器
+   ```java
+   @SpringBootApplication
+   @ImportResource(value = {"classpath:xxx.xml"})
+   public class XxxApplication {
+       public static void main(String[] args) {
+           SpringApplication.run(XxxApplication.class, args);
+       }
+   }
+   ```
 
-  - 第四步：为配置类启用属性校验@Validate
+## 2.6 SpringBoot多环境支持→profile
 
-  - 第五步：为属性添加校验规则
-
-    ```java
-    @Component
-    @ConfigurationProperties(prefix = "配置文件前缀")
-    @Validate
-    public class XxxProperties {
-        @Email
-        privete String email;
-    }
-    ```
-
-## 2.4 SpringBoot加载外部配置文件
-
-### <font size=4 color=blue>▲ 加载外部配置文件</font>
-
-- @EnableConfigurationProperties注解注入到Spring容器中组件只能读取到主配文件application中的属性，如果需要读取其他自定义的配置文件需要使用@PropertySource记载
-
-  ```java
-  @Component
-  @ConfigurationProperties(prefix = "属性前缀")
-  @PropertySource(value = {"classpath:根路径下自定义配置文件路径"})
-  public class Person {
-  	... ...
-  }
-  ```
-
-### <font size=4 color=blue>▲ 加载外部Spring配置文件</font>
-
-- <del>需要在Spring中的一个配置类上添加：@ImportResource注解，一般没人会这样使用</del>
-
-  ```java
-  @SpringBootApplication
-  @ImportResource(value = {"classpath:xxx.xml"})
-  public class SpringbootConfigApplication {
-  
-      public static void main(String[] args) {
-          SpringApplication.run(SpringbootConfigApplication.class, args);
-      }
-  
-  }
-  ```
-
-- SpringBoot推荐使用@Configuration定义Java编写的配置类
-
-  ```java
-  @Configuration
-  public class SpringbootConfigApplication {
-  	... ...
-  }
-  ```
-
-## 2.5 SpringBoot多环境支持→profile
-
-### <font size=4 color=blue>▲ profile介绍</font>
+1. **profile介绍**：Profile是Spring对不同环境提供不同功能的支持，可以通过启动参数激活指定参数对应的Profile配置，以达到快速切换环境。
 
 ​		Profile是Spring对不同环境提供不同功能的支持，可以通过启动参数激活指定参数对应的Profile配置，以达到快速切换环境。
 
-### <font size=4 color=blue>▲ profile文件格式</font>
+2. **profile文件格式**
 
-1. **多profile文件格式**
+   1. **多profile文件格式**
 
-   - 主配置文件：application.yml
-   - profile配置文件：application-profile标识.yml
+      - 主配置文件：application.yml
+      - profile配置文件：application-profile标识.yml
 
-2. **多profile文档块格式**：全部定义在主配置文件application.yml中
+   2. **多profile文档块格式**：全部定义在主配置文件application.yml中
 
-   ```yml
-   # 主文档
-   spring:
-   	profiles:
-   		active: 指定激活的profile的文档标识
-   		
-   ---
-   # profile文档块1
-   spring:
-   	profile: profile1的文档标识
-   	
-   	
-   ---
-   # profile文档块2
-   spring:
-   	profile: profile2的文档标识
-   ```
+      ```yml
+      # 主文档
+      spring:
+      	profiles:
+      		active: 指定激活的profile的文档标识
+      		
+      ---
+      # profile文档块1
+      spring:
+      	profile: profile1的文档标识
+      	
+      	
+      ---
+      # profile文档块2
+      spring:
+      	profile: profile2的文档标识
+      ```
 
 3. **Profile的激活方式**
 
@@ -564,135 +697,59 @@ public class HttpEncodingAutoConfiguration {
    - **配置文件中指定profile属性：**spring.profiles.active=profile标识
    - **jvm启动参数：**-Dspring.profiles.active=profile标识
 
-## 2.6 配置文件类型与加载顺序
+## 2.7 配置文件类型与加载顺序
 
-### <font size=4 color=blue>▲ bootstrap.yml优先加载</font>
+1. **bootstrap.yml优先加载**
 
-### <font size=4 color=blue>▲ 主配置文件加载顺序</font>
+2. **主配置文件加载顺序**
 
-> - SpringBoot启动会扫描以下位置的application主配置文件作为默认配置文件，一下位置的配置文件的加载顺序是**从高到低**，所有位置的配置文件都会被加载，高优先级的配置会覆盖低优先级的配置, 这几个配置文件形成互补配置。
-> - 通过spring.config.location改变默认配置，在项目打包后，在启动命令行参数后加这个属性，指定jar包之外的配置文件，这个外部配置文件和项目中的配置文件一起生效形成互补配置。
+   > - SpringBoot启动会扫描以下位置的application主配置文件作为默认配置文件，一下位置的配置文件的加载顺序是**从高到低**，所有位置的配置文件都会被加载，高优先级的配置会覆盖低优先级的配置, 这几个配置文件形成互补配置。
+   > - 通过spring.config.location改变默认配置，在项目打包后，在启动命令行参数后加这个属性，指定jar包之外的配置文件，这个外部配置文件和项目中的配置文件一起生效形成互补配置。
 
-1. <kbd>/config</kbd>：项目的跟目录中新建config文件中的application配置文件；
-2. <kbd>/</kbd>：项目的跟目录中的application配置文件；
-3. <kbd>classpath:/config</kbd>：项目的classpath下（resources）的config文件中的application配置文件；
-4. <kbd>classpath:/</kbd>：项目的classpath下（resources）的application配置文件；
+   - <kbd>/config</kbd>：项目的跟目录中新建config文件中的application配置文件；
+   - <kbd>/</kbd>：项目的跟目录中的application配置文件；
+   - <kbd>classpath:/config</kbd>：项目的classpath下（resources）的config文件中的application配置文件；
+   - <kbd>classpath:/</kbd>：项目的classpath下（resources）的application配置文件；
 
-### <font size=4 color=blue>▲ 外部属性加载</font>
+3. **外部属性加载**：SpringBoot中属性配置不仅可以定义在指定的主配置文件中，在以下的位置都可以加载配置文件
 
-- SpringBoot中属性配置不仅可以定义在指定的主配置文件中，在以下的位置都可以加载配置文件
-
-  1. **命令行参数：**所有的配置都可以在命令行上进行指定，多个配置用空格分开
+   - **命令行参数：**所有的配置都可以在命令行上进行指定，多个配置用空格分开
 
      ```sh
      java -jar xxx.jar --配置项=值
      ```
 
-  2.  来自java:comp/env的JNDI属性 
+   - 来自java:comp/env的JNDI属性 
 
-  3. Java系统属性（System.getProperties()）
+   - Java系统属性（System.getProperties()）
 
-  4. 操作系统环境变量 
+   - 操作系统环境变量 
 
-  5. RandomValuePropertySource配置的random.*属性值  
+   - RandomValuePropertySource配置的random.*属性值  
 
-     **<font color=red size=4> ★ 由jar包外向jar包内进行寻找 </font>**
+     - **<font color=red size=4> ★ 由jar包外向jar包内进行寻找 </font>**
 
-     ​	**<font color=red> ▲ 由jar包外向jar包内进行寻找， 优先加载带proﬁle </font>**
+     - **<font color=red> ▲ 由jar包外向jar包内进行寻找， 优先加载带proﬁle </font>**
 
-  6. **jar包外部的application-{proﬁle}.properties或application.yml(带spring.proﬁle)配置文件**
+   - **jar包外部的application-{proﬁle}.properties或application.yml(带spring.proﬁle)配置文件**
 
-  7. **jar包内部的application-{proﬁle}.properties或application.yml(带spring.proﬁle)配置文件**  
+   - **jar包内部的application-{proﬁle}.properties或application.yml(带spring.proﬁle)配置文件**  
 
-     ​	**<font color=red> ▲ 再来加载不带proﬁle </font>**
+     - **<font color=red> ▲ 再来加载不带proﬁle </font>**
 
-  8. **jar包外部的application.properties或application.yml(不带spring.proﬁle)配置文件** 
+   - **jar包外部的application.properties或application.yml(不带spring.proﬁle)配置文件** 
 
-  9. **jar包内部的application.properties或application.yml(不带spring.proﬁle)配置文件**
+   - **jar包内部的application.properties或application.yml(不带spring.proﬁle)配置文件**
 
-  10. @Conﬁguration注解类上的@PropertySource
+   - @Conﬁguration注解类上的@PropertySource
 
-  11. .通过SpringApplication.setDefaultProperties指定的默认属性
+   - .通过SpringApplication.setDefaultProperties指定的默认属性
 
-# 第三章 SpringBoot日志框架
-
-## 3.1 日志框架介绍
-
-<font size=4 color=blue>▲ 日志框架使用原理</font>：主流日志框架有自己的日志抽象接口，并且为接口提供的不同的实现从而形成了不同的日志框架，在开发中使用主流日志框架时，首先需要引入的日志的抽象层，对日志开发是面向接口开发的；其次需要引入该抽象层的实现，并且只能引入一个实现；有些框架默认自带有日志系统，所以在开发中需要解决的首要问题就是日志冲突问题
-
-<font size=4 color=blue>▲ 主流的日志抽象层以及对应的实现层</font>
-
-| 接口层                                    | 实现层                                                       |
-| ----------------------------------------- | ------------------------------------------------------------ |
-| <del>jboss-logging</del>                  | 比较优秀，日志框架稍微高级，使用难度较高                     |
-| <del>JCL( jakarta commons logging )</del> | Apache开发的Commons logging日志，停止维护很久了              |
-| <del>JUL（java.util.logging）</del>       | 是java为了和log4j挣市场开发的                                |
-| **SLF4j**                                 | <del>① 首先诞生的是Log4j这个日志框架，有性能问题</del><br />② 为解决Log4j性能问题，重新开发的**Logback**日志框架 |
-| Log4j2                                    | Apache借Log4j之名而开发，很优秀，但是主流框架未适配          |
-
-- Spring 中默认是 : commons-logging
-- SpringBoot 中默认是 : SLF4j + logback组合
-
-## 3.2 日志框架使用方式
-
-<font size=4 color=blue>▲ 正常情况的日志框架引入</font>：首先在java应用中引入`slf4j-api`日志抽象层，并为这个抽象层添加一个日志实现层的框架，建议使用`logback`：`logback-classic`、`logback-core`
-
-<img src="https://s1.ax1x.com/2020/05/08/YnVdds.png" alt="YnVdds.png" border="0" />
-
-<font size=4 color=blue>▲ 日志替换处理方案</font>：如果应用中的使用的日志接口是SLF4J，在不改变代码的情况下可以引入有log4j提供的日志适配包+对应的日志框架即可完成替换。
-
-<img src="https://s1.ax1x.com/2020/05/08/YnVfoR.png" alt="YnVfoR.png" border="0" />
-
-<font size=4 color=blue>▲ 日志统一处理方案</font>：在Java应用开发中经常使用到各种成熟框架，而这些框架一般会有默认的日志框架，如果在使用这些Java框架后需要统一日志框架的使用方式，需要为这些Java框架的默认的日志框架引入日志替换包，并且一定要移除掉应用框架的默认的日志框架。
-
-<img src="https://s1.ax1x.com/2020/05/08/YnV5Jx.png" alt="YnV5Jx.png" border="0" />
-
-## 3.3 SpringBoot中的日志框架profile
-
-<font size=4 color=blue>▲ SpringBoot的日志配置</font>：
-
-- 
-
-<font size=4 color=blue>▲ SpringBoot的日志格式说明</font>：
+# 第三章 SpringBoot日志
 
 # 第四章 SpringBoot WEB开发
 
+# 第五章 SpringBoot启动配置原理
 
+# 第六章 SpringBoot自定义starters
 
-# 第五章 SpringBoot与Docker
-
-
-
-# 第六章 Spring Boot启动配置原理
-
-
-
-# 第七章 SpringBoot自定义启动器
-
-
-
-@ConditionalOnClass：当类路径classpath下有指定的类的情况下进行自动配置
-
-@ConditionalOnMissingBean:当容器(Spring Context)中没有指定Bean的情况下进行自动配置
-
-@ConditionalOnProperty(prefix = “example.service”, value = “enabled”, matchIfMissing = true)，当配置文件中example.service.enabled=true时进行自动配置，如果没有设置此值就默认使用matchIfMissing对应的值
-
-@ConditionalOnMissingBean，当Spring Context中不存在该Bean时。
-
-@ConditionalOnBean:当容器(Spring Context)中有指定的Bean的条件下
-
-@ConditionalOnMissingClass:当类路径下没有指定的类的条件下
-
-@ConditionalOnExpression:基于SpEL表达式作为判断条件
-
-@ConditionalOnJava:基于JVM版本作为判断条件
-
-@ConditionalOnJndi:在JNDI存在的条件下查找指定的位置
-
-@ConditionalOnNotWebApplication:当前项目不是Web项目的条件下
-
-@ConditionalOnWebApplication:当前项目是Web项目的条件下
-
-@ConditionalOnResource:类路径下是否有指定的资源
-
-@ConditionalOnSingleCandidate:当指定的Bean在容器中只有一个，或者在有多个Bean的情况下，用来指定首选的Bean
