@@ -129,7 +129,7 @@
 
 ## 1.5 入们案例总结
 
-1. ApplicationContext（IOC容器接口）：接口的两个实现类ClassPathXmlApplicationContext、FileSystemXmlApplicationContext、AnnotationConfigApplicationContext；
+1. ApplicationContext（IOC容器接口）：接口的三个实现类ClassPathXmlApplicationContext、FileSystemXmlApplicationContext、AnnotationConfigApplicationContext；
 2. 组件对象的创建工作是由IOC容器完成，容器中组件对象的创建是在容器创建时候完成的；
 3. 同一个组件在IOC容器中是单实例的；
 4. 获取容器中不存在的组件会报错；
@@ -186,38 +186,48 @@
 
 ### 3. 向IOC容器中注入Bean
 
-- <font size=4 color='blue'>**注入Bean并根据set方法属性赋值**</font>
-
-  ```java
-  @Setter
-  @Getter
-  public class User {
-      private String name;
-      private Integer age;
-  }
-  ```
-
-  ```xml
-  <bean name="user" class="com.spring5.demo01.User">
-      <property name="name" value="Tom"/>
-      <property name="age" value="12"/>
-  </bean>
-  ```
-
-- <font size=4 color='blue'>**注入bean并根据构造器赋值**</font>：在JavaBean中定义了有参构造器，在xml配置文件中使用构造器为属性赋值
+- <font size=4 color='blue'>**基于xml：属性赋值**</font>
 
   ```java
   @Setter
   @Getter
   @ToString
-  public class User {
-  
+  public class Car {
       private String name;
-      private Integer age;
+      private Integer price;
+      private Boolean allDriver;
+  }
+  ```
+
+  ```xml
+  <bean id="car01" class="com.it.spring03.model.Car">
+      <property name="name" value="大奔"/>
+      <property name="price" value="150"/>
+      <property name="allDriver" value="true"/>
+  </bean>
+  ```
+
+- <font size=4 color='blue'>**基于xml：构造器赋值**</font>：在JavaBean中定义了有参构造器，在xml配置文件中使用构造器为属性赋值
+
+  ```java
+  @Setter
+  @Getter
+  @ToString
+  public class Car {
+      private String name;
+      private Integer price;
+      private Boolean allDriver;
   
-      public User(String name, Integer age) {
+      public Car() {
+      }
+  
+      public Car(String name, Integer price) {
           this.name = name;
-          this.age = age;
+          this.price = price;
+      }
+      public Car(Integer price, Boolean allDriver) {
+          this.price = price;
+          this.allDriver = allDriver;
       }
   }
   ```
@@ -225,31 +235,60 @@
   - **根据构造器参数默认位置**：每个`<constructor-arg>`表示一个构造器参数，默认将参数值赋值给构造器中对应位置的参数上；
 
     ```xml
-    <bean name="user2" class="com.spring5.demo01.User">
-        <constructor-arg value="Tom"/>
-        <constructor-arg value="23"/>
+    <bean id="car02" class="com.it.spring03.model.Car">
+        <constructor-arg value="宝马"/>
+        <constructor-arg value="200"/>
     </bean>
     ```
 
   - **指定构造器参数名称**：为标签`<constructor-arg>`指定name属性，IOC容器会根据参数名称进行属性赋值
 
     ```xml
-    <bean name="user3" class="com.spring5.demo01.User">
-        <constructor-arg name="name" value="Tom"/>
-        <constructor-arg name="age" value="23"/>
+    <bean id="car03" class="com.it.spring03.model.Car">
+        <constructor-arg name="name" value="宝马" type="java.lang.String"/>
+        <constructor-arg name="price" value="200"/>
     </bean>
     ```
 
   - **指定构造器参数位置**：在JavaBean中构造器参数的位置是索引标识，在xml配置中指定参数所在索引进行赋值
 
     ```xml
-    <bean name="user4" class="com.spring5.demo01.User">
-        <constructor-arg index="0" value="Tom"/>
-        <constructor-arg index="1" value="23"/>
+    <bean id="car04" class="com.it.spring03.model.Car">
+        <constructor-arg index="0" value="400"/>
+        <constructor-arg index="1" value="true"/>
+    </bean>
+    ```
+    
+  - **指定构造器参数类型**：如果JavaBean中定义了重载构造器，在使用构造器配置Bean时候可以声明参数类型
+
+    ```xml
+    <bean id="car05" class="com.it.spring03.model.Car">
+        <constructor-arg index="0" value="400" type="java.lang.Integer"/>
+        <constructor-arg index="1" value="true" type="java.lang.Boolean"/>
     </bean>
     ```
 
-- <font size=4 color='blue'>**定义xml中的名称空间为属性赋值**</font>
+- <font size=4 color='blue'>**基于xml：定义名称空间进行赋值**</font>
+
+  - 首先要在Spring的XMl文件中导入p名称空间：xmlns（xml namespace）
+
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans ...
+           xmlns:p="http://www.springframework.org/schema/p"
+           ...>
+    </beans>
+    ```
+
+  - 使用p名称空间为JavaBean的属性进行赋值
+
+    ```xml
+    <bean id="car06"
+          class="com.it.spring03.model.Car"
+          p:name="QQ"
+          p:price="100"
+          p:allDriver="false"/>
+    ```
 
 - <font size=4 color='blue'>**自定义静态工厂类创建对象**</font>
 
@@ -269,23 +308,187 @@
 
 ### 4. 为Bean的各种属性赋值
 
-- 基于xml：为属性赋值：null
+```java
+@Setter
+@Getter
+@ToString
+public class Book {
+    private String name;
+    private String auth;
+}
+@Setter
+@Getter
+@ToString
+public class Car {
+    private String name;
+    private String name1;
+    private Integer price;
+    private Boolean allDriver;
 
-- 基于xml：为引用类型赋值：外部bean
+    public Car() {
+    }
 
-- 基于xml：为引用类型赋值：内部bean
+    public Car(String name, Integer price) {
+        this.name = name;
+        this.price = price;
+    }
 
-- 基于xml：为List属性赋值
+    public Car(Integer price, Boolean allDriver) {
+        this.price = price;
+        this.allDriver = allDriver;
+    }
+}
+@Setter
+@Getter
+@ToString
+public class Pseson {
+    private String name;
+    private Integer age;
+    private Boolean gender;
+    private Car car;
+    private List<Book> books;
+    private Map<String,Object> maps;
+    private Properties properties;
+}
+```
 
-- 基于xml：为Map类型属性赋值
+- <font size=4 color='blue'>**基于xml：为属性赋值：null**</font>：初始化Ban的配置，不赋值默认就是null值，XML也提供的声明式NULL值赋值
 
-- 基于xml：为properties属性赋值
+  ```xml
+  <bean id="person01" class="com.it.spring03.model.Person">
+      <property name="name">
+          <null/>
+      </property>
+  </bean>
+  ```
 
-- 基于xml：使用<kbd>util</kbd>名称空间在spring中定义集合
+- <font size=4 color='blue'>**基于xml：为引用类型赋值：外部bean**</font>：Bean中的引用类型可以用ref属性引用容器中的组件
 
-- 基于xml：级联属性赋值
+  ```xml
+  <bean id="car" class="com.it.spring03.model.Car">
+      <property name="name" value="五菱"/>
+      <property name="price" value="400"/>
+  </bean>
+  <bean id="person02" class="com.it.spring03.model.Person">
+      <property name="car" ref="car"/>
+  </bean>
+  ```
 
-- 基于xml：通过Bean的继承实现配置信息的重用：在xml配置文件中声明`<bean>`标签的parent属性用来指定当前Bean的配置是从哪个Bean继承
+- <font size=4 color='blue'>**基于xml：为引用类型赋值：内部bean**</font>：在XML中配置的内部Bean不会被Spring管理
+
+  ```xml
+  <bean id="person03" class="com.it.spring03.model.Person">
+      <property name="car">
+      	<bean id="car" class="com.it.spring03.model.Car">
+              <property name="name" value="五菱"/>
+              <property name="price" value="400"/>
+          </bean>
+      </property>
+  </bean>
+  ```
+
+- <font size=4 color='blue'>**基于xml：为List属性赋值**</font>：`<property>`中的空`<list>`标签相当于`new ArrayList<>()`，需要为集合中添加对应的元素：可以定义基本数据类型、引用数据类型、Spring中的组件。
+
+  ```xml
+  <bean id="book01" class="com.it.spring03.model.Book">
+      <property name="name" value="西游记"/>
+  </bean>
+  <bean id="person04" class="com.it.spring03.model.Person">
+      <property name="books">
+          <list>
+              <bean class="com.it.spring03.model.Book">
+                  <property name="name" value="东游记"/>
+              </bean>
+              <ref bean="book01"/>
+          </list>
+      </property>
+  </bean>
+  ```
+
+- <font size=4 color='blue'>**基于xml：为Map类型属性赋值**</font>：Spring底层采用LinkedHashMap实现
+
+  ```xml
+   <bean id="book01" class="com.it.spring03.model.Book">
+       <property name="name" value="西游记"/>
+  </bean>
+  <bean id="person05" class="com.it.spring03.model.Person">
+      <property name="maps">
+          <map>
+              <entry key="key01" value="基本数据类型"/>
+              <entry key="key02" value-ref="book01"/>
+              <entry key="key03">
+                  <bean class="com.it.spring03.model.Book">
+                      <property name="name" value="key05的book"/>
+                  </bean>
+              </entry>
+              <entry key="key04">
+                  <map>
+                      <entry key="key0401" value="嵌套map"/>
+                  </map>
+              </entry>
+          </map>
+      </property>
+  </bean>
+  ```
+
+- <font size=4 color='blue'>**基于xml：为properties属性赋值**</font>：
+
+  ```xml
+  <bean id="person06" class="com.it.spring03.model.Person">
+      <property name="properties">
+          <props>
+              <prop key="key01">value</prop>
+          </props>
+      </property>
+  </bean>
+  ```
+
+- <font size=4 color='blue'>**基于xml：使用<kbd>util</kbd>名称空间在spring中定义集合**</font>：使用util名称空间定义集合必须指定id属性，并且定义好的集合也是Spring中的组件
+
+  - 为xml配置文件导入util名称空间
+
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans ...
+           xmlns:util="http://www.springframework.org/schema/util"
+           ...>
+    </beans>
+    ```
+
+  - 使用Util名称空间创建集合：list、map、set，在JavaBean中的集合类型可以引用定义好的名称空间集合
+
+    ```xml
+    <!-- 1. 创建map -->
+    <util:map id="map">
+         <entry key="" value=""/>
+    </util:map>
+    
+    <!-- 1. 创建list -->
+    <util:list id="list">
+    
+    </util:list>
+    
+    <!-- 1. 创建set -->
+    <util:set id="set">
+    
+    </util:set>
+    
+    <!-- 1. 创建properties -->
+    <util:properties id="properties">
+        <prop key="key">value</prop>
+    </util:properties>
+    ```
+
+- <font size=4 color='blue'>**基于xml：级联属性赋值**</font>：为属性的属性赋值，为属性赋值时也要保证该属性非空
+
+  ```xml
+  <bean id="person07" class="com.it.spring03.model.Person">
+      <property name="car" ref="car"/>
+      <property name="car.name" value="级联属性赋值"/>
+  </bean>
+  ```
+
+- <font size=4 color='blue'>**基于xml：通过Bean的继承实现配置信息的重用**</font>：在xml配置文件中声明`<bean>`标签的parent属性用来指定当前Bean的配置是从哪个Bean继承
 
   ```xml
   <bean id = "" class = "" parent = ""></bean>
@@ -361,6 +564,10 @@
 ### 3. 源码解析
 
 - 
+
+## 2.4 Bean生命周期解析
+
+
 
 第三章 AOP
 
