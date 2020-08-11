@@ -155,6 +155,12 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
    }
    ```
 
+   > 1. package main：main包会编译为执行二进制文件，非main包是用于封装功能
+   >
+   > 2. main()：是执行的入口函数，
+   >
+   > 3. 在函数外只能作为标识符的声明，只能使用var关键字声明标识符
+
 2. **单行注释和多行注释**
 
 3. **开发注意事项**
@@ -447,7 +453,7 @@ if 表达式1 {
 
 ```go
 switch {
-	case 掉价表达式:
+	case 条件表达式:
 		fallthrough
 	default:
 		// 
@@ -478,24 +484,62 @@ for i < 10 {
 }
 ```
 
-- for range
-- for循环可以通过break、goto、return、panic语句强制退出循环。
+> for循环可以通过break、goto、return、panic语句强制退出循环。
+
+### <font size=4 color=blue>5. for range</font>
+
+```go
+ss := "仅仅字符串"
+for i, v := range ss {
+    fmt.Printf("%d %c", i, v)
+    fmt.Println("")
+}
+```
 
 ### <font size=4 color=blue>4. goto</font>
 
+
+
 ## 2.6 变量与常量
 
-### <font size=4 color=blue>1. 变量声明</font>
+### <font size=4 color=blue>1. 标准变量声明</font>
 
->  Go语言中的变量需要声明后才能使用，同一作用域内不支持重复声明。 并且Go语言的变量声明后必须使用。
+```go
+var 变量名 变量类型 = 值
+```
 
-- **标准声明**：关键字`var`开头，变量类型放在变量的后面，行尾无需分号
+> - 在函数外部声明标识符必须是：var、const、func关键字开头
+> - 如果声明全局变量（定义在函数外部的变量），声明变量后可以不使用，定义在函数内部的变量必须使用；
+> - 如果声明变量（全局或局部变量）后立即赋值，变量类型可以根据变量的值进行类型推导，变量的类型**必须**省略不写；
+> - 如果声明变量（全局或局部变量）后没有立即赋值，变量类型必须声明；
+> - 同一个作用域的变量不能重复声明；
+
+### <font size=4 color=blue>2. 局部变量（短变量）</font>
+
+```go
+func main() {
+	n := 10
+	m := 200 
+	fmt.Println(m, n)
+}
+```
+
+> - 只能在函数内部声明局部变量
+> - 在函数内部，使用更简略的 `:=` 方式，声明后必须初始化变量
+
+### <font size=4 color=blue>3. 变量批量声明</font>
+
+- **批量声明后批量赋值**：必须使用var关键字，在函数内或函数外声明方式相同
 
   ```go
-  var 变量名 变量类型
+  var x,
+  	y,
+  	z = 1,
+  	2,
+  	3
   ```
 
-- **批量声明**：
+- **批量声明不立即赋值**：声明变量后不赋值必须指定变量的类型
 
   ```go
   var (
@@ -506,32 +550,33 @@ for i < 10 {
   )
   ```
 
-- **变量的初始化**：Go语言在声明变量的时候，会自动对变量对应的内存区域进行初始化操作。每个变量会被初始化成其类型的默认值，例如： 整型和浮点型变量的默认值为`0`。 字符串变量的默认值为`空字符串`。 布尔型变量默认为`false`。 切片、函数、指针变量的默认为`nil`。
+- **批量声明变量并赋值**：可以指定变量类型或可以由根据变量的值推导出变量类型
 
   ```go
-  // 标准格式初始化
-  var 变量名 类型 = 表达式
-  
-  // 定义初始化的类型推导:将变量的类型省略，这个时候编译器会根据等号右边的值来推导变量的类型完成初始化
-  var name = "Q1mi"
-  var age = 18
+  var (
+  	aa string = "aa"
+  	bb        = 23
+  	cc        = true
+  	dd        = 23.23
+  )
   ```
 
-- **短变量声明**：在函数内部，可以使用更简略的 `:=` 方式声明并初始化变量
+- **在函数内部批量声明**：函数内部可以使用短变量声明格式，省略var关键字和数据类型
 
   ```go
-  // 全局变量m
-  var m = 100
-  
   func main() {
-      // 此处声明局部变量
-  	n := 10
-  	m := 200 
-  	fmt.Println(m, n)
+  	a, b := 23, 23
+  	fmt.Println(a, b)
   }
   ```
 
-- **匿名变量**：在使用多重赋值时，如果想要忽略某个值，可以使用`匿名变量（anonymous variable）`。 匿名变量用一个下划线`_`表示
+### <font size=4 color=blue>4. 变量的初始值</font>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Go语言在声明变量的时候，会自动对变量对应的内存区域进行初始化操作。每个变量会被初始化成其类型的默认值，例如： 整型和浮点型变量的默认值为`0`。 字符串变量的默认值为`空字符串`。 布尔型变量默认为`false`。 切片、函数、指针变量的默认为`nil`。
+
+### <font size=4 color=blue>5. 匿名变量</font>
+
+- 在使用多重赋值时，如果想要忽略某个值，可以使用`匿名变量（anonymous variable）`。 匿名变量用一个下划线`_`表示
 
   ```js
   func main() {
@@ -542,7 +587,7 @@ for i < 10 {
   }
   ```
 
-### <font size=4 color=blue>2. 常量</font>
+### <font size=4 color=blue>6. 常量</font>
 
 - **常量定义**：常量的声明和变量声明非常类似，只是把`var`换成了`const`，常量在定义的时候必须赋值。
 
@@ -566,16 +611,25 @@ for i < 10 {
   )
   ```
 
-### <font size=4 color=blue>3. iota</font>
+### <font size=4 color=blue>5. iota</font>
 
-- `iota`是go语言的常量计数器，只能在常量的表达式中使用。
+- `iota`是go语言的常量计数器，只能在常量的表达式中使用。使用iota能简化定义，在定义枚举时很有用。
 
-- `iota`在const关键字出现时将被重置为0。const中每新增一行常量声明将使`iota`计数一次(iota可理解为const语句块中的行索引)。 使用iota能简化定义，在定义枚举时很有用。
+  - `iota`在const关键字出现时将被重置为0。
+  - const中每新增一行常量声明将使`iota`计数一次(iota可理解为const语句块中的行索引)。 
 
   ```go
   const (
-      a, b = iota + 1, iota + 2 //1,2
-      c, d                      //2,3
+      a1 = 12				// 12 被赋值的
+      a2 = 12				// 12 被赋值的
+      a3 = iota			// 2 -- const关键字出现时将被重置为0m,所以第一个位置的a1的iota=0
+      a4					// 3
+      a5					// 4
+  )
+  // a = iota + 1 所以c = iota + 1;e = iota + 1;
+  const (
+      a, b = iota + 1, iota + 2 //1,2	-- iota第一行a=0,b计数一次=1
+      c, d                      //2,3 -- iota第二行c=1 , d= 1+2
       e, f                      //3,4
   )
   ```
@@ -583,6 +637,23 @@ for i < 10 {
 ## 2.7 基础进阶
 
 # 第三章 Go常用标准库
+
+## 3.1 fmt
+
+## 3.2 strings
+
+> 
+
+| API                                                          | 说明                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| <span title='fmt.Println(strings.EqualFold("Go", "go")) // true'>func EqualFold(s, t string) bool</span> | 判断两个utf-8编码字符串是否相同<br /> - 将unicode大写、小写、标题三种格式字符视为相同 |
+| <span title='fmt.Println(strings.HasPrefix("aaa", "aa")) // true'>func HasPrefix(s, prefix string) bool</span> | 判断s是否有前缀字符串prefix。                                |
+| func HasSuffix(s, suffix string) bool                        | 判断s是否有后缀字符串suffix。                                |
+| <span title='fmt.Println(strings.Contains("seafood", "foo")) // true'>func Contains(s, substr string) bool</span> | 判断字符串s是否包含子串substr。                              |
+| func ContainsRune(s string, r rune) bool                     | 判断字符串s是否包含utf-8码值r。                              |
+| <span title='fmt.Println(strings.ContainsAny("failure", "u & i")) // true'>func ContainsAny(s, chars string) bool</span> | 判断字符串s是否包含字符串chars中的任一字符。                 |
+| func Count(s, sep string) int                                | 返回字符串s中有几个不重复的sep子串。                         |
+| func Index(s, sep string) int                                |                                                              |
 
 
 
