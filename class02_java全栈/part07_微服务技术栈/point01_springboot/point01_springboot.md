@@ -12,7 +12,7 @@
 
 |                             优点                             |                             缺点                             |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| 快速构建项目。<br />对主流开发框架的无配置集成。<br />项目可独立运行，无须外部依赖Servlet容器。<br />提供运行时的应用监控。<br />极大地提高了开发、部署效率。<br />与[云计算](http://c.biancheng.net/cloud_computing/)的天然集成。 | 版本迭代速度很快，一些模块改动很大。<br />由于不用自己做配置，报错时很难定位。<br />网上现成的解决方案比较少。 |
+| 快速构建项目。<br />对主流开发框架的无配置集成。<br />项目可独立运行，无须外部依赖Servlet容器。<br />提供运行时的应用监控。<br />极大地提高了开发、部署效率。<br />与[云计算](http://c.biancheng.net/cloud_computing/)的天然集成。<br /> | 版本迭代速度很快，一些模块改动很大。<br />由于不用自己做配置，报错时很难定位。<br />网上现成的解决方案比较少。<br /> |
 
 ## 1.3 SpringBoot与微服务
 
@@ -619,7 +619,7 @@ public @interface SpringBootApplication {
      @Component
      @ConfigurationProperties(prefix = "配置文件前缀")
      public class XxxProperties {
-         
+         private String key;
      }
      ```
 
@@ -658,11 +658,9 @@ public @interface SpringBootApplication {
    }
    ```
 
-## 2.6 SpringBoot多环境支持→profile
+## 2.6 SpringBoot多环境profile配置
 
-1. **profile介绍**：Profile是Spring对不同环境提供不同功能的支持，可以通过启动参数激活指定参数对应的Profile配置，以达到快速切换环境。
-
-​		Profile是Spring对不同环境提供不同功能的支持，可以通过启动参数激活指定参数对应的Profile配置，以达到快速切换环境。
+1. **profile介绍**：Profile是Spring对不同环境提供不同功能的支持，可以通过启动参数激活指定参数对应的Profile配置，以达到快速切换环境。Profile是Spring对不同环境提供不同功能的支持，可以通过启动参数激活指定参数对应的Profile配置，以达到快速切换环境。
 
 2. **profile文件格式**
 
@@ -743,7 +741,7 @@ public @interface SpringBootApplication {
 
    - @Conﬁguration注解类上的@PropertySource
 
-   - .通过SpringApplication.setDefaultProperties指定的默认属性
+   - 通过SpringApplication.setDefaultProperties指定的默认属性
 
 # 第三章 SpringBoot日志
 
