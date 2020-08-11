@@ -20,6 +20,10 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
   - **官网**：https://golang.org/dl/
   - **镜像**：https://golang.google.cn/dl/
+  
+- 文档
+
+  - https://studygolang.com/pkgdoc
 
 ## 1.2 基本环境
 
@@ -40,11 +44,11 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ### <font size=4 color=blue>1. Visual Studio</font>
 
-- 插件安装
+- **插件安装**
 
   - go
 
-- 公共代理镜像
+- **公共代理镜像**
 
   ```sh
   go env -w GO111MODULE=on
@@ -57,7 +61,7 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
   go env -w GOPRIVATE=example.com/org_name
   ```
 
-- go代码片段设置
+- **go代码片段设置**
 
   1. Ctrl + P 或者 Command+Shift+P：弹出命令输入框
   2. 输入：>snippets
@@ -88,9 +92,17 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ## 1.6 Go命令
 
-1. go build：表示将源代码编译成可执行文件，可以使用`-o`参数来指定编译后得到的可执行文件的名字
+1. go build：表示将源代码编译成可执行文件，可以使用`-o`参数来指定编译后得到的可执行文件的名字，后缀必须是exe
 2. go run go脚本：直接执行脚本中的main函数中的代码
 3. go install：示安装的意思，它先编译源代码得到可执行文件，然后将可执行文件移动到`GOPATH`的bin目录下
+
+> - go文件执行流程分析
+>   - 源文件 -> go build（编译）-> 生成可执行文件ext -> 运行 -> 获取结果
+>   - 源文件 -> go run（编译运行） -> 获取结果
+> - 区别
+>   - 编译生成的可执行文件exe可以在非go环境中执行
+>   - 编译运行只可以在具有go运行环境的机器才可以执行
+>   - 在编译时，编译器会将程序运行的库文件包含在可执行文件中，所以可执行文件提交较大
 
 ## 1.7 跨平台编译
 
@@ -127,15 +139,51 @@ https://www.bilibili.com/video/BV14C4y147y8?p=1
 
 ## 1.8 Hello World
 
-```go
-package main
+1. **程序示例**
 
-import "fmt"
+   ```go
+   package main
+   // 单行注释
+   import "fmt"
+   
+   /**
+    * 多行注释
+    * main()方法是程序执行的入口
+    */
+   func main() {
+   	fmt.Println("Hello World!")
+   }
+   ```
 
-func main() {
-	fmt.Println("Hello World!")
-}
-```
+2. **单行注释和多行注释**
+
+3. **开发注意事项**
+
+   - go源文件必须是`.go`作为文件扩展标识符
+   - go语言严格区分大小写
+   - go方法由一条条语句构成，每个语句后不需要添加分号，提现go语言的简洁性
+   - 在go语言中定义变量或引入的包必须使用，否则编译不通过
+
+4. go语言代码风格
+
+   - 缩进有严格要求
+   - 运算符的两边严格规定有空格
+
+5. 包和函数：import表示引入一个包，包中可以定义多个go文件，import这个包后就可以使用这个包中的文件中的函数了
+
+6. doc操作指令
+
+   - cd：切换目录
+   - md：创建文件夹
+   - dir：查看列表
+   - rd：删除空目录
+   - echo：输出内容
+   - `>`：添加内容
+   - `>>`：追加
+   - copy：拷贝文件
+   - del：删除文件
+   - cls：清屏
+   - exit：退出
 
 # 第二章 Go语言基础
 
@@ -292,7 +340,7 @@ func main() {
 
   | 转义符 | 含义                               |
   | :----: | :--------------------------------- |
-  |  `\r`  | 回车符（返回行首）                 |
+  |  `\r`  | 回车符（返回行首）,不换行          |
   |  `\n`  | 换行符（直接跳到下一行的同列位置） |
   |  `\t`  | 制表符                             |
   |  `\'`  | 单引号                             |
