@@ -1,4 +1,4 @@
-# 第一章 SpringBoot入门
+# @Component第一章 SpringBoot入门
 
 ## 1.1 SpringBoot简介
 
@@ -582,48 +582,65 @@ public @interface SpringBootApplication {
      private String spelValue;
      ```
 
-2. **配置环境变量 @ConfigurationProperties 与 @EnableConfigurationProperties**
+2. **配置环境变量 @ConfigurationProperties**：使用SpringBoot的自定义配置类封装配置文件中属性时候，需要在自定义的属性配置类上添加@ConfigurationProperties注解并制定属性的配置前缀；此时的属性配置类不会被Spring识别，需要使用@Component将属性配置类添加到到Spring容器中，或者使用Spring配置类添加@EnableConfigurationProperties注解讲属性配置类加载进Spring容器中；在项目中添加以下依赖，实现在配置文件中的属性提示
 
-   - 如果属性配置类不是Spring容器中的组件，而且只使用了@ConfigurationProperties注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用`@EnableConfigurationProperties`注解去指定这个类，这个时候就会让该类上的`@ConfigurationProperties`生效，然后作为bean添加进spring容器中
+   ```xml
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-configuration-processor</artifactId>
+       <optional>true</optional>
+   </dependency>
+   ```
 
-     ```java
-     /*
-     	@Configuration声明这个类是配置类
-      	@EnableConfigurationProperties使注解中指定的数组中的ConfigurationProperties类生效，并将它们添加到Spring容器中
-     */
-     @Configuration
-     @EnableConfigurationProperties({XxxProperties.class, YyyProperties.class})
-     public class XxxConfigurationProperties {
-         
-     }
-     
-     // 将XxxProperties类添加到Spring容器，并且属性与配置文件中对应属性完成绑定
-     @ConfigurationProperties(prefix = "配置文件前缀")
-     public class XxxProperties {
-         
-     }
-     
-     // 将YyyProperties，并且属性与配置文件中对应属性完成绑定
-     @ConfigurationProperties(prefix = "配置文件前缀")
-     public class YyyProperties {
-         
-     }
-     ```
+   - **案例说明：@EnableConfigurationProperties**
 
-   - 属性类只使用了`@ConfigurationProperties`注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用@EnableConfigurationProperties注解去指定这个类，这个时候就会让该类上的@ConfigurationProperties生效，然后作为bean添加进spring容器中
+     - @ConfigurationProperties(prefix = "配置文件前缀")：首先定义属性配置类
 
-   - 如果该类只使用了@ConfigurationProperties注解，然后该类没有在扫描路径下或者没有使用@Component等注解，导致无法被扫描为bean，那么就必须在配置类上使用@EnableConfigurationProperties注解去指定这个类，这个时候就会让该类上的@ConfigurationProperties生效，然后作为bean添加进spring容器
+       ```java
+       @ConfigurationProperties(prefix = "配置文件前缀")
+       public class XxxProperties {
+           // getter/setter
+       }
+       
+       @ConfigurationProperties(prefix = "配置文件前缀")
+       public class YyyProperties {
+           // getter/setter
+       }
+       ```
 
-     ```java
-     // 将属性配置类声明为Spring中的一个组件, 则会自动完成属性绑定工作
-     @Component
-     @ConfigurationProperties(prefix = "配置文件前缀")
-     public class XxxProperties {
-         private String key;
-     }
-     ```
+     - @Configuration：自定义配置类将自定义属性配置类添加到Spring容器中
 
-3. @ConfigurationProperties与@Value 区别
+       ```java
+       /*
+       	@Configuration声明这个类是配置类
+        	@EnableConfigurationProperties使注解中指定的数组中的ConfigurationProperties类生效，并将它们添加到Spring容器中
+       */
+       @Configuration
+       @EnableConfigurationProperties({XxxProperties.class, YyyProperties.class})
+       public class XxxConfigurationProperties {
+           
+       }
+       ```
+
+   - **案例说明：@ConfigurationProperties**
+
+     - @Component：定义属性配置后直接将配置类添加到Spring容器中
+
+       ```jav
+       @Component
+       @ConfigurationProperties(prefix = "配置文件前缀")
+       public class XxxProperties {
+           // getter/setter
+       }
+       
+       @Component
+       @ConfigurationProperties(prefix = "配置文件前缀")
+       public class YyyProperties {
+           // getter/setter
+       }
+       ```
+
+3. **@ConfigurationProperties与@Value 区别**
 
    > 涉及到复杂对象的封装必须使用@ConfigurationProperties方式
 
@@ -641,7 +658,7 @@ public @interface SpringBootApplication {
 
    ````java
    @Configuration
-   public class SpringbootConfigApplication {
+   public class XxxConfiguration {
    	... ...
    }
    ````
