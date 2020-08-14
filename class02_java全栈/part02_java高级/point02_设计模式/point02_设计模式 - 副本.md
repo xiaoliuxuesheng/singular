@@ -49,68 +49,66 @@
 
 ## 2.1 简单工厂模式
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工厂模式的作用就是创建产品;在；Java中就是new一个对象：在开发某些业务功能时候需要用都某种类型的对象的特定功能，而且该类型的实现由多种方式，如果仅仅为了使用特定功能而负责这个类型对象的创建，这对于业务功能来说是多余的操作，代码耦合严重；工厂模式的解决了对象的创建和使用分离，只需要在业务功能中引入工厂角色就能获取到所需要的对象，而无需关系对象的创建过程
+​        简单工厂模式也称为静态工厂模式或实例工厂模式，基本结构是一个类中定义一个工厂方法，在工厂方法中完成对象的创建；这工厂模式中负责生产对象的类称为工厂类，一般开发中使用Factory作为类的后缀名（约定）；    
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单工厂模式是采用封装方法的方式实现对象的创建，所以根据方法的作用域不同，简单工厂模式分为静态工厂（工厂类中提供静态方法创建对象，生产对象要直接使用工厂类调用）和实例工厂（工厂类中定义实例方法创建对象，生成对象需要用工厂对象调用）；在Java中的方法设计灵活，对应的简单工厂的方式也有很多种；
+<font size=4 color=blue>1. 简单工厂涉及相关对象说明</font>
 
-<font color='blue' size=4>1. 根据参数创建对象</font>：实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建不同的对象
+<img src="https://s1.ax1x.com/2020/05/13/YaiR6e.jpg" alt="YaiR6e.jpg" width='400' />
 
-- 静态工厂
+| 名称     | 说明                                                       |
+| -------- | ---------------------------------------------------------- |
+| 工厂     | 负责生产对象：根据传入不同参数从而创建不同具体产品类的实例 |
+| 抽象产品 | 可以不用这个角色，用于为工厂类生产的对象定义规范           |
+| 具体产品 | 是由工厂类生产的对象                                       |
+
+<font size=4 color=blue>2. 案例演示</font>
+
+
+
+- 抽象产品与具体产品的关系：面向接口编程
+
+  ```java
+  public interface IProduct{
+  	// TUDO
+  }
+  
+  public class ProductA implements IProduct{
+  	// TUDO  
+  }
+  public class ProductB implements IProduct{
+  	// TUDO  
+  }
+  ```
+
+- **使用方法逻辑创建对象**
 
   ```java
   public class SimpleFactory01 {
+      public static IProduct create(String type) {
+          switch (type) {
+              // 已经开发完成的
+              case "A":
+                  return new ProductA();
+              case "B":
+                  return new ProductB();
   
-      private SimpleFactory01() {
-      }
-  
-      public static Car createCar(String type) {
-          if ("BM".equals(type)) {
-              return new BMCar(type);
-          } else if ("QQ".equals(type)) {
-              return new QQCar(type);
+              // 工厂类新增代码完成扩展要创建的对象
+              case "C":
+                  return new ProductC();
+              default:
+                  return null;
           }
-          return null;
       }
   }
   ```
-
-- 实例工厂
+  
+- **使用反射创建简单工厂**
 
   ```java
   public class SimpleFactory02 {
-      public Car createCar(String type) {
-          if ("BM".equals(type)) {
-              return new BMCar(type);
-          } else if ("QQ".equals(type)) {
-              return new QQCar(type);
-          }
-          return null;
-      }
-  }
-  ```
-
-<font color='blue' size=4>2. 根据参数创建对象：使用反射</font>：实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
-
-- 静态工厂
-
-  ```java
-  public class SimpleFactory05 {
-  
-      private SimpleFactory05() {
-      }
-  
-      public static Car createCar(String productBeanName) {
+      public static IProduct create(String productBeanName) {
           try {
-              return (Car) Class.forName(productBeanName).newInstance();
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-          return null;
-      }
-  
-      public static Car createCar(Class<?> clz) {
-          try {
-              return (Car) clz.newInstance();
+              return (IProduct) Class.forName(productBeanName).newInstance();
           } catch (Exception e) {
               e.printStackTrace();
           }
@@ -119,97 +117,17 @@
   }
   ```
 
-- 实例工厂
+- **使用泛型创建简单工厂：本质还是反射**
 
   ```java
-  
-  public class SimpleFactory06 {
-      public Car createCar(String productBeanName) {
-          try {
-              return (Car) Class.forName(productBeanName).newInstance();
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-          return null;
-      }
-  
-      public Car createCar(Class<?> clz) {
-          try {
-              return (Car) clz.newInstance();
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-          return null;
-      }
-  }
-  ```
-
-<font color='blue' size=4>3. 根据参数创建对象：使用泛型加反射</font>：实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
-
-- 静态工厂
-
-  ```java
-  public class SimpleFactory07 {
-  
-      private SimpleFactory07() {
-      }
-  
+  public class SimpleFactory03<T> {
       public static <T> T create(Class<T> t) {
           try {
-              return t.newInstance();
+              return(T) t.newInstance();
           } catch (Exception e) {
               e.printStackTrace();
           }
           return null;
-      }
-  }
-  ```
-
-- 实例工厂
-
-  ```java
-  public class SimpleFactory08 {
-      public <T> T create(Class<T> t) {
-          try {
-              return (T) t.newInstance();
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-          return null;
-      }
-  }
-  ```
-
-<font color='blue' size=4>4. 根据方法创建对象</font>：实现思路，在工厂类中定义一系列的方法实现对象的创建，不同的方法创建出不同的对象
-
-- 静态工厂
-
-  ```java
-  public class SimpleFactory03 {
-  
-      private SimpleFactory03() {
-      }
-  
-      public static Car createQQCar() {
-          return new QQCar("QQ");
-      }
-  
-      public static Car createBMCar() {
-          return new QQCar("BM");
-      }
-  }
-  ```
-
-- 实例工厂
-
-  ```java
-  public class SimpleFactory04 {
-      public Car createQQCar() {
-          return new QQCar("QQ");
-      }
-  
-      public Car createBMCar() {
-          return new QQCar("BM");
       }
   }
   ```

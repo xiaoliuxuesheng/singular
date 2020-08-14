@@ -1,3 +1,32 @@
+# 前言
+
+## 1.1 并发相关API
+
+1. CountDownLatch：是一个同步工具类，用来协调多个线程之间的同步，或者说起到线程之间的通信。能够使一个线程在等待另外一些线程完成各自工作之后，再继续执行。
+
+   | API                                | 说明                                                         |
+   | ---------------------------------- | ------------------------------------------------------------ |
+   | new CountDownLatch(n)              | 某一线程在开始运行前等待n个线程执行完毕<br />每当一个任务线程执行完毕，就将计数器减1 |
+   | countDown()                        | 当计数器的值变为0时，在CountDownLatch上await()的线程就会被唤醒 |
+   | await()                            | 调用await()方法的线程会被挂起，它会等待直到count值为0才继续执行 |
+   | await(long timeout, TimeUnit unit) | 等待一定的时间后count值还没变为0的话就会继续执行             |
+
+2. CyclicBarrier：会让所有线程都等待完成后才会继续下一步行动。
+
+   | API                                                          | 说明                                  |
+   | ------------------------------------------------------------ | ------------------------------------- |
+   | CyclicBarrier(int parties) <br />CyclicBarrier(int parties, Runnable barrierAction) | 初始化                                |
+   | await()<br />await(long timeout, TimeUnit unit)              | 线程调用 await() 表示自己已经到达栅栏 |
+
+3. Semaphore：是 synchronized 的加强版，作用是控制线程的并发数量。 semaphore.acquire() 和 semaphore.release()之间的代码，同一时刻只允许制定个数的线程进入，
+
+   | API       | 说明                          |
+   | --------- | ----------------------------- |
+   | acquire() | 获取一个许可，信号量中数量加1 |
+   | release() | 是否一个许可，信号量中数量减1 |
+
+4. 
+
 # 第一部分 并发编程
 
 ## 1. 概览

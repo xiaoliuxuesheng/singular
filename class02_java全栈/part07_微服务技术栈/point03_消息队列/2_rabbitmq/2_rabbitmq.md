@@ -2,15 +2,32 @@
 
 ## 1.1 消息中间件概述
 
-​		衡量消息中间件的指标：服务性能，数据存储，集群架构
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**衡量消息中间件的指标**：服务性能，数据存储，集群架构
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**消息**：是指应用直接传递的数据；
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**消息队列（Message Queue）**：是一种应用间的通信方式，先进先出；
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**消息中间件**：消息发送者将消息发送到消息中间件后立即返回，由消息中间件完成消息的后续传递，并且保证消息传递的可靠性；消息发布者只管把消息发送到MQ中而不用关系谁来取值；消息消费者只管从MQ中获取值而不用关系是谁发布的，发布者和消费者相互不知道对方的存在；消息中间件的作用：
+
+1. **解耦**：应用直接可以通信，而且不需要指定彼此的实现细节；
+2. **冗余〈存储)**：有些情况下处理数据的过程会失败，造成数据丢失，可使用消息中间件进行数据持久化；
+3. **扩展性**：消息中间件解耦了应用的处理过程，所以提高消息入队和处理的效率是很容易的，只要另外增加处理过程即可，不需要改变代码，也不需要调节参数。
+4. **削峰**：在访问量剧增的情况下，程序不会因为突发的超负荷请求而崩溃。
+5. **可恢复性**：当系统一部分组件失效时，不会影响到整个系，消息中间件降低了进程间的耦合度，所以即使 个处理消息的进程挂掉，加入消息中间件中的消息仍然可以在系统恢复后进行处理。
+6. **顺序保证**：在大多数使用场景下，数据处理的顺序很重要，大部分消息中间件支持 定程度上的顺序性。
+7. **缓冲**：在任何重要的系统中，都会存在需要不同处理时间的元素。消息中间件通过 个缓冲层来帮助任务最高效率地执行，写入消息中间件的处理会尽可能快速 该缓冲层有助于控制和优化数据流经过系统的速度。
+8. **异步通信**：在很多时候应用不想也不需要立即处理消息 消息中间件提供了异步处理机制，允许应用把 些消息放入消息中间件中，但并不立即处理它，在之后需要的时候再慢慢处理
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;衡量消息中间件的指标：服务性能，数据存储，集群架构
 
 ## 1.2 业界主流的消息中间件
 
 ### <font size=4 color=blue> ▲ ActiveMQ</font>
 
-​		ActiveMQ是Apache出品的，最流行的能力，强劲的开源消息总线，并且他完全支持Java的JMs规范。丰富的API，多种集群构建模式使得它成为业界老牌的消息中间件，在中小型企业应用广泛。但是相比于kafka，rabbitmq等MQ来说，性能太弱，**在如今的高并发，大数据处理的场景下显得力不从心**，经常会出现一些小问题，消息延迟，堆积，堵塞等，不过其多种集群架构是优势。
+ActiveMQ是Apache出品的，最流行的能力，强劲的开源消息总线，并且他完全支持Java的JM规S范。丰富的API，多种集群构建模式使得它成为业界老牌的消息中间件，在中小型企业应用广泛。但是相比于kafka，rabbitmq等MQ来说，性能太弱，**在如今的高并发，大数据处理的场景下显得力不从心**，经常会出现一些小问题，消息延迟，堆积，堵塞等，不过其多种集群架构是优势。
 
-​		<img src='./imgs/01_activemq架构'/>
+<img src='./imgs/01_activemq架构'/>
 
 **ActiveMQ的两种集群架构**
 
@@ -20,11 +37,11 @@
 
 ### <font size=4 color=blue> ▲ Kafka</font>
 
-​		kafka是linkedin开源的分布式发布-订阅消息系统，目前归属于Apache的顶级项目。主要特点是基于pull模式来处理消息消费，**追求高吞吐量**，一开始的目的是日志的收集和传输。0.8版本开始支持复制，**不支持事务，对消息的丢失，重复，错误没有严格要求** 适用于产生大量数据的互联网服务的数据收集业务。在廉价的服务器上都能有很高的性能，这个主要是基于操作系统底层的pagecache，不用内存胜似使用内存。
+kafka是linkedin开源的分布式发布-订阅消息系统，目前归属于Apache的顶级项目。主要特点是基于pull模式来处理消息消费，**追求高吞吐量**，一开始的目的是日志的收集和传输。0.8版本开始支持复制，**不支持事务，对消息的丢失，重复，错误没有严格要求** 适用于产生大量数据的互联网服务的数据收集业务。在廉价的服务器上都能有很高的性能，这个主要是基于操作系统底层的pagecache，不用内存胜似使用内存。
 
 <img src='./imgs/02_kafka架构'/>
 
-​		Kafka集群也是采用zk进行集群，当一个数据存放在一个节点中，会通过relicate同步到其他节点，所以我们不需要更多的关注kafka有可能丢失消息，因为其他节点会有这份数据，除非你这个地区的kafka都挂了。可靠性高的场景不适用。
+Kafka集群也是采用zk进行集群，当一个数据存放在一个节点中，会通过relicate同步到其他节点，所以我们不需要更多的关注kafka有可能丢失消息，因为其他节点会有这份数据，除非你这个地区的kafka都挂了。可靠性高的场景不适用。
 
 ### <font size=4 color=blue> ▲ RocketMQ</font>
 
@@ -32,11 +49,11 @@ RocketMQ是阿里开源的，目前是也是Apache的顶级项目，纯Java开�
 
 <img src='./imgs/03_rocketmq架构'/>
 
-​		RocketMQ集群它刚开始也是依赖zk做集群的，但是觉得太慢就自己开发了Name Server。
+RocketMQ集群它刚开始也是依赖zk做集群的，但是觉得太慢就自己开发了Name Server。
 
 ### <font size=4 color=blue> ▲ RabbitMQ</font>
 
-​	RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协议来实现。AMQP的主要特征是面向消息/队列/路由(包括点对点的发布/订阅)可靠性，安全。AMQP协议更多用在企业系统内，**对数据一致性/稳定性和可靠性要求很高的场景，对性能和吞吐量的要求还在其次**。rabbitMQ的可靠性很高，性能比不上kafka，但是也很高了，集群模式也有多种。
+RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协议来实现。AMQP的主要特征是面向消息/队列/路由(包括点对点的发布/订阅)可靠性，安全。AMQP协议更多用在企业系统内，**对数据一致性/稳定性和可靠性要求很高的场景，对性能和吞吐量的要求还在其次**。rabbitMQ的可靠性很高，性能比不上kafka，但是也很高了，集群模式也有多种。
 
 <img src='./imgs/04_rabbitmq架构'/>
 
@@ -44,43 +61,43 @@ RocketMQ是阿里开源的，目前是也是Apache的顶级项目，纯Java开�
 
 ## 2.1 不同环境下安装RabbitMQ
 
-### <font size=4 color=blue> ▲ Windows系统安装 </font>
+### <font size=4 color=blue> 1、Windows系统安装 </font>
 
-### <font size=4 color=blue> ▲ Linux系统安装 </font>
+1. <a href='https://www.erlang.org/downloads'>下载erlang官网</a>，RabbitMQ是基于relang语言开发，运行需要erlang环境支持
 
-### <font size=4 color=blue> ▲ Docker安装 </font>
+2. 安装erlang并配置windows系统环境变量：ERLANG_HOME
+
+3. 下载RabbitMQ：<a herf='http://www.rabbitmq.com/download.html'>官网</a>、<a href='https://www.newbe.pro/Mirrors/Mirrors-RabbitMQ/'>国内镜像地址</a>
+
+4. 安装RabbitMQ
+
+5. 安装RabbitMQ工作台
+
+   ```sh
+   rabbitmq-plugins enable rabbitmq_management
+   ```
+
+6. 启动RabbitMQ：测试访问RabbitMQ工作台 - http://localhost:15672
+
+7. 关闭RabbitMQ
+
+### <font size=4 color=blue> 2、Linux系统安装 </font>
+
+### <font size=4 color=blue>3、Docker安装 </font>
 
 ## 2.2 RabbitMQ命令行与管控台
 
-### <font size=4 color=blue> ▲ Rabbit命令行</font>
+###<font size=4 color=blue> 1、Windows RabbitMQ命令行</font>
 
-- rabbitmqctl start_app：启动应用
-- rabbitmqctl stop_app：关闭应用
-- rabbitmqctl status：节点状态
-- rabbitmqctl add_user <用户名> <密码>：添加用户
-- rabbitmqctl list_users：列出所有用户
-- rabbitmqctl delete_user <用户名>：删除用户
-- rabbitmqctl clear_permissions -p <虚拟主机地址> <用户名>：清除用户权限
-- rabbitmqctl list_user_permissions  <用户名>：列出用户权限
-- rabbitmqctl change_password <用户名> <密码>：修改密码
-- rabbitmqctl set_permissions -p <虚拟主机地址> <用户名> ".\*"  ".\*"   ".*"：设置权限
-- rabbitmqctl add_vhost <虚拟主机地址>：创建虚拟主机
-- rabbitmqctl list_vhost：查看虚拟主列表
-- ：移除所有数据
-- ：组成集群命令
-- ：修改集群节点存储形式
-- ：忘记节点
-- ：修改节点名称
+### <font size=4 color=blue>2、Linux RabbitMQ命令行</font>
 
-### <font size=4 color=blue> ▲ Rabbit管控台</font>
-
-
+### <font size=4 color=blue>3、Rabbit管控台</font>
 
 # 第三章 RabbitMQ基础
 
 ## 3.1 AMQP协议
 
-​		AMQP（Adviced Message Queuing Protocol）：是具有现代特征的二进制协议。是一个提供统一消息服务的应用层标准高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。
+AMQP（Adviced Message Queuing Protocol）：是具有现代特征的二进制协议。是一个提供统一消息服务的应用层标准高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。
 
 <img src='/imgs/05_AMQP协议模型'/>
 
@@ -90,21 +107,16 @@ RocketMQ是阿里开源的，目前是也是Apache的顶级项目，纯Java开�
 
 ## 3.2 RabbitMQ介绍
 
-​		RabbitMQ是一个开源的消息代理和队列服务器，用来通过普通协议在完全不同的应用之间数据共享，RabbitMQ是基于Erlang语言编写的（安装RabbitMQ需要提前准备Erlang坏境），RabbitMQ是基于AMQP协议的。
+RabbitMQ是一个开源的消息代理和队列服务器，用来通过普通协议在完全不同的应用之间数据共享，RabbitMQ是基于Erlang语言编写的（安装RabbitMQ需要提前准备Erlang坏境），RabbitMQ是基于AMQP协议的。
 
-​		RabbitMQ特点：
+- RabbitMQ特点：
+  1.  开源、性能优秀、稳定性保障
+  2. 提供可靠性消息投递模式（confirm）、返回模式（return）
+  3. 与SpringAMQP完美整合：API丰富
+  4. 集群模式丰富、表达式配置（配置集群策略）：HA模式、镜像队列模式；
+  5. 保证数据不丢失的前提做到可靠性、可用性；
 
-​			① 开源、性能优秀、稳定性保障
-
-​			② 提供可靠性消息投递模式（confirm）、返回模式（return）
-
-​			③ 与SpringAMQP完美整合：API丰富
-
-​			④ 集群模式丰富、表达式配置（配置集群策略）：HA模式、镜像队列模式；
-
-​			⑤ 保证数据不丢失的前提做到可靠性、可用性；
-
-​		RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模式，是的RabbitMQ在Broker直接进行数据交互的的性能是非常优秀的；Erlang的特点是原生Socket一样的延迟；
+RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模式，是的RabbitMQ在Broker直接进行数据交互的的性能是非常优秀的；Erlang的特点是原生Socket一样的延迟；
 
 ## 3.3 RabbitMQ核心概念
 
