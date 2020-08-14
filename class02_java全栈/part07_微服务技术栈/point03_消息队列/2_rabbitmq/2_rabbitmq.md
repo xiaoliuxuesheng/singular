@@ -83,15 +83,115 @@ RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协�
 
 ### <font size=4 color=blue> 2、Linux系统安装 </font>
 
+- <a href='https://www.erlang.org/downloads'>下载erlang官网</a>，RabbitMQ是基于relang语言开发，运行需要erlang环境支持
+
+- 安装erlang
+
+  - 安装erlang编译环境
+
+    ```sh
+    yum install gcc glibc-devel make ncurses-devel openssl-devel xmlto
+    
+    yum -y install gcc				# 如果是no acceptable C compiler found in $PATH错误
+    yum install perl				# 如果是checking for perl... no_perl
+    yum -y install ncurses-devel	# 如果是error: No curses library functions found
+    yum -y install openssl openssl-devel
+    
+    yum -y install gtk3-devel.x86_64
+    yum -y install unixODBC.x86_64 unixODBC-devel.x86_64
+    ```
+
+  - 在`/usr/local`目录中新建erlang的安装包`env_erlang`：/usr/local/env_erlang
+
+  - 解压：`tar -zxvf  otp_src_xx.tar.gz`并进入加压后的目录中
+
+  - 配置安装目录：`./configure --prefix=/usr/local/env_erlang`
+
+  - make && make install
+
+  - 配置环境变量：`vim /etc/profile`
+
+    ```sh
+    ERLANG_HOME=/usr/local/env_relang32
+    export PATH=$PATH:$ERLANG_HOME/bin
+    export ERLANG_HOME PATH
+    ```
+
+  - 刷新配置文件：`. source` 或 `source /etc/profile`
+
+  - 验证erlang版本：erl
+
+- 下载RabbitMQ：：<a herf='http://www.rabbitmq.com/download.html'>官网</a>、<a href='https://www.newbe.pro/Mirrors/Mirrors-RabbitMQ/'>国内镜像地址</a>
+
+  - 方式一：安装rpm安装包
+
+    ```sh
+    rpm -ivh --nodeps xxx.rpm
+    ```
+
+  - 方式二：编译安装tar.gz包
+
+    ```sh
+    
+    ```
+
+- 开启RabbitMQ管控台端口
+
+  ```sh
+  查看已开放的端口
+  firewall-cmd --list-ports
+  
+  开放端口（开放后需要要重启防火墙才生效）
+  
+  firewall-cmd --zone=public --add-port=3338/tcp --permanent
+  
+  重启防火墙
+  
+  firewall-cmd --reload
+  
+  关闭端口（关闭后需要要重启防火墙才生效）
+  
+  firewall-cmd --zone=public --remove-port=3338/tcp --permanent
+  
+  开机启动防火墙
+  systemctl enable firewalld
+  
+  开启防火墙
+  
+  systemctl start firewalld
+  
+  禁止防火墙开机启动
+  systemctl disable firewalld
+  
+  停止防火墙
+  systemctl stop firewalld
+  ```
+
 ### <font size=4 color=blue>3、Docker安装 </font>
 
-## 2.2 RabbitMQ命令行与管控台
+## 2.2 RabbitMQ命令行
 
-###<font size=4 color=blue> 1、Windows RabbitMQ命令行</font>
+### <font size=4 color=blue> 1、Windows RabbitMQ命令行</font>
 
 ### <font size=4 color=blue>2、Linux RabbitMQ命令行</font>
 
-### <font size=4 color=blue>3、Rabbit管控台</font>
+- 启动与关闭服务
+
+  ```sh
+  chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
+  chown 400 /var/lib/rabbitmq/.erlang.cookie
+  
+  rabbitmq-server start				# 启动RabbitMQ服务
+  rabbitmq-server stop				# 停止RabbitMQ服务
+  ```
+
+- 安装Rabbitmq管控台
+
+  ```sh
+  rabbitmq-plugins enable rabbitmq_management
+  ```
+
+## 2.3 RabbitMQ管控台
 
 # 第三章 RabbitMQ基础
 
@@ -300,6 +400,17 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
 
 
 # 第四章 RabbitMQ用户组管理
+
+## 4.1 RabbitMQ用户
+
+RabbitMQ默认提供的guest用户只允许本机登陆需要在命令行添加用户
+
+```sh
+rabbitmqctl add_user <用户名> <密码>			# 添加用户
+rabbitmqctl delete_user <用户名>			 # 删除用户
+rabbitmqctl change_password  <用户名> <密码>	
+rabbitmqctl set_user_tags root administrator
+```
 
 
 
