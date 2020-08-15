@@ -23,9 +23,9 @@
 
 ## 1.2 业界主流的消息中间件
 
-### <font size=4 color=blue> ▲ ActiveMQ</font>
+### <font size=4 color=blue> 1、ActiveMQ</font>
 
-ActiveMQ是Apache出品的，最流行的能力，强劲的开源消息总线，并且他完全支持Java的JM规S范。丰富的API，多种集群构建模式使得它成为业界老牌的消息中间件，在中小型企业应用广泛。但是相比于kafka，rabbitmq等MQ来说，性能太弱，**在如今的高并发，大数据处理的场景下显得力不从心**，经常会出现一些小问题，消息延迟，堆积，堵塞等，不过其多种集群架构是优势。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ActiveMQ是Apache出品的，最流行的能力，强劲的开源消息总线，并且他完全支持Java的JM规S范。丰富的API，多种集群构建模式使得它成为业界老牌的消息中间件，在中小型企业应用广泛。但是相比于kafka，rabbitmq等MQ来说，性能太弱，**在如今的高并发，大数据处理的场景下显得力不从心**，经常会出现一些小问题，消息延迟，堆积，堵塞等，不过其多种集群架构是优势。
 
 <img src='./imgs/01_activemq架构'/>
 
@@ -35,25 +35,25 @@ ActiveMQ是Apache出品的，最流行的能力，强劲的开源消息总线，
 
 2. network模式就相当于两组master-slave组合在一起。
 
-### <font size=4 color=blue> ▲ Kafka</font>
+### <font size=4 color=blue> 2、Kafka</font>
 
-kafka是linkedin开源的分布式发布-订阅消息系统，目前归属于Apache的顶级项目。主要特点是基于pull模式来处理消息消费，**追求高吞吐量**，一开始的目的是日志的收集和传输。0.8版本开始支持复制，**不支持事务，对消息的丢失，重复，错误没有严格要求** 适用于产生大量数据的互联网服务的数据收集业务。在廉价的服务器上都能有很高的性能，这个主要是基于操作系统底层的pagecache，不用内存胜似使用内存。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kafka是linkedin开源的分布式发布-订阅消息系统，目前归属于Apache的顶级项目。主要特点是基于pull模式来处理消息消费，**追求高吞吐量**，一开始的目的是日志的收集和传输。0.8版本开始支持复制，**不支持事务，对消息的丢失，重复，错误没有严格要求** 适用于产生大量数据的互联网服务的数据收集业务。在廉价的服务器上都能有很高的性能，这个主要是基于操作系统底层的pagecache，不用内存胜似使用内存。
 
 <img src='./imgs/02_kafka架构'/>
 
-Kafka集群也是采用zk进行集群，当一个数据存放在一个节点中，会通过relicate同步到其他节点，所以我们不需要更多的关注kafka有可能丢失消息，因为其他节点会有这份数据，除非你这个地区的kafka都挂了。可靠性高的场景不适用。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kafka集群也是采用zk进行集群，当一个数据存放在一个节点中，会通过relicate同步到其他节点，所以我们不需要更多的关注kafka有可能丢失消息，因为其他节点会有这份数据，除非你这个地区的kafka都挂了。可靠性高的场景不适用。
 
-### <font size=4 color=blue> ▲ RocketMQ</font>
+### <font size=4 color=blue>3、RocketMQ</font>
 
-RocketMQ是阿里开源的，目前是也是Apache的顶级项目，纯Java开发，**具有高吞吐量，高可用，适合大规模分布式系统应用的特点**。其思路起源于kafka，它对消息的可靠传输以及事务性做了优化，目前在阿里被广泛应用于交易/充值/流计算/消息推送/日志流式处理/Binglog分发等场景。不过其维护是一个痛点。不过它能保证消息的顺序性，集群模式也丰富，在双十一等高并发场景承受上亿访问，三大指标都很好，但是它的**商业版要收费！！！**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RocketMQ是阿里开源的，目前是也是Apache的顶级项目，纯Java开发，**具有高吞吐量，高可用，适合大规模分布式系统应用的特点**。其思路起源于kafka，它对消息的可靠传输以及事务性做了优化，目前在阿里被广泛应用于交易/充值/流计算/消息推送/日志流式处理/Binglog分发等场景。不过其维护是一个痛点。不过它能保证消息的顺序性，集群模式也丰富，在双十一等高并发场景承受上亿访问，三大指标都很好，但是它的**商业版要收费！！！**
 
 <img src='./imgs/03_rocketmq架构'/>
 
 RocketMQ集群它刚开始也是依赖zk做集群的，但是觉得太慢就自己开发了Name Server。
 
-### <font size=4 color=blue> ▲ RabbitMQ</font>
+### <font size=4 color=blue> 4、RabbitMQ</font>
 
-RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协议来实现。AMQP的主要特征是面向消息/队列/路由(包括点对点的发布/订阅)可靠性，安全。AMQP协议更多用在企业系统内，**对数据一致性/稳定性和可靠性要求很高的场景，对性能和吞吐量的要求还在其次**。rabbitMQ的可靠性很高，性能比不上kafka，但是也很高了，集群模式也有多种。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协议来实现。AMQP的主要特征是面向消息/队列/路由(包括点对点的发布/订阅)可靠性，安全。AMQP协议更多用在企业系统内，**对数据一致性/稳定性和可靠性要求很高的场景，对性能和吞吐量的要求还在其次**。rabbitMQ的可靠性很高，性能比不上kafka，但是也很高了，集群模式也有多种。
 
 <img src='./imgs/04_rabbitmq架构'/>
 
@@ -63,25 +63,25 @@ RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协�
 
 ### <font size=4 color=blue> 1、Windows系统安装 </font>
 
-1. <a href='https://www.erlang.org/downloads'>下载erlang官网</a>，RabbitMQ是基于relang语言开发，运行需要erlang环境支持
+- <a href='https://www.erlang.org/downloads'>下载erlang官网</a>，RabbitMQ是基于relang语言开发，运行需要erlang环境支持
 
-2. 安装erlang并配置windows系统环境变量：ERLANG_HOME
+- 安装erlang并配置windows系统环境变量：ERLANG_HOME
 
-3. 下载RabbitMQ：<a herf='http://www.rabbitmq.com/download.html'>官网</a>、<a href='https://www.newbe.pro/Mirrors/Mirrors-RabbitMQ/'>国内镜像地址</a>
+- 下载RabbitMQ：<a herf='http://www.rabbitmq.com/download.html'>官网</a>、<a href='https://www.newbe.pro/Mirrors/Mirrors-RabbitMQ/'>国内镜像地址</a>
 
-4. 安装RabbitMQ
+- 安装RabbitMQ
 
-5. 安装RabbitMQ工作台
+- 安装RabbitMQ工作台
 
-   ```sh
-   rabbitmq-plugins enable rabbitmq_management
-   ```
+  ```sh
+  rabbitmq-plugins enable rabbitmq_management
+  ```
 
-6. 启动RabbitMQ：测试访问RabbitMQ工作台 - http://localhost:15672
+- 启动RabbitMQ：测试访问RabbitMQ工作台 - http://localhost:15672
 
-7. 关闭RabbitMQ
+- 关闭RabbitMQ
 
-### <font size=4 color=blue> 2、Linux系统安装 </font>
+### <font size=4 color=blue>2、Linux系统安装 </font>
 
 - <a href='https://www.erlang.org/downloads'>下载erlang官网</a>，RabbitMQ是基于relang语言开发，运行需要erlang环境支持
 
@@ -173,9 +173,32 @@ RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协�
 
 ### <font size=4 color=blue> 1、Windows RabbitMQ命令行</font>
 
+- rabbitmqctl.bat
+- rabbitmq-defaults.bat
+- rabbitmq-diagnostics.bat
+- rabbitmq-echopid.bat
+- rabbitmq-env.bat
+- rabbitmq-plugins.bat
+- rabbitmq-queues.bat
+- rabbitmq-server.bat
+- rabbitmq-service.bat
+- rabbitmq-upgrade.bat
+
 ### <font size=4 color=blue>2、Linux RabbitMQ命令行</font>
 
-- 启动与关闭服务
+- rabbitmqctl
+
+- rabbitmq-diagnostics
+
+- rabbitmq-plugins
+
+  ```sh
+  rabbitmq-plugins enable rabbitmq_management
+  ```
+  
+- rabbitmq-queues
+
+- rabbitmq-server
 
   ```sh
   chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
@@ -185,19 +208,29 @@ RabbitMQ是使用erlang语言开发的开源消息队列系统，基于AMQP协�
   rabbitmq-server stop				# 停止RabbitMQ服务
   ```
 
-- 安装Rabbitmq管控台
-
-  ```sh
-  rabbitmq-plugins enable rabbitmq_management
-  ```
+- rabbitmq-upgrade
 
 ## 2.3 RabbitMQ管控台
 
+### <font size=4 color=blue> 1、Overview（概览）</font>
+
+### <font size=4 color=blue> 2、Connections（连接）</font>
+
+### <font size=4 color=blue> 3、Channels（通道）</font>
+
+### <font size=4 color=blue> 4、Exchanges（交换机）</font>
+
+### <font size=4 color=blue> 5、Queues（队列）</font>
+
+### <font size=4 color=blue> 6、Admin（用户）</font>
+
+- vhost：是RabbitMQ的命令空间，类似MySQL每次可以连接到的数据库，消息对象在指定命名空间之下
+
 # 第三章 RabbitMQ基础
 
-## 3.1 AMQP协议
+## 3.1 AMQP协议与RabbitMQ
 
-AMQP（Adviced Message Queuing Protocol）：是具有现代特征的二进制协议。是一个提供统一消息服务的应用层标准高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AMQP（Adviced Message Queuing Protocol）：是具有现代特征的二进制协议。是一个提供统一消息服务的应用层标准高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。生产者（producer）创建消息，然后发布到队列消费者（consumer）订阅某个队列，消息由发布者发布到队列后，对象将消息发送给监听的消费者，AMQP协议模型与基本说明：
 
 <img src='/imgs/05_AMQP协议模型'/>
 
@@ -207,7 +240,7 @@ AMQP（Adviced Message Queuing Protocol）：是具有现代特征的二进制�
 
 ## 3.2 RabbitMQ介绍
 
-RabbitMQ是一个开源的消息代理和队列服务器，用来通过普通协议在完全不同的应用之间数据共享，RabbitMQ是基于Erlang语言编写的（安装RabbitMQ需要提前准备Erlang坏境），RabbitMQ是基于AMQP协议的。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RabbitMQ是一个开源的消息代理和队列服务器，用来通过普通协议在完全不同的应用之间数据共享，RabbitMQ是基于Erlang语言编写的（安装RabbitMQ需要提前准备Erlang坏境），RabbitMQ是基于AMQP协议的。RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模式，是的RabbitMQ在Broker直接进行数据交互的的性能是非常优秀的；Erlang的特点是原生Socket有着一样的延迟；
 
 - RabbitMQ特点：
   1.  开源、性能优秀、稳定性保障
@@ -216,7 +249,7 @@ RabbitMQ是一个开源的消息代理和队列服务器，用来通过普通协
   4. 集群模式丰富、表达式配置（配置集群策略）：HA模式、镜像队列模式；
   5. 保证数据不丢失的前提做到可靠性、可用性；
 
-RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模式，是的RabbitMQ在Broker直接进行数据交互的的性能是非常优秀的；Erlang的特点是原生Socket一样的延迟；
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RabbitMQ的工作机制：一个RabbitMQ服务器称为Server或Broker，一个服务器中有若干个Virtual host，一个Virtual Host中有若干个Exchange（交换机）和若干个Queue（消息队列），Exchange与Queue有绑定规则；消息生成者将消息发送到指定Exchange，由Exchange将消息保存到绑定的Queue中，生产者通过链接（若干个Channel）到消息服务器上，通道会连接到对应的Queue中，监听Queue中的数据；
 
 ## 3.3 RabbitMQ核心概念
 
@@ -230,13 +263,14 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
 
 ### <font size=4 color=blue> ▲ Channel</font>
 
-- 网络信道，几乎所有的操作都在Channel中进行，Channel是进行消息读写的通道。客户端可以建立多个Channel，每个Channel代表一个会话任务。
+- 信道，多路复用连接中的一条独立的双向数据通道。信道是建立在真实的TCP连接内的虚拟连接。AMQP命令是通过信道发送出去的，不管发布消息、订阅队列、接收消息，这些动作都是通过信道完成的。几乎所有的操作都在Channel中进行，Channel是进行消息读写的通道。客户端可以建立多个Channel，每个Channel代表一个会话任务。
+- 因为对于操作系统来说建立和销毁TCP都是分成昂贵的开箱，所以引入信道的概念，以复用一条TCP链接；
 
 ### <font size=4 color=blue> ▲ Message</font>
 
-- 消息，服务器之间和应用程序之间传输的数据：由Properties和Body组成；
-  - Properties可以对消息进行修饰，比如消息的优先级、延迟等高级特性；
-  - Body：消息的主体内容；
+- 消息是不具体的，它由消息头和消息体组成。
+  - 消息体（body）是不透明的：消息的主体内容；
+  - 消息头则由一系列可选属性（Properties）组成：这些属性包括routing-key（路由键）、priority（相对其他消息的优先权）、delivery-node（持久存储方式）等等
 
 ### <font size=4 color=blue> ▲ Virtual Host</font>
 
@@ -244,7 +278,7 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
 
 ### <font size=4 color=blue> ▲ Exchange</font>
 
-1. **交换机作用**：接受消息，根据路由键转发消息到绑定的队列
+1. **交换机作用**：用来接受生产者发布的消息，并将这些消息路由转发消息到绑定的队列；在AMQP中消息路由的概念中新增了Exchange和Binding的角色，消息最终达到对象并被消费者接受，而Binding决定交换机的消息应该发送到哪个队列；
 
    <img src='./imgs/08_exchange路由'/>
 
@@ -252,7 +286,7 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
 
    - Name：交互机名称，同一个virtual host里面的Name不能重复；不同的virtual host是可以重复的
 
-   - Type：交换机类型
+   - Type：交换机类型，共四中类型direct、fanout、topic、<del title='headers匹配消息的header而不用路由键,并且headers交换器和direct交换器完全一致,而且性能差很多,几乎不再使用了'>headers</del>
 
      - **Default Excante**：名字是空字符串
 
@@ -260,22 +294,22 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
        > 2. 任何发送到该Exchange的消息都会被转发到Routing key和queue名字相同的Queue中
        > 3. 如果vhost中不存在Routing key中指定的队列名，则该消息会被抛弃
 
-     - **Direct Exchange**：将消息中的Routing key与该Exchange关联的所有Binding中的Routing key进行比较，如果相等，则发送到该Binding对应的Queue中
+     - **Direct Exchange**：一对一：消息中的路由键（routing key）如果和Binding中的binding key一致，交换器就将消息发送到对应的队列中；
 
        > 1. 一个Exchange可以Binding一个或多个Queue
        > 2. 绑定可以指定Routing key， Binding的多个Queue可以使用相同的Routing key，也可以使用不同的Routing key
 
        <img src='./imgs/09_direct'/>
 
-     - **Topic Exchange**：将消息中的Routing key与该Exchange关联的所有Binding中的Routing key进行比较，如果匹配上了（匹配上规则），则发送到该Binding对应的Queue中
+     - **Topic Exchange**：Exchange和Queue的binding key可以指定通配符，如果发送者的发送消息中的Routing key与该Exchange关联的所有Binding中的Binding key进行比较，如果匹配上了（匹配上规则），则发送到该Binding对应的Queue中；如果监听在发送之后也会丢失消息；
 
+       > - Binding key由多个单词组成，单词和单词之间需要用 `.` 隔开
        > - `*`匹配一个单词，只能写在 `.` 号左右，且不能挨着字符
        > - `#`匹配0个或多个字符，只能写在 `.` 号左右，且不能挨着字符
-       > - 单词和单词之间需要用 `.` 隔开
 
-     - **Fanout Exchange**：直接将消息转发到所有Binding的对应的Queue中这种Exchange在路由转发的时候，忽略Routing key这种Exchange效率最高
+     - **Fanout Exchange**：分发（广播）模式：交换机直接将消息转发到所有Binding的对应的Queue中；这种Exchange在路由转发的时候，忽略Routing key这种Exchange效率最高；消费者必须在发送者发送前监听队列，如果消息先发送了，消费者会错过这条消息；这种模式是交换机适合使用在以下消息数据不重要的场景，消费者受到或收不到都不影响业务的使用场景；
 
-     - **Headers Exchange**：将消息中的headers与该Exchange关联的所有Binding中的参数进行匹配，如果匹配上了，则发送到该Binding对应的Queue中
+     - **<del>Headers Exchange</del>**：将消息中的headers与该Exchange关联的所有Binding中的参数进行匹配，如果匹配上了，则发送到该Binding对应的Queue中
 
    - Durability：交换机是否需要持久化
 
@@ -294,7 +328,7 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
 
 ### <font size=4 color=blue> ▲ Binding</font>
 
-- Exchange和Queue的虚拟连接，binding中可以包含routing key
+- y用户Exchange和Queue的虚拟连接，一个绑定就是基于路由键将交换器和消息队列连接起来的路由规则，可以将交换器理解成一个由绑定构成的路由表：从交换器映射到对应的消息队列；
 
 ### <font size=4 color=blue> ▲ Routing Key</font>
 
@@ -302,7 +336,19 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
 
 ### <font size=4 color=blue> ▲ Queue</font>
 
-- 消息队列，保存消息，消费者消费消息主要是通过连接到交换机，根据Queue的路由规则消费消息
+- 消息队列，保存消息知道发送给消费者。他是消息的容器，一个消息可以投入到一个或多个队列。消息一直在队列里面，等待消费消连接将队列中消息取走；
+
+### <font size=4 color=blue> ▲ Publisher（生产者）</font>
+
+- 消息的生产者：向消息服务器中的交换机发布消息的客户端应用程序
+
+### <font size=4 color=blue> ▲ Consumer（消费者）</font>
+
+- 消息消费者： 表示一个从消息队列中取得消息的客户端应用程序
+
+### <font size=4 color=blue> ▲ Virtual Host（虚拟主机）</font>
+
+- 虚拟主机是主机内的一批交换机、消息队列和相关对象是共享相同的身份认证和加密环境的独立服务器；每一个vhost本质上就是一个迷你版的RabbitMQ服务器，拥有自己的队列，交换机，绑定和权限机制，vhost是AMQP概念的基础，必须在链接时指定（好比链接MySQL必须指定数据库），RabbitMQ默认的vhost是/。
 
 ## 3.4 RabbitMQ的整体架构
 
@@ -395,7 +441,7 @@ RabbitMQ高性能的原因：Erlang语言最初在于交换机领域的架构模
      > - **noWait**：是否等待服务器返回
      > - **args**：相关参数
 
-## 3.7 RabbitMQ继承SpringBoot
+## 3.7 SpringBoot集成RabbitMQ
 
 
 
@@ -412,7 +458,37 @@ rabbitmqctl change_password  <用户名> <密码>
 rabbitmqctl set_user_tags root administrator
 ```
 
+## 4.2 角色的功能说明
 
+- 设置权限命令
+
+  ```sh
+  设置用户角色的命令为：
+  rabbitmqctl  set_user_tags  User  Tag
+  
+  同一用户设置多个角色，例如
+  rabbitmqctl  set_user_tags  hncscwc  monitoring  policymaker
+  
+  设置用户权限
+  rabbitmqctl  set_permissions  -p  VHostPath  User  ConfP  WriteP  ReadP
+  
+  查看(指定hostpath)所有用户的权限信息
+  rabbitmqctl  list_permissions  [-p  VHostPath]
+  
+  查看指定用户的权限信息
+  rabbitmqctl  list_user_permissions  User
+  
+  除用户的权限信息
+  rabbitmqctl  clear_permissions  [-p VHostPath]  User
+  
+  ```
+
+- 用户角色可分为五类，超级管理员, 监控者, 策略制定者, 普通管理者以及其他
+  - 超级管理员(administrator)可登陆管理控制台(启用management plugin的情况下)，可查看所有的信息，并且可以对用户，策略(policy)进行操作。
+  - 监控者(monitoring)可登陆管理控制台(启用management plugin的情况下)，同时可以查看rabbitmq节点的相关信息(进程数，内存使用情况，磁盘使用情况等)
+  - 策略制定者(policymaker)可登陆管理控制台(启用management plugin的情况下), 同时可以对policy进行管理。但无法查看节点的相关信息(上图红框标识的部分)。
+  - 普通管理者(management)仅可登陆管理控制台(启用management plugin的情况下)，无法看到节点信息，也无法对策略进行管理。
+  -  其他法登陆管理控制台，通常就是普通的生产者和消费者。
 
 # 第五章 RabbitMQ集群架构
 
