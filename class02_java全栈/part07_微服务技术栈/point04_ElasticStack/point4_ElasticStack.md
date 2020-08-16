@@ -35,30 +35,163 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
 版本说明：ElasticSearch发展非常快，在5.0以前ELK各个版本都不统一，所以在ELK5.0以后Elasticstatic技术栈的版本都统一为一个版本号
 
+- ElasticSearch下载地址：https://www.elastic.co/cn/downloads/elasticsearch
+
+- Kibana下载地址：https://www.elastic.co/cn/downloads/kibana
+- LogStash下载地址：
+- Beats下载地址：
+
 ## 2.2 ElasticSearch安装
 
 ### 1. Linux系统安装
 
-- 创建ElasticSearch用户
+- 删除CentOS中预安装的Java
 
   ```sh
-  user add elsearch
+  rpm -qa | grep java
+  rpm -e --nodeps xxx
   ```
 
-- 解压安装包到安装目录
+- 安装ElasticSearch对应的JDK
 
   ```sh
+  export JAVA_HOME=/opt/jdk
+  export PATH=$JAVA_HOME/bin:$PATH
+  export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar 
+  ```
+
+- 创建ElasticSearch用户：因为ElasticSearch默认不支持root用于运行，所以ElasticSearch需要单独创建用户
+
+  ```sh
+  useradd elsearch
+  ```
+
+- 新建elk安装目录并上传安装包，并修改elk目录所属
+
+  ```sh
+  cd /opt
+  mkdir search
+  chown elsearch:elsearch search/ -R
+  ```
+
+- 切换到elsearch用户完成ElasticSearch的安装
+
+  ```sh
+  su - elsearch
+  ```
+
+- 将安装包解压到/usr/local/elk/search目录中，解压后需要调整安装包中文件目录
+
+  ```sh
+  tar -xzvf xxx.tar.gz -C search/
+  ```
+
+- ElasticSearch配置文件详解：/config/
+
+  1. elasticsearch.yml
   
-  ```
-
-- 修改配置文件
+     ```yml
+   # ======================== Elasticsearch Configuration =========================
+     # https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+     # ---------------------------------- Cluster -----------------------------------
+     # 集群名称
+     #cluster.name: my-application
+     # ------------------------------------ Node ------------------------------------
+     # 节点名称:
+     #node.name: node-1
+     # 节点自定义属性:
+     #node.attr.rack: r1
+     # ----------------------------------- Paths ------------------------------------
+     # 存储数据的目录,多个路径用逗号分隔:
+     #path.data: /path/to/data
+     # 日志文件目录:
+     #path.logs: /path/to/logs
+     # ----------------------------------- Memory -----------------------------------
+     # 启动时是否锁定内存:
+     #bootstrap.memory_lock: true
+     # ---------------------------------- Network -----------------------------------
+     # 将绑定地址设置为特定的IP (IPv4或IPv6) 0 任意端口可以访问
+     network.host: 0.0.0.0
+     # 为HTTP设置自定义端口:
+     http.port: 9200
+     # --------------------------------- Discovery ----------------------------------
+     #当这个节点启动时，传递一个初始的主机列表来执行发现: 默认的主机列表是["127.0.0.1"，"[::1]"]
+     #discovery.seed_hosts: ["host1", "host2"]
+     # 使用主节点的初始集合引导集群:
+     #cluster.initial_master_nodes: ["node-1", "node-2"]
+     # ---------------------------------- Gateway -----------------------------------
+     # 在整个集群重新启动后阻塞初始恢复，直到N个节点启动:
+     #gateway.recover_after_nodes: 3
+     # ---------------------------------- Various -----------------------------------
+     # 删除索引时要求显式名称:
+     #action.destructive_requires_name: true
+     ```
+  
+  2. jvm.options：ElasticSearch中的host配置不是localhost或127.0.0.1会被认为是生产环境，会多ElasticSearch启动要求比较高；
+  
+     ```properties
+     # Xms 表示总的堆空间的初始大小
+     # Xmx 表示堆空间的最大大小
+     -Xms128m
+     -Xmx128m
+     ```
+  
+  3. log4j2.properties
+  
+  4. role_mapping.yml
+  
+  5. roles.yml
+  
+- 配置系统的内存一个进程在VMAS（虚拟内存）创建内存映射的最大数量：**需要使用root用户进行操作**
 
   ```sh
-  vim conf/elasticsearch.yml
+  vim /etc/sysctl.conf
+  vm.max_map_count=655360
+  sysctl -p # 刷新使配置生效
   ```
 
-  ```yaml
-  network.host: 0.0.0.0 # 任意IP都可访问
+- root用户开启9200端口
+
+  ```sh
+  firewall-cmd --zone=public --add-port=9200/tcp --permanent 
+  firewall-cmd --zone=public --add-port=9200/tcp --permanent 
+  ```
+
+- elsearch用户启动ElasticSearch服务
+
+  ```sh
+  cd /bin
+   ./elasticsearch		# 前台启动
+   ./elasticsearch -d  	# 后台启动
+  ```
+
+- 启动日志：修改系统级的属性，重启服务器
+
+  ```txt
+  [1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+  [2]: max number of threads [3756] for user [elsearch] is too low, increase to at least [4096]
+  [3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured
+  ```
+
+- 解决方案
+
+  ```sh
+  # ① 最大文件描述不足以满足ELasticSearch
+  vim /etc/security/limits.conf
+  # >>>>追加 * 号表示所有用户
+  * soft nofile 65536
+  * hard nofile 131072
+  * soft nproc 2048
+  * hard nproc 4096
+  
+  
+  # ② 默认进程中的线程数2014太低 最少是4096
+  vim /etc/security/limits.d/20-nproc.conf
+  # >>>>修改
+  *          soft    nproc     4096
+  
+  # ③ 修改elasticsearch.yml
+  cluster.initial_master_nodes: ["node-1"] #这里的node-1为node-name配置的值
   ```
 
 ### 2. Windows系统安装
