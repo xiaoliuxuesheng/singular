@@ -1,149 +1,154 @@
-# 第一章 ElasticStack简介
+# 第一章 ElasticStack
 
-## 1.1 ES与ELK
+## 1.1 ELK
 
-- Elasticsearch是使用Java语言编写的并且基于Lucene编写的搜索引擎框架，他提供了分布式全文搜索功能，提供了一个统一的基于RestFul风格的WEB接口
-  - Lucene：本身就是一个搜索引擎的底层；
-  - Slor：查询死数据时候，速度相对ES而言Slor更快一些，如果数据实时改变的，Slor速度会受很大影响；ES集群更容易搭建；
-  - 分布式：主要是体现在横向扩展能力；
-- ELK是Elasticsearch、Logstash、Kibana三大开源框架首字母大写简称，现在对ELK扩展后市面上也被成为Elastic Stack。
+ELK是Elasticsearch、Kibana、Logstash三个技术的组合，组合使用可以解决大部分软件开发中的日志分析与处理工作，能够安全可靠地获取任何来源、任何格式的数据，并且能够实时地对数据进行搜索、分析和可视化；其中，Logstash负责数据的收集，Kibana负责结果数据的可视化展现，Elasticsearch作为核心部分用于数据的分布式存储以及索引。
 
-## 1.2 ElasticStack简介
+## 1.2 ElasticStack
 
-[![GfcENQ.png](https://s1.ax1x.com/2020/04/08/GfcENQ.png)](https://imgchr.com/i/GfcENQ)
+ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术成员，所以ELK重新改名为ElasticStack；ElasticStack的工作流程:
 
-- 对ELK扩展后对Elastic技术栈的统称，主要包括 Elasticsearch、Kibana、Logstash 以及 Beats 等，能够安全可靠地获取任何来源、任何格式的数据，并且能够实时地对数据进行搜索、分析和可视化。其中，Logstash和Beats负责数据的收集，Kibana负责结果数据的可视化展现，作为核心部分用于数据的分布式存储以及索引。
+1. Beats将采集的各种数据发送到ElasticSearch或交给LogStash进行数据处理
+2. Logstash的主要作用是做数据处理工作
+3. ElasticSearch主要是保存数据
+4. 最终Kibana连接ElasticSearch将数据可视化展示
 
-## 1.3 ES技术栈概要
+## 1.3 ElasticSearch技术栈简介
 
-1. Elasticsearch：是基于Java的分布式搜索引擎，主要特点是：分布式，零配置，自动发现，索引自动分片，索引副本机制，RESTful风格接口，多数据源，自动搜索负载等。
-2. logstash：基于Java，是一个开源的用于收集、分析和储存日志的工具
-3. Kibana：基于Node，Kibna可以为LogStash和ElasticSearch提供友好的web界面，可以汇总，分析，搜索重要数据
-4. Beats是elastic公司开源的一款采集系统监控数据的agent，是在被监控的服务器上以客户端的形式运行的数据收集器统称，可以直接把数据发送给ElasticSearch或者通过LogStash发送给ElasticSearch，然后进行后续的数据分析活动。Beat主要的组成：
-   - Packetbeat：是一个网络数据包分析器，用于监控、收集网络流量信息，Packetbeat嗅探服务器直接的流量，解析应用层协议，并关联到消息的处理，支持ICMP（IPV4 and IPV6）、DNS、HTTP、MySql、Redis、PostgrpreSQL、MongoDB等协议
-   - Filebeat：用于监控收集服务器日志文件，以取代logstash forwarder
-   - Metricbeat：可定期获取外部系统监控指标信息，其可以监控收集Apache、HAProxy、MongoDB、MySql、Nginx、Redis、PostgrpreSQL、Redis、System、ZooKeeper等服务
-   - Winlogbeat：用于监控收集Windows的日志信息。
+<img src='http://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/TmEUgtj9EK6.7V8ajmQrEF4zy*CieSN8Uhj8zeDpSgTlBYc5LHj1RyWWS.gDe9xDGXNAQ0cW8YvecBKZpC7ms8MzIKOkg3ybCpIgajVKeH8!/b&bo=LwUlAy8FJQMDORw!&rf=viewer_4&t=5'/>
 
-# 第二章 ElasticSearch
+1. **ElasticSearch**：是使用Java语言编写的并且基于Lucene编写的搜索引擎框架，主要特点是：分布式，零配置，自动发现，索引自动分片，索引副本机制，RESTful风格接口，多数据源，自动搜索负载等。核心技术是倒排索引：在ElasticSrearch中数据存储在索引中，ElasticSearch会根据索引中的数据进行分词保存在分词库中；当需要检索数据时候，首先会根据检索关键字在分词库中检索出索引ID，再根据检索的索引ID去索引中直接查找对应的数据；
+   - Lucene：本身就是一个搜索引擎的底层；
+   - Slor：查询死数据时候，速度相对ES而言Slor更快一些，如果数据实时改变的，Slor速度会受很大影响；ES集群更容易搭建；
+   - 分布式：主要是体现在横向扩展能力；
+2. **LogStash**：基于Java，是一个开源的用于收集、分析和储存日志的工具
+3. **Kibana**：基于Node，Kibna可以为LogStash和ElasticSearch提供友好的web界面，可以汇总，分析，搜索重要数据
+4. **Beats**：是elastic公司开源的一款采集系统监控数据的agent，是在被监控的服务器上以客户端的形式运行的数据收集器统称，可以直接把数据发送给ElasticSearch或者通过LogStash发送给ElasticSearch，然后进行后续的数据分析活动。Beat主要的组成：
+   - **Packetbeat**：是一个网络数据包分析器，用于监控、收集网络流量信息，Packetbeat嗅探服务器直接的流量，解析应用层协议，并关联到消息的处理，支持ICMP（IPV4 and IPV6）、DNS、HTTP、MySql、Redis、PostgrpreSQL、MongoDB等协议
+   - **Filebeat**：用于监控收集服务器日志文件，以取代logstash forwarder
+   - **Metricbeat**：可定期获取外部系统监控指标信息，其可以监控收集Apache、HAProxy、MongoDB、MySql、Nginx、Redis、PostgrpreSQL、Redis、System、ZooKeeper等服务
+   - **Winlogbeat**：用于监控收集Windows的日志信息。
 
-## 2.1 简介
+# 第二章 ElasticSearch安装
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elasticsearch 是一个分布式、RESTful 风格的搜索和数据分析引擎，能够解决不断涌现出的各种用例。 作为 Elastic Stack 的核心，它集中存储您的数据，帮助您发现意料之中以及意料之外的情况。
+## 2.1 ElasticSearch版本说明
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;倒排索引：在ElasticSrearch中数据存储在索引中，ElasticSearch会根据索引中的数据进行分词保存在分词库中；当需要检索数据时候，首先会根据检索关键字在分词库中检索出索引ID，再根据检索的索引ID去索引中直接查找对应的数据；
+版本说明：ElasticSearch发展非常快，在5.0以前ELK各个版本都不统一，所以在ELK5.0以后Elasticstatic技术栈的版本都统一为一个版本号
 
-## 2.2 安装
+## 2.2 ElasticSearch安装
 
-​		版本说明：ElasticSearch发展非常快，在5.0以前ELK各个版本都不统一，所以在ELK5.0以后Elasticstatic技术栈的版本都统一为一个版本号
+### 1. Linux系统安装
 
-★ 单机版安装：ElasticSearch不支持root用户运行
+- 创建ElasticSearch用户
 
-1. 创建ElasticSearch用户
+  ```sh
+  user add elsearch
+  ```
 
-   ```sh
-   user add elsearch
-   ```
+- 解压安装包到安装目录
 
-2. 解压安装包到安装目录
+  ```sh
+  
+  ```
 
-   ```sh
-   
-   ```
+- 修改配置文件
 
-3. 修改配置文件
+  ```sh
+  vim conf/elasticsearch.yml
+  ```
 
-   ```sh
-   vim conf/elasticsearch.yml
-   ```
+  ```yaml
+  network.host: 0.0.0.0 # 任意IP都可访问
+  ```
 
-   ```yaml
-   network.host: 0.0.0.0 # 任意IP都可访问
-   ```
+### 2. Windows系统安装
 
-★ Linux安装
+### 3. Docker安装
 
+- 设置
 
+  ```sh
+  vim etc/sysctl.conf
+  vm.max_map_count=131072
+  ```
 
-★ Windows安装
+- 下载ElasticSearch
 
+  ```sh
+  docker pull elasticsearch:7.6.0
+  ```
 
+- 运行镜像启动容器
 
-★ Docker安装
+  ```sh
+  mkdir -p /docker/elstatic/search/plugins
+  mkdir -p /docker/elstatic/search/data
+  ```
 
-1. 设置
+  ```sh
+  chmod 777 /docker/elstatic/search/data
+  ```
 
-   ```sh
-   vim etc/sysctl.conf
-   vm.max_map_count=131072
-   
-   ```
+  ```sh
+  docker run -p 9200:9200 -p 9300:9300 --name elasticsearch \
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
+  -e "discovery.type=single-node" \
+  -e "cluster.name=elasticsearch" \
+  -v /docker/elstatic/search/plugins:/usr/share/elasticsearch/plugins \
+  -v /docker/elstatic/search/data:/usr/share/elasticsearch/data \
+  -d elasticsearch:7.6.0
+  
+  
+  docker run -p 9200:9200 -p 9300:9300 --name elasticsearch -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "discovery.type=single-node" -e "cluster.name=elasticsearch" -v D:/panda_docker_files/search/plugins:/usr/share/elasticsearch/plugins -v D:/panda_docker_files/search/data:/usr/share/elasticsearch/data -d elasticsearch:7.6.0
+  ```
 
-2. 下载ElasticSearch
+- 测试安装：http://120.27.22.124:9200/
 
-   ```sh
-   docker pull elasticsearch:7.6.0
-   ```
+- 安装：elstaticstarch-head
 
-3. 运行镜像启动容器
+  - docker：需要处理服务跨域访问配置
 
-   ```sh
-   mkdir -p /docker/elstatic/search/plugins
-   mkdir -p /docker/elstatic/search/data
-   ```
+    ```sh
+    docker pull mobz/elasticsearch-head:5
+    
+    docker run -d --name es_head -p 9100:9100 mobz/elasticsearch-head:5
+    ```
 
-   ```sh
-   chmod 777 /docker/elstatic/search/data
-   ```
+  - Github：Chrome插件的使用无需处理跨域
 
-   ```sh
-   docker run -p 9200:9200 -p 9300:9300 --name elasticsearch \
-   -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
-   -e "discovery.type=single-node" \
-   -e "cluster.name=elasticsearch" \
-   -v /docker/elstatic/search/plugins:/usr/share/elasticsearch/plugins \
-   -v /docker/elstatic/search/data:/usr/share/elasticsearch/data \
-   -d elasticsearch:7.6.0
-   
-   
-   docker run -p 9200:9200 -p 9300:9300 --name elasticsearch -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "discovery.type=single-node" -e "cluster.name=elasticsearch" -v D:/panda_docker_files/search/plugins:/usr/share/elasticsearch/plugins -v D:/panda_docker_files/search/data:/usr/share/elasticsearch/data -d elasticsearch:7.6.0
-   ```
+    ```sh
+    git clone https://github.com/mobz/elasticsearch-head.git
+    ```
 
-4. 测试安装：http://120.27.22.124:9200/
+## 2.3 IK分词器
 
-5. 安装：elstaticstarch-head
+## 2.4 Kibana安装
 
-   - docker：需要处理服务跨域访问配置
+## 2.5 LogStash安装
 
-     ```sh
-     docker pull mobz/elasticsearch-head:5
-     
-     docker run -d --name es_head -p 9100:9100 mobz/elasticsearch-head:5
-     ```
+## 2.6 Beats - 安装
 
-   - Github：Chrome插件的使用无需处理跨域
+# 第三章 ElasticSearch基础
 
-     ```sh
-     git clone https://github.com/mobz/elasticsearch-head.git
-     ```
-
-## 2.3 基本概念说明
-
-> ES服务中可以创建多个索引
->
-> 每一个索引默认被分为5片存储
->
-> 每个分片都会存在至少一个备份分片
->
-> 备份分片默认不会帮助检索数据，当ES压力特别大时候，备份分片才会检索数据
->
-> 备份的分片必须放在不同的服务器中
+## 3.1 ES基本概念
 
 ### 1. 索引
 
 - 索引是ElasticSearch对逻辑数据的存储，所以它可以分为更小的部分
+
 - 可以把索引看成关系型数据库的表，索引的结构是为快速有效的全文检索准备的，特别是它不存储原始值
+
 - ElasticSearch可以把索引存放在一台机器或者分散在多态服务器上，每个索引有一个或多个分片（shard），每个分片可以有多个副本（replica）。
+
+- ES服务中可以创建多个索引
+
+  每一个索引默认被分为5片存储
+
+  每个分片都会存在至少一个备份分片
+
+  备份分片默认不会帮助检索数据，当ES压力特别大时候，备份分片才会检索数据
+
+  备份的分片必须放在不同的服务器中
 
 ### 2. 文档
 
@@ -165,41 +170,35 @@
   - 在ES7.x中一个索引下没有Type
 - 不同的文档类型不能为相同的属性设置不同的类型，例如：同一索引中的所有文档类型中，有一个字段title字段的必须具有相同的类型。
 
-### 5.field
+### 5. field
 
 - 一个文档中包含多个属性，一行数据中的多个列
 
-## 2.4 RESTful接口说明
+  | 类型     |               | 说明                                                 |
+  | -------- | ------------- | ---------------------------------------------------- |
+  | 字符串   | text          | 一般被用于全文检索，可以被分词                       |
+  |          | keyword       | 不可以被分词                                         |
+  | 数值     | long          |                                                      |
+  |          | integer       |                                                      |
+  |          | short         |                                                      |
+  |          | byte          |                                                      |
+  |          | double        |                                                      |
+  |          | float         |                                                      |
+  |          | half_float    |                                                      |
+  |          | scaled_float  | long+比例表示一个浮点数                              |
+  | 时间类   | date          | yyyy-MM-dd HH:mm:ss \| yyyy-MM-dd \| epoch-millis    |
+  | 布尔     | boolean       |                                                      |
+  | 二进制   | binary        | 支持base64的字符串                                   |
+  | 范围类型 | long_range    | 赋值时无需指定具体的内容,只需要指定一个范围,gt \| lt |
+  |          | flaot_range   |                                                      |
+  |          | double_range  |                                                      |
+  |          | integer_range |                                                      |
+  |          | date_range    |                                                      |
+  |          | ip_range      |                                                      |
+  | 经纬度   | geo_point     | 用来存储经纬度                                       |
+  | ip类型   | ip            | IPV4 \| IPV6                                         |
 
-- get请求
-
-  ```http
-  http://ip:端口/index	 				// 查询索引信息
-  http://ip:端口/index/type/dock_id		// 查询指定的文档信息
-  ```
-
-- post请求
-
-  ```http
-  http://ip:端口/index/type/_search			// 查询,请求体包含json参数
-  http://ip:端口/index/type/_update			// 修改,请求体包含json参数
-  ```
-
-- put请求
-
-  ```http
-  http://ip:端口/index					// 创建索引,请求体包含索引信息
-  http://ip:端口/index/type/_mappings	// 代表创建索引时候,指定索引文档存储的属性的信息
-  ```
-
-- delete请求
-
-  ```http
-  http://ip:端口/index					// 删库跑路
-  http://ip:端口/index/type/dock_id		// 删除指定的文档信息
-  ```
-
-### 操作案例
+## 3.2 基础操作  - 索引
 
 1. 新增索引：number_of_shards分片数据；number_of_replicas备份数
 
@@ -225,33 +224,9 @@
    DELETE /person
    ```
 
-4. es中file可以指定的类型
+## 3.3 基础操作 - 文档
 
-   | 类型     |               | 说明                                                 |
-   | -------- | ------------- | ---------------------------------------------------- |
-   | 字符串   | text          | 一般被用于全文检索，可以被分词                       |
-   |          | keyword       | 不可以被分词                                         |
-   | 数值     | long          |                                                      |
-   |          | integer       |                                                      |
-   |          | short         |                                                      |
-   |          | byte          |                                                      |
-   |          | double        |                                                      |
-   |          | float         |                                                      |
-   |          | half_float    |                                                      |
-   |          | scaled_float  | long+比例表示一个浮点数                              |
-   | 时间类   | date          | yyyy-MM-dd HH:mm:ss \| yyyy-MM-dd \| epoch-millis    |
-   | 布尔     | boolean       |                                                      |
-   | 二进制   | binary        | 支持base64的字符串                                   |
-   | 范围类型 | long_range    | 赋值时无需指定具体的内容,只需要指定一个范围,gt \| lt |
-   |          | flaot_range   |                                                      |
-   |          | double_range  |                                                      |
-   |          | integer_range |                                                      |
-   |          | date_range    |                                                      |
-   |          | ip_range      |                                                      |
-   | 经纬度   | geo_point     | 用来存储经纬度                                       |
-   | ip类型   | ip            | IPV4 \| IPV6                                         |
-
-5. 创建索引指定数据结构
+1. 创建索引指定数据结构
 
    ```json
    PUT /book
@@ -283,7 +258,7 @@
    }
    ```
 
-6. 文档操作-新增：文档在es服务中的唯一标识（_index索引   _type类型  _id 主键自动生成）
+2. 文档操作-新增：文档在es服务中的唯一标识（_index索引   _type类型  _id 主键自动生成）
 
    ```json
    # 自动生成_id
@@ -297,7 +272,7 @@
    }
    ```
 
-7. 文档操作 - 新增 手动指定ID
+3. 文档操作 - 新增 手动指定ID
 
    ```json
    POST /book/_doc/1
@@ -310,7 +285,7 @@
    }
    ```
 
-8.  文档操作 - 覆盖式修改 如果ID存在值则字段全量更新
+4. 文档操作 - 覆盖式修改 如果ID存在值则字段全量更新
 
    ```json
    POST /book/_doc/1
@@ -322,7 +297,7 @@
    }
    ```
 
-9. 文档操作 - 懒修改
+5. 文档操作 - 懒修改
 
    ```json
    POST /book/_doc/1/_update
@@ -334,16 +309,15 @@
    }
    ```
 
-10. 删除文档
+6. 删除文档
 
-    ```json
-    DELETE /book/_doc/87bgvnMBZnIOh5hMwAW5
-    ```
+   ```json
+   DELETE /book/_doc/87bgvnMBZnIOh5hMwAW5
+   ```
 
+## 3.4 基础操作 - 检索
 
-### 测试数据
-
-- 创建index
+- 创建测试数据
 
   ```json
   PUT /sms_logs_index
@@ -515,7 +489,6 @@
   }
   ```
 
-### 查询操作
 
 1. term查询：代表完全匹配，搜索之前不会对搜索关键字进行分词，直接用关键字去文档分词库中去匹配内容
 
@@ -675,24 +648,24 @@
 
 10. range：只能针对数值类型的查询，字符串范围查询无效
 
-    - gt
-    - gte
-    - lt
-    - lte
+   - gt
+   - gte
+   - lt
+   - lte
 
-    ```json
-    POST /sms_logs_index/_search
-    {
-      "query": {
-        "range": {
-          "fee": {
-            "gte": 10,
-            "lte": 60
-          }
-        }
-      }
-    }
-    ```
+   ```json
+   POST /sms_logs_index/_search
+   {
+     "query": {
+       "range": {
+         "fee": {
+           "gte": 10,
+           "lte": 60
+         }
+       }
+     }
+   }
+   ```
 
 11. regexp：正则查询，prefix、fuzzy、wildcard、regexp查询效率低
 
@@ -815,7 +788,6 @@
     - positive：只有匹配上positive的内容才会放在结果集中
     - negative：匹配上positive并且匹配上negative，就可以降低文档分数
     - negative_boost：指定系数，如：必须小于1.0
-
     - 分数计算
       - 搜索关键字匹配次数越多，分数越高
       - 搜索是文档越短，匹配度越高
@@ -934,9 +906,21 @@
       
       ```
 
-      
+## 3.5 ElasticSearch集群
 
-## RESTful接口说明接口
+## 3.6 Java连接ElasticSearch
+
+## 3.6 SpringBoot集成ElasticSearch
+
+# 第四章 Kibana基础
+
+
+
+# 第五章 LogStash基础
+
+# 第六章 Beats基础
+
+RESTful接口说明接口
 
 > 在ElasticSearch中，提供了丰富的RESTful API的操作完成基本的crud、创建索引、删除索引等
 
@@ -1061,9 +1045,37 @@
 
 8. **聚合**
 
-# 第三章 ElasticSearch核心详解
+RESTful接口说明
 
-## 3.1 文档
+- get请求
+
+  ```http
+  http://ip:端口/index	 				// 查询索引信息
+  http://ip:端口/index/type/dock_id		// 查询指定的文档信息
+  ```
+
+- post请求
+
+  ```http
+  http://ip:端口/index/type/_search			// 查询,请求体包含json参数
+  http://ip:端口/index/type/_update			// 修改,请求体包含json参数
+  ```
+
+- put请求
+
+  ```http
+  http://ip:端口/index					// 创建索引,请求体包含索引信息
+  http://ip:端口/index/type/_mappings	// 代表创建索引时候,指定索引文档存储的属性的信息
+  ```
+
+- delete请求
+
+  ```http
+  http://ip:端口/index					// 删库跑路
+  http://ip:端口/index/type/dock_id		// 删除指定的文档信息
+  ```
+
+3.1 文档
 
 - 元数据：matedata
 
@@ -1079,7 +1091,7 @@
   > - _type：在应用中，万物皆对象，某一类对象可以抽象为一种类型，type用于描述数据的类型，意味着同一类型的数据表示相同的事物。在ES中每个类型都有自己 映射或者结构定义
   > - _id：如果不手动指定就由ES自动生成32为字符串，用于唯一标识文档
 
-## 3.2 查询相应
+3.2 查询相应
 
 1.  **pretty：格式化查询结果**
 
@@ -1107,12 +1119,12 @@
      http://127.0.0.1:9200/panda/user/1001/_source?_source=age
      ```
 
-## 3.3 判断文档是否存在
+3.3 判断文档是否存在
 
 1. 根据查询结果的`found`属性：true标识存在，false表示不存在
 2. 发送HEAD请求：相应200表示存在，否则表示不存在
 
-## 3.4 批量操作
+3.4 批量操作
 
 1. 批量查询：<kbd>POST请求 --> ElasticSearch服务地址/{索引}/{类型}/_mget</kbd>
 
@@ -1139,7 +1151,7 @@
    - 批量请求是需要被加载到接受请求节点的内存中，所以请求越大，其他请求的内存就越小
    - 最佳的请求大小取决与硬件、文档大小、复杂度以及索引和要搜素的负载
 
-## 3.5 分页
+3.5 分页
 
 - form：起始偏移量
 
@@ -1150,8 +1162,7 @@
   GET /_search?size=5&from=10
   ```
 
-
-## 3.6 映射
+3.6 映射
 
 ​		ES可以进行明确的字段类型说明，在操作数据时候可以根据数据类型判断数据与实际字段是否符合
 
@@ -1212,7 +1223,7 @@
 
   
 
-## 3.7 结构化查询
+3.7 结构化查询
 
 1. ES介绍
 

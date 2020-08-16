@@ -441,7 +441,29 @@ RocketMQ集群它刚开始也是依赖zk做集群的，但是觉得太慢就自�
      > - **noWait**：是否等待服务器返回
      > - **args**：相关参数
 
-## 3.7 SpringBoot集成RabbitMQ
+## 3.7 RabbitMQ事务
+
+1. 事务消息：事物消息与数据库事务类似，MQ中的事务是要保证消息是否全部发送成功，防止丢失消息的一种策略
+
+2. RabbitMQ的事务方案
+
+   - 通过AMQP提供的事务机制：发送者开启事务后发送中异常发送失败，消费者开启事务后即使不做事务提交依然可以从队列中获取消息，所以暂时性队列不会影响接受者
+
+     ```java
+     channel.teSelect();		// 启动一个事务,启动事务后所有写入到队列中的消息,必须显示的提交事务或回滚事务
+     channel.txCommit(); // 提交事务 事务才会被提交到队列
+     channel.txRollback(); // 回滚事务
+     ```
+
+   - 使用发送者确认模式，效率稍高：Confirm发送发确认模式使用和事务类似，通过设置Channel进行发送方确认的，最终达到确保所有消息发送成功
+
+3. Confirm的三种确认方式
+
+   - 普通确认
+   - 批量确认
+   - 异步箭筒确认
+
+## 3.8 SpringBoot集成RabbitMQ
 
 
 
@@ -492,6 +514,51 @@ rabbitmqctl set_user_tags root administrator
 
 # 第五章 RabbitMQ集群架构
 
+## 5.1 普通模式集群
 
+- 需要在消息服务器直接建立通道完成数据同步，但是目标服务器停止运行后，通道也会失效
+
+## 5.2 镜像模式
+
+- 多台服务器：相当于相互建立双向通道，共同实现数据同步，也是高可用模式
+
+- 镜像环境配置：
+
+  1. 多台服务器安装RabbitMQ服务器
+
+  2. 添加各种的登陆账户
+
+  3. 配置多台机器之间的cookie文件相同： 
+
+     - Linux系统的cookie文件：/etc/var/lib/rabbitmq/.erlang.cookie
+     - Windows系統的cookie文件：用户目录中/.erlang.cookie
+
+  4. 使用命令将RabbitMQ加入到服务节点
+
+     ```sh
+     rabbitmqctl start_app
+     rabbitmqctl join_cluster 服务器
+     rabbitmqctl stop_app
+     
+     rabbitmqctl cluster_status
+     ```
+
+  5. SpringBoot链接RabbitMQ集群
+
+     ```yml
+     spring:
+      	rabbitmq: 
+      		address: ip:port,ip:port
+      		username: root
+      		password: root
+     ```
+
+  6. 配置服务器镜像
+
+     - admin/policies/add/update a policy
+       - name
+       - Patten:^
+       - apply to
+       - defintion:ha-mode=all
 
 # 第六章 消息中间件与架构设计
