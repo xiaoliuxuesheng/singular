@@ -38,6 +38,7 @@
    | vscode-icons           | 文件图标       |
    | Bracket Pair Colorizer | 彩虹括号       |
    | Highlight Matching Tag | 标签匹配       |
+   | JS-CSS-HTML-formatter  | 自动代码格式化 |
    | **开发插件**           | **说明**       |
    | View In Browser        | 在浏览器打开   |
    | Live Server            | 临时服务器     |
@@ -47,47 +48,43 @@
    |                        |                |
    | GitLens                | Git代码提示    |
 
-6. WEB相关概念
-
-   - 浏览器引擎
-
-     | 引擎    | 内核       | 常见浏览器                               |
-     | ------- | ---------- | ---------------------------------------- |
-     | Blink   | Chrome     | Chrome、360极速浏览器、360安全浏览器     |
-     |         | Chromium   | QQ浏览器、搜狗高速浏览器、Opera          |
-     | Gecko   | Firefox    | Firefox（火狐浏览器）                    |
-     | Webkit  | Safari     | Safari、Android 默认浏览器               |
-     |         | U3（国产） | UC浏览器                                 |
-     | Trident | Edge       | Microsoft Edge                           |
-     |         | IE 内核    | IE6 - IE11、360极速浏览器、360安全浏览器 |
-
-   - http请求与服务器
-
-7. 网页的基本组成
-
-   - 页面的结构：html
-   - 页面的样式：css
-   - 页面的行为：JavaScript
 
 # 第一章 HTML基础
 
 ## 1.1 HTML概述
 
-​		HTML称为超文本标记语言，是一种标识性的语言。它包括一系列标签，通过这些标签可以将网络上的文档格式统一，使分散的Internet资源连接为一个逻辑整体。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTML称为超文本标记语言，是一种标识性的语言。它包括一系列标签，通过这些标签可以将网络上的文档格式统一，使分散的Internet资源连接为一个逻辑整体。
 
-​		HTML文本是由HTML命令组成的描述性文本，HTML命令可以说明文字，图形、动画、声音、表格、链接等。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTML文本是由HTML命令组成的描述性文本，HTML命令可以说明文字，图形、动画、声音、表格、链接等。
 
-## 1.2 HTML的发展
+## 1.2 常见浏览器
 
-- **xml**
+| 引擎    | 内核       | 常见浏览器                               |
+| ------- | ---------- | ---------------------------------------- |
+| Blink   | Chrome     | Chrome、360极速浏览器、360安全浏览器     |
+|         | Chromium   | QQ浏览器、搜狗高速浏览器、Opera          |
+| Gecko   | Firefox    | Firefox（火狐浏览器）                    |
+| Webkit  | Safari     | Safari、Android 默认浏览器               |
+|         | U3（国产） | UC浏览器                                 |
+| Trident | Edge       | Microsoft Edge                           |
+|         | IE 内核    | IE6 - IE11、360极速浏览器、360安全浏览器 |
 
-- **h5**
-  - h5不是新增的语言，是html语言第五次重大修改版本
-  - 所有主流浏览器引擎都支持h5
-  - 改变了用户与文档的交互方式：新增多媒体标签（audio、vodio、canvas）
-  - 新增其他特性：语义特性、本地存储、网页多媒体、二维三维、动画特效
+## 1.3 WEB标准
 
-## 1.4 HTML标签的分类
+| 标准 | 说明                                                  |
+| ---- | ----------------------------------------------------- |
+| 结构 | 结构用于对网页元素进行整理和分类：HTML                |
+| 表现 | 表现用于设置网页元素的大小、颜色、版式等外观样式：CSS |
+| 行为 | 行为是指网页模型的定义和交互方式：JavaScript          |
+
+## 1.4 HTML标签基础
+
+### 1、HTML语法规范
+
+- HTML标签是由尖括号包围的关键字
+- HTML标签的关键字是小写字母组成
+
+### 2、标签的分类
 
 1. 根据标签的个数
    - 单标签
@@ -109,7 +106,7 @@
 2. class：根据class属性值的名称将标签分类
 3. title：为标签指定标题属性值
 
-## 1.5 HTML标准结构
+## 1.6 HTML标准结构
 
 ```html
 <!DOCTYPE html>
@@ -141,17 +138,19 @@
 | `<style>`    | 用于为 HTML 文档定义样式信息。                               |
 | `<body>`     | 包含文档的所有内容                                           |
 
-### 1.`<!DOCTYPE>`
+### 1. \<!DOCTYPE html>
 
-- 位于文档最前面，向浏览器说明当前文档使用的HTML标准规范，默认为html表示为html5的文档规范，
+- 文档类型声明标签，位于文档最前面，向浏览器说明当前文档使用的HTML标准规范，默认为html表示为html5的文档规范，
 
-### 2.  `<html>`
+### 2.  \<html lang="en">
 
-- 标签限定了文档的开始点和结束点，在它们之间是文档的头部和主体；属性**lang**：规定元素内容的语言。
+- 标签限定了文档的开始点和结束点，在它们之间是文档的头部和主体；属性**lang**：规定元素内容的语言（en 或 zh-CN）。
 
-### 3. `<head> + <title>`
+### 3. \<head> + \<title>
 
-### 4. `<meta>`
+### 4. \<meta>
+
+- charset属性：用于说明文档的编码格式
 
 - 提供有关页面的元信息（meta-information），`name`属性是元信息的标识，对应`content`属性指对应元信息标识的内容；
 
@@ -247,24 +246,24 @@
   <meta http-equiv="Content-Script-Type" content="text/javascript" />
   ```
 
-### 3. `<body>`
+### 3. \<body>
 
-### 4. `<style>`
+### 4. \<style>
 
-### 5. `<script>`
+### 5. \<script>
 
 ## 2.2 HTML基础标签
 
-| 标签名称    | 标签说明           |
-| ----------- | ------------------ |
-| `<h1>~<h6>` | 标题标签           |
-| `<div>`     | 无语义块级标签     |
-| `<span>`    | 无语义行内标签     |
-| `<p>`       | 段落标签：块级标签 |
-| `<a>`       | 超链接：行内标签`  |
-| `<br>`      | 换行符             |
-| `<hr>`      | 分隔符             |
-| `<!-- -->`  | 注释标签           |
+| 标签名称    | 英文      | 标签说明           |
+| ----------- | --------- | ------------------ |
+| `<h1>~<h6>` | headline  | 标题标签           |
+| `<div>`     |           | 无语义块级标签     |
+| `<span>`    |           | 无语义行内标签     |
+| `<p>`       | paragraph | 段落标签：块级标签 |
+| `<a>`       |           | 超链接：行内标签`  |
+| `<br>`      | break     | 换行符             |
+| `<hr>`      |           | 分隔符             |
+| `<!-- -->`  |           | 注释标签           |
 
 ## 2.3 html5语义标签
 
@@ -415,10 +414,10 @@
 </audio>
 ```
 
-- src
-- controls
-- autoplay
-- loop
+> - src
+> - controls
+> - autoplay
+> - loop
 
 ## 6.2 video
 
@@ -428,13 +427,13 @@
 </video>
 ```
 
-- src
-- controls
-- autoplay
-- loop
-- width
-- height
-- post
+> - src
+> - controls
+> - autoplay
+> - loop
+> - width
+> - height
+> - post
 
 # 第七章 HTML内联框架
 

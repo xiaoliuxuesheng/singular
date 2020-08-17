@@ -86,7 +86,7 @@
 
 ### 1.3 CSS样式优先级
 
-​	**<font size=4 color=blue>行内样式 > 嵌入样式 > 外部样式</font>**
+- **<font size=4 color=blue>行内样式 > 嵌入样式 > 外部样式</font>**
 
 ### 1.4 注释
 
@@ -100,8 +100,242 @@
 
 ### 1.5 CSS命名规范
 
-- css命令建议用中横线字符
-- 建议使用纯文英文字符，不建议使用中文和
+1. 命名要求
+   - css命令建议用中横线字符；
+   - 建议使用纯文英文字符，不建议使用中文和拼音；
+   - 长名称或多个英文词组使用中横线分隔；
+   - 不可以使用纯数字或数字开头命名
+2. WEB前端命名规范
+
+- **❤ 主体**
+
+  　　**头部：header**
+
+    　　**内容：content/container**
+
+    　　**尾部：footer**
+
+    　　**导航：nav**
+
+    　　**侧栏：sidebar**
+
+    　　**栏目：column**
+
+    　　**整体布局：wrapper**
+
+    　　**左右中：left / right / center**
+
+    　　**登录条：loginbar**
+
+    　　**标志：logo**
+
+    　　**广告：banner**
+
+    　　**页面主体：main**
+
+    　　**热点：hot**
+
+    　　**新闻：news**
+
+    　　**下载：download**
+
+    　　**子导航：subnav**
+
+    　　**菜单：menu**
+
+    　　**子菜单：submenu**
+
+    　　**搜索：search**
+
+    　　**友情链接：friendlink**
+
+    　　**页脚：footer**
+
+    　　**版权：copyright**
+
+    　　**滚动：scroll**
+
+    　　**标签页：tab**
+
+    　　**文章列表：list**
+
+    　　**提示信息：msg**
+
+    　　**小技巧：tips**
+
+    　　**栏目标题：title**
+
+    　　**加入：join**
+
+    　　**指南：guild**
+
+    　　**服务：service**
+
+    　　**注册：regsiter**
+
+    　　**状态：status**
+
+    　　**投票：vote**
+
+    　　**合作伙伴：partner**
+
+   
+
+  **❤ id的命名规范**
+
+  　　**(1)页面结构**
+
+  　　　　**容器: container**
+
+  　　　　**页头：header**
+
+  　　　　**内容：content/container**
+
+  　　　　**页面主体：main**
+
+  　　　　**页尾：footer**
+
+  　　　　**导航：nav**
+
+  　　　　**侧栏：sidebar**
+
+  　　　　**栏目：column**
+
+  　　　　**页面外围控制整体布局宽度：wrapper**
+
+  　　　　**左右中：left right center**
+
+  　　**(2)导航**
+
+  　　　　**导航：nav**
+
+  　　　　**主导航：mainnav**
+
+  　　　　**子导航：subnav**
+
+  　　　　**顶导航：topnav**
+
+  　　　　**边导航：sidebar**
+
+  　　　　**左导航：leftsidebar**
+
+  　　　　**右导航：rightsidebar**
+
+  　　　　**菜单：menu**
+
+  　　　　**子菜单：submenu**
+
+  　　　　**标题: title**
+
+  　　　　**摘要: summary**
+
+  　　**(3)功能**
+
+  　　　　**标志：logo**
+
+  　　　　**广告：banner**
+
+  　　　　**登陆：login**
+
+  　　　　**登录条：loginbar**
+
+  　　　　**注册：regsiter**
+
+  　　　　**搜索：search**
+
+  　　　　**功能区：shop**
+
+  　　　　**标题：title**
+
+  　　　　**加入：joinus**
+
+  　　　　**状态：status**
+
+  　　　　**按钮：btn**
+
+  　　　　**滚动：scroll**
+
+  　　　　**标签页：tab**
+
+  　　　　**文章列表：list**
+
+  　　　　**提示信息：msg**
+
+  　　　　**当前的: current**
+
+  　　　　**小技巧：tips**
+
+  　　　　**图标: icon**
+
+  　　　　**注释：note**
+
+  　　　　**指南：guild**
+
+  　　　　**服务：service**
+
+  　　　　**热点：hot**
+
+  　　　　**新闻：news**
+
+  　　　　**下载：download**
+
+  　　　　**投票：vote**
+
+  　　　　**合作伙伴：partner**
+
+  　　　　**友情链接：link**
+
+  　　　　**版权：copyright**
+
+  **❤ class的命名:**
+
+  　　**(1)颜色：使用颜色的名称或者16进制代码，如：**
+
+  　　　　**.red { color: red; } .f60 { color: #f60; } .ff8600 { color: #ff8600; }**
+
+  　　**(2)字体大小，直接使用“font+字体大小”作为名称，如：**
+
+  　　　　**.font12px { font-size: 12px; } .font9pt {font-size: 9pt; }**
+
+  　　**(3)对齐样式，使用对齐目标的英文名称，如：**
+
+  　　　　**.left { float:left; } .bottom { float:bottom; }**
+
+  　　**(4)标题栏样式，使用“类别+功能”的方式命名，如：**
+
+  　　　　**.barnews { } .barproduct { }**
+
+  **❤！注意事项：**
+
+  　　**1.一律小写；**
+
+  　　**2.尽量用英文；**
+
+  　　**3.尽量不加中杠和下划线；**
+
+  　　**4.尽量不缩写，除非一看就明白的单词，如：wrapper可以写成wrap。**
+
+  　　**5.css文件命名规范：**
+
+  　　　　**主要的 master.css；**
+
+  　　　　**模块 module.css；**
+
+  　　　　**基本共用 base.css；**
+
+  　　　　**布局，版面layout.css；**
+
+  　　　　**主题 themes.css；**
+
+  　　　　**专栏 columns.css；**
+
+  　　　　**文字 font.css；**
+
+  　　　　**表单 forms.css；**
+
+  　　　　**补丁 mend.css；**
+
+  　　　　**打印print.css**
 
 ## 第二章 CSS模型
 
@@ -213,7 +447,7 @@
 
 ## 第一章 文字属性
 
-**<font color=blue size=4>▲ 文字样式：font-style</font>**
+### **<font color=blue size=4>▲ 文字样式：font-style</font>**
 
 | 值      | 描述                                   |
 | :------ | :------------------------------------- |
@@ -222,7 +456,7 @@
 | oblique | 浏览器会显示一个倾斜的字体样式。       |
 | inherit | 规定应该从父元素继承字体样式。         |
 
-**<font color=blue size=4>▲ 文字粗细：font-weight</font>**
+### **<font color=blue size=4>▲ 文字粗细：font-weight</font>**
 
 | 值        | 描述                                                        |
 | :-------- | :---------------------------------------------------------- |
@@ -233,7 +467,7 @@
 | 100 ~ 900 | 定义由粗到细的字符。400 等同于 normal，而 700 等同于 bold。 |
 | inherit   | 规定应该从父元素继承字体的粗细。                            |
 
-**<font color=blue size=4>▲ 文字大小：font-size</font>**
+### **<font color=blue size=4>▲ 文字大小：font-size</font>**
 
 | 值                                                           | 描述                                                         |
 | :----------------------------------------------------------- | :----------------------------------------------------------- |
@@ -244,7 +478,7 @@
 | %                                                            | 把 font-size 设置为基于父元素的一个百分比值。                |
 | inherit                                                      | 规定应该从父元素继承字体尺寸。                               |
 
-**<font color=blue size=4>▲ 文字字体：font-family</font>**
+### **<font color=blue size=4>▲ 文字字体：font-family</font>**
 
 | 值      | 描述                           |
 | :------ | :----------------------------- |
@@ -258,11 +492,11 @@
 ### <font color=blue size=4>▲ 文字属性缩写：font </font>
 
 ```css
-font: 样式 粗细 大小 字体;
+font: 样式 粗细 大小/行高 字体;
 ```
 
 - 注意事项
-  1. 样式属性和粗细属性可以省略，也可以相互交互位置
+  1. 样式属性和粗细属性可以省略，也可以相互交互位置，因为文字样式默认为系统样式，文档粗细默认为细线问题；
   2. 大小属性和字体属性**必须设置**；
   3. 大小属性和字体属性**必须放在属性最后**；
   4. 大小属性和字体属性**不可以交换**位置。
@@ -530,7 +764,7 @@ padding: 上 右 下 左;
 ### <font color=blue size=4>▲ 显示隐藏：visibility</font>
 
 | 值       | 描述                                                         |
-| :------- | :----------------------------------------------------------- |
+| :------- | ------------------------------------------------------------ |
 | visible  | 默认值。元素是可见的。                                       |
 | hidden   | 元素是不可见的。但是位置会保留                               |
 | collapse | 当在表格元素中使用时，此值可删除一行或一列，但是它不会影响表格的布局。被行或列占据的空间会留给其他内容使用。如果此值被用在其他的元素上，会呈现为 "hidden"。 |
