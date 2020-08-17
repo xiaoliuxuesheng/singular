@@ -66,7 +66,7 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
   useradd elsearch
   ```
 
-- 新建elk安装目录并上传安装包，并修改elk目录所属
+- 新建ElasticSearch的安装目录，安装目录自定义，这里是安装在opt中是search目录中，并上传ElasticSearch的安装包并解压到search目录中
 
   ```sh
   cd /opt
@@ -74,31 +74,17 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
   chown elsearch:elsearch search/ -R
   ```
 
-- 切换到elsearch用户完成ElasticSearch的安装
+- ElasticSearch配置文件说明：在/opt/search/config/目录中的相关文件
 
-  ```sh
-  su - elsearch
-  ```
+  1. **elasticsearch.yml**：ElasticSearch的启动配置文件
 
-- 将安装包解压到/usr/local/elk/search目录中，解压后需要调整安装包中文件目录
-
-  ```sh
-  tar -xzvf xxx.tar.gz -C search/
-  ```
-
-- ElasticSearch配置文件详解：/config/
-
-  1. elasticsearch.yml
-  
      ```yml
-   # ======================== Elasticsearch Configuration =========================
-     # https://www.elastic.co/guide/en/elasticsearch/reference/index.html
      # ---------------------------------- Cluster -----------------------------------
      # 集群名称
      #cluster.name: my-application
      # ------------------------------------ Node ------------------------------------
      # 节点名称:
-     #node.name: node-1
+     node.name: node-1
      # 节点自定义属性:
      #node.attr.rack: r1
      # ----------------------------------- Paths ------------------------------------
@@ -118,7 +104,7 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
      #当这个节点启动时，传递一个初始的主机列表来执行发现: 默认的主机列表是["127.0.0.1"，"[::1]"]
      #discovery.seed_hosts: ["host1", "host2"]
      # 使用主节点的初始集合引导集群:
-     #cluster.initial_master_nodes: ["node-1", "node-2"]
+     cluster.initial_master_nodes: ["node-1"]
      # ---------------------------------- Gateway -----------------------------------
      # 在整个集群重新启动后阻塞初始恢复，直到N个节点启动:
      #gateway.recover_after_nodes: 3
@@ -126,72 +112,69 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
      # 删除索引时要求显式名称:
      #action.destructive_requires_name: true
      ```
-  
-  2. jvm.options：ElasticSearch中的host配置不是localhost或127.0.0.1会被认为是生产环境，会多ElasticSearch启动要求比较高；
-  
+
+  2. **jvm.options**：ElasticSearch是基于Java开发，jvm.options用于设置ElasticSearch运行时jvm环境相关配置；ElasticSearch中的host配置不是localhost或127.0.0.1会被认为是生产环境，会多ElasticSearch启动要求比较高；
+
      ```properties
      # Xms 表示总的堆空间的初始大小
      # Xmx 表示堆空间的最大大小
      -Xms128m
      -Xmx128m
      ```
-  
+
   3. log4j2.properties
-  
+
   4. role_mapping.yml
-  
+
   5. roles.yml
-  
+
 - 配置系统的内存一个进程在VMAS（虚拟内存）创建内存映射的最大数量：**需要使用root用户进行操作**
 
   ```sh
-  vim /etc/sysctl.conf
-  vm.max_map_count=655360
-  sysctl -p # 刷新使配置生效
+  vim /etc/sysctl.conf		# 编辑配置文件,修改此文件需要重启Linux服务器
+  vm.max_map_count=655360		# 修改内存最大映射数量
+  sysctl -p 					# 查看配置后的信息
   ```
 
-- root用户开启9200端口
+- 修改最大文件描述以满足ELasticSearch：max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]；\*号的位置标示支持的用户名称，\*号匹配所有用户
 
   ```sh
-  firewall-cmd --zone=public --add-port=9200/tcp --permanent 
-  firewall-cmd --zone=public --add-port=9200/tcp --permanent 
-  ```
-
-- elsearch用户启动ElasticSearch服务
-
-  ```sh
-  cd /bin
-   ./elasticsearch		# 前台启动
-   ./elasticsearch -d  	# 后台启动
-  ```
-
-- 启动日志：修改系统级的属性，重启服务器
-
-  ```txt
-  [1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
-  [2]: max number of threads [3756] for user [elsearch] is too low, increase to at least [4096]
-  [3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured
-  ```
-
-- 解决方案
-
-  ```sh
-  # ① 最大文件描述不足以满足ELasticSearch
   vim /etc/security/limits.conf
   # >>>>追加 * 号表示所有用户
   * soft nofile 65536
   * hard nofile 131072
   * soft nproc 2048
   * hard nproc 4096
-  
-  
-  # ② 默认进程中的线程数2014太低 最少是4096
+  ```
+
+- 默认进程中的线程数2014太低 最少是4096：max number of threads [3756] for user [elsearch] is too low, increase to at least [4096]
+
+  ```sh
   vim /etc/security/limits.d/20-nproc.conf
   # >>>>修改
   *          soft    nproc     4096
-  
-  # ③ 修改elasticsearch.yml
-  cluster.initial_master_nodes: ["node-1"] #这里的node-1为node-name配置的值
+  ```
+
+- 开启ElasticSearch端口：9200
+
+  ```sh
+  firewall-cmd --zone=public --add-port=9200/tcp --permanent 
+  firewall-cmd --reload
+  ```
+
+- 修改ElasticSearch的安装的用户所属并切换到elsearch用户：在启动后ElasticSearch生成的日志相关文件所属也是root用户，需要将这些文件也修改为新建的elsearch（非root用户）的所属；
+
+  ```sh
+  chown elsearch:elsearch -R /opt/search
+  su - elsearch
+  ```
+
+- 用elsearch（非root用户）用户启动ElasticSearch服务
+
+  ```sh
+  cd /bin
+  ./elasticsearch		# 前台启动
+  ./elasticsearch &  	# 后台启动
   ```
 
 ### 2. Windows系统安装
@@ -255,19 +238,136 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
 ## 2.3 IK分词器
 
+
+
 ## 2.4 Kibana安装
+
+### 1. Linux系统安装
+
+- 新建Kibana安装目录：/opt/kibana
+
+- 将Kibana安装包解压到/opt/kibana目录中：Kibana的版本必须和ElasticSearch版本相同
+
+- 修改Kibana配置文件：/opt/kibana/config/kibana.yml
+
+  ```yml
+  # Kibana 服务启动端口
+  server.port: 5601
+  
+  # 指定Kibana服务器要绑定到的地址
+  server.host: "192.168.57.129"
+  
+  #server.basePath: ""
+  
+  #server.rewriteBasePath: false
+  
+  # 传入服务器请求的最大负载大小(以字节为单位)
+  #server.maxPayloadBytes: 1048576
+  
+  # Kibana服务器的名字。它用于显示目的
+  #server.name: "your-hostname"
+  
+  # 用于所有查询的Elasticsearch实例的url
+  elasticsearch.hosts: ["http://192.168.57.129:9200"]
+  
+  # 当这个设置的值为真时，Kibana使用server.host中指定的主机名
+  #elasticsearch.preserveHost: true
+  
+  #kibana.index: ".kibana"
+  
+  # 要加载的默认应用程序.
+  #kibana.defaultAppId: "home"
+  
+  
+  #elasticsearch.username: "kibana"
+  #elasticsearch.password: "pass"
+  
+  #server.ssl.enabled: false
+  #server.ssl.certificate: /path/to/your/server.crt
+  #server.ssl.key: /path/to/your/server.key
+  
+  #elasticsearch.ssl.certificate: /path/to/your/client.crt
+  #elasticsearch.ssl.key: /path/to/your/client.key
+  
+  
+  #elasticsearch.ssl.certificateAuthorities: [ "/path/to/your/CA.pem" ]
+  
+  #elasticsearch.ssl.verificationMode: full
+  
+  #elasticsearch.pingTimeout: 1500
+  
+  #elasticsearch.requestTimeout: 30000
+  
+  #elasticsearch.requestHeadersWhitelist: [ authorization ]
+  
+  #elasticsearch.customHeaders: {}
+  
+  #elasticsearch.shardTimeout: 30000
+  
+  #elasticsearch.startupTimeout: 5000
+  
+  #elasticsearch.logQueries: false
+  
+  #pid.file: /var/run/kibana.pid
+  
+  #logging.dest: stdout
+  
+  #logging.silent: false
+  
+  #logging.quiet: false
+  
+  #logging.verbose: false
+  
+  #ops.interval: 5000
+  
+  i18n.locale: "zh-CN"
+  ```
+
+- 开启kibana服务运行端口：5601
+
+  ```sh
+  firewall-cmd --zone=public --add-port=5601/tcp --permanent 
+  firewall-cmd --reload
+  ```
+
+- 切换到非root用户,并将kibana安装目录指定为当前用户所属
+
+  ```sh
+  chown elsearch:elsearch -R /opt/kibana
+  su - elsearch
+  /opt/kibana/kibana &
+  ```
 
 ## 2.5 LogStash安装
 
 ## 2.6 Beats - 安装
 
+## 2.7 Chrome Head插件安装
+
+- GIt源码地址：https://github.com/mobz/elasticsearch-head
+- 打开下载地址找到es-head.crx文件：/elasticsearch-head/blob/master/crx/es-head.crx
+- 文件后缀名".crx"改为“.rar”解压到文件夹中
+- Chrome“加载已解压的扩展程序”按钮加入文件夹。
+
 # 第三章 ElasticSearch基础
 
 ## 3.1 ES基本概念
 
-### 1. 索引
+### 1、集群
 
-- 索引是ElasticSearch对逻辑数据的存储，所以它可以分为更小的部分
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包含多个节点，每个节点属于哪个集群是通过一个配置（集群名称，默认是elasticsearch）来决定的，对于中小型应用来说，刚开始一个集群就一个节点很正常。集群的目的为了提供高可用和海量数据的存储以及更快的跨节点查询能力。
+
+### 2、节点 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;集群中的一个节点，节点也有一个名称（默认是随机分配的），节点名称很重要（在执行运维管理操作的时候），默认节点会去加入一个名称为“elasticsearch”的集群，如果直接启动一堆节点，那么它们会自动组成一个elasticsearch集群，当然一个节点也可以组成一个elasticsearch集群
+
+### 3、倒排索引
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;传统的索引方式是将字段内容存储为索引结构的数据，检索时候根据内容先检索索引，在根据索引查询到数据；在ElasticSearch中使用倒排索引：其基本原理是讲字段中内容进行分词，将分词结果存储在分词库中，并记录这些分词对应的记录ID，检索时候将检索关键字进行分词后在分词库中进行匹配，然后将匹配的分词对应的记录ID进行返回，最后根据检索出的记录ID检索出数据；
+
+### 4、索引
+
+- 索引是ElasticSearch对数据的逻辑存储，所以它可以分为更小的部分
 
 - 可以把索引看成关系型数据库的表，索引的结构是为快速有效的全文检索准备的，特别是它不存储原始值
 
@@ -283,27 +383,26 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
   备份的分片必须放在不同的服务器中
 
-### 2. 文档
+### 5、分片
+
+### 6、副本
+
+### 7、文档
 
 - 存储在Electicsearch中的主要实体叫文档（document），用关系型数据库类比的话，一个文档相当于数据表中的一行记录。
 - ElasticSearch和MongoDB中的文档相似，都可以有不同的结构，但在ElasticSearch中，相同字段必须有相同的类型。
 - 文档由多个字段组成，每个字段可以多次的出现在同一文档中，这种字段称为**多值字段**，
 - 每个字段的类型可以是文本、数值、日期等；字段类型也可以是复杂类型，一个字段可以包含其他子文档或数组；
 
-### 3. 映射
+### 8、类型
 
-- 所有文档写进索引之前都会先进行分析：如何将输入的文本分隔为词条、哪些词条又会被过滤；这种行为称为映射，一般由用户自定义规则，比如使用中文分词
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;起初，我们说"索引"和关系数据库的“库”是相似的，“类型”和“表”是对等的。这是一个不正确的对比，导致了不正确的假设。在关系型数据库里,"表"是相互独立的,一个“表”里的列和另外一个“表”的同名列没有关系，互不影响。但在一个Elasticsearch索引里，在类型里字段不是这样的，所有不同类型的同名字段内部使用的是同一个lucene字段存储。举个例子：user类型的user_name字段和tweet类型的user_name字段是存储在一个字段里的，两个类型里的user_name必须有一样的字段定义。最后,在同一个索引中，存储仅有小部分字段相同或者全部字段都不相同的文档，会导致数据稀疏，影响Lucene有效压缩数据的能力。因为这些原因，从Elasticsearch7.x中移除类型的概念;
 
-### 4. 文档类型
+### 9、映射
 
-- 在ElasticSearch中，一个索引对象可以存储很对不同用途的对象。例如：博客中的文章也可以存储评论数据，是根据文档类型进行区分
-- 一个索引下可以有多个类型，每个类型下可以有多个文档，每个文档类型可以有不同的结构
-  - 在ES5.x中一个索引下可能有多个Type
-  - 在ES6.x中一个索引下只有一个Type
-  - 在ES7.x中一个索引下没有Type
-- 不同的文档类型不能为相同的属性设置不同的类型，例如：同一索引中的所有文档类型中，有一个字段title字段的必须具有相同的类型。
+所有文档写进索引之前都会先进行分析：如何将输入的文本分隔为词条、哪些词条又会被过滤；这种行为称为映射，一般由用户自定义规则，比如使用中文分词
 
-### 5. field
+### 10、field
 
 - 一个文档中包含多个属性，一行数据中的多个列
 
@@ -333,7 +432,7 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
 ## 3.2 基础操作  - 索引
 
-1. 新增索引：number_of_shards分片数据；number_of_replicas备份数
+1. **新增结构化索引**：number_of_shards分片数据；number_of_replicas备份数；在Lucene中创建索引是需要定义字段名称以及字段类型的，在ElasticSearch中提供了非结构化索引，就是不需要创建索引结构即可写数据到索引中，实际上ElasticSearch在底层会做结构化操作，此操作对用户是透明的。
 
    ```json
    PUT /person
@@ -345,13 +444,13 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
    }
    ```
 
-2. 查看索引信息
+2. **查看索引信息**
 
    ```json
    GET /person
    ```
 
-3. 删除索引
+3. **删除索引**
 
    ```json
    DELETE /person
