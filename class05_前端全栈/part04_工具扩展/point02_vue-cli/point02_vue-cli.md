@@ -95,3 +95,110 @@
 - `ey: value`格式冒号后必须带有空格
 - vue组件文件的最后一行必须是空行
 - 组件中不可以有空行
+
+# 脚手架
+
+1. 初始目录说明
+
+   ```tex
+   node_modules/		# 依赖包目录
+   public/				# 静态资源目录,全局引入css,js,img
+   src/				# 源码目录
+   	assets/			# 资源文件,静态资源,最终会被编码为base64,存放小图标
+   	components/		# 是小组件,公用的组件
+   	views/			# 视图组件 是页面级组件
+   	router.js		# 路由组件,后期,路由都方法一个组件不合适,需要单独创建一个包拆分路由组件
+   	store.js		# 状态管理,也需要单独拆分为包
+   	App.vue			# 根组件
+   	main.js			# 打包入口文件
+   babel.config.js		# bable配置文件
+   package.json		# npm 配置文件
+   .eslintrc.js		# eslint语法配置文件
+   ```
+
+2. 改造App.vue
+
+   ```html
+   <template>
+     <router-view/>
+   </template>
+   ```
+
+3. 路由和状态管理需要存储在单独的包中：router/index.js；store/index.js；在main.js中直接引入目录即可识别目录中的index.js文件
+
+   ```js
+   import router from './router'
+   import store from './store'
+   ```
+
+4. 根据页面数量新建对应目录的页面包
+
+   ```tex
+   views/
+   	Cinema/index.vue
+   	Mine/index.vue
+   	Movie/index.vue
+   ```
+
+5. 初始化页面组件的结构
+
+   ```html
+   <template>
+       <div>
+           hello Movie
+       </div>
+   </template>
+   
+   <script>
+   export default {
+       name: "Movie"
+   }
+   </script>
+   <style scoped>
+   
+   </style>
+   ```
+
+6. 拆分路由：需要页面路由拆分到对应的包中
+
+   ```tex
+   router/
+   	cinema/index.js
+   	mine/index.js
+   	movie/index.js
+   ```
+
+7. 在对应页面的路由组件中路由到该页面
+
+   ```js
+   export default {
+       path:"/movie",
+       component: () => import("@/views/Movie")
+   }
+   ```
+
+8. 在主路由文件中将拆分的路由组件引入
+
+   ```js
+   import Vue from 'vue'
+   import VueRouter from 'vue-router'
+   import cinemaRouter from './cinema'
+   import mineRouter from './mine'
+   import movieRouter from './movie'
+   
+   Vue.use(VueRouter)
+   
+   const router = new VueRouter({
+     mode: 'history',
+     base: process.env.BASE_URL,
+     routes: [
+       cinemaRouter,
+       mineRouter,
+       movieRouter
+     ]
+   })
+   
+   export default router
+   ```
+
+   
