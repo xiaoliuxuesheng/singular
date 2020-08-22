@@ -1,4 +1,4 @@
-# @Component第一章 SpringBoot入门
+# 第一章 SpringBoot入门
 
 ## 1.1 SpringBoot简介
 
@@ -294,17 +294,56 @@
   </properties>
   ```
 
-## 1.6 SpringBoot启动原理
+## 1.6 SpringBoot学习基础
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**@SpringBootApplication**：用于表示当前类为SringBoot应用的主配置类，运行当前类的main方法启动SpringBoot应用；这个注解是组合注解，源码如下：
+1. Spring内置注解及功能
+
+   | 注解                                  | 描述 |
+   | ------------------------------------- | ---- |
+   | @ComponentScan                        |      |
+   | @Configuration + @Bean                |      |
+   | @Configuration + @Import({Xxx.class}) |      |
+
+2. Condition接口
+
+   ```java
+   @FunctionalInterface
+   public interface Condition {
+   
+   	/**
+   	 * 确定条件是否匹配
+   	 * @param context condition的上下文环境
+   	 * @param metadata 被检查的类或方法的元信息(注解信息、类信息)
+   	 * @return 如果条件匹配，并且组件可以注册
+   	 */
+   	boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata);
+   
+   }
+   ```
+
+3. @Conditional注解SpringBoot提供的自动配置的常用实现
+
+   | Conditions 实现              | 描述                                  |
+   | ---------------------------- | ------------------------------------- |
+   | @ConditionalOnBean           | 在存在某个bean的时候                  |
+   | @ConditionalOnMissingBean    | 不存在某个bean的时候                  |
+   | @ConditionalOnClass          | 当前classpath可以找到某个类型的类时   |
+   | @ConditionalOnMissingClass   | 当前classpath不可以找到某个类型的类时 |
+   | @ConditionalOnResource       | 当前classpath是否存在某个资源文件     |
+   | @ConditionalOnProperty       | 当前jvm是否包含某个系统属性为某个值   |
+   | @ConditionalOnWebApplication | 当前spring context是否是web应用程序   |
+
+## 1.7 SpringBoot启动原理
+
+**@SpringBootApplication**：用于表示当前类为SringBoot应用的主配置类，运行当前类的main方法启动SpringBoot应用；这个注解是组合注解，源码如下：
 
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@SpringBootConfiguration 	// 1
-@EnableAutoConfiguration 	// 2
+@SpringBootConfiguration
+@EnableAutoConfiguration
 @ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
 		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
 public @interface SpringBootApplication {
@@ -314,7 +353,7 @@ public @interface SpringBootApplication {
 
 1. **@SpringBootConfiguration**：表示是SpringBoot的配置类，其底层是Spring提供的`@Configuration`：表示当前类是一个配置类（等价于Spring最初的xml配置文件）
 
-2. **@EnableAutoConfiguration**：开启自动配置功能，在Spring中需要配置的东西，由SpringBoot中完成自动配置，这个注解就是告诉SpringBoot开启自动配置功能；源码如下：
+2. **@EnableAutoConfiguration**：开启自动配置功能，在Spring中需要配置的东西，由SpringBoot中完成自动配置，这个注解就是告诉SpringBoot开启自动配置功能；改注解的功能实现由`@AutoConfigurationPackage和 @Import`实现，源码如下：
 
    ```java
    @Target(ElementType.TYPE)
@@ -328,10 +367,9 @@ public @interface SpringBootApplication {
    	Class<?>[] exclude() default {};
    	String[] excludeName() default {};
    }
-   
    ```
 
-   1. **@AutoConfigurationPackage**：翻译过来就是自动配置包，具体的底层功能是由Spring提供的`@Import`实现，表示给容器中导入组件，导入的组件源码如下：`@Import(AutoConfigurationPackages.Registrar.class)`；`metadata`表示注解的元信息（主启动类上注解@SpringBootApplication的元信息），getPackageNames：获取到主启动类的包名，作用是扫描主启动类所在包以及子包里面所有的组件扫描到Spring容器中；
+   1. `@AutoConfigurationPackage`：自动配置包，具体的底层功能是由Spring提供的`@Import`实现，表示给容器中导入组件，源码：`@Import(AutoConfigurationPackages.Registrar.class)`；`metadata`表示注解的元信息（主启动类上注解@SpringBootApplication的元信息），getPackageNames：获取到主启动类的包名，作用是扫描主启动类所在包以及子包里面所有的组件扫描到Spring容器中；
 
       ```java
       @Target(ElementType.TYPE)
@@ -341,11 +379,15 @@ public @interface SpringBootApplication {
       @Import(AutoConfigurationPackages.Registrar.class)
       public @interface AutoConfigurationPackage {
       }
-      ```
-
-      ```java
+      
+      // ============================================================================================
       static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
       
+      	/**
+      	 * 将主配置类所在的包以及子包的组件扫描进IOC容器
+      	 * @param metadata 注解的元信息，改注解是标准在主启动类上的
+      	 * @param registry Bean注册器
+      	 */
           @Override
           public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
               register(registry, new PackageImports(metadata).getPackageNames().toArray(new String[0]));
@@ -359,34 +401,26 @@ public @interface SpringBootApplication {
       }
       ```
 
-   2. **@Import(AutoConfigurationImportSelector.class)**：（开启自动导包的选择器）源码如下：核心方法selectImports()，最用是以全类名的字符串
+   2. `@Import(AutoConfigurationImportSelector.class)`：（开启自动导包的选择器）源码如下：核心方法selectImports()，最用是以全类名的字符串；
 
       ```java
       @Override
       public String[] selectImports(AnnotationMetadata annotationMetadata) {
-          if (!isEnabled(annotationMetadata)) {
-              return NO_IMPORTS;
-          }
+          ...
           AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(annotationMetadata);
-          return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+          ...
       }
+      
       protected AutoConfigurationEntry getAutoConfigurationEntry(AnnotationMetadata annotationMetadata) {
-          if (!isEnabled(annotationMetadata)) {
-              return EMPTY_ENTRY;
-          }
-          AnnotationAttributes attributes = getAttributes(annotationMetadata);
+          ...
           List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);
-          configurations = removeDuplicates(configurations);
-          Set<String> exclusions = getExclusions(annotationMetadata, attributes);
-          checkExcludedClasses(configurations, exclusions);
-          configurations.removeAll(exclusions);
-          configurations = getConfigurationClassFilter().filter(configurations);
-          fireAutoConfigurationImportEvents(configurations, exclusions);
-          return new AutoConfigurationEntry(configurations, exclusions);
+          ...
       }
+      
       protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
           /**
-           *  Spring Boot中的SPI机制：core包里定义了SpringFactoriesLoader类，这个类实现了检索META-INF/spring.factories文件
+           *  Spring Boot中的SPI机制：core包里定义了SpringFactoriesLoader类，
+           *  - 这个类实现了检索META-INF/spring.factories文件
            *	- 在META-INF/spring.factories文件中配置接口的实现类名称，然后在程序中读取这些配置文件并实例化。
            *  - 这种自定义的SPI机制是Spring Boot Starter实现的基础
            */
@@ -396,7 +430,33 @@ public @interface SpringBootApplication {
                           + "are using a custom packaging, make sure that file is correct.");
           return configurations;
       }
+      
+      // 参数一:用类加载器获取META-INF/spring.factories资源,封装为properties,
+      // 在properties中读取的属性是名EnableAutoConfiguration的属性值,
+      // 将读取到的全类名注入到IOC容器
+      protected Class<?> getSpringFactoriesLoaderFactoryClass() {
+          return EnableAutoConfiguration.class;
+      }
+      
+      // 参数二:获取到Bean的类加载器
+      protected ClassLoader getBeanClassLoader() {
+          return this.beanClassLoader;
+      }
       ```
+
+## 1.8 自定义SpringBoot Starter
+
+1. 新建Starter项目：官方约定内置启动器名称是：spring-boot-xxx-sarter，而第三方自定义的启动器的命名规范是：xxx-spring-boot-starter
+
+2. 添加自定义starter所需依赖和版本信息
+
+3. 新建配置类：XxxAutoConfiguration，并添加Spring配置类注解@Configuration，并完善自动配置逻辑
+
+4. 配置文件引入自动配置类：在根目录（resources）中添加文件META-INF/spring.factories（**文件夹和路径固定，否则SpringBoot无法识别**），在sspring.factories中使用properties格式添加配置：key=org.springframework.boot.autoconfigure.EnableAutoConfiguration，valux=XxxAutoConfiguration全类名字符串
+
+   ```properties
+   org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.XxxAutoConfiguration
+   ```
 
 # 第二章 SpringBoot配置
 
