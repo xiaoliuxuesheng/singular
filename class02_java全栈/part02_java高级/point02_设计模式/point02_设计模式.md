@@ -49,11 +49,13 @@
 
 ## 2.1 简单工厂模式
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工厂模式的作用就是创建产品；在Java中就是new一个对象：在开发某些业务功能时候需要用都某种类型的特定功能，而且该类型的实现有多种方式，如果仅仅为了使用特定功能而负责这个对象的创建，这个对象的创建工作对于业务功能来说是多余的操作，而且代码耦合严重；工厂模式的解决了对象的创建和使用分离，只需要在业务功能中引入工厂角色就能获取到所需要的对象，而无需关系对象的创建过程
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工厂模式的作用就是创建产品；在Java中就是new一个对象：Java是面向对象的开发语言，在业务开发中会遇到各种类型的对象，如果在业务代码中仅仅为了使用特定功能而负责这个对象的创建，这个对象的创建工作对于业务功能来说是多余的操作，而且代码耦合严重；工厂模式的解决了对象的创建和使用分离，只需要在业务功能中引入工厂角色就能获取到所需要的对象，而无需关系对象的创建过程
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单工厂模式是采用封装方法的方式实现对象的创建，所以根据方法的签名（修饰符、方法名称、方法参数）不同，简单工厂模式分为**静态工厂**（工厂类中提供静态方法创建对象，生产对象要直接使用工厂类调用）和**实例工厂**（工厂类中定义实例方法创建对象，生成对象需要用工厂对象调用）；在Java中的方法设计灵活，对应的简单工厂的方式也有很多种；
 
-<font color='blue' size=4>1. 根据参数创建对象</font>：实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建不同的对象
+### <font color='blue' size=4>1. 根据参数创建对象</font>
+
+> 实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建不同的对象
 
 - 静态工厂
 
@@ -89,7 +91,9 @@
   }
   ```
 
-<font color='blue' size=4>2. 根据参数创建对象：使用反射</font>：实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
+### <font color='blue' size=4>2. 根据参数创建对象：使用反射</font>
+
+> 实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
 
 - 静态工厂
 
@@ -144,7 +148,9 @@
   }
   ```
 
-<font color='blue' size=4>3. 根据参数创建对象：使用泛型加反射</font>：实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
+### <font color='blue' size=4>3. 根据参数创建对象：使用泛型加反射</font>
+
+> 实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
 
 - 静态工厂
 
@@ -180,7 +186,9 @@
   }
   ```
 
-<font color='blue' size=4>4. 根据方法创建对象</font>：实现思路，在工厂类中定义一系列的方法实现对象的创建，不同的方法创建出不同的对象
+### <font color='blue' size=4>4. 根据方法创建对象</font>
+
+> 实现思路，在工厂类中定义一系列的方法实现对象的创建，不同的方法创建出不同的对象
 
 - 静态工厂
 
@@ -216,22 +224,20 @@
 
 ## 2.2 工厂方法模式
 
-​        简单工厂模式出现的问题是：如过需要添加新的产品，则需要修改原来的代码，对扩展和修改不友好；为解决简单工厂模式出现的问题，可以使用工厂方法模式：借鉴模板方法模式的思路，定义创建对象的抽象方法，将具体对象的创建延迟到子类实现，即由子类来决定应该实例化（创建）哪一个类。
+​        简单工厂模式出现的问题是：如过需要添加新的产品，则需要修改原来的代码，对扩展和修改不友好；为解决简单工厂模式出现的问题，可以使用工厂方法模式：借鉴模板方法模式的思路，定义创建对象的抽象方法，在工厂类中具体对象的创建延迟到工厂的子类实现，即由子类来决定应该实例化（创建）哪一个类。
 
-<font size=4 color=blue>1. 工厂方法模式涉及相关对象说明</font>
+- 工厂方法中相关对象说明 
 
-<img src="https://s1.ax1x.com/2020/05/13/YaEyHH.jpg" alt="YaEyHH.jpg" width="500" />
+  | 名称     | 作用说明                                             |
+  | -------- | ---------------------------------------------------- |
+  | 抽象工厂 | 对创建对象的方式进行抽象，并不负责具体对象的创建     |
+  | 工厂方法 | 是对抽象方法的实现，主要作用的是创建该工厂对应的对象 |
+  | 抽象产品 | 规定工厂创建对象的产品类型                           |
+  | 具体产品 | 是抽象产品的一个实现类，是工厂方法创建出的具体对象   |
 
-| 名称            | 作用说明                                                     |
-| --------------- | ------------------------------------------------------------ |
-| Creator         | 抽象工厂。它实现了所有操纵产品的方法，但不实现工厂方法。Creator所有的子类都必须要实现 |
-| ConcreteCreator | 具体工厂。制造产品的实际工厂。它负责创建一个或者多个具体产品 |
-| Product         | 抽象产品。所有的产品必须实现这个共同的接口                   |
-| ConcreteProduct | 具体产品                                                     |
+### <font size=4 color=blue>1. 工厂方法模式案例</font>
 
-<font size=4 color=blue>2. 工厂方法模式案例</font>
-
-- 为所需要生成的产品定义规范（抽象父类或者接口）
+- 抽象产品：假设工厂类要创建的产品的类型是IProduct产品
 
   ```java
   public interface IProduct {
@@ -239,7 +245,7 @@
   }
   ```
 
-- 根据规范设计对应的产品
+- 具体产品：IProduct类型的产品有多中不同的实现，比如ProductA、ProductB。。。
 
   ```java
   public class ProductA implements IProduct{
@@ -253,27 +259,23 @@
       }
   }
   
+  
+  public class ProductC implements IProduct {
+      public void show() {
+          System.out.println(" 创建产品C成功 ");
+      }
+  }
   ```
 
-- 工厂模式需要扩展创建的对象
-
-  ```java
-   public class ProductC implements IProduct {
-        public void show() {
-            System.out.println(" 创建产品C成功 ");
-        }
-    }
-  ```
-
-- 定义工厂类，定义抽象方法
+- 抽象工厂：需要定义个工厂，对IProduct对象的创建进行抽象，但是不会创建具体的产品
 
    ```java
   public interface Factory {
-    	IProduct create();
-    }
+      IProduct create();
+  }
   ```
 
-- 在工厂子类中完成对象创建
+- 在工厂类的子类中实现抽象方法，在子类工厂中实现对具体产品的实现
 
   ```java
   public class ProductAFactory implements Factory {
@@ -288,12 +290,6 @@
           return new ProductB();
       }
   }
-  
-  ```
-  
-- 为扩展的产品c创建工厂
-
-  ```java
   public class ProductCFactory implements Factory {
   	@Override
   	public IProduct create() {
@@ -301,151 +297,161 @@
   	}
   }
   ```
+  
 ## 2.3 抽象工厂模式
 
-​		在工厂方法模式中，我们使用一个工厂创建一个产品，也就是说一个具体的工厂对应一个具体的产品。但是有时候我们需要一个工厂能够提供多个产品对象，而不是单一的对象，这个时候我们就需要使用抽象工厂模式。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在工厂方法模式中，我们使用一个工厂创建一种类型的产品。但是有时候我们需要一个工厂能够提供多个类型的产品（产品族），而且每一种类型的产品可以有多个具体产品（产品等级），可以使用抽象工厂模式：抽象工厂模式我理解的是对工厂方法的扩展，抽象工厂用于创建多种类型的多种产品的一中对象创建方式；
 
-- 在讲解抽象工厂模式之前，我们需要厘清两个概念：
+- 在讲解抽象工厂模式之前，我们需要理清两个概念：
 
-​		**产品等级结构**。产品的等级结构也就是产品的继承结构。例如一个为空调的抽象类，它有海尔空调、格力空调、美的空调等一系列的子类，那么这个抽象类空调和他的子类就构成了一个产品等级结构。
+  - **产品等级结构**。产品的等级结构也就是产品的继承结构。例如一个为空调的抽象类，它有海尔空调、格力空调、美的空调等一系列的子类，那么这个抽象类空调和他的子类就构成了一个产品等级结构。
 
-​		**产品族**。产品族是在抽象工厂模式中的。在抽象工厂模式中，产品族是指由同一个工厂生产的，位于不同产品等级结构中的一组产品。比如，海尔工厂生产海尔空调。海尔冰箱，那么海尔空调则位于空调产品族中。
+  - **产品族**。产品族是在抽象工厂模式中的。在抽象工厂模式中，产品族是指由同一个工厂生产的，位于不同产品等级结构中的一组产品。比如，海尔工厂生产海尔空调。海尔冰箱，那么海尔空调则位于空调产品族中。
 
-<font size=4 color=blue>1. 抽象工厂模式涉及相关对象说明</font>
+- 抽象工厂中相关对象说明 
 
-<img src="https://s1.ax1x.com/2020/05/13/YaZVFs.jpg" alt="YaZVFs.jpg" border="0" />
+| 名称     | 作用说明                                                     |
+| -------- | ------------------------------------------------------------ |
+| 产品族   | 定义工厂类需要创建的产品类型：比如手机类型和电脑类型         |
+| 产品等级 | 定义每种类型的具体产品：比如手机又小米手机和华为手机，电脑有小米电脑和华为电脑 |
+| 工厂     | 在工厂类中抽象出创建多中类型的产品的方法：比如要创建手机类型的产品和电脑类型的产品 |
+| 抽象工厂 | 抽象工厂是对工厂的进一步抽象：<br />  - 比如可以抽象为小米工厂（生产小米手机和小米电脑）和华为工厂（生产华为手机和华为电脑）<br />  - 或者抽象为高端工厂（生产华为手机和小米电脑）和低端工厂（生产小米手机和华为电脑） |
+| 工厂类   | 类似于工厂方法中创建对象的具体工厂的实现，没一个工厂类只能创建特定类型的产品 |
 
-| 名称            | 作用说明                                                     |
-| --------------- | ------------------------------------------------------------ |
-| AbstractFactory | 抽象工厂。抽象工厂定义了一个接口，所有的具体工厂都必须实现此接口，这个接口包含了一组方法用来生产产品。 |
-| ConcreteFactory | 具体工厂。具体工厂是用于生产不同产品族。要创建一个产品，客户只需要使用其中一个工厂完全不需要实例化任何产品对象 |
-| AbstractProduct | 抽象产品。这是一个产品家族，每一个具体工厂都能够生产一整组产品 |
-| Product         | 具体产品                                                     |
+### <font size=4 color=blue>1. 抽象工厂模式案例</font>
 
-<font size=4 color=blue>2. 抽象工厂模式案例</font>：是披萨店。为了要保证每家加盟店都能够生产高质量的披萨，防止使用劣质的原料，我们打算建造一家生产原料的工厂，并将原料运送到各家加盟店。但是加盟店都位于不同的区域，比如纽约、芝加哥。纽约使用一组原料，芝加哥使用另一种原料。在这里我们可以这样理解，这些不同的区域组成了原料家族，每个区域实现了一个完整的原料家族。
-
-- 首先有一个披萨产品，在这个披萨类里面，我们需要使用原料，将prepare()方法声明为抽象，在这个方法中，我们需要收集披萨所需要的原料。
-
-  ```java
-  public abstract class Pizza {
-      /*
-      * 每个披萨都持有一组在准备时会用到的原料
-      */
-      String name;
-      Dough dough;
-      Sauce sauce;
-      Veggies veggies[];
-      Cheese cheese;
-      Pepperoni pepperoni;
-      Clams clams;
-      /*
-      * prepare()方法声明为抽象方法。在这个方法中，我们需要收集披萨所需要的原料，而这些原料都是来自原料工厂
-      */
-      abstract void prepare();
-      void bake(){
-          System.out.println("Bake for 25 munites at 350");
-      }
-      void cut(){
-          System.out.println("Cutting the pizza into diagonal slices");
-      }
-      void box(){
-          System.out.println("Place pizza in official PizzaStore box");
-      }
-      public String getName() {
-          return name;
-      }
-      public void setName(String name) {
-          this.name = name;
-      }
-  }
-  ```
-
-- 具体的披萨制作时候需要从原料工厂中得到原料
+- 需要创建两种类型的产品：比如有两个产品族：手机和电脑
 
   ```java
-  public class CheesePizza extends Pizza{
-      PizzaIngredientFactory ingredientFactory;
-      /*
-      * 要制作披萨必须要有制作披萨的原料，而这些原料是从原料工厂运来的
-      */
-      public CheesePizza(PizzaIngredientFactory ingredientFactory){
-          this.ingredientFactory = ingredientFactory;
-          prepare();
-      }
-      /* 实现prepare方法
-      * prepare 方法一步一步地创建芝士比萨，每当需要原料时，就跟工厂要
-      */
-      void prepare() {
-          System.out.println("Prepareing " + name);
-          dough = ingredientFactory.createDough();
-          sauce = ingredientFactory.createSauce();
-          cheese = ingredientFactory.createCheese();
-      }
+  public interface NetBook {
   }
   
-  public class ClamPizza extends Pizza{
-      PizzaIngredientFactory ingredientFactory;
-      public ClamPizza(PizzaIngredientFactory ingredientFactory){
-          this.ingredientFactory = ingredientFactory;
-      }
-      @Override
-      void prepare() {
-          System.out.println("Prepare " + name);
-          dough = ingredientFactory.createDough();
-          sauce = ingredientFactory.createSauce();
-          cheese = ingredientFactory.createCheese();
-          clams = ingredientFactory.createClams();
-      }
+  public interface NetPhone {
+  
   }
   ```
 
-- 所以需要创建一个原料工厂。该工厂为抽象工厂，负责创建所有的原料
+- 电脑类型的产品有两个产品等级：小米笔记本电脑和华为笔记本电脑
 
   ```java
-  public interface PizzaIngredientFactory {
-      /*
-       *在接口中，每个原料都有一个对应的方法创建该原料
-      **/
-      public Dough createDough();
-      public Sauce createSauce();
-      public Cheese createCheese();
-      public Veggies[] createVeggies();
-      public Pepperoni createPepperoni();
-      public Clams createClams();
+  public class HWNetBook implements NetBook{
+  }
+  
+  public class XMNetBook implements NetBook{
   }
   ```
 
-- 创建具体的原料工厂。该具体工厂只需要继承PizzaIngredientFactory，然后实现里面的方法即可。具体的原料工厂也可定义为多个
+- 手机类型的产品有两个产品等级：小米手机和华为手机
 
   ```java
-  public class NYPizzaIngredientFactory implements PizzaIngredientFactory{
-      @Override
-      public Cheese createCheese() {
-          return new ReggianoCheese();
-      }
-      @Override
-      public Clams createClams() {
-          return new FreshClams();
-      }
-      @Override
-      public Dough createDough() {
-          return new ThinCrustDough();
-      }
-      @Override
-      public Pepperoni createPepperoni() {
-          return new SlicedPepperoni();
-      }
-      @Override
-      public Sauce createSauce() {
-          return new MarinaraSauce();
-      }
-      @Override
-      public Veggies[] createVeggies() {
-          Veggies veggies[] =  {new Garlic(),new Onion(),new Mushroom(),new RefPepper()};
-          return veggies;
-      }
+  public class HWNetPhone implements NetPhone{
+  }
+  
+  public class XMNetPhone implements NetPhone{
+  
   }
   ```
+
+- 此时我们需要使用到抽象工厂创建上面的四个产品：首先定义一个工厂规定创建手机和电脑的方法
+
+  ```java
+  public interface Factory {
+      NetBook creatBook();
+  
+      NetPhone createPhone();
+  }
+  ```
+
+- 根据产品族和产品等级对工厂进一步抽象：说明这些工厂是为了创建什么样的产品
+
+  - 抽象方案一：根据产品类型不同抽象为小米工厂（生产小米手机和小米电脑）和华为工厂（生产华为手机和华为电脑）
+
+    ```java
+    public interface HWAbsFactory extends Factory {
+    }
+    
+    public interface XMAbsFactory extends Factory {
+    }
+    ```
+
+  - 抽象方案二：根据产品价格不同抽象为高端工厂和低端工厂
+
+    ```java
+    public interface HightAbsFactory extends Factory {
+    }
+    
+    public interface LowAbsFactory extends Factory {
+    }
+    ```
+
+- 创建具体的工厂实现抽象出来的工厂用于创建具体的产品对象
+
+  - 根据方案一：实现抽象工厂创建华为工厂的实现创建华为手机和华为电脑，创建小米工厂的实现创建小米手机和小米电脑
+
+    ````java
+    /**
+     * 华为工厂的实现
+     */
+    public class HWAbsFactoryImpl implements HWAbsFactory {
+        @Override
+        public NetBook creatBook() {
+            return new HWNetBook();
+        }
+    
+        @Override
+        public NetPhone createPhone() {
+            return new HWNetPhone();
+        }
+    }
+    /**
+     * 小米工厂的实现
+     */
+    public class XMAbsFactoryImpl implements XMAbsFactory {
+        @Override
+        public NetBook creatBook() {
+            return new XMNetBook();
+        }
+    
+        @Override
+        public NetPhone createPhone() {
+            return new XMNetPhone();
+        }
+    }
+    ````
+
+  - 根据方案二：实现抽象工厂创建高端工厂的实现创建华为手机和小米电脑，创建低端工厂的实现创建小米手机和华为电脑
+
+    ```java
+    /**
+     * 高端工厂的实现
+     */
+    public class HightAbsFactoryImpl implements HightAbsFactory {
+    
+        @Override
+        public NetBook creatBook() {
+            return new HWNetBook();
+        }
+    
+        @Override
+        public NetPhone createPhone() {
+            return new XMNetPhone();
+        }
+    }
+    /**
+     * 低端工厂的实现
+     */
+    public class LowAbsFactoryImpl implements LowAbsFactory {
+        @Override
+        public NetBook creatBook() {
+            return new HWNetBook();
+        }
+    
+        @Override
+        public NetPhone createPhone() {
+            return new XMNetPhone();
+        }
+    }
+    ```
 
 
 ## 2.4 单例设计模式
@@ -990,11 +996,11 @@ public class Single{
 
 <font color=blue size=4>**1. 概述**</font>
 
-​		原型模式的思路：Java中Object是所有类的根类，Object提供了一个clone方法，该方法可以将Java对象复制一份，但是需要实现克隆方法的Java类**必须实现一个接口Cloneable**：该接口表示实现类能够复制且具有复制的能力，这种复制方式也称为原型模式。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原型模式的思路：Java中Object是所有类的根类，Object提供了一个clone方法，该方法可以将Java对象复制一份，但是需要实现克隆方法的Java类**必须实现一个接口Cloneable**：该接口表示实现类能够复制且具有复制的能力，这种复制方式也称为原型模式。
 
-​		原型（Prototype）模式的定义如下：用一个已经创建的实例作为原型，通过复制该原型对象来创建一个和原型相同或相似的新对象。在这里，原型实例指定了要创建的对象的种类。用这种方式创建对象非常高效，根本无须知道对象创建的细节。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原型（Prototype）模式的定义如下：用一个已经创建的实例作为原型，通过复制该原型对象来创建一个和原型相同或相似的新对象。在这里，原型实例指定了要创建的对象的种类。用这种方式创建对象非常高效，根本无须知道对象创建的细节。
 
-​		在Spring中指定scope=prototype（多例）的Bean的创建，就是使用的原型模式
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Spring中指定scope=prototype（多例）的Bean的创建，就是使用的原型模式
 
 <font color=blue size=4>**2. 实现原理**</font>
 
