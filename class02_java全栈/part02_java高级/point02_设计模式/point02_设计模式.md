@@ -258,8 +258,6 @@
           System.out.println(" 创建产品B成功 ");
       }
   }
-  
-  
   public class ProductC implements IProduct {
       public void show() {
           System.out.println(" 创建产品C成功 ");

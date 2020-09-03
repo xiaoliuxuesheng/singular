@@ -14,13 +14,13 @@
 
 ### 1.1 CSS样式规则
 
-1. **<font size=4 color=blue>行内样式</font>**：
+1. <font size=4 color=blue>**行内样式**</font>：
 
    ```css
    style="属性名: 属性值; 属性名: 属性值; ... ..."
    ```
 
-2. **<font size=4 color=blue>文档样式</font>**：
+2. <font size=4 color=blue>**文档样式**</font>：
 
    ```css
    选择器{
@@ -30,7 +30,7 @@
    }
    ```
 
-3. **<font size=4 color=blue>CSS脚本文件</font>**：
+3. <font size=4 color=blue>**CSS脚本文件**</font>：
 
    - 使用html内嵌样式时候，css的编码格式和html的编码格式相同
 
@@ -47,7 +47,7 @@
 
 ### 1.2 CSS引用规则
 
-1. **<font size=4 color=blue>行内样式：</font>**样式定义在html标签的style属性上
+1. <font size=4 color=blue>**行内样式：**</font>样式定义在html标签的style属性上
 
    ```html
    <div style="background-color: red;">
@@ -55,7 +55,7 @@
    </div>
    ```
    
-2. **<font size=4 color=blue>嵌入样式：</font>**样式写在 `<style>`标签内，`<style>`标签定义在html文件的`<head>`标签内
+2. <font size=4 color=blue>**嵌入样式：**</font>样式写在 `<style>`标签内，`<style>`标签定义在html文件的`<head>`标签内
 
    ```html
    <style rel="stylesheet" type="text/css">
@@ -68,7 +68,7 @@
    - 属性`rel`：不能省略，是用来指定文档和链接资源的关系
    - 属性`type`：rel指定后，type也会被确定，所有type是可以省略的
    
-3. **<font size=4 color=blue>外部样式</font>**
+3. <font size=4 color=blue>**外部样式**</font>
 
    ```html
    <link rel="stylesheet"  type="text/css" href="./css/01_外部css.css">
@@ -780,16 +780,16 @@ padding: 上 右 下 左;
 | **inline-block**   | 行内块元素。（CSS2.1 新增的值）                              |
 | list-item          | 此元素会作为列表显示。                                       |
 | run-in             | 此元素会根据上下文作为块级元素或内联元素显示。               |
-| table              | 此元素会作为块级表格来显示（类似 <table>），表格前后带有换行符。 |
-| inline-table       | 此元素会作为内联表格来显示（类似 <table>），表格前后没有换行符。 |
-| table-row-group    | 此元素会作为一个或多个行的分组来显示（类似 <tbody>）。       |
-| table-header-group | 此元素会作为一个或多个行的分组来显示（类似 <thead>）。       |
-| table-footer-group | 此元素会作为一个或多个行的分组来显示（类似 <tfoot>）。       |
-| table-row          | 此元素会作为一个表格行显示（类似 <tr>）。                    |
-| table-column-group | 此元素会作为一个或多个列的分组来显示（类似 <colgroup>）。    |
-| table-column       | 此元素会作为一个单元格列显示（类似 <col>）                   |
-| table-cell         | 此元素会作为一个表格单元格显示（类似 <td> 和 <th>）          |
-| table-caption      | 此元素会作为一个表格标题显示（类似 <caption>）               |
+| table              | 此元素会作为块级表格来显示（类似 `<table>`），表格前后带有换行符。 |
+| inline-table       | 此元素会作为内联表格来显示（类似 `<table>`），表格前后没有换行符。 |
+| table-row-group    | 此元素会作为一个或多个行的分组来显示（类似 `<tbody>`）。     |
+| table-header-group | 此元素会作为一个或多个行的分组来显示（类似 `<thead>`）。     |
+| table-footer-group | 此元素会作为一个或多个行的分组来显示（类似 `<tfoot>`）。     |
+| table-row          | 此元素会作为一个表格行显示（类似 `<tr>`）。                  |
+| table-column-group | 此元素会作为一个或多个列的分组来显示（类似 `<colgroup>`）。  |
+| table-column       | 此元素会作为一个单元格列显示（类似 `<col>`）                 |
+| table-cell         | 此元素会作为一个表格单元格显示（类似 `<td>` 和 `<th>`）      |
+| table-caption      | 此元素会作为一个表格标题显示（类似 `<caption>`）             |
 | inherit            | 规定应该从父元素继承 display 属性的值。                      |
 
 ## 第六章 浮动属性
