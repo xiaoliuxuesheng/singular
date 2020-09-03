@@ -1,6 +1,2 @@
-- [point01_springboot](/class02_java全栈/part07_微服务技术栈/point01_springboot/point01_springboot.md)
-- [point02_springcloud](/class02_java全栈/part07_微服务技术栈/point02_springcloud/point02_springcloud.md)
-- [point03_消息队列](/class02_java全栈/part07_微服务技术栈/point03_消息队列/point03_消息队列.md)
-- [point04_ElasticStack](/class02_java全栈/part07_微服务技术栈/point04_ElasticStack/point04_ElasticStack.md)
-  	1. Tomcat
-  	2. Nginx
+- [1_Tomcat](/class02_java全栈/part07_微服务技术栈/point09_服务器/1_Tomcat/1_Tomcat.md)
+- [2_Nginx](/class02_java全栈/part07_微服务技术栈/point09_服务器/2_Nginx/2_Nginx.md)

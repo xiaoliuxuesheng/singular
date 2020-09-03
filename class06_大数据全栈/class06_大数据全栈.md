@@ -1,4 +1,4 @@
-- [part01_linux运维](/class06_大数据全栈/part01_linux运维/part01_linux运维.md)
-- [part02_docker虚拟化](/class06_大数据全栈/part02_docker虚拟化/part02_docker虚拟化.md)
-- [part03_python](/class06_大数据全栈/part03_python/part03_python.md)
-- [part04_大数据核心](/class06_大数据全栈/part04_大数据核心/part04_大数据核心.md)
+- [part01_linux](/class06_大数据全栈/part01_linux/part01_linux.md)
+- [part02_docker](/class06_大数据全栈/part02_docker/part02_docker.md)
+- [part03_技术栈](/class06_大数据全栈/part03_技术栈/part03_技术栈.md)
+- [part04_大数据](/class06_大数据全栈/part04_大数据/part04_大数据.md)
