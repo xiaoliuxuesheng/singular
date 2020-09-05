@@ -9,6 +9,15 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/buble.css">
+    <style>
+        .app-nav {
+            position: absolute;
+        }
+        
+        #main {
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,31 +25,17 @@
     <script>
         window.$docsify = {
             name: '乘风破浪 披荆斩棘',
+            repo: 'https://gitee.com/xiaoliuxuesheng',
             coverpage: true,
-            loadSidebar: true,
             loadNavbar: true,
-            maxLevel: 1,
-            subMaxLevel: 1,
-            auto2top: false,
-            search: 'auto', // default
-            search: [
-                '/', // => /README.md
-                '/guide', // => /guide.md
-                '/get-started', // => /get-started.md
-                '/zh-cn/', // => /zh-cn/README.md
-            ],
-            // complete configuration parameters
+            mergeNavbar: true,
+            loadSidebar: true,
+            subMaxLevel: 6,
+            auto2top: true,
             search: {
-                maxAge: 86400000, // Expiration time, the default one day
-                paths: [], // or 'auto'
                 placeholder: '搜索',
-                noData: 'No Results!',
-
-                // Localization
-                noData: {
-                    '/zh-cn/': '找不到结果',
-                    '/': 'No Results'
-                }
+                noData: '找不到结果',
+                depth: 4,
             }
         }
     </script>
@@ -49,6 +44,9 @@
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+    <script src="https://unpkg.com/prismjs/components/prism-bash.js"></script>
+    <script src="https://unpkg.com/prismjs/components/prism-java.js"></script>
+    <script src="https://unpkg.com/prismjs/components/prism-sql.js"></script>
 </body>
 
 </html>

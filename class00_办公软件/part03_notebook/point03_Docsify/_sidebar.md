@@ -1,2 +1,2 @@
 - [返回](class00_办公软件/part03_notebook/part03_notebook.md)
-- [目录](class00_办公软件/part01_office/point03_Docsify/point03_Docsify.md)
+- [目录](class00_办公软件/part03_notebook/point03_docsify/point03_docsify.md)

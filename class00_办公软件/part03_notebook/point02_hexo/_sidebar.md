@@ -1,2 +1,2 @@
 - [返回](class00_办公软件/part03_notebook/part03_notebook.md)
-- [目录](class00_办公软件/part01_office/point02_hexo/point02_hexo.md)
+- [目录](class00_办公软件/part03_notebook/point02_hexo/point02_hexo.md)

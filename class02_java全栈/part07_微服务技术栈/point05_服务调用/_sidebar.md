@@ -1,0 +1,4 @@
+- [返回](class02_java全栈/part07_微服务技术栈/part07_微服务技术栈.md)
+  - [1_RestTemplate](/class02_java全栈/part07_微服务技术栈/point05_服务调用/1_RestTemplate/1_RestTemplate.md)
+  - [2_dubbo](/class02_java全栈/part07_微服务技术栈/point05_服务调用/2_dubbo/2_dubbo.md)
+  - [3_OpenFeign](/class02_java全栈/part07_微服务技术栈/point05_服务调用/3_OpenFeign/3_OpenFeign.md)

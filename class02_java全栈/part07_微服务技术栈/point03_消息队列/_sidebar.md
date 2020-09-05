@@ -1,0 +1,5 @@
+- [返回](class02_java全栈/part07_微服务技术栈/part07_微服务技术栈.md)
+  - [1_kafka](/class02_java全栈/part07_微服务技术栈/point03_消息队列/1_kafka/1_kafka.md)
+  - [2_rabbitmq](/class02_java全栈/part07_微服务技术栈/point03_消息队列/2_rabbitmq/2_rabbitmq.md)
+  - [3_activemq](/class02_java全栈/part07_微服务技术栈/point03_消息队列/3_activemq/3_activemq.md)
+  - [4_rocketmq](/class02_java全栈/part07_微服务技术栈/point03_消息队列/4_rocketmq/4_rocketmq.md)

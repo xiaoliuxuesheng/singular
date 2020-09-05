@@ -1,3 +1,3 @@
 - [返回](class00_办公软件/class00_办公软件.md)
-- [point01_PS](class00_办公软件/part02_ui/point01_PS/point01_PS.md)
-- [point02_AI](class00_办公软件/part02_ui/point02_AI/point02_AI.md)
+  - [point01_PS](class00_办公软件/part02_ui/point01_PS/point01_PS.md)
+  - [point02_AI](class00_办公软件/part02_ui/point02_AI/point02_AI.md)

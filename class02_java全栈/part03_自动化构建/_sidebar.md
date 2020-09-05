@@ -1,0 +1,6 @@
+- [返回](class02_java全栈/class02_java全栈.md)
+  - [point00_开发工具](/class02_java全栈/part03_自动化构建/point00_开发工具/point00_开发工具.md)
+  - [point01_maven](/class02_java全栈/part03_自动化构建/point01_maven/point01_maven.md)
+  - [point02_gradle](/class02_java全栈/part03_自动化构建/point02_gradle/point02_gradle.md)
+  - [point03_Jenkins](/class02_java全栈/part03_自动化构建/point03_Jenkins/point03_Jenkins.md)
+  - [point04_junit](/class02_java全栈/part03_自动化构建/point04_junit/point04_junit.md)
