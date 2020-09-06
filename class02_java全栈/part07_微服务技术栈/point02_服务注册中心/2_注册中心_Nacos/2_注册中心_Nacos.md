@@ -117,7 +117,110 @@
    http://localhost:8848/nacos/
    ```
 
-# 第二章 Nacos配置中心
+# 第二章 Nacos配置中心-SpringCloud
+
+## 2.1 Nacos配置相关概念
+
+1. 命名空间
+2. Group
+3. Data ID
+
+## 2.2 Nacos配置控制台
+
+1. 命名空间
+2. 发布配置
+3. 修改配置
+4. 回滚配置
+5. 导出与导入
+
+## 2.3 SpringCloud引入Nacos配置
+
+1. 新建Maven项目，配置SpringCloud环境：Nacos是SpringAlibaba技术栈
+
+   ```xml
+    <dependencyManagement>
+           <dependencies>
+               <!--SpringCloudDependencies-->
+               <dependency>
+                   <groupId>org.springframework.cloud</groupId>
+                   <artifactId>spring-cloud-dependencies</artifactId>
+                   <version>Hoxton.SR1</version>
+                   <type>pom</type>
+                   <scope>import</scope>
+               </dependency>
+   
+               <!--SpringBootDependencies-->
+               <dependency>
+                   <groupId>org.springframework.boot</groupId>
+                   <artifactId>spring-boot-dependencies</artifactId>
+                   <version>2.2.2.RELEASE</version>
+                   <type>pom</type>
+                   <scope>import</scope>
+               </dependency>
+   
+               <!--SpringCloudAlibabaDependencies-->
+               <dependency>
+                   <groupId>com.alibaba.cloud</groupId>
+                   <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                   <version>2.1.0.RELEASE</version>
+                   <type>pom</type>
+                   <scope>import</scope>
+               </dependency>
+           </dependencies>
+       </dependencyManagement>
+   ```
+
+2. 添加Nacos相关依赖以及测试环境依赖
+
+   ```xml
+       <dependencies>
+           <dependency>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-starter-web</artifactId>
+           </dependency>
+           <dependency>
+               <groupId>com.alibaba.cloud</groupId>
+               <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+           </dependency>
+           <dependency>
+               <groupId>com.alibaba.cloud</groupId>
+               <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+           </dependency>
+       </dependencies>
+   ```
+
+3. 新增主启动类，并添加Nacos相关配置：bootstrap.yml
+
+   -  **bootstrap.yml（bootstrap.properties）**用来在程序引导时执行，应用于更加早期配置信息读取，如可以使用来配置application.yml中使用到参数等
+   - **application.yml（application.properties)** 应用程序特有配置信息，可以用来配置后续各个模块中需使用的公共参数等。
+
+   ```yaml
+   server:
+     port: 3377
+   
+   spring:
+     application:
+       name: alibaba-config
+     cloud:
+       nacos:
+         discovery:
+           server-addr: 127.0.0.1:8848
+         config:
+           server-addr: 127.0.0.1:8848
+           file-extension: yaml
+           namespace: 06e2876f-6ece-484b-9220-12eb8e5b4db5
+           group: DEFAULT_GROUP
+   ```
+
+4. 配置文件说明：
+
+   - 在配置文件中指定namespace，
+   - 根据配置读取Nacos中配置DataId的规则：{spring.application.name}.{nacos.config.file-extension}
+
+## 2.4 配置管理
+
+1. 发布配置
+2. 配置优先级
 
 # 第三章 Nacos服务中心
 

@@ -53,7 +53,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单工厂模式是采用封装方法的方式实现对象的创建，所以根据方法的签名（修饰符、方法名称、方法参数）不同，简单工厂模式分为**静态工厂**（工厂类中提供静态方法创建对象，生产对象要直接使用工厂类调用）和**实例工厂**（工厂类中定义实例方法创建对象，生成对象需要用工厂对象调用）；在Java中的方法设计灵活，对应的简单工厂的方式也有很多种；
 
-### <font color='blue' size=4>1. 根据参数创建对象</font>
+### 1. 根据参数创建对象
 
 > 实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建不同的对象
 
@@ -91,7 +91,7 @@
   }
   ```
 
-### <font color='blue' size=4>2. 根据参数创建对象：使用反射</font>
+### 2. 根据参数创建对象：使用反射
 
 > 实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
 
@@ -148,7 +148,7 @@
   }
   ```
 
-### <font color='blue' size=4>3. 根据参数创建对象：使用泛型加反射</font>
+### 3. 根据参数创建对象：使用泛型加反射
 
 > 实现思路，在工厂类中定义一个方法实现对象的创建，根据参数的不同可以创建对应类型的对象
 
@@ -186,7 +186,7 @@
   }
   ```
 
-### <font color='blue' size=4>4. 根据方法创建对象</font>
+### 4. 根据方法创建对象
 
 > 实现思路，在工厂类中定义一系列的方法实现对象的创建，不同的方法创建出不同的对象
 
@@ -235,7 +235,7 @@
   | 抽象产品 | 规定工厂创建对象的产品类型                           |
   | 具体产品 | 是抽象产品的一个实现类，是工厂方法创建出的具体对象   |
 
-### <font size=4 color=blue>1. 工厂方法模式案例</font>
+### 1. 工厂方法模式案例
 
 - 抽象产品：假设工厂类要创建的产品的类型是IProduct产品
 
@@ -316,7 +316,7 @@
 | 抽象工厂 | 抽象工厂是对工厂的进一步抽象：<br />  - 比如可以抽象为小米工厂（生产小米手机和小米电脑）和华为工厂（生产华为手机和华为电脑）<br />  - 或者抽象为高端工厂（生产华为手机和小米电脑）和低端工厂（生产小米手机和华为电脑） |
 | 工厂类   | 类似于工厂方法中创建对象的具体工厂的实现，没一个工厂类只能创建特定类型的产品 |
 
-### <font size=4 color=blue>1. 抽象工厂模式案例</font>
+### 1. 抽象工厂模式案例
 
 - 需要创建两种类型的产品：比如有两个产品族：手机和电脑
 
@@ -451,314 +451,487 @@
     }
     ```
 
-
 ## 2.4 单例设计模式
 
-### 1. 创建单例的各种方式
+### 1、学习准备
 
-<font color=blue size=4>**★ - 饿汉式-静态常量**</font>：使用静态常量的方式将单例对象准备好, 可接获取即可使用
-
-```java
-public class Single {
-    
-    private static final Single INSTANCE = new Single();
-
-    public static Single getInstance() {
-        return INSTANCE;
-    }
-    
-    private Single() {
-        if (null != INSTANCE){
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-
-    private Object readResolve() {
-        return INSTANCE;
-    }
-}
-```
-
-> - 在类加载的时候就立即初始化，并且创建单例对象
-> - 绝对线程安全，在线程还没出现以前就是实例化了
-> - 类加载的时候就初始化，不管用与不用都占着空间，浪费了内存
-
-<font color=blue size=4>**★ - 饿汉式-静态代码块**</font>：
-
-```java
-public class Single {
-    
-    private static final Single INSTANCE;
-    static {
-        INSTANCE = new Single();
-    }
-
-    public static Single getInstance() {
-        return INSTANCE;
-    }
-
-    
-    private Single() {
-        if (null != INSTANCE){
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-    
-	private Object readResolve() {
-        return INSTANCE;
-    }
-}
-```
-
-> - 特点和静态常量方式的单例模式相同
-
-<font color=blue size=4>**☆ - 懒汉式-普通**</font>
-
-```java
-public class Single {
-    
-    private static Single instance;
-
-    public static Single getInstance() {
-        if (null == instance){
-            instance = new Single();
-        }
-        return instance;
-    }
-    
-    private Single() {
-        if (null != instance){
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-    
-    private Object readResolve() {
-        return instance;
-    }
-}
-```
-
-> - 这样的单例存在线程安全隐患
-> - 不推荐
-
-<font color=blue size=4>**☆ - 懒汉式-同步方法**</font>：单线程环境下实现懒加载
-
-```java
-public class Single {
-    
-    private static Single instance;
-
-    public static synchronized Single getInstance() {
-        if (null == instance){
-            instance = new Single();
-        }
-        return instance;
-    }
-    
-    private Single() {
-        if (null != instance){
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-
-    private Object readResolve() {
-        return instance;
-    }
-}
-```
-
-> - 加上 synchronized 关键字，使这个方法变成线程同步方法,会导致程序运行性能大幅下降
-
-<font color=blue size=4>**☆ - 懒汉式-同步代码块**</font>：单线程环境下实现懒加载
-
-```java
-public class Single {
-    
-    private static SingleSynBlock instance;
-    
-    public static SingleSynBlock getInstance() {
-        if (null == instance) {
-            synchronized (SingleSynBlock.class) {
-                instance = new SingleSynBlock();
-            }
-        }
-        return instance;
-    }
-    
-    
-    private Single() {
-        if (null != instance){
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-
-    private Object readResolve() {
-        return instance;
-    }
-}
-```
-
-> - 线程不安全并且效率提升不明显,
-> - 最危险的一种单例模式
-
-<font color=blue size=4>**★ - 懒汉式-双重检查**</font>：解决同步方法的单例模式中出现的问题, 使用双重判断保证单例的实现
-
-```java
-public class Single{
-    
-    private static volatile Single instance = null;
-
-    public static Single getInstance() {
-        if (null == instance) {
-            synchronized (Single.class) {
-                if (null == instance) {
-                    instance = new Single();
-                }
-            }
-        }
-        return instance;
-    }
-    
-    private Single() {
-        if (null != instance){
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-
-    private Object readResolve() {
-        return instance;
-    }
-}
-```
-
-> - 性能相对比较良好
-> - 而且适合多线程环境
-> - 关键字 `volatile` : 保证此变量对所有的线程的可见性，当一个线程修改了这个变量的值，volatile 保证了新值能立即同步到主内存，以及每次使用前立即从主内存刷新。但普通变量做不到这点，普通变量的值在线程间传递均需要通过主内存
-
-<font color=blue size=4>**★ - 懒汉式-静态内部类**</font>：枚举类中每个值代表该枚举类的一个静态实例对象；它是线程安全的，不可变的，并且很好的解决了序列化中的多实例问题
-
-```java
-public class Single{
-    
-    public static Single getInstance() {
-        return InnerClass.INSTANCE;
-    }
-    
-    private static class InnerClass {
-        public static final Single INSTANCE = new Single();
-    }
-    
-    private SingleInnerClass() {
-        if (InnerClass.INSTANCE != null) {
-            throw new RuntimeException("实例对象已存在");
-        }
-    }
-
-    private Object readResolve() {
-        return InnerClass.INSTANCE;
-    }
-}
-```
-
-> - 静态内部类不会再外部类加载时候加载, 在使用内部类时候才会被加载
-> - 兼顾饿汉式的内存浪费，也兼顾 synchronized 性能问题。内部类一定是要在方法调用之前初始化，巧妙地避免了线程安全问题
-
-<font color=blue size=4>**★ - 枚举单例**</font>
-
-```java
-public enum SingleEnum{
-    
-    INSTANCE;
-    
-    private Single single;
-
-    SingleEnum() {
-        single = new Single();
-    }
-
-    public Single getInstance() {
-        return single;
-    }
-}
-```
-
-> 在 JDK 枚举的语法特殊性，以及反射也为枚举保驾护航，让枚举式单例成为一种比较优雅的实现。
-
-### 2. 反射破坏单例
-
-- Java反射可以调用私有方法,所以反射会破坏单例
+- 使用CountDownLatch和Semaphore模拟并发
 
   ```java
-  Class<?> clz = Class.forName(clzName);
-  Constructor<?> constructor = clz.getDeclaredConstructor();
-  constructor.setAccessible(true);
-  Object o1 = constructor.newInstance();
-  Object o2 = constructor.newInstance();
-  ```
+  public class TestSingle {
   
-- 解决方案 : 在构造方法中做一些限制
+      private static final Integer TOTAL_COUNT = 10000;
+      private static final Integer THREAD_COUNT = 500;
+  
+      private final Set<Integer> hash = new HashSet<>();
+  
+      /**
+       * 并发模拟测试单例效率与安全性
+       */
+      @Test
+      public void test() throws InterruptedException {
+          // 创建线程池
+          ExecutorService service = Executors.newCachedThreadPool();
+          // 定义信号量
+          final Semaphore semaphore = new Semaphore(THREAD_COUNT);
+          //定义计数器闭锁
+          final CountDownLatch countDownLatch = new CountDownLatch(TOTAL_COUNT);
+          long start = System.currentTimeMillis();
+          for (int i = 0; i < TOTAL_COUNT; i++) {
+              //将需要测试的业务全部放入线程池
+              service.execute(() -> {
+                  try {
+                      //当线程允许被执行时才执行
+                      semaphore.acquire();
+                  } catch (InterruptedException e) {
+                      // TODO Auto-generated catch block
+                      e.printStackTrace();
+                  }
+                  hash.add(LazySyncBlock.getInstance().hashCode());
+                  //线程执行完后释放
+                  semaphore.release();
+                  //每次线程执行完之后，countdown一次
+                  countDownLatch.countDown();
+              });
+          }
+          try {
+              //该方法可以保证clientTotal减为0.既可以保证所有的线程都执行完毕了
+              countDownLatch.await();
+          } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+          }
+          //所有的线程执行完了后，关闭线程池
+          service.shutdown();
+          System.out.println("创建实例数=" + hash.size());
+          System.out.println("创建实例耗时=" + (System.currentTimeMillis() - start));
+      }
+  }
+  ```
+
+- 使用反射创建对象
 
   ```java
-  public class Single{
-      private Single() {
-          if (null != instance){
-              throw new RuntimeException("不允许重复实例化");
+  public class TestSingle {
+  	@Test
+      public void staticFinal() throws Exception {
+          Class<StaticFinal> finalClass = StaticFinal.class;
+          Constructor<StaticFinal> ct = finalClass.getDeclaredConstructor();
+          ct.setAccessible(true);
+  
+          StaticFinal single1 = ct.newInstance();
+          StaticFinal single2 = ct.newInstance();
+          Assert.assertEquals(single1, single2);
+      }
+  }
+  ```
+
+- 序列化创建对象
+
+  ```java
+  public class TestSingle {    
+  	@Test
+      public void testXuliehua() {
+          String path = "StaticFinal";
+          try (
+                  FileOutputStream objStream = new FileOutputStream(path);
+                  ObjectOutputStream outputObjStream = new ObjectOutputStream(objStream);
+                  ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(path));
+          ) {
+              StaticFinal instance1 = StaticFinal.getInstance();
+              StaticFinal instance2 = null;
+              outputObjStream.writeObject(instance1);
+              outputObjStream.flush();
+  
+              instance2 = (StaticFinal) objectInputStream.readObject();
+              Assert.assertEquals(instance1, instance2);
+          } catch (Exception e) {
+              e.printStackTrace();
           }
       }
   }
-  
   ```
 
-### 3. 序列化破坏单例
+- synchronized关键字
 
-- 单例对象序列化然后写入到磁盘,再从磁盘中读取到对象，反序列化转化为内存对象。反序列化后的对象会重新分配内存,重新创建破坏了单例
+- volatile关键字
+
+### 2、单例的九种实现
+
+- ① 静态常量单例
 
   ```java
-  String path = "序列化文件路径";
+  public class StaticFinal {
+      private static final StaticFinal INSTANCE = new StaticFinal();
   
-  Object instance1 = obj;
-  Object instance2 = null;
+      private StaticFinal() {
+      }
   
-  FileOutputStream objStream = new FileOutputStream(path);
-  ObjectOutputStream outputObjStream = new ObjectOutputStream(objStream);
-  outputObjStream.writeObject(instance1);
-  outputObjStream.flush();
-  outputObjStream.close();
-  
-  ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(path));
-  instance2 = objectInputStream.readObject();
-  objectInputStream.close();
+      public static StaticFinal getInstance() {
+          return INSTANCE;
+      }
+  }
   ```
-  
-- 序列化解决破坏单例的方式 : 只需要增加 readResolve()方法即可
+
+- ② 静态代码块
 
   ```java
-  public class Single{
-      private Object readResolve(){
+  public class StaticBlock {
+      private StaticBlock() {
+      }
+  
+      private static final StaticBlock INSTANCE;
+  
+      static {
+          INSTANCE = new StaticBlock();
+      }
+  
+      public static StaticBlock getInstance() {
+          return INSTANCE;
+      }
+  }
+  ```
+
+- ③ 静态内部类
+
+  ```java
+  public class LazyInnerClass {
+      private LazyInnerClass() {
+  
+      }
+  
+      private static class Inner {
+          private static final LazyInnerClass INSTANCE = new LazyInnerClass();
+      }
+  
+      public static LazyInnerClass getInstance() {
+          return Inner.INSTANCE;
+      }
+  }
+  ```
+
+- ④ 懒加载单例-饿汉式
+
+  ```java
+  public class LazyGenerator {
+  
+      private static LazyGenerator instance;
+  
+      private LazyGenerator() {
+  
+      }
+  
+      public static LazyGenerator getInstance() {
+          if (null == instance) {
+              instance = new LazyGenerator();
+          }
           return instance;
       }
   }
   ```
 
-### 4. 标准单例的设计方式
+- ⑤ 懒加载单例-同步方法
 
-```java
-public class Single{
-    private Single() {
-        if (null != instance){
-            throw new RuntimeException("不允许重复实例化");
+  ```java
+  public class LazySyncMethod {
+      private LazySyncMethod() {
+  
+      }
+  
+      private static LazySyncMethod instance;
+  
+      public static synchronized LazySyncMethod getInstance() {
+          if (null == instance) {
+              instance = new LazySyncMethod();
+          }
+          return instance;
+      }
+  }
+  ```
+
+- ⑥ 懒加载单例-同步代码块
+
+  ````java
+  public class LazySyncBlock {
+      private LazySyncBlock() {
+  
+      }
+  
+      private static LazySyncBlock instance;
+  
+      public static LazySyncBlock getInstance() {
+          if (null == instance) {
+              synchronized (LazySyncBlock.class) {
+                  instance = new LazySyncBlock();
+              }
+          }
+          return instance;
+      }
+  }
+  ````
+
+- ⑦ 懒加载单例-双重检查
+
+  ```java
+  public class LazyDoubleCheck {
+      static TestSingle l = new TestSingle();
+      private static LazyDoubleCheck instance;
+  
+      private LazyDoubleCheck() {
+  
+      }
+  
+      public static LazyDoubleCheck getInstance() {
+          //先判断是否存在，不存在再加锁处理
+          if (instance == null) {
+              //在同一个时刻加了锁的那部分程序只有一个线程可以进入
+              synchronized (l) {
+                  if (instance == null) {
+                      instance = new LazyDoubleCheck();
+                  }
+              }
+          }
+          return instance;
+      }
+  }
+  ```
+
+- ⑧ 懒加载单例-volatile
+
+  ```java
+  public class LazyVolitile {
+      private static volatile LazyVolitile instance;
+  
+      private LazyVolitile() {
+  
+      }
+  
+      public static LazyVolitile getInstance() {
+          if (instance == null) {
+              synchronized (LazyVolitile.class) {
+                  if (instance == null) {
+                      instance = new LazyVolitile();
+                  }
+              }
+          }
+          return instance;
+      }
+  }
+  ```
+
+  > 关键字 `volatile` : 保证此变量对所有的线程的可见性，当一个线程修改了这个变量的值，volatile 保证了新值能立即同步到主内存，以及每次使用前立即从主内存刷新。但普通变量做不到这点，普通变量的值在线程间传递均需要通过主内存
+
+- ⑨ 单例- 枚举
+
+  ```java
+  public enum EnumSingle {
+      INSTANCE;
+  
+      public EnumSingle getInstance() {
+          return INSTANCE;
+      }
+  }
+  ```
+
+### 3、破坏单例
+
+#### 反射破坏单例
+
+- 案例说明
+
+  ```java
+  @Test
+  public void staticFinal() throws Exception {
+      Class<StaticFinal> finalClass = StaticFinal.class;
+      Constructor<StaticFinal> ct = finalClass.getDeclaredConstructor();
+      ct.setAccessible(true);
+  
+      StaticFinal single1 = ct.newInstance();
+      StaticFinal single2 = ct.newInstance();
+      Assert.assertEquals(single1, single2);
+  }
+  ```
+
+- 解决方案：反射创建对象是会调用对象的构造方法，需要为单例订单构造方法中添加显示：方式构造方法重复调用
+
+  ```java
+  public class StaticFinal implements Serializable {
+      private static final StaticFinal INSTANCE = new StaticFinal();
+  
+      private static boolean flag = false;
+  
+      private StaticFinal() {
+          synchronized (StaticFinal.class) {
+              if (flag) {
+                  throw new RuntimeException("单例对象不可以重复创建");
+              }
+              flag = true;
+          }
+      }
+  
+      public static StaticFinal getInstance() {
+          return INSTANCE;
+      }
+  }
+  ```
+
+#### 序列化破坏单例
+
+- **案例说明**：单例对象序列化然后写入到磁盘,再从磁盘中读取到对象，反序列化转化为内存对象。反序列化后的对象会重新分配内存,重新创建破坏了单例
+
+  ```java
+  @Test
+  public void testXuliehua() {
+      String path = "single";
+      try (
+          FileOutputStream objStream = new FileOutputStream(path);
+          ObjectOutputStream outputObjStream = new ObjectOutputStream(objStream);
+          ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(path));
+      ) {
+          StaticFinal instance1 = StaticFinal.getInstance();
+          StaticFinal instance2 = null;
+          outputObjStream.writeObject(instance1);
+          outputObjStream.flush();
+  
+          instance2 = (StaticFinal) objectInputStream.readObject();
+          Assert.assertEquals(instance1, instance2);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+  }
+  ```
+
+- **序列化创建对象源码**
+
+  - readObject()
+
+    ```java
+    public final Object readObject() throws IOException, ClassNotFoundException {
+        //...
+            Object obj = readObject0(false);
+      	// ...
+    }
+    ```
+
+  - readObject0(false)
+
+    ```java
+    /**
+     * new Object.
+     */
+    final static byte TC_OBJECT =       (byte)0x73;
+    
+    // 定位到这里:序列化创建对象
+    case TC_OBJECT:
+    	return checkResolve(readOrdinaryObject(unshared));
+    ```
+
+  - readOrdinaryObject(unshared)
+
+    ```java
+    private Object readOrdinaryObject(boolean unshared) throws IOException {
+    	// ...
+            
+            // new了一个对象
+            obj = desc.isInstantiable() ? desc.newInstance() : null;
+    	// ...
+    	// 如果序列化对象中有hasReadResolveMethod()方法
+        if (obj != null &&
+            handles.lookupException(passHandle) == null &&
+            desc.hasReadResolveMethod())
+        {
+            // 重点1:获取这个方法返回的对象
+            Object rep = desc.invokeReadResolve(obj);
+            if (unshared && rep.getClass().isArray()) {
+                rep = cloneArray(rep);
+            }
+            if (rep != obj) {
+                // Filter the replacement object
+                if (rep != null) {
+                    if (rep.getClass().isArray()) {
+                        filterCheck(rep.getClass(), Array.getLength(rep));
+                    } else {
+                        filterCheck(rep.getClass(), -1);
+                    }
+                }
+                
+                // 把方法返回的对象的引用赋值给序列化的对象
+                handles.setObject(passHandle, obj = rep);
+            }
         }
-    }
     
-    //TODU 除枚举外的其余的单例设计方式
-    
-    private Object readResolve(){
-        return instance;
+        return obj;
     }
-}
-```
+    ```
 
-### 5. 单例模式的知识点
+- 序列化破坏单例解决方案：在readOrdinaryObject()源码中，如果类实现了readResolveMethod()方法，那就invoke，同时之前newInstance的obj引用readOrdinaryObject()返回的对象，在源码中找到这个方法的名称是readResolve()
+
+  ```java
+  /** class-defined readResolve method, or null if none */
+  private Method readResolveMethod;
+  ```
+
+  需要被序列化的类实现了Serializable接口，在Serializable接口的文档注释中也有说明
+
+  ```java
+  /**
+   * This writeReplace method is invoked by serialization if the method
+   * exists and it would be accessible from a method defined within the
+   * class of the object being serialized. Thus, the method can have private,
+   * protected and package-private access. Subclass access to this method
+   * follows java accessibility rules. <p>
+   *
+   * Classes that need to designate a replacement when an instance of it
+   * is read from the stream should implement this special method with the
+   * exact signature.
+   *
+   * <PRE>
+   * ANY-ACCESS-MODIFIER Object readResolve() throws ObjectStreamException;
+   * </PRE><p>
+   */
+  public interface Serializable {
+  }
+  ```
+
+- 标准单例
+
+  ```java
+  public class StaticFinal implements Serializable {
+      private static final StaticFinal INSTANCE = new StaticFinal();
+  
+      private static boolean flag = false;
+  
+      private StaticFinal() {
+          synchronized (StaticFinal.class) {
+              if (flag) {
+                  throw new RuntimeException("单例对象不可以重复创建");
+              }
+              flag = true;
+          }
+      }
+  
+      public static StaticFinal getInstance() {
+          return INSTANCE;
+      }
+  
+      /**
+       * 防止单例被序列化破坏单例
+       *
+       * @return 序列化对象
+       */
+      public Object readResolve() {
+          return INSTANCE;
+      }
+  }
+  
+  ```
+
+### 4、单例的应用
+
+- 在Spring中的应用
+- 在JDK中的应用
+
+### 5、单例模式的知识点
 
 1. 多线程的的使用 : 用于验证单例的线程安全
 
