@@ -10,3 +10,5 @@
   - [point09_Java网络编程](/class02_java全栈/part02_java高级/point09_Java网络编程/point09_Java网络编程.md)
   - [point10_java新特性](/class02_java全栈/part02_java高级/point10_java新特性/point10_java新特性.md)
   - [point11_密码学](/class02_java全栈/part02_java高级/point11_密码学/point11_密码学.md)
+  - [point12_注解](/class02_java全栈/part02_java高级/point12_注解/point12_注解.md)
+  - [point13_泛型](class02_java全栈/part02_java高级/point13_泛型/point13_泛型.md)

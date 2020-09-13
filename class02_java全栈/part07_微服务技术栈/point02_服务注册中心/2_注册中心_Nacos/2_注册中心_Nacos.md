@@ -55,6 +55,31 @@
   git checkout 1.3.1
   ```
 
+- 检查Maven镜像地址，最好将地址修改为国内镜像地址，将setting.xml配置文件保存于maven目录的conf文件夹中
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  
+    <localRepository>E:/repository/maven</localRepository>
+    <pluginGroups></pluginGroups>
+    <proxies></proxies>
+    <servers></servers>
+  
+    <mirrors>
+      <mirror>  
+        <id>alimaven</id>  
+        <name>aliyun maven</name>  
+        <url>https://maven.aliyun.com/nexus/content/groups/public/</url>  
+        <mirrorOf>central</mirrorOf>
+  	 </mirror>
+    </mirrors>
+    <profiles></profiles>
+  </settings>
+  ```
+
 - 在CMD窗口执行Maven命令打包源码
 
   ```sh
@@ -69,7 +94,41 @@
 
 ## 1.2 安装与配置
 
-### 1、配置说明
+### 1、目录说明
+
+### 2. nacos服务配置说明
+
+| Spring引导相关配置                                           | 作用                       |
+| ------------------------------------------------------------ | -------------------------- |
+| server.servlet.contextPath=/nacos                            | 启动后控制台访问路径       |
+| server.port=8848                                             | 默认端口号                 |
+| **网络相关的配置**                                           | **作用**                   |
+| nacos.inetutils.prefer-hostname-over-ip=false                |                            |
+| nacos.inetutils.ip-address=                                  | 指定本地服务器的IP         |
+| **配置模块相关配置**                                         | **作用**                   |
+| spring.datasource.platform=mysql                             | 数据源                     |
+| db.num=1                                                     |                            |
+| db.url.0=                                                    |                            |
+| db.user                                                      |                            |
+| db.password                                                  |                            |
+| **命名模块相关配置**                                         | **作用**                   |
+| nacos.naming.distro.taskDispatchPeriod=200                   | 数据调度任务执行周期       |
+| nacos.naming.distro.batchSyncKeyCount=1000                   | 批处理同步任务的数据计数   |
+| nacos.naming.distro.syncRetryDelay                           | 如果同步任务失败，重试延迟 |
+| nacos.naming.data.warmup=true                                | 启用数据预热               |
+| nacos.naming.expireInstance=true                             | 启用实例自动过期           |
+| nacos.naming.empty-service.auto-clean=true<br/>nacos.naming.empty-service.clean.initial-delay-ms=50000<br/>nacos.naming.empty-service.clean.period-time-ms=30000 |                            |
+| **CMDB模块相关配置**                                         | **作用**                   |
+| nacos.cmdb.labelTaskInterval=300                             | 转储外部CMDB的间隔         |
+| nacos.cmdb.loadDataAtStart=false                             | 是否打开数据加载任务       |
+| **指标相关的配置**                                           | **作用**                   |
+| management.endpoints.web.exposure.include=*                  | 指标的普罗米修斯           |
+| management.metrics.export.elastic.enabled=false<br />management.metrics.export.elastic.host=es地址 | es搜索指标                 |
+| management.metrics.export.influx.enabled=false<br/>management.metrics.export.influx.db=springboot<br/>management.metrics.export.influx.uri=http://localhost:8086<br/>management.metrics.export.influx.auto-create-db=true<br/>management.metrics.export.influx.consistency=one<br/>management.metrics.export.influx.compressed=true | 指标的涌入                 |
+
+### 3. nacos集群配置说明
+
+
 
 ## 1.3 启动
 
@@ -117,21 +176,22 @@
    http://localhost:8848/nacos/
    ```
 
-# 第二章 Nacos配置中心-SpringCloud
+# 第二章 Nacos配置中心
 
 ## 2.1 Nacos配置相关概念
 
-1. 命名空间
-2. Group
-3. Data ID
+1. 命名空间：命名空间可用于进行不同环境的配置隔离。一般一个环境划分到一个命名空间
+
+2. Group：配置分组用于将不同的服务可以归类到同一分组。一般将一个项目的配置分到一组
+3. Data ID：在系统中，一个配置文件通常就是一个配置集。一般微服务的配置就是一个配置集
 
 ## 2.2 Nacos配置控制台
 
-1. 命名空间
-2. 发布配置
-3. 修改配置
-4. 回滚配置
-5. 导出与导入
+1. **命名空间**：在控制台可以实现命名空间的基本操作；默认的public命名空间不可以删除；命令空间的ID是在SpringCloud的配置项的值，如果需要在项目中切换工作环境的配置除了需要指定`spring.profiles.active`的标识外，还需要重新指定`spring.clond.nacos.config.namespace`的值为对应命名空间的id。
+2. **发布配置**：在配置列表实现对配置的基本操作；Data Id的命名规范是：`{spring.application.name}-{spring.profiles.active}.{spring.clond.nacos.config.file-extension}`（应用名称-profile.文件后缀名）；
+3. **修改配置**：配置的基本操作
+4. **回滚配置**：配置的基本操作
+5. **导出与导入**：配置的管理
 
 ## 2.3 SpringCloud引入Nacos配置
 
@@ -208,21 +268,41 @@
          config:
            server-addr: 127.0.0.1:8848
            file-extension: yaml
-           namespace: 06e2876f-6ece-484b-9220-12eb8e5b4db5
            group: DEFAULT_GROUP
    ```
-
-4. 配置文件说明：
-
-   - 在配置文件中指定namespace，
-   - 根据配置读取Nacos中配置DataId的规则：{spring.application.name}.{nacos.config.file-extension}
+   
 
 ## 2.4 配置管理
 
-1. 发布配置
-2. 配置优先级
+1. 使用@Value读取配置属性
+
+2. 使用@Configuration + @ConfigurationProperties封装配置属性
+
+3. 扩展dataId（读取多个配置文件）：ext-config[0++]，从0开始
+
+   ```yaml
+   spring:
+     application:
+       name: alibaba-config
+     cloud:
+       nacos:
+         config:
+         	ext-config[0]: 
+         		data-id: 
+         		group: 
+           ext-config[1]: 
+         		data-id: 
+         		group: 
+         		refresh: true
+   ```
+
+4. 配置共享data-id：
 
 # 第三章 Nacos服务中心
 
 # 第四章 Nacos运维
+
+## 4.1 集群配置
+
+
 
