@@ -447,7 +447,7 @@
 
 ## 第一章 文字属性
 
-### **<font color=blue size=4>▲ 文字样式：font-style</font>**
+### 1. 文字样式：font-style
 
 | 值      | 描述                                   |
 | :------ | :------------------------------------- |
@@ -456,7 +456,7 @@
 | oblique | 浏览器会显示一个倾斜的字体样式。       |
 | inherit | 规定应该从父元素继承字体样式。         |
 
-### **<font color=blue size=4>▲ 文字粗细：font-weight</font>**
+### 2. 文字粗细：font-weight
 
 | 值        | 描述                                                        |
 | :-------- | :---------------------------------------------------------- |
@@ -467,7 +467,7 @@
 | 100 ~ 900 | 定义由粗到细的字符。400 等同于 normal，而 700 等同于 bold。 |
 | inherit   | 规定应该从父元素继承字体的粗细。                            |
 
-### **<font color=blue size=4>▲ 文字大小：font-size</font>**
+### 3. 文字大小：font-size
 
 | 值                                                           | 描述                                                         |
 | :----------------------------------------------------------- | :----------------------------------------------------------- |
@@ -478,7 +478,7 @@
 | %                                                            | 把 font-size 设置为基于父元素的一个百分比值。                |
 | inherit                                                      | 规定应该从父元素继承字体尺寸。                               |
 
-### **<font color=blue size=4>▲ 文字字体：font-family</font>**
+### 4. 文字字体：font-family
 
 | 值      | 描述                           |
 | :------ | :----------------------------- |
@@ -489,7 +489,7 @@
 - 英文字体无法解析中文，中文字体可以解析英文；
 - 设置字体必须是系统已安装字体，否则会显示系统默认字体；
 
-### <font color=blue size=4>▲ 文字属性缩写：font </font>
+### 5. 文字属性缩写：font 
 
 ```css
 font: 样式 粗细 大小/行高 字体;
@@ -503,7 +503,7 @@ font: 样式 粗细 大小/行高 字体;
 
 ## 第二章 文本属性
 
-### <font color=blue size=4>▲ 文本装饰：text-decoration</font>
+### 2. 文本装饰：text-decoration
 
 | 值           | 描述                                          |
 | :----------- | :-------------------------------------------- |
@@ -514,7 +514,7 @@ font: 样式 粗细 大小/行高 字体;
 | blink        | 定义闪烁的文本。                              |
 | inherit      | 规定应该从父元素继承 text-decoration 属性的值 |
 
-### <font color=blue size=4>▲ 文本对齐：text-align</font>
+### 3. 文本对齐：text-align
 
 | 值      | 描述                                       |
 | :------ | :----------------------------------------- |
@@ -524,7 +524,7 @@ font: 样式 粗细 大小/行高 字体;
 | justify | 实现两端对齐文本效果。                     |
 | inherit | 规定应该从父元素继承 text-align 属性的值。 |
 
-### <font color=blue size=4>▲ 文本缩进：text-indent</font>
+### 4. 文本缩进：text-indent
 
 | 值      | 描述                                        |
 | :------ | :------------------------------------------ |
@@ -532,7 +532,7 @@ font: 样式 粗细 大小/行高 字体;
 | *%*     | 定义基于父元素宽度的百分比的缩进。          |
 | inherit | 规定应该从父元素继承 text-indent 属性的值。 |
 
-### <font color=blue size=4>▲ 字母文本：text-transform</font>
+### 5. 字母文本：text-transform
 
 | 值         | 描述                                           |
 | :--------- | :--------------------------------------------- |
@@ -542,13 +542,13 @@ font: 样式 粗细 大小/行高 字体;
 | lowercase  | 定义无大写字母，仅有小写字母。                 |
 | inherit    | 规定应该从父元素继承 text-transform 属性的值。 |
 
-### <font color=blue size=4>▲ 行高：line-height</font>
+### 6. 行高：line-height
 
 - 如果没有给盒子设置高度，默认行高和内容高度相同；
 - 如果行高和盒子高度相同，则文本等内容在盒子中会垂直居中；
 - 如果需要多行文字居中，需要给盒子添加padding实现文字居中；
 
-### <font color=blue size=4>▲ 超出模式：overflow  </font>
+### 7. 超出模式：overflow
 
 | 值      | 描述                                                     |
 | :------ | :------------------------------------------------------- |
@@ -560,7 +560,7 @@ font: 样式 粗细 大小/行高 字体;
 
 ## 第三章 颜色属性
 
-### <font color=blue size=4>▲ 文本颜色：color</font>
+### 1. 文本颜色：color
 
 | 值                    | 描述                                                         |
 | :-------------------- | :----------------------------------------------------------- |
@@ -573,11 +573,11 @@ font: 样式 粗细 大小/行高 字体;
 
 ## 第四章 背景属性
 
-**<font color=blue size=4>▲ 背景颜色：background-color</font>**
+### 1. 背景颜色：background-color
 
 - 颜色取值和颜色属性相同
 
-**<font color=blue size=4>▲ 背景图片：background-image</font>**
+### 2. 背景图片：background-image
 
 ```css
 background-image:url('图片链接');
@@ -587,7 +587,7 @@ background-image:url('图片链接');
   - 背景图片不占页面空间；
   - 背景图片的位置等属性容易控制；
 
-**<font color=blue size=4>▲ 背景平铺：background-repeat</font>**
+### 3. 背景平铺：background-repeat
 
 | 值        | 说明                                         |
 | :-------- | :------------------------------------------- |
@@ -597,7 +597,7 @@ background-image:url('图片链接');
 | no-repeat | background-image不会重复                     |
 | inherit   | 指定background-repea属性设置应该从父元素继承 |
 
-**<font color=blue size=4>▲ 背景定位：background-position</font>**
+### 4. 背景定位：background-position
 
 | 值                                               | 描述                                                         |
 | :----------------------------------------------- | :----------------------------------------------------------- |
@@ -606,7 +606,7 @@ background-image:url('图片链接');
 | *xpos ypos*                                      | 第一个值是水平位置，第二个值是垂直。左上角是0。单位可以是像素（0px0px）或任何其他 CSS单位。如果仅指定了一个值，其他值将是50％。你可以混合使用％和positions |
 | inherit                                          | 指定background-position属性设置应该从父元素继承              |
 
-**<font color=blue size=4>▲ 背景关联：background-attachment  </font>**
+### 5. 背景关联：background-attachment 
 
 | 值      | 描述                                              |
 | :------ | :------------------------------------------------ |
@@ -615,7 +615,7 @@ background-image:url('图片链接');
 | local   | 背景图片会随着元素内容的滚动而滚动。              |
 | inherit | 指定 background-attachment 的设置应该从父元素继承 |
 
-### <font color=blue size=4>▲ 背景属性：background</font>
+### 6. 背景属性：background
 
 ```css
 background: 颜色 图片 平铺 关联 定位;
@@ -623,7 +623,7 @@ background: 颜色 图片 平铺 关联 定位;
 
 - 任意一个属性都可以省略
 
-### <font color=blue size=4>▲ 指定背景绘制区域：background-clip</font>
+### 7. 指定背景绘制区域：background-clip
 
 | 值          | 说明                                             |
 | :---------- | :----------------------------------------------- |
@@ -794,7 +794,7 @@ padding: 上 右 下 左;
 
 ## 第六章 浮动属性
 
-### <font color=blue size=4>▲ 浮动元素：float</font>
+### 1. 浮动元素：float
 
 > 将标准流中元素转换为浮动流
 
@@ -805,7 +805,7 @@ padding: 上 右 下 左;
 | none    | 默认值。元素不浮动，并会显示在其在文本中出现的位置。 |
 | inherit | 规定应该从父元素继承 float 属性的值。                |
 
-### <font color=blue size=4>▲ 清除浮动：clear</font>
+### 2. 清除浮动：clear
 
 | 值      | 描述                                  |
 | :------ | :------------------------------------ |
