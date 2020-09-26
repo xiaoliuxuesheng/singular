@@ -1,3 +1,54 @@
+# Linux安装
+
+1. 下载MySQL安装包：https://dev.mysql.com/downloads/mysql/
+
+2. 卸载旧版MySQL
+
+   ```sh
+    rpm -qa | grep -i mysql
+    
+    rpm -e 包
+   ```
+
+3. MySQL内置的文件
+
+   ```sh
+    whereis mysql
+    rm -rf xxx
+   ```
+
+4. 上传并解压到mysql目录中
+
+   ```sh
+   tar -xvf xxx.tar -C mysql/
+   ```
+
+5. 安装MySQL第三方包
+
+   ```sh
+   yum -y install libaio.so.1 libgcc_s.so.1 libstdc++.so.6 libncurses.so.5 --setopt=protected_multilib=false
+   yum update libstdc
+   ```
+
+6. 安装mysql
+
+   ```sh
+   rpm -ivh client
+   rpm -ivh server
+   ```
+
+7. 启动
+
+   ```sh
+   systemctl start mysqld.service    启动mysql
+   systemctl status mysqld.service  查看mysql状态
+   systemctl stop mysqld.service   关闭mysql
+   ```
+
+   
+
+   
+
 # 第七章 表类型的选择
 
 > MySQL中有存储引擎的概念：可以针对不同的存储需求而选择最优的存储引擎
