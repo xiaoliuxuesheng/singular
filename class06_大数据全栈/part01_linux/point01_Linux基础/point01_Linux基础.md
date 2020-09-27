@@ -778,8 +778,6 @@ rpm 选项 [参数] [包名]
 <font color=blue size=4>:anchor: yum在线安装
 </font>
 
-- 
-
 # 第五章 Linux用户管理
 
 ## 5.1 用户与组概述
