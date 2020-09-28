@@ -1,27 +1,80 @@
-# 前言
+```tex
+<font size=4 color=blue>:anchor: **
+**</font> ：
+```
 
-> 面试题整理
+# 前言 Spring源码构建
 
-# 第一部分 Spring入门
+1. 下载源码包
 
-## 第一章 框架与Spring框架
+   ```sh
+   https://gitee.com/panda-study-opensource/Spring-Framework.git
+   ```
 
-### 1.1 框架
+2. 根据需要阅读的源码版本新建分支
 
-框架是抽取出来的高度可重用的代码, 多个可重用模块的集合, 形成某个领域的整体解决方案
+   ```sh
+   git checkout -b panda5.2.4.RELEASE
+   ```
 
-### 1.2 Spring框架
+3. 将代码重置到该tag对应的分支上
+
+   ```sh
+   git reset -hard v5.2.4.RELEASE
+   ```
+
+4. Gradle编译环境准备
+
+5. 修改build.gradle文件为阿里云仓库地址
+
+   - 在文件首行添加
+
+     ```groovy
+     buildscript {
+     	repositories {
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/groups/public/'
+     		}
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+     		}
+     	}
+     }
+     ```
+
+   - 在ext扩展属性之后添加仓库地址
+
+     ```groovy
+     allprojects {
+     	repositories {
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/groups/public/'
+     		}
+     		maven {
+     			url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+     		}
+     	}
+     }
+     ```
+
+6. 等待构建完成
+
+7. 新建模块引入Spring组件
+
+# 第一章 Spring概述
+
+## 1.1 框架
+
+<font size=4 color=blue>:anchor: **框架概述**</font> ：框架是抽取出来的高度可重用的代码, 多个可重用模块的集合, 形成某个领域的整体解决方案
+
+## 1.2 Spring简介
+
+<font size=4 color=blue>:anchor: **Spring框架**</font> 
 
 - Spring框架是是一个IOC和AOP的容器框架
 - Spring容器包含并且管理应用中的对象的关系以及生命周期
-- **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
-- **非侵入** : 用Spring开发的应用不依赖Spring的API
-- **依赖注入** : 是对IOC思想的实现
-- **面向切面编程** : 是对面向对象的扩展与增强
-- **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
-- **模块化** : 添加特定模块可以解决特定场景的功能 
 
-### 1.3 Spring技术栈
+<font size=4 color=blue>:anchor: **Spring技术栈**</font> 
 
 | Spring技术      | 功能说明               |
 | --------------- | ---------------------- |
@@ -31,7 +84,17 @@
 | spring boot     | Spring场景启动自动配置 |
 | spring cloud    | Spring微服务解决方案   |
 
-### 1.4 Spring的模块化
+## 1.3 Spring特点
+
+- **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
+
+- **非侵入** : 用Spring开发的应用不依赖Spring的API
+- **依赖注入** : 是对IOC思想的实现
+- **面向切面编程** : 是对面向对象的扩展与增强
+- **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
+- **模块化** : 添加特定模块可以解决特定场景的功能 
+
+## 1.4 Spring的模块划分
 
 | spring 测试模块 | 测试组件说明 |
 | --------------- | ------------ |
@@ -75,76 +138,9 @@
 | ---------------------- | ---- |
 | spring-instrument      |      |
 
-## 第二章 Spring入门
+## 1.5 Spring源码中的技术特点
 
-### 2.1 入门案例
-
-1. 定义Maven项目：添加Spring依赖
-
-   ```xml
-   <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-core</artifactId>
-       <version>5.1.8.RELEASE</version>
-   </dependency>
-   <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-beans</artifactId>
-       <version>5.1.8.RELEASE</version>
-   </dependency>
-   <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-context</artifactId>
-       <version>5.1.8.RELEASE</version>
-   </dependency>
-   <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-expression</artifactId>
-       <version>5.1.8.RELEASE</version>
-   </dependency>
-   ```
-
-2. 在根目录定义Spring的xml配置文件：spring-ioc.xml
-
-   ```xml
-   <?xml version="1.0" encoding="UTF-8"?>
-   <beans xmlns="http://www.springframework.org/schema/beans"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.springframework.org/schema/beans 
-                              http://www.springframework.org/schema/beans/spring-beans.xsd">
-   
-   </beans>
-   ```
-
-3. 定义测试Java类：根据配置文件加载Spring容器对象
-
-   ```java
-   @Test
-   public void testAutowiredIoc() throws Exception {
-       ApplicationContext ioc =  new ClassPathXmlApplicationContext("classpath:spring-ioc.xml");
-   }
-   ```
-
-### 2.2 Spring单元测试
-
-```java
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring-ioc01.xml"})
-public class SpringIocTest01 {
-
-    @Autowired
-    private ApplicationContext ioc;
-    
-    @Test
-    public void testAutowiredIoc() throws Exception {
-        System.out.println("ioc = " + ioc);
-    }
-}
-```
-
-## 第三章 Spring技术栈
-
-### 3.1 Java语言特性
+<font size=4 color=blue>:anchor: **Java语言特性**</font> ：
 
 - 反射
 - 动态代理
@@ -154,7 +150,7 @@ public class SpringIocTest01 {
 - ARM
 - Lambda语法
 
-###  3.2 设计思想和设计模式的实现
+<font size=4 color=blue>:anchor: **设计思想和设计模式的实现**</font> ：
 
 - OOP
 - IoC
@@ -163,7 +159,7 @@ public class SpringIocTest01 {
 - TDD
 - GOF23
 
-### 3.3 JavaAPI的封装与简化
+<font size=4 color=blue>:anchor: **JavaAPI的分装与简化**</font> ：
 
 - JDBC
 - Servlet
@@ -171,62 +167,107 @@ public class SpringIocTest01 {
 - JMX
 - Bean Validation
 
-### 3.4 JSR规范的适配与实现
+<font size=4 color=blue>:anchor: **JSR规范的适配与实现**</font> ：
 
-### 3.5 第三方框架的整合
+<font size=4 color=blue>:anchor: **第三方框架的整合**</font> ：
 
 - Mybatis
 - Hibernate
 - Redis
 - ... ...
 
-# 第二部分 XML版Spring
-
-## 第一章 IOC
-
-### 1.1 Spring配置文件
-
-1. xml配置文件说明
-
-   ```xml
-   
-   ```
-
-   
-
-### 1.2 初始化IOC容器
-
-### 1.3 从IOC容器获取Bean
-
-### 1.4 向IOC容器注入Bean
-
-## 第二章 AOP
-
-### 2.1 AOP概述
-
-### 2.2 AOP概念说明
-
-### 2.3 AOP案例
-
-## 第三章 事物
-
-# 第三部分 注解版Spring
-
-## 第一章 IOC
-
-## 第二章 AOP
-
-## 第三章 事物
-
-
-
-# ----
-
-
-
 # 第二章 Spring容器-IOC
 
+## 2.1 IOC Helloworld
 
+:anchor: 添加Spring依赖 : pom.xml
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-beans</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-expression</artifactId>
+    <version>5.1.8.RELEASE</version>
+</dependency>
+```
+
+:anchor: 定义JavaBean : User.java
+
+```java
+@Setter
+@Getter
+@ToString
+public class User {
+    private String name;
+    public User() {
+        System.out.println(" User构造器被执行.... ");
+    }
+}
+```
+
+:anchor: 添加配置文件 : spring-ioc.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean class="com.panda.ioc.beans.User" id="user"></bean>
+</beans>
+```
+
+:anchor: 测试springIOC
+
+- 初始化IOC容器
+
+    ```java
+    ApplicationContext ioc = 
+        new ClassPathXmlApplicationContext("classpath:spring-ioc.xml");
+    ```
+
+- 从容器中获取组件
+
+    ```java
+    @Test
+    public void testByName() throws Exception {
+        Object user = ioc.getBean("user");
+        System.out.println("user = " + user);
+    }
+    ```
+
+## 2.2 Spring单元测试
+
+- 将Junit运行在Spring容器中
+
+    ```java
+    @RunWith(SpringJUnit4ClassRunner.class)
+    @ContextConfiguration(locations = {"classpath:spring-ioc01.xml"})
+    public class SpringIocTest01 {
+    
+        @Autowired
+        private ApplicationContext ioc;
+        
+        @Test
+        public void testAutowiredIoc() throws Exception {
+            System.out.println("ioc = " + ioc);
+        }
+    }
+    ```
 
 ## 2.2 初始化Spring容器
 
