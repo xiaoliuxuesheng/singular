@@ -192,7 +192,7 @@ public class SpringIocTest01 {
    
    ```
 
-   
+2. 
 
 ### 1.2 初始化IOC容器
 
