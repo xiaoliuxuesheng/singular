@@ -8,18 +8,20 @@
 
 ### 1.1 框架
 
-框架是抽取出来的高度可重用的代码, 多个可重用模块的集合, 形成某个领域的整体解决方案
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;框架是抽取出来的高度可重用的代码的集合，或者多个可重用模块的集合, 形成某个领域的整体解决方案
 
 ### 1.2 Spring框架
 
-- Spring框架是是一个IOC和AOP的容器框架
-- Spring容器包含并且管理应用中的对象的关系以及生命周期
-- **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
-- **非侵入** : 用Spring开发的应用不依赖Spring的API
-- **依赖注入** : 是对IOC思想的实现
-- **面向切面编程** : 是对面向对象的扩展与增强
-- **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
-- **模块化** : 添加特定模块可以解决特定场景的功能 
+1. **Spring 框架概述**
+   - Spring框架是是一个IOC和AOP的**容器框架**
+   - Spring容器包含并且管理应用中的对象（也成Spring组件）的关系以及生命周期
+2. **Spring框架的特点**
+   - **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
+   - **非侵入** : 用Spring开发的应用不依赖Spring的API
+   - **依赖注入** : 是对IOC思想的实现
+   - **面向切面编程** : 是对面向对象的扩展与增强
+   - **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
+   - **模块化** : 添加特定模块可以解决特定场景的功能 
 
 ### 1.3 Spring技术栈
 
@@ -184,21 +186,66 @@ public class SpringIocTest01 {
 
 ## 第一章 IOC
 
-### 1.1 Spring配置文件
+### 1.1 IOC概述
 
-1. xml配置文件说明
+- **IOC（Inversion Of Control）**：控制反转
+  - 控制：在IOC中表示资源的获取方式，主动获取资源可以在代码中进行手动初始化；被动式获取资源指的是讲要获取的资源交给IOC容器，使用资源时候直接从容器中获取；
+  - 反转：指资源的初始化和生命周期都交给SpringIOC容器进行管理
+- **DI（Dependency Injection）**：依赖注入，容器可以知道那个组件运行的时候需要其他的组件；容器通过反射的形式将组件中所需要的其他组件进行自动赋值；
 
-   ```xml
-   
+### 1.2 Spring配置文件
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+</beans>
+```
+
+### 1.3 初始化IOC容器
+
+1. **加载项目根目录中的SpringXML配置文件**
+
+   ```java
+   ApplicationContext ioc = new ClassPathXmlApplicationContext("classpath:配置文件路径");
    ```
 
-2. 
+2. **加载系统资源中的SpringXML配置文件**
 
-### 1.2 初始化IOC容器
+   ```java
+   ApplicationContext ioc = new FileSystemXmlApplicationContext("系统磁盘路径");
+   ```
 
-### 1.3 从IOC容器获取Bean
+3. **初始化IOC容器源码解析**
 
-### 1.4 向IOC容器注入Bean
+   
+
+### 1.4 从IOC容器获取Bean
+
+1. **根据bean标签的属性**
+
+   ```java
+   org.springframework.beans.factory.BeanFactory#getBean(java.lang.String)
+   ```
+
+2. **根据bean的类型**
+
+   ```java
+   org.springframework.beans.factory.BeanFactory#getBean(java.lang.Class<T>)
+   ```
+
+   > 如果容器中该类型的bean有多个,则会报错
+
+3. **根据bean的标识和类型**
+
+   ```java
+   org.springframework.beans.factory.BeanFactory#getBean(java.lang.String, java.lang.Class<T>)
+   ```
+
+### 1.5 向IOC容器注入Bean
 
 ## 第二章 AOP
 
@@ -228,22 +275,7 @@ public class SpringIocTest01 {
 
 
 
-## 2.2 初始化Spring容器
-
-:anchor: 初始化IOC容器的方式
-
-- 根路径读取配置文件初始化IOC
-
-    ```java
-    ApplicationContext ioc = 
-        new ClassPathXmlApplicationContext("classpath:配置文件路径");
-    ```
-
-- 根据磁盘文件初始化IOC
-
-    ```java
-    ApplicationContext ioc = new FileSystemXmlApplicationContext("系统磁盘路径");
-    ```
+## 2.2 初始化Spring容
 
 :anchor: 初始化IOC容器源码
 
@@ -337,28 +369,6 @@ public class SpringIocTest01 {
         }
     }
     ```
-
-## 2.2 从容器中获取bean
-
-### 1. 根据bean标签的属性
-
-```java
-org.springframework.beans.factory.BeanFactory#getBean(java.lang.String)
-```
-
-### 2. 根据bean的类型
-
-```java
-org.springframework.beans.factory.BeanFactory#getBean(java.lang.Class<T>)
-```
-
-> 如果容器中该类型的bean有多个,则会报错
-
-### 3. 根据bean的标识和类型
-
-```java
-org.springframework.beans.factory.BeanFactory#getBean(java.lang.String, java.lang.Class<T>)
-```
 
 ## 2.3 给容器中添加bean及其属性
 
