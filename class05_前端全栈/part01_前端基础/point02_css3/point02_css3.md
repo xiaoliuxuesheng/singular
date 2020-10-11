@@ -1089,7 +1089,14 @@ padding: 上 右 下 左;
 
 - 过渡时间函数用于定义元素过渡属性随时间变化的过渡速度变化效果
 - 过渡时间函数共三种取值，分别是关键字、steps函数和bezier函数
-  - **关键字**：**ease**: 开始和结束慢；linear: 匀速；ease-in: 开始慢；ease-out: 结束慢；ease-in-out: 和ease类似；step-start: 直接位于结束处；step-end: 位于开始处经过时间间隔后结束
+  - **关键字**：
+    - **ease**: 开始和结束慢；
+    - linear: 匀速；
+    - ease-in: 开始慢；
+    - ease-out: 结束慢；
+    - ease-in-out: 和ease类似；
+    - step-start: 直接位于结束处；
+    - step-end: 位于开始处经过时间间隔后结束
   - steps步进函数将过渡时间划分成大小相等的时间时隔来运行
   - 贝塞尔曲线通过p0-p3四个控制点来控制
 
@@ -1099,17 +1106,21 @@ padding: 上 右 下 左;
 
 ### 5. transition: 复合属性
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**过渡描述**：当元素的部分属性发生改变时，是经过一定的时间后过渡到了最终状态，而不是直接从一个状态变为另一个状态；
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**过渡属性添加规则**：谁做过渡给谁加，然后配合`:hover`选择器修改元素的属性实现对元素的变化产生过渡效果；
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;过渡transition的这四个子属性只有`transition-duration`是必需值且不能为0。其中，`transition-duration`和`transition-delay`都是时间。当两个时间同时出现时，第一个是`transition-duration`，第二个是`transition-delay`；当只有一个时间时，它是`transition-duration`，而`transition-delay`为默认值0
 
 ```css
-transition: 过渡属性  持续时间 过渡函数 延迟时间, 过渡属性  持续时间 过渡函数 延迟时间
+transition: 过渡属性  持续时间 过渡函数 延迟时间, 过渡属性  持续时间 过渡函数 延迟时间, ... ...
 ```
 
 - **多值**：transition的多个属性值用逗号分隔开表示可以同时为多个值设置过渡属性
 
 ### 6. 触发方式
 
-- 伪类触发：`:hove`、`:focus`、`:active`
+- 伪类触发：`:hover`、`:focus`、`:active`
 - 符合媒体查询条件时触发：@media触发
 - 点击事件触发
 
@@ -1209,6 +1220,6 @@ div{
 | animation-play-state      | 规定动画是否正在运行或暂停。默认是 "running"。暂停是"paused" |
 | animation-fill-mode       | 规定动画结束后状态：保持forwards。回到起始backwards          |
 
-## 第四章 3D变形
+## 第四章 transform - 3D
 
 ## 第五章 多媒体
