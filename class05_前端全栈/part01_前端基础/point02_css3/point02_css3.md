@@ -1078,7 +1078,7 @@ padding: 上 右 下 左;
 
 ### 1. transition-property: 过渡属性
 
-- 值: none | all | 过渡样式（不是所有的CSS样式值都可以过渡，只有具有中间值的<i title="颜色、宽高、位置、大小等相关属性">属性</i>才具备过渡效果）；
+- 值: none | all | 过渡样式（不是所有的CSS样式值都可以过渡，只有具有中间值的<i title="颜色、宽高、位置、大小等属性值是数字的相关属性">属性</i>才具备过渡效果）；
 - 默认值： all表示指定元素所有支持transition-property属性的样式，一般都是使用默认值；
 
 ### 2. transition-duration: 过渡持续时间
