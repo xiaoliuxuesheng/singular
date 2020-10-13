@@ -1095,10 +1095,7 @@ padding: 上 右 下 左;
     - ease-in: 开始慢；
     - ease-out: 结束慢；
     - ease-in-out: 和ease类似；
-    - step-start: 直接位于结束处；
-    - step-end: 位于开始处经过时间间隔后结束
-  - steps步进函数将过渡时间划分成大小相等的时间时隔来运行
-  - 贝塞尔曲线通过p0-p3四个控制点来控制
+    - steps步进函数将过渡时间划分成大小相等的时间时隔来运行，步长
 
 ### 4. transition-delay: 过渡延迟时间
 
