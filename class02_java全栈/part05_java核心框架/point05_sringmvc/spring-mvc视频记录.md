@@ -107,5 +107,75 @@
 
 - 高版本中Tomcat中国没有exception对象 : 需要手动添加 , 在jsp标签中添加 `isErrorPage=true`:表示将出现的错误交给exception对象
 
+# 021_SpringMVC请求参数_环境搭建
 
+#022_获取请求参数
 
+1.  @RequestParam + @RequestHeader + @CookieValue
+
+- 使用原生HttpRequest获取请求参数
+- 在处理器方法中定义参数获取同名请求参数
+- 给方法参数标注@RequestParam获取指定请求参数
+
+# 023_RequestHader
+
+- 给方法参数标注@RequestHader获取请求头参数
+
+# 024_CookieValue
+
+- 给方法参数标注@CookieValue获取Cookie中的参数
+
+# 025_请求处理POJO
+
+- 将多个参数封装为pojo
+
+# 026_请求处理 操作原生API
+
+1. HttpServletRequest
+2. HttpServletResponse
+3. HTTPSession
+4. java.security.Principe
+5. Location
+6. InputStream
+7. OutputStream
+8. Writer
+9. Reader
+
+# 027_SpringMVC乱码
+
+1. 请求乱码/响应乱码
+2. GET请求乱码处理方案
+3. POST乱码处理方案
+4. SpringMVC乱码方案
+
+# 101_响应环境搭建
+
+# 102_数据输出
+
+1. 参数中定义Map
+   - 向Map中put数据会添加到请求域中
+2. 方法参数定义Model对象
+   - 给Model对象设置属性,添加到请求域中
+3. 方法参数定义ModelMap
+
+# 103_Model 和 ModelMap的关系
+
+- 最终类都是BindingAwareModelMap类型
+  - ModelMap是Model的实现类
+  - BindingAwareModelMap是Model 和 ModelMap的子类
+
+# 104_ModelAndView响应返回值
+
+- 处理器方法返回值ModelAndView
+  - new ModelAndView
+  - mv.addObject
+
+# 106_数据输出SessionAttribute
+
+1. 标注在类上
+   - value：表示给BindingAwareModelMap绑定的数据同时也给SessionAttribute绑定一份对应value的值，多个key用逗号分隔
+   - type：表示给BindingAwareModelMap绑定的数据同时也给SessionAttribute绑定一份对应type的值
+
+# 107_数据输出ModelAttribute
+
+- 封装请求的POJO默认是反射new出来的对象，在处理器类中定义被@ModelAttribute标注的方法，改方法会提前与处理器方法执行，并向BIndingAwareModelMap中注入
