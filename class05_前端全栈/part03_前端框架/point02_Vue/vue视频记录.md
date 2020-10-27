@@ -309,9 +309,319 @@ day02_08_事件参数
 - 在Vue中方法调用事件监听方法时候,如果省略小括号,会将event事件对象传递给方法
   - 同时需要event和其他参数时候：如果不传参数第一个参数被event赋值，如果需要获取event对象，方法实参固定写法$event
 
+day02_09_v-on参数问题
 
+1. 情况一：如果监听事件不需要传递参数，调用事件方法时候的方法调用的括号可以省略，则浏览器会将事件方法中第一个形参被赋值给事件对象
+2. 情况二：如果监听事件不需要传递参数，如果没有省略小括号，则事件方法第一个参数这是undefined
+3. 情况三：如果监听事件需要传递参数，如果还需要传递事件对象，则事件对象的固定写法是$event
 
+day02_10_v-on修饰符
 
+1.  @click.stop 阻止事件冒泡 ：`<button @click.stop="button">div里面的按钮</button>`
+2. @click.prevent 阻止默认事件： <input type="submit" value="提交" @click.prevent="submitClick">
+3. 监听按键，只会监听enter键： <input type="text" @keyup.enter="keyup">
+4. @事件.once : 只会监听一次回调
+
+day02_11_v-if 和 v-else
+
+- v-if：会删除DOM，需要渲染
+- v-else
+- v-else if
+
+day02_12 v-if案例
+
+- 点击切换登陆方式
+
+day02_13 登陆案例input复用问题
+
+- 存在的问题：切换登陆方式后，登陆表单中的内容不会被清空，会将上个的内容保留
+- 原型是vue底层在虚拟DOM放进内存中，为性能考虑，虚拟DOM会尽可能复用DOM，然后将虚拟DOM中元素渲染到DOM中
+- 解决方案：给标签添加key属性，作为虚拟DOM复用的标识
+
+day02_14 v-show
+
+- v-show：不会渲染DOM
+
+day02_15 v-for 遍历数组
+
+- 遍历数组: 第一个变量是数组中元素, 第二个参数是元素对应的下标
+
+  ```js
+  <li v-for="(item,idnex) in arr">{{idnex}} --- {{item}} </li>
+  ```
+
+- 遍历对象
+
+day02_16 v-for 绑定key
+
+- 官方建议:使用v-for的时候给元素或组件添加不重复的key属性,保证组件的复用
+
+- key唯一 性能更好
+
+day02_17 数组中的算法
+
+- 数据是响应式的
+- 数组的响应式的API
+  - push("")
+  - pop()  从数组后删除
+  - shift() 从数组第一个元素
+  - unshift() 从数组最前面添加元素
+  - splice(starter, 删除个数, 追加元素)
+  - sort() 排序
+  - reverse() 反转
+  - Vue.set(数组,索引,修改的值) vue实现的根据索引修改数组的可以做到响应式
+- 数组非响应式API
+  - 通过索引修改数组中元素: arr[索引] = 新值
+
+day02_18 作业讲解
+
+- 当前index为红色 这个逻辑
+
+day03_19 购物车图书馆环境
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #app {
+            width: 800px;
+            margin: 0 auto;
+        }
+        table,
+        thead {
+            width: 800px;
+            background: #000000;
+        }
+        td,
+        th {
+            text-align: center;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>书籍名称</th>
+                    <th>出版日期</th>
+                    <th>价格</th>
+                    <th>购买数量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="book,index in books">
+                    <td>{{index}}</td>
+                    <td>{{book.name}}</td>
+                    <td>{{book.date}}</td>
+                    <td>￥{{book.price}}</td>
+                    <td>
+                        <button @click="add">+</button> {{book.count}}
+                        <button @click="min">-</button>
+                    </td>
+                    <td><button>移除</button></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>合计:</td>
+                    <td colspan="5">￥{{total}}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <script src="../resources/js/vue.js"></script>
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                books: [{
+                    name: "java基础",
+                    date: "2020-01-27",
+                    price: 23,
+                    count: 0
+                }, {
+                    name: "JavaScript",
+                    date: "2020-02-27",
+                    price: 23,
+                    count: 0
+                }, {
+                    name: "Go",
+                    date: "2020-03-27",
+                    price: 23,
+                    count: 0
+                }, {
+                    name: "Python",
+                    date: "2020-04-27",
+                    price: 23,
+                    count: 0
+                }, {
+                    name: "Shell",
+                    date: "2020-05-27",
+                    price: 23,
+                    count: 0
+                }]
+            },
+            computed: {
+                total() {
+                    return 100;
+                }
+            },
+            methods: {
+                add() {
+
+                },
+                min() {
+
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+day02_20 过滤器
+
+- vue - options ：filters - 过滤器给价格保留两位小数， 并且给价格之前拼接一个￥符号
+
+  ```js
+  <td>{{book.price | priceFilter}}</td>
+  
+  filters: {
+       priceFilter(price) {
+           return "￥ " + price.toFixed(2)
+       }
+   }
+  ```
+
+day02_21 改变购买数量
+
+```js
+methods: {
+    add(index) {
+        this.books[index].count++
+    },
+        min(index) {
+            if (this.books[index].count > 0) {
+                this.books[index].count--
+            }
+        }
+}
+```
+
+day02_22 统计价格
+
+```js
+computed: {
+    total() {
+        let total = 0;
+        this.books.forEach(book => {
+            total += book.price * book.count
+
+        });
+        return total;
+    }
+}
+```
+
+day03_01 JavaScript高级函数
+
+- foreach - 数组长度为0会报错
+
+- for - in : 拿到的是元素的索引
+
+  ```js
+  for (let index in books) {
+      console.log(books[index])
+  }
+  ```
+
+- for of : 遍历拿到元素
+
+  ```js
+  for (let item of books) {
+      console.log(item)
+  }
+  ```
+
+- filter : filter中的回调函数有一个要求,必须返回boolean值, 当返回为true会将当前参数添加到新的数组总,如果返回false当前参数会过滤掉
+
+  ```js
+  let arr1 = [12, 23, 12, 34, 545, 74634, 23, 454, 5, 56575, 2323]
+  arr1.filter(function(n) {
+      return n < 100;
+  })
+  var res1 = arr1.filter(n => n < 100)
+  ```
+
+- map : 接受数组的每个元素并转换为另外的元素并返回新数组
+
+  ```js
+  let map = res1.map(n => n * 3);
+  ```
+
+- reduce : 规约 作用是用于汇总需要遍历数组中的某个值, 与给定的初始值进行汇总,最后返回一个值,每次函数的返回值都赋值给第一个参数
+
+  ```js
+   let reduce = map.reduce(function(preValu, n) {
+       return preValu + n
+   }, 0)
+  ```
+
+day03_02 v-model 双向绑定
+
+- v-model : 双向绑定的原理:① v-bind:value 将表单的属性绑定到表单②v-on:input事件将表单的值设置到遍历
+
+  ```js
+  <input type="text" v-model="msg"> {{msg}}
+  ```
+
+day03_03 radio类型的表单
+
+- v-model 绑定的属性名相同, radio选项会互斥,可以不要name属性
+
+day03_04_checkbox类型表单
+
+- 单选框:绑定一个变量  表示是否选中
+- 复选框:绑定的是一个数组, 多选框的选中的元素会添加到数组中
+
+day03_05 select 下拉选
+
+- 下拉单选:① 默认是单选 ② v-model绑定的select元素上
+- 下拉多选: ① select标签添加属性 multiple ② v-model绑定一个数组
+
+day03_06 input的值绑定
+
+- 核心是动态的给 需要绑定的值进行赋值
+- 首先是要具有初始值,通过加载初始值得到 动态的value值
+
+day04_07 v-model 修饰符
+
+- v-model..lazy : 懒加载 失去焦点或回车才会触发数据绑定
+- v-model.num : 表示只能绑定数字, 但是输入的类型也会转为number
+- v-model.trim : 会将表单输入的字符串两边的空格去除
+
+day04_08 组件化
+
+1. 组件化的介绍
+   - 举个例子:有一堆复杂的问题要解决,人们会将问题分离成一个个的,然后分步解决一个个的小问题
+   - 组件化的例子:原始的业务代码是放在一个js模块中, 为了方便复用抽离了很多方法(函数), 最后可以将表示一组功能的函数再抽离为组件,这个组件就可以重复使用
+2. vue中的组件思想
+   - 提供了一种抽象,让我们可以开发出一个个独立可复用的小组件来构造我们的应用
+   - 任何的应用都会被抽象成一颗组件树
+3. vue组件使用的基本步骤
+   - 创建组件构造器 : 构造出组件对象
+   - 注册组件 : 将组件对象关联的到Vue对象之上
+   - 使用组件 : 可以在当前vue管理的DOM中使用DOM之外有其他组件管理的DOM
+4. 
 
 
 
