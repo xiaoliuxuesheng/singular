@@ -1,3 +1,5 @@
+# day01
+
 day01_01_vue js课程介绍
 
 1. 课程大纲
@@ -211,6 +213,8 @@ day01_21_计算属性复杂操作
 
 day01_22_回顾课程
 
+# day02
+
 day02_01_计算属性getter和setter
 
 - 完整的计算属性
@@ -377,7 +381,7 @@ day02_18 作业讲解
 
 - 当前index为红色 这个逻辑
 
-day03_19 购物车图书馆环境
+day02_19 购物车图书馆环境
 
 ```html
 <!DOCTYPE html>
@@ -531,6 +535,8 @@ computed: {
     }
 }
 ```
+
+# day03
 
 day03_01 JavaScript高级函数
 
@@ -742,7 +748,296 @@ day03_13 组件模板的抽离
    </script>
    ```
 
-   
+day03_14 组件内部的model
+
+- 组件内的data属性必须是一个函数返回的Object对象
+
+  ```js
+  Vue.component("tem", {
+      template: "#tem",
+      data: function() {
+          return {
+              title: "title"
+          }
+      }
+  })
+  ```
+
+- vue中的data必须是一个函数
+
+  - 保证函数返回的对象是独立的
+
+day03_15 父子组件通信
+
+1. 父传子 : 通过props向子组件传递
+
+   - 第一步 : 在父组件中定义需要传递的变量数据
+
+     ```js
+     data: {
+         vue: 'Wellcome Vue',
+        	list: ["海王", "海贼王", "全职高手"]
+     },
+     ```
+
+   - 第二步 : 定义子组件, 并且注册在父组件中
+
+     ```html
+     <template id="sube">
+         <div>
+             <h2>sube</h2>
+             5. 在子组件中使用父组件中传递过来的值
+             {{vue}}
+             {{list}}
+         </div>
+     </template>
+     <script>
+         const sube = {
+             template: "#sube",
+             // 4. 子组件中定义props 字符串数组接收父组件传递过来的变量
+             props: ["vue", "list"]
+     
+         };
+         const vm = new Vue({
+             components: {
+                 sube
+             }
+         })
+     </script>
+     ```
+
+   - 第三步 : 使用子组件 并将父组件的属性绑定到子组件上
+
+     ```html
+     <div id='app'>
+         <h1>{{vue}}</h1>
+         <sube v-bind:vue='vue' :list='list'></sube>
+     </div>
+     ```
+
+   - 第四步   在子组件中使用props字符串数据接收组件上绑定的变量
+
+     ```js
+     props: ["vue", "list"]
+     ```
+
+   - props接收变量的方式 使用对象
+
+     ```js
+     # 使用对象接收并限定变量类型
+     props:{
+         变量名: 数据类型,
+         变量名:[数据类型A, 数据类型B]
+     }
+     
+     # 使用对象接收并指定变量的多种属性
+     props:{
+         变量:{
+             type: 变量的类型
+             default: 如果不传值的默认值
+             required: true 必传的值  false 不是必传的值
+         }
+     }
+     
+     # 自定义验证函数
+     props:{
+         valider: function(){
+             return 验证结果;
+         }
+     }
+     ```
+
+     > props变量支持的数据类型
+     >
+     > - String
+     > - Number
+     > - Boolean
+     > - Array
+     > - Object
+     > - Date
+     > - Function
+     > - Symbol
+     > - 自定义类型
+
+2. 子传父 : 通过自定义事件发送消息
+
+   - 第一步  在子组件中定义事件并接受事件的参数
+
+     ```html
+     <button @click="subClick(item)">{{item.name}}</button>
+     ```
+
+   - 第二步 在子组件的方法中发送事件和参数
+
+     ```js
+     methods: {
+         subClick(item) {
+             this.$emit("subclick", item)
+         }
+     ```
+
+   - 第三步  在父组件模板中的子组件标签上监听改名称的事件
+
+     ```html
+      <sube @subclick="fatherEvent"></sube>
+     ```
+
+   - 第四步  在父组件的方法中定义事件的方法和接受参数  默认第一个参数是由子组件发送事件传递的参数
+
+     ```js
+     methods: {
+         fatherEvent(item) {
+             console.log('fatherEvent', item)
+         }
+     }
+     ```
+
+day03_16 父传子 props中的驼峰标识
+
+- 在标签中属性不支持驼峰单词, 所以父组件在子组件上绑定数据时候,如果有驼峰单词,将单词转为中横线的方式传递, 在子组件的props属性中仍然使用驼峰方式接受父组件传递的值
+
+day03_17 子传父
+
+- 通过事件告诉父组件在子组件发生了什么事;
+
+day03_18_19 今日回顾
+
+# day04
+
+day04_01 父子通信数据双向绑定
+
+- 通过v-model实现数据在父子组件的双向绑定
+
+day04_02 画图分析父子组件双向绑定
+
+day04_03 vue watch 属性
+
+- watch作用 : 用于监听属性的改变
+
+day04_04 父访问子
+
+- 从父组件中拿到子组件对象, 从而操作子组件的属性
+  - 父组件访问子组件: $children  或 $refs是一个数组类型,包含所有的子组件对象
+    - **默认refs是空对象, 如果组件中有<组件元素 ref="key"> ,name子组件才会加入到refs对象中,对象元素的属性名称是ref的值,属性值是组件对象**
+  - 子组件访问父组件: $parent  
+
+day04_05 子访问父
+
+- 在开发中不建议这么用,
+- $parent 访问父组件
+- $root 访问根组件
+
+day04_06 slot 插槽
+
+- 组件的插槽
+  - 为了让组件更具备扩展性,让使用者决定组件内部的一些内容的展示
+
+1. 插槽的基本使用slot : 定义组件时候预留插槽位置, 使用组件时候在组件内定义插槽内容, vue会解析并替换到slot位置
+
+   ```html
+       <div id='app'>
+           <h1>{{vue}}</h1>
+           <cpn>
+               <button>插槽的基本使用</button>
+           </cpn>
+       </div>
+       <template id="cpn">
+           <div>
+               <h2>我是子组件</h2>
+               <slot></slot>
+           </div>
+       </template>
+   ```
+
+2. 插槽的默认值 : 可以为插槽指定默认值
+
+   ```html
+       <template id="cpn">
+           <div>
+               <h2>我是子组件</h2>
+               <slot>
+                   <button>插槽的默认值</button>
+               </slot>
+           </div>
+       </template>
+   ```
+
+3. 插槽的替换特性 : 使用组件时候 组件内的插槽内容会全部替换掉插槽位置
+
+day04_07 具名插槽
+
+- 如果组件内定义了多个插槽, 需要为插槽定义名称
+
+  ```html
+  <slot name="aaa"></slot>
+  <slot name="bbb"></slot>
+  ```
+
+- 要使用插槽时候需要声明替换的是那个插槽
+
+  ```html
+  <cpn name="aaa">
+      <button>具名插槽</button>
+  </cpn>
+  ```
+
+day04_08 编译的作用域
+
+- 在模板内使用变量, 变量的作用域是模板对应的实例上的数据,模板内的变量都在vue实例作用域内进行编译
+
+day04_09 作用域插槽
+
+- 描述作用域插槽：父组件替换插槽的标签，但是内容由子组件来提供
+
+- 获取子组件的内容
+
+  1. 定义子组件实例, 实例中有数据对象,用于测试给父组件传递数据
+
+     ```js
+     components: {
+         cpn: {
+             template: "#cpn",
+                 data() {
+                 return {
+                     list: ["aaa", "bbb", "ccc"]
+                 }
+             }
+         }
+     }
+     ```
+
+  2. 定义子组件作用域: 用指定属性绑定实例上的数据
+
+     ```html
+     <template id="cpn">
+         <div>
+             // 绑定的属性名称自定义
+             <slot :data="list"></slot>
+         </div>
+     </template>
+     ```
+
+  3. 在父组件上使用插槽 : 插槽封装在template标签内 并且指定插槽的作用域slot 或指定名称的slot, 使用slot作用域可以获取绑定在子组件上的数据, 父组件可以使用到子组件的数据
+
+     ```html
+     <cpn>
+         <template slot-scope='slot'>
+             <span v-for="item in slot.data">{{item}}</span>
+         </template>
+     </cpn>
+     ```
+
+  day04_10 模块化 前端代码的复杂性
+
+  1. 在前端疯狂扩张的年代 : 
+
+  
+
+
+
+
+
+
 
 
 
