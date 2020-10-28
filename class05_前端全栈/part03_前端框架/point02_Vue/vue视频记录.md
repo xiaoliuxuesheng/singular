@@ -603,13 +603,13 @@ day03_06 input的值绑定
 - 核心是动态的给 需要绑定的值进行赋值
 - 首先是要具有初始值,通过加载初始值得到 动态的value值
 
-day04_07 v-model 修饰符
+day03_07 v-model 修饰符
 
 - v-model..lazy : 懒加载 失去焦点或回车才会触发数据绑定
 - v-model.num : 表示只能绑定数字, 但是输入的类型也会转为number
 - v-model.trim : 会将表单输入的字符串两边的空格去除
 
-day04_08 组件化
+day03_08 组件化
 
 1. 组件化的介绍
    - 举个例子:有一堆复杂的问题要解决,人们会将问题分离成一个个的,然后分步解决一个个的小问题
@@ -621,7 +621,130 @@ day04_08 组件化
    - 创建组件构造器 : 构造出组件对象
    - 注册组件 : 将组件对象关联的到Vue对象之上
    - 使用组件 : 可以在当前vue管理的DOM中使用DOM之外有其他组件管理的DOM
-4. 
+
+day03_09 组件化基本使用
+
+1. 创建组件对象: extend 创建组件构造器, 传入组件选项 创建组件选项,template标识组件的DOM内容(template  会被渲染为render函数)
+
+   ```js
+   const cmp = Vue.extend({
+       template: `
+           <div>
+               <h2>是个标题啊</h2>
+               <p>是个段落啊</p>
+           </div>
+   	`
+   })
+   ```
+
+2. 注册组件:给组件定义名称 - 使用组件的标识 Vue.component将组件注册为全局组件 
+
+   ```js
+   Vue.component("test-cmp", cmp)
+   ```
+
+3. 使用组件 ; 组件必须在vue实例范围内使用
+
+   ```html
+   <div id="app">
+       <test-cmp></test-cmp>
+       <test-cmp></test-cmp>
+       <test-cmp></test-cmp>
+       <test-cmp></test-cmp>
+   </div>
+   ```
+
+day03_10 全局组件和局部组件
+
+1. 全局组件 : 在多个Vue实例对象下使用
+
+   ```js
+   Vue.component("test-cmp", cmp)
+   ```
+
+2. 局部组件: 只能在当前vue实例范围内使用
+
+   ```js
+   const vm = new Vue({
+       components: {
+           "cpm-b": cmpB
+       }
+   })
+   ```
+
+day03_11 父组件和子组件
+
+1. 组件概述: 组件本质也是一个vue实例对象, 在组件内也具有vue实例的大部分属性,包括组件注册, 如果在组件内注册了其他组件,那么则可以在这个组件内使用注册的组件, 被注册的组件称为这个组件的子组件, 这个组件是子组件的父组件
+2. vue实例也是一个组件,是组件树中的根组件
+3. 组件只能使用全局组件和自己的直接子组件: 在渲染组件模板内容时候首先会在自己实例的组件中查找,找不到再去全局组件查找
+
+day03_12 组件注册的语法糖 省略extend函数 直接传递组件对象
+
+1. 注册到全局组件
+
+   ```js
+           const cmpB = Vue.extend({
+               template: `
+                   <div>
+                       <h2>局部组件</h2>
+                       <p>是个段落啊</p>
+                   </div>
+               `
+           })
+   ```
+
+2. 注册到局部组件
+
+   ```js
+   components: {
+       "cpm-b": cmpB,
+   	"cpm-c": cpmC,
+   	"cpm-d": {
+           template: `
+               <div>
+               <h2>局部组件</h2>
+               <p>是个段落啊</p>
+               </div>
+   		`
+   	}
+   }
+   ```
+
+day03_13 组件模板的抽离
+
+1. 方式一：将模块字符定义在script标签中，指定标签类型 text/x-template ,在template中挂载script标签元素
+
+   ```html
+   <script type="text/x-template" id="scr">
+           <div>
+               <h1>模板字符串抽离script</h1>
+       </div>
+   </script>
+   <script>
+       Vue.component("scr", {
+           template: "#scr"
+       })
+   </script>
+   ```
+
+2. 方式二: 使用template标签抽离模板
+
+   ```html
+   <template id="tem">
+       <div>
+           <h1>模板字符串抽离 template</h1>
+       </div>
+   </template>
+   <script>
+       Vue.component("tem", {
+           template: "#tem"
+       })
+   </script>
+   ```
+
+   
+
+
 
 
 
