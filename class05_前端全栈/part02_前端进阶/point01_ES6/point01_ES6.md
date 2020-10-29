@@ -227,3 +227,156 @@ Array.prototype.Includes
    66.ES11-动态import.mp4
    67.ES11-BigInt类型.mp4
    68.ES11-绝对全局对象globalThis.mp4
+
+
+
+# =======
+
+01_课程介绍
+
+- ES6 EcmaScript2015
+- 三大框架使用大量ES新特性
+
+02_EcmaScript相关名词
+
+- ECMA：European Computer Manufactures Association 欧洲计算机制造协会；这个组织目标是评估、开发和认可电信和计算机标准，1994年后改名为ECMA国际
+
+- EcmaScript：ECMA-262是ECMA标准之一，script脚本语言标准 
+
+  | 版本   | 时间 | 特性                                                       |
+  | ------ | ---- | ---------------------------------------------------------- |
+  | 第一版 | 1997 | 制定基本语法                                               |
+  | 第二版 | 1998 | 小改动                                                     |
+  | 第三版 | 1999 | 引入正则、异常、格式化输出、IE支持                         |
+  | 第四版 | 2007 | 过于激进、未发布                                           |
+  | 第五版 | 2009 | 引入严格模式、JSON、扩展对象、数组、原型、字符串、日期方法 |
+  | 第六版 | 2015 | 模块化、面向对象、Promise、箭头函数、let、const、数组结构  |
+  | 第七版 | 2016 | 幂运算符、数组扩展、Async/await关键字                      |
+  | 第八版 | 2017 | Async/await、字符串扩展                                    |
+  | 第九版 | 2018 | 对象解构赋值、正则扩展                                     |
+  | 第十版 | 2019 | 扩展对象、数组方法                                         |
+  | 第十版 | 2020 |                                                            |
+
+- let特性
+
+  - 变量可以批量声明
+  - 变量不能重复定义  var可以
+  - let块级作用域,只在{}代码块中有效,var没有块级作用域,只有全局和函数作用域 
+  - let变量不存在变量提升，只能声明后才能使用； var变量会提升
+  - let块级作用域，任然符合作用域链特性
+
+02_let案例实践
+
+- for循环修改获取按钮下标
+
+03_const特性
+
+- 特性和let相同，块级作用域
+- 建议定义常量用大写
+- const产量声明必须赋初始值
+- const声明常量, 声明后常量的内存引用值不能修改
+
+04_ES6解构赋值
+
+- 数组结构赋值
+
+  ```js
+  let arr = ['a', 'b', 'c', 'd']
+  let [a, b, c, d] = arr
+  ```
+
+- 对象的解构赋值
+
+  ```js
+  let obj = {
+      name: "赵本山",
+      age: 23,
+      show() {
+          console.log('昨天今天明天')
+      }
+  }
+  let {
+      name,
+      age,
+      show
+  } = obj
+  ```
+
+05_模板字符串
+
+- 模板字符串：反引号
+
+  ```js
+  let str = `
+  模板
+  字符串
+  格式`;
+  ```
+
+- 变量拼接
+
+  ```js
+  let aaa = "变量"
+  let str2 = `${aaa}原来的字符串`
+  ```
+
+06_对象的简化写法
+
+- 对象简化写法: es6中允许在对象中直接写变量和函数,作为对象的属性和方法
+
+  ```js
+  let filed = "变量"
+  let func = function() {
+      console.log('这是函数')
+  }
+  // 对象简化写法
+  let object = {
+      filed,
+      func,
+      methodName(){
+      	// 自定义方法声明简化
+      }
+  }
+  ```
+
+07_箭头函数的声明和特性
+
+- 箭头函数 : =>   在java中是->
+
+  ```js
+  let old = function() {
+  
+  }
+  let n = (形参) => {
+  	return 返回值;
+  }
+  
+  // 省略小括号 ; 形参有且只有一个
+  let o = 形参 => {}
+  // 省略大括号, 有且只有一个语句,而且return关键字必须省略
+  let o =  形参 => 一句语句
+  ```
+
+  > 特性
+  >
+  > - this是静态的:使用指向函数声明时所在作用下的this的值: 函数.call()?
+  > - 不能作为构造函数实例化对象, function可以作为对象的构造函数
+  > - 不能使用arguments变量: 在函数中可以使用arguments变量结束实参值
+
+07_箭头函数的实践
+
+- 点击两秒后变红: 如果setTimeout中是function格式的,this的指向是window对象,如果是箭头函数, this指向是内层的监听器的对象
+
+  ```js
+  let aa = document.getElementById("aa")
+  aa.addEventListener("click", function() {
+      setTimeout(() => {
+          this.style.background = "pink"
+      }, 2000);
+  })
+  ```
+
+- 箭头适合于this无关的回调
+
+- 箭头不适合有this有关的回调  不适合对象的方法
+
