@@ -257,26 +257,27 @@ Array.prototype.Includes
   | 第十版 | 2019 | 扩展对象、数组方法                                         |
   | 第十版 | 2020 |                                                            |
 
-- let特性
 
-  - 变量可以批量声明
-  - 变量不能重复定义  var可以
-  - let块级作用域,只在{}代码块中有效,var没有块级作用域,只有全局和函数作用域 
-  - let变量不存在变量提升，只能声明后才能使用； var变量会提升
-  - let块级作用域，任然符合作用域链特性
+03_let特性
 
-02_let案例实践
+- 变量可以批量声明
+- 变量不能重复定义  var可以
+- let块级作用域,只在{}代码块中有效,var没有块级作用域,只有全局和函数作用域 
+- let变量不存在变量提升，只能声明后才能使用； var变量会提升
+- let块级作用域，任然符合作用域链特性
+
+04_let案例实践
 
 - for循环修改获取按钮下标
 
-03_const特性
+05_const特性
 
 - 特性和let相同，块级作用域
 - 建议定义常量用大写
 - const产量声明必须赋初始值
 - const声明常量, 声明后常量的内存引用值不能修改
 
-04_ES6解构赋值
+06_ES6解构赋值
 
 - 数组结构赋值
 
@@ -302,7 +303,7 @@ Array.prototype.Includes
   } = obj
   ```
 
-05_模板字符串
+07_模板字符串
 
 - 模板字符串：反引号
 
@@ -320,7 +321,7 @@ Array.prototype.Includes
   let str2 = `${aaa}原来的字符串`
   ```
 
-06_对象的简化写法
+08_对象的简化写法
 
 - 对象简化写法: es6中允许在对象中直接写变量和函数,作为对象的属性和方法
 
@@ -339,7 +340,7 @@ Array.prototype.Includes
   }
   ```
 
-07_箭头函数的声明和特性
+09_箭头函数的声明和特性
 
 - 箭头函数 : =>   在java中是->
 
@@ -363,7 +364,7 @@ Array.prototype.Includes
   > - 不能作为构造函数实例化对象, function可以作为对象的构造函数
   > - 不能使用arguments变量: 在函数中可以使用arguments变量结束实参值
 
-07_箭头函数的实践
+10_箭头函数的实践
 
 - 点击两秒后变红: 如果setTimeout中是function格式的,this的指向是window对象,如果是箭头函数, this指向是内层的监听器的对象
 
@@ -380,3 +381,99 @@ Array.prototype.Includes
 
 - 箭头不适合有this有关的回调  不适合对象的方法
 
+11_函数参数默认值
+
+- ES6在函数声明时候为参数声明默认值
+
+  ```js
+  function add(p1,p2=34){
+      return p1 + p2;
+  }
+  ```
+
+- 函数默认可以合结构赋值结合使用
+
+  ```js
+  function add({参数1,参数2=默认值,参数3}){
+      return p1 + p2;
+  }
+  ```
+
+12_es6引入rest参数
+
+- 引入rest参数,获取函数实参,用来代替arguments参数
+
+  ```js
+  function argu(...rest){
+      console.log(arguments);
+      console.log(rest);
+  }
+  ```
+
+  - arguments 用于接收调用函数时传递的实参
+  - 参数中定义rest参数(格式: ...参数名) 可以将函数多余参数封装为数组
+  - rest参数必须放置在函数的最后的一个参数
+
+13_ES6 扩展运算符
+
+- 扩展运算符可以将数字转为逗号分隔的参数序列
+
+  ```js
+  const list = ["参数1","参数2","参数3"]
+  function extend(){
+      console.log(arguments);
+  }
+  extend(list)
+  extend(...list)
+  ```
+
+14_扩展运算符的使用
+
+1. 数组的合并, 用户函数调用时候,list参数的转换
+2. 数组的克隆: 将数组转换后在放在新的数组中
+3. 将伪数组转为真正的数组
+
+15_Symbol的基本使用
+
+- ES6引入一个新的原始数据类型Symbol,表示独一无二的值,是JavaScript第七种数据类型,是一种类似字符串的数据类型
+  - Symbol的值是唯一的,用来解决命名冲突的问题,Symbol的唯一性对外不可见
+  - Symbol的值不能与其他数据进行运算
+  - Symbol定义的对象属性不能用for-in循环遍历,但是可以使用Reflect.ownKeys来获取对象所有键名称
+
+- 创建Symbol类型 
+
+  ```js
+  // 创建Symbol
+          let s1 = Symbol()
+          
+  // 创建带标识的Symbol         
+  let s2 = Symbol("中国")
+  
+  //方法会根据给定的键 `key`，来从运行时的 symbol 注册表中找到对应的 symbol
+  //，如果找到了，则返回它，否则，新建一个与该键关联的 symbol，并放入全局 symbol 注册表中。
+  let s4 = Symbol.for("中国")
+  ```
+
+16_对象添加Symbol属性
+
+- 标识独一无二的标识 , 首先要将Symbol()赋值给一个变量, 然后将变量设置为对象的属性, 调用属性之后使用变量调用
+
+17_Symbol内置值
+
+| 内置值                    | 说明                                                         |
+| ------------------------- | ------------------------------------------------------------ |
+| Symbol.hasinstance        | 当其他对象是一个instance运算符,判断是否为改对象实例时,调用该方法 |
+| Symbol.isConcatSpreadable | 是一个布尔值,表示该对象用于Array.property.concat()是否可以展开 |
+| Symbol.unscopables        | 改对象指定使用with关键字时候,哪些属性被with环境排除          |
+| Symbol.match              | 只是str.match(obj)时候,如果改属性存在,会调用它,返回该方法的返回值 |
+| Symbol.replace            | 只是str.replace(obj)时候,如果改属性存在,会调用它,返回该方法的返回值 |
+| Symbol.search             | 只是str.search(obj)时候,如果改属性存在,会调用它,返回该方法的返回值 |
+| Symbol.split              | 只是str.split(obj)时候,如果改属性存在,会调用它,返回该方法的返回值 |
+| iterator                  |                                                              |
+| toPrimitive               |                                                              |
+| toStringTag               |                                                              |
+| spcecies                  |                                                              |
+
+18_迭代器
+
+- 
