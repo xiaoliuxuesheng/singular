@@ -1949,9 +1949,21 @@ day07_11 - vue - router - keep - alive属性介绍
 
 day07_12 - tabbar - 基本结构的搭建
 
-- 案例演示：tabBar的封装
+1. 在style标签中引入其他样式文件：@import 路径
+2. tabBar的高度：49px
 
 day07_13 - tabbar - TabBar和TabBarItem组件封装
+
+1. vue3点击路由重复报错
+
+   ```js
+   const originalReplace = VueRouter.prototype.replace;
+   VueRouter.prototype.replace = function replace(location) {
+       return originalReplace.call(this, location).catch(err => err);
+   };
+   ```
+
+   
 
 day07_14 - tabbar - 给TabBarItem传入active图片
 
