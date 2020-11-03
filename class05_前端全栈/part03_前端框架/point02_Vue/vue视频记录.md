@@ -1077,7 +1077,7 @@ day04_12 ES6的模块化
   }
   # 导入
   import obj from 'xxx.js';			// 接受批量导出
-import {解构语法} from 'xxx.js';	// 结构方式导入
+	import {解构语法} from 'xxx.js';	// 结构方式导入
   import 自定义命名 form 'xxx.js';	// 自定义命名只能接受默认导出的东西
   import 变量 as 别名 from  'xxx.js'; // 导入可以为导出的名称起别名
   import * as 别名 from  'xxx.js'; // 统一导入指定模块的所有导出
@@ -1972,3 +1972,98 @@ day07_15 - tabbar - TabBarItem和路由结合效果
 day07_16 - tabbar - TabBarItem的颜色动态控制
 
 day07_17 - (了解) 知识回顾
+
+# day08
+
+01_路径别名
+
+- @代替src
+
+  ```js
+  resolve:{
+      alias:{
+          '@': resolve('src')
+      }
+  }
+  ```
+
+  - 在import语句中可以直接使用路径别名
+  - 如果在非import语句中的路径必须使用~作为别名的前缀
+
+02_Promise
+
+- Promise是异步编程的一种解决方案；
+  - 网络请求之间有顺序，下一个请求依赖上一个请求的数据，如果网络请求比较复杂，会出现严重的回调地狱
+- Promise基本使用
+  1. 创建Promise对象：new Promise(resolve，reject){}：resolve，reject本身也是个函数
+  2. promise异步回调
+     1. resolve(成功回调)
+     2. reject(失败回调)
+     3. 返回promise对象：返回的promise对象是成功则回调成功，否则回调失败
+  3. 回调
+     1. promise.then(function(succ){},function(err){})：Promise中的resolve回调后执行then方法
+     2. promise.catch(function(err){})：等于then的第二个参数
+
+03_Promise三种状态
+
+- pending：等待状态
+- fulfile：满足状态，主动resolve回调
+- reject：拒绝状态，主动调用reject回调，并且回调cache方法
+
+04_Promise链式调用你
+
+- then方法返回的仍然是Promise对象，Promise的值是then方法的返回值
+- Promise.resolve()：
+
+05_Promise的all方法
+
+- Promise.all([可迭代Promise对象]).then(results)：返回结果也是对应的可迭代的结果
+
+06-vuex-Vuex概念和作用解析
+
+1. vuex功能概述:作为vue应用程序的状态管理器
+   1. 模式:采用集中式存储应用里所有组件的某些状态,并以一种响应的规则保证以一种可预测的方式进行变化
+2. 状态管理:可以理解成多个组件共享变量存储在一个对象中
+   1. vuex的状态管理可以对管理的数据具有响应式的功能
+3. 需要管理的数据:多个页面都需要的一些数据
+   1. token
+   2. 用户信息
+   3. 全局唯一的:比如购物车.我的收藏等等
+
+07-vuex-单界面到多界面状态管理切换
+
+- 
+
+08-vuex-devtools和mutations
+
+09-vuex-state单一状态树的理解
+
+10-vuex-getters的使用详解
+
+11-vuex-mutations的携带参数
+
+12-vuex-mutations的提交风格
+
+13-vuex-数据的响应式原理
+
+14-vuex-mutations的类型常量
+
+15-vuex-actions的使用详解
+
+16-vuex-modules的使用详解
+
+17-vuex-store文件夹的目录组织
+
+# day09
+
+01-网络请求模块的选择-axios
+
+02-axios框架的基本使用
+
+03-axios发送并发请求
+
+04-axios的配置信息相关
+
+05-axios的实例和模块封装
+
+06-axios的拦截器的使用
