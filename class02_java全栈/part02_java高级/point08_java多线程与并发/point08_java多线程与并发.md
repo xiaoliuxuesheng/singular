@@ -12,9 +12,9 @@
 
 ## 1.2 CPU多级缓存
 
-1. **CPU内部结构**：CPU的结构主要由运算器、控制器、寄存器三大块组成。运算器就是中央机构里负责执行任务的部门，也就是专门干活的；而控制器就是中央机构的领导小组，针对不同需要，给运算器下达不同的命令；寄存器可以理解为控制器和运算器之间的联络小组，主要工作就是协调控制器和运算器。
+1. **CPU内部结构**：CPU的结构主要由运算器、控制器、寄存器三大块组成。运算器就是中央机构里负责执行任务的部门，也就是专门干活的；而控制器就是中央机构的领导小组，针对不同需要，给运算器下达不同的命令；寄存器可以理解为控制器和运算器之间的联络小组，主要工作就是协调控制器和运算器。 
 
-   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqaNbNPiwAciJTBgHcgViVEX2k3jAoYda2K63QIcEvZ1jT*PsVAwXf2FsO3IAKp7VwohN*XItbZgtzdz9CO*Xul4!/b&bo=oANPAqADTwIDCSw!&rf=viewer_4&t=5' width='70%'/>
+   <img src="https://s1.ax1x.com/2020/11/05/B2SKPK.png" alt="B2SKPK.png" border="0" />
 
 2. **CPU多核缓存架构**：为了提高程序运行的性能，现代CPU在很多方面会对程序进行优化。CPU的处理速度是很快的，内存的速度次之，硬盘速度最慢。在cpu处理内存数据中，内存运行速度太慢，就会拖累cpu的速度。为了解决这样的问题，cpu设计了多级缓存策略。
 
@@ -22,7 +22,7 @@
    - **L2 Cache (二级缓存)**是CPU外部的高速缓存，由于L1高速缓存的容量限制，为了再次提高CPU的运算速度，在CPU外部放置一高速存储器，即二级缓存。像一级缓存一样，二级缓存越大，则CPU处理速度就越快，整台计算机性能也就越好。一级缓存和二级缓存都位于CPU和内存之间，用于缓解高速CPU与慢速内存速度匹配问题。
    - **L3 Cache (三级缓存)** 都是内置的，它的作用是进一步降低内存延迟，同时提升大数据量计算时处理器的性能。具有较大L3缓存的处理器，能提供更有效的文件系统缓存行为及较短的消息和队列长度。一般多核共享一个L3缓存。
 
-   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqaNbNPiwAciJTBgHcgViVEUEUHnPup62sWfH4ygta4dU*lxF94rlZAKa55BhAI0Vr4SERmZGV4kwNbq2Erk*eZE!/b&bo=2gLxAdoC8QEDCSw!&rf=viewer_4&t=5'/>
+   <img src="https://s1.ax1x.com/2020/11/05/B29SpT.png" alt="B29SpT.png" border="0" />
 
 3. **为什么要CPU缓存**：CPU的频率太快，快到主存根本跟不上，这样在处理周时钟期内，CPU常常需要等待缓存，严重浪费资源。CPU Cache的出现为了缓解CPU和内存之间速度不匹配的问题；
 
@@ -33,16 +33,16 @@
 
 5. **CPU缓存一致性（MESI）**：规定CPU中每个缓存行（caceh line）使用4种状态进行标记（使用额外的两位(bit）表示）；用于保证多个CPU cache之间缓存共享数据的一致，因为每个CPU都有自己的缓存，容易导致一种情况就是：如果多个CPU的缓存（多CPU读取同样的数据进行缓存，进行不同运算后，写入内存中）中都有同样一份数据，那这个数据要如何处理呢？已谁的为准？ 这个时候就需要一个缓存同步协议了！
 
+   <img src="https://s1.ax1x.com/2020/11/05/B29k7R.png" alt="B29k7R.png" border="0" />
+   
    - **修改态 (Modified)** ：代表该缓存行中的内容被修改了，并且该缓存行只被缓存在该CPU中。这个状态的缓存行中的数据和内存中的不一样，在未来的某个时刻（当其他CPU要读取该缓存行的内容时。或者其他CPU要修改该缓存对应的内存中的内容时）它会被写入到内存中；当被写回主存之后，该缓存行的状态会变成独享（`exclusive`)状态。
    - **专有态 (Exclusive)** ：代表该缓存行对应内存中的内容只被该CPU缓存，其他CPU没有缓存该缓存对应内存行中的内容。这个状态的缓存行中的内容和内存中的内容一致。该缓存可以在任何其他CPU读取该缓存对应内存中的内容时变成S状态。或者本地处理器写该缓存就会变成M状态。
-   - **共享态 (Shared)** ：该状态意味着数据不止存在本地CPU缓存中，还存在别的CPU的缓存中。这个状态的数据和内存中的数据是一致的。当有一个CPU修改该缓存行对应的内存的内容时会使该缓存行变成 I 状态。
+- **共享态 (Shared)** ：该状态意味着数据不止存在本地CPU缓存中，还存在别的CPU的缓存中。这个状态的数据和内存中的数据是一致的。当有一个CPU修改该缓存行对应的内存的内容时会使该缓存行变成 I 状态。
    - **无效态 (Invalid)**： 此缓存无效，需要从主内存中重新读取。
-
-   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqTU4XoG*alc4FwVTQz3nICE*7lWAdbeV0MZqiLNhywd59XTHHhxSod1JtPwjlL1fEDwyB7Acb7MtW3iiENa5qpY!/b&bo=lgTNAZYEzQEDCSw!&rf=viewer_4&t=5'/>
 
 6. **引起缓存状态改变的方法**
 
-   <img src='https://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/bqQfVz5yrrGYSXMvKr.cqSt0.XiLZ6**SenSnYT8bjm3USg1VkD2CsAr5OQTfbThbhJFkNN1rOndfzeOr4ZoRN3JZZvOD7zzW2.xQxFO5.E!/b&bo=zwLbAc8C2wEDCSw!&rf=viewer_4&t=5'/>
+   <img src="https://s1.ax1x.com/2020/11/05/B29p1U.png" alt="B29p1U.png" border="0" />
 
    - **local read** : 读取本地缓存中数据
    - **local write** : 将数据写到本地缓存中
