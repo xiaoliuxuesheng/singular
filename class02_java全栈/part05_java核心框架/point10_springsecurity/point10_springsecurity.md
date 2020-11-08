@@ -731,7 +731,44 @@ spring:
 
 # 第三章 Security第三方认证
 
-
+1. OAuth2协议：
+   - OAuth2协议解决的问题：微信服务器上有我的照片数据，我自己要开发一个服务可以获取我在微信中的数据（我的服务就有了微信的潜在用户），但是微信服务肯定不同意直接读取用户数据，需要微信授权给我的服务：（授权的方式一：用户把微信的用户名和密码给我；授权方式二：用OAuth协议，用户从微信拿到令牌，我的服务用令牌从微信服务获取照片数据
+2. OAuth运行流程
+   - 运行角色
+     - 服务提供商（Provider）作用是提供令牌。谁提供令牌，谁就是服务提供商
+       - 认证服务器：Authentication server作用是认证用户身份，为用户提供令牌
+       - 资源服务器：Resource Server保存用户数据，可以验证令牌
+     - 用户：资源所有者（Rsource Owner）
+     - 第三方应用（client）：
+   - 运行流程
+     - 用户访问第三方应用：想要获取微信照片
+     - 第三方应用第一次会返回给用户要授权：用户同意授权
+     - 第三方应用会去服务提供商的认证服务器：告诉认证服务器用户同意了，服务器验证用户发放令牌
+     - 第三方应用拿到令牌：访问资源服务器，
+     - 资源服务器验证令牌：同意访问图片
+   - 在第二步有四种授权模式
+     - 授权码模式：功能最完整，流程最严密的授权模式，所有的服务提供商都是授权码模式
+       - 0：用户访问第三方应用
+       - 1：第三方应用将用户导向认证服务器：用户访问认证服务器进行授权认证
+       - 2：用户授权成功：授权服务器再讲用户导向第三方应用，并带有授权码（两个导向的地址是两个服务提前注册好的）
+       - 3：第三方应用拿着授权码：再去认证服务器申请令牌（在后台完成）
+       - 4：如果是刚才发放的令牌：则给第三方提供一个令牌，第三方拿到令牌
+     - 简化模式：
+       - 
+     - 密码模式：
+     - 客户端模式：
+3. SecuritySocial：实现是OAuth2协议，封装在SocialAuthenticationFilter中，把过滤器加到Security过滤器链，带着用户走完OAuth协议流程
+   - SecuritySocial流程中的接口
+     - ServiceProvider：是服务器提供商的抽象，提供了一个AbstractOAuth2ServiceProvider，每个具体的服务提供商需要为接口提供自己的实现。服务提供商的1-5步是标准化流程；第六步获取用户资源是个性化接口
+       - OAuth2Operations：封装的1-5步的标注流程，默认实现OAuth2Template
+       - Api：SecuritySocial提供默认的抽象：AbstractOAuth2ApiBinding，获取个性化用户信息的行为
+     - 第七步相关的接口在第三方应用内部完成的
+       - Connection：作用是封装前六步完成拿到的用于信息。SecuritySocial提供了实现OAuth2Connection
+         - 服务提供商的用户信息和第三方应用的用户信息的匹配：存储在第三方应用的数据库中UserConnection表，这个表是由UserConnectionRepository的实现JdbcUserConnectionRepository操作这个数据库；
+       - ConnectionFactory接口：的实现OAuth2ConnectionFactory创建出了Connection
+         - 包含了ServiceProvider的实例：用实例调取前六步的流程
+         - 包含了Api的实例：ApiAdapter：服务商不同的数据结构转为为Connection标准的数据结构，做的适配
+4. SpringSocial：提供了常规的实现微博、等等其他
 
 # 第四章 第三方认证服务开发
 
