@@ -242,18 +242,18 @@
 
 ## 1.4 MongoDB相关概念
 
-- MongoDB是一个以JSON为数据模型的文档型（Java Document）数据库，文档的本质是一个Object。
+> MongoDB是一个以JSON为数据模型的文档型（Java Document）数据库，文档的本质是一个Object。
 
-  |          | MongoDB      | 关系型数据库 |
-  | -------- | ------------ | ------------ |
-  | 数据库   | database     | database     |
-  | 数据表   | collection   | table        |
-  | 行       | document     | row          |
-  | 列       | field        | column       |
-  | 索引     | index        | index        |
-  | 数据模型 | json         | 关系模型     |
-  | 高可用   | 复制集       | 集群模式     |
-  | 横向扩展 | 原生分片支持 | 数据分区     |
+|          | MongoDB      | 关系型数据库 |
+| -------- | ------------ | ------------ |
+| 数据库   | database     | database     |
+| 数据表   | collection   | table        |
+| 行       | document     | row          |
+| 列       | field        | column       |
+| 索引     | index        | index        |
+| 数据模型 | json         | 关系模型     |
+| 高可用   | 复制集       | 集群模式     |
+| 横向扩展 | 原生分片支持 | 数据分区     |
 
 ## 1.5 MongoDB数据类型
 
