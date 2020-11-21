@@ -68,6 +68,8 @@
      - 配置MySQL
 
        ```sh
+       
+       ```
   # 启动数据库
        service mysql start
        
@@ -83,7 +85,7 @@
        
        exit
        ```
-     
+
    - 使用yum安装MySQL
 
      - 下载yum包：https://dev.mysql.com/downloads/repo/yum/
@@ -91,51 +93,54 @@
      - 使用wget下载安装包
 
        ```sh
+       
+       ```
+
     wget https://repo.mysql.com//mysql80-community-release-el7-3.noarch.rpm
        ```
-   
+       
      - 本地配置yum
-
+    
        ```sh
     yum localinstall Xxx.rpm
        ```
-   
+       
      - 检查mysql源是否安装成功
-
+    
        ```sh
     [root@localhost Downloads]# yum repolist enabled | grep mysql
        mysql-connectors-community/x86_64       MySQL Connectors Community           153
        mysql-tools-community/x86_64            MySQL Tools Community                110
        mysql80-community/x86_64                MySQL 8.0 Community Server           177
        ```
-   
+       
      - 安装MySQL
-
+    
        ```sh
     yum install mysql-community-server
        ```
-   
+       
      - 启动MySQL
-
+    
        ```sh
     systemctl start mysqld
        ```
-   
+       
      - 查看MySQL状态
-
+    
        ```sh
     systemctl status mysqld
        ```
-   
+       
      - 开机启动
-
+    
        ```sh
     systemctl enable mysqld
        systemctl daemon-reload
        ```
-   
+       
      - 修改root本地登录密码，mysql安装完成之后，在/var/log/mysqld.log文件中给root生成了一个默认密码
-  
+      
        ```sh
        grep 'temporary password' /var/log/mysqld.log
        
@@ -148,9 +153,10 @@
        ```sh
        firewall-cmd --zone=public --add-port=3306/tcp --permanent 
        ```
-     
-       
-   
+
+
+​       
+
 3. Mac系统安装
 
 4. Docker安装
@@ -190,7 +196,8 @@
 
 :anchor: **特点**
 
-- MySQL有多重日期的数据类型
+- MySQL
+- 有多重日期的数据类型
 - 每一个类型都有合法的取值范围
 
 :anchor: **日期时间类型**
