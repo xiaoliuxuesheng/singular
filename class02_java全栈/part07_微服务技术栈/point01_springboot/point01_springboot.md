@@ -828,3 +828,53 @@ public @interface SpringBootApplication {
 
 # 第六章 SpringBoot自定义starters
 
+1. 场景所需要的依赖
+
+2. 场景启动器的开发规范：
+
+   ```java
+   @Configuration				// 指定一个配置类
+   @ConditionalOnXXX			// 判断条件成立开启自动配置
+   @AutoConfigureAfter			// 指定自动配置类的顺序
+       @Bean					// 给容器中添加属性
+   @ConfigurationProperties	// 添加Bean的时候所需要外部指定的属性
+   @EnableConfigurationProperties	// 将@ConfigurationProperties生效加入到容器中
+   ```
+
+3. 自动配置类必须指定在classpath路径下的：/META-INF/spring.factories文件中
+
+   ```properties
+   org.springframework.boot.autoconfigure.EnableAutoConfiguration=XxxConfiguration
+   ```
+
+4. 场景启动器开发的模式
+
+   - 启动器模块是一个空的jar文件，仅提供辅助依赖管理，这些依赖可用于自动装配或者其他类库
+   -  命名规约：
+     - 官方的命名格式：spring-boot-starter-模块名称
+     - 自定义命名空间：模块名称-spring-boot-starter
+
+5. 自定义启动器
+
+   1. xxx-spring-boot-starter-autoconfigure：spring-boot-starter所有starter必须要的一个依赖
+
+      ```xml
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter</artifactId>
+      </dependency>
+      ```
+
+   2. xxx-spring-boot-starter
+
+      ```xml
+      <dependency>
+          <groupId>com.xxx</groupId>
+          <artifactId>xxx-spring-boot-starter-autoconfiguration</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      ```
+
+      
+
+      
