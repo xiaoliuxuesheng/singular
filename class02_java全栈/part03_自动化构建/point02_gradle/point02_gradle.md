@@ -1,118 +1,76 @@
-|       |             |                                               |
-| ----- | ---- | ---- |
-| **studio** | /ˈstuːdioʊ/ | n. 工作室；广播 电视 演播室；画室；电影制片厂 |
-
 # 前言
 
-:anchor: Gradle特点
-
-- 最新的, 功能最强大的构建工具
-
-  > 可以完成Maven和Ant所有功能
-  >
-  > 是使用程序代替xml配置, 构建灵活
-  >
-  > 是一门程序语言又非常多的第三方插件
-
-- 完善开发技术体系, 提示自动化构建技术深度
-
-- 进阶高级开发工程师
+- Gradle是最新的, 功能最强大的构建工具：①可以完成Maven和Ant所有功能②是使用程序代替xml配置, 构建灵活③是一门程序语言又非常多的第三方插件；
+- Gradle技术可以完善开发技术体系, 提示自动化构建技术深度；
+- 进阶高级开发工程师的必备工具；
 
 # 第一章 Gradle介绍与环境搭建
 
 ## 1.1 Gradle相关介绍
 
-:anchor: 领域特定语言DSL : **求专不求全**
-
-- 特定领域的专用语言
-- 使用范围小, 功能专一
-
-:anchor: Groovy 编程语言
-
-- 是一种基于JVM的敏捷开发语言
-- 结合Python, Ruby等脚本语言的有许多强大特性
-- Groovy可以和Java完美结合 - 而且可以使用Java的所有的库
-
-:anchor: Groovy 语言特性
-
-- 语法上支持动态类型, 闭包等新一代语言特性
-- 无缝集成所有已存在的Java类库
-- 支持面向对象编程, 也支持面向过程编程
-
-:anchor: Groovy 优势
-
-- 更加敏捷的编程语言 : 非常多的语法糖
-- 入门非常容器 , 功能非常强大
-- 既可以用作编程也可以用作编写脚本
+1. **领域特定语言DSL** : **求专不求全**，如UML建模语言、html语言等等；特点是①特定领域的专用语言②使用范围小, 功能专一
+2. **Groovy 编程语言**：①是一种基于JVM的敏捷开发语言②结合Python, Ruby等脚本语言的有许多强大特性③Groovy可以和Java完美结合 - 而且可以使用Java的所有的库
+3. **Groovy 语言特性**：①语法上支持动态类型, 闭包等新一代语言特性②无缝集成所有已存在的Java类库③支持面向对象编程, 也支持面向过程编程
+4. **Groovy 优势**：①更加敏捷的编程语言 : 非常多的语法糖②入门非常容器 , 功能非常强大③既可以用作编程也可以用作编写脚本
 
 ## 1.2 开发坏境搭建
 
-:anchor: Groovy 基于JVM : 需要安装JDK
-
-:anchor: Groovy的快捷搭建 : [Groovy官网](http://www.groovy-lang.org)
-
-- Mac系统的Groovy安装 : 解压并配置`~/bin`坏境变量
-- Win系统的Groovy安装 : 解压并配置`~/bin`坏境变量
-
-:anchor: IDEA开发坏境的Groovy环境配置
-
-- 开启IDEA的Groovy插件
-- 创建Groovy工程 : 选择本地的Groovy坏境
+1. Groovy是基于JVM的一种编程语言：Groovy需要准备JDK环境
+2. Groov下载并快捷环境搭建 : [Groovy官网](http://www.groovy-lang.org/)
+   - Mac系统的Groovy安装 : 解压并配置`~/bin`坏境变量
+   - Win系统的Groovy安装 : 解压并配置`~/bin`坏境变量
+3. IDEA开发工具的Groovy环境配置
+   - 开启IDEA的Groovy插件
+   - 创建Groovy工程 : 选择本地的Groovy坏境
 
 # 第二章 Gradle核心语法
 
 ## 2.1 Groovy基础语法
 
-### :anchor: 变量
+### 1. 变量
 
-1. **变量的类型**
+- 变量的类型：在Groovy中变量分为基本类型和对象类型：本质上都是对象类型，基本类型本质是基本类型的包装类
 
-   - Groovy中的变量的类型本质上都是对象类型
-   - Groovy中的基本类型本质是基本类型的包装类
+- **变量的定义：建议使用强类型定义变量**：变量的定义方式有强类型方式定义和弱类型方式定义（弱类型变量类型根据值推断）
 
-2. **变量的定义** : *建议使用强类型定义变量*
+  ```groovy
+  变量类型 变量名 = 变量值 			# 定义方式与Java变量定义方式相同
+  
+  //弱类型定义关键字 def,可以根据变量值推算出变量的类型
+  def 变量名称 = 变量值
+  ```
 
-   - **强类型定义** : 定义变量时候指定了变量的类型
+### 2. 字符串String
 
-     ```groovy
-     变量类型 变量名 = 变量值 			# 定义方式与Java变量定义方式相同
-     ```
+- 是Java的String和GStringImpl作为参数可以相互替换和相互调用，在Groovy中的String定义格式有三种
 
-   - **弱类型定义** `关键字 : def`: 可以根据变量值推算出变量的类型
+  | 定义方式 | 使用说明                                         |
+  | -------- | ------------------------------------------------ |
+  | 单引号   | 普通无格式字符串                                 |
+  | 双引号   | 可扩展字符串 : 可以使用`${}`引用变量表达式<br /> |
+  | 三单引号 | 格式化输出字符串                                 |
 
-     ```groovy
-     def 变量名称 = 变量值
-     ```
+### 3. 字符串GString
 
-### :anchor: Groovy中String方法
+- 双引号字符串也称为可扩展字符串：使用了扩展表达式则该字符串会转为GStringImpl类型
 
-> java.lang.String
->
-> DefaultGroovyMethods
->
-> StringGroovyMethods
+  ```groovy
+  String str = '变量'
+  
+  String gString = "${str}扩展字符串表达式"
+  
+  gString.class == class org.codehaus.groovy.runtime.GStringImpl
+  ```
 
-:one: Strng定义格式
+### 4. Groovy字符串API
 
-| 定义方式 | 使用说明                                   |
-| -------- | ------------------------------------------ |
-| 单引号   | 普通无格式字符串                           |
-| 双引号   | 可扩展字符串 : 可以使用`${}`引用变量表达式 |
-| 三单引号 | 格式化输出字符串                           |
+- **StringAPI来源一**：String类的基本方法；使API的使用同Java的String类
 
-> 双引号字符串中使用了扩展表达式则该字符串会转为GStringImpl类型
->
-> String 和 GStringImpl作为参数可以相互替换和相互调用
+- **StringAPI来源二**：DefaultGroovyString是Groovy对所有对象的扩展
 
-:two: Groovy对String的扩展
+- **StringAPI来源三**：**StringGroovyMethods**的方法是对String的扩展，重写了DefaultGroovyString的方法，普通类型参数方法
 
-- StringAPI来源一：String类的基本方法:同Java的String类
-
-- StringAPI来源二：DefaultGroovyString是Groovy对所有方法的扩展
-
-- StringAPI来源三：**StringGroovyMethods**的方法是对String的扩展，重写了DefaultGroovyString的方法，普通类型参数方法
-
-  - **字符串填充**
+  - **字符串填充**：如果不传填充的字符串，则默认是以空格填充
 
     ```groovy
     println "aaa".center(5,"c")			// caaac
@@ -124,13 +82,16 @@
 
     ```groovy
     println "aaa".capitalize()			// Aaa
-    println "abc abb cdd" - "abb"		// abc  cdd
     ```
 
-  - **字符串比较**
+  - **字符串操作符**
 
     ```groovy
-    println "abc" > "abb"				// true
+    println "abc".compareTo("abc")		// 使用API比较
+    println "abc" > "abb"				// true 比较大小
+    
+    println "abc".minus("abc")		// 使用API减法
+    println "abc abb cdd" - "abb"		// abc  cdd		字符串的减法
     ```
 
   - **获取子串**
@@ -149,67 +110,48 @@
     println "1234".toInteger()			// 1234
     ```
 
-- StringAPI来源四：**StringGroovyMethods**闭包类型参数方法（查看闭包使用详解）
+- **StringAPI来源四**：**StringGroovyMethods**闭包类型参数方法（查看闭包使用详解）
 
-### :anchor: Groovy语句
+  - 
 
-**:one: 顺序语句**
+### 5. Groovy语句
 
-**:two: 条件逻辑** 
+- **顺序语句**
 
-- if
+- **条件逻辑**：①if、②if - else、③if - else if、④if - else if -else、⑤switch/case : 可以传入任意类型变量和`case`匹配
 
-- if - else
-
-- if - else if
-
-- if - else if -else
-
-- switch/case : 可以传入任意类型变量和`case`匹配
-
-  ```groovy
-  switch (a) {
-      case 11:
-          result = 1
-          break
-      case "string":
-          result = "string"
-          break
-      case ["list"]:
-          result = ["list"]
-          break
-      case 10..20:
-          result = 10..20
-          break
-      default: result = "default"
-  }
-  ```
-
-**:three: 循环语句**
-
-- while循环
-
-- for循环 
-
-  - for - i 格式循环
+  - switch-case语法：支持任意类型的判断
 
     ```groovy
-    for (int i = 0; i < 20; i++) {
-        sum1 += i
+    switch (a) {
+        case 11:
+            result = 1
+            break
+        case "string":
+            result = "string"
+            break
+        case ["list"]:
+            result = ["list"]
+            break
+        case 10..20:
+            result = 10..20
+            break
+        default: result = "default"
     }
     ```
 
-  - for - in 格式循环列表
+- **循环语句**
+
+  - while循环
+
+  - for循环：①for - i 、②for - in
 
     ```groovy
+    // for - in 格式循环range
     for (i in 10..20){
         sum2 += i
     }
-    ```
-
-  - for - in 格式循环map
-
-    ```groovy
+    // for - in 格式循环map
     for (i in ["key":"value"]){
         i.key + i.value 
     }
@@ -217,64 +159,45 @@
 
 ## 2.2 Groovy闭包
 
-### :anchor: 闭包基础
+### 1. ​​ 闭包基础
 
-:one: **闭包的概念 :**
-
-- 闭包的概念：闭包的本质就是一段代码块
-
-- 闭包的定义
+- **闭包的概念 :**闭包的本质就是一段代码块
 
   ```groovy
-  def 闭包名称 = {}		
-  ```
-
-- 闭包的调用
-
-  ```groovy
+  // 闭包的定义
+  def 闭包名称 = {}
+  
+  // 比较的调用
   闭包名称.call()			// 方式一 : 调用闭包函数
   闭包名称()				// 方式二 : 直接使用闭包函数
   ```
 
-:two: **闭包参数**
-
-- 定义闭包参数格式
+- **闭包参数**
 
   ```groovy
+  // 定义闭包参数格式,多个参数用逗号分隔
   def 闭包名称 = { 参数类型 参数名称, ... ... ->
       // 闭包体
   }
-  ```
-
-  > 多个参数用逗号分隔
-
-- 定义闭包时指定参数默认值
-
-  ```groovy
+  
+  // 定义闭包时指定参数默认值,有默认值一般定义在最后,条用闭包的时候
   def 闭包名称 = { 参数类型 参数名称 = 默认值 ->
       // 闭包体
   }
-  ```
-
-- 闭包的默认参数 : 如果闭包中没有定义参数, 则该闭包会有一个默认参数 **it**，如果为闭包指定参数后，默认参数则失效
-
-  ```groovy
+  
+  // 闭包的默认参数:如果闭包中没有定义参数,则该闭包会有一个默认参数it，如果为闭包指定参数后，默认参数则失效
   def 闭包 = {
       // 闭包体
       println it
   }
   ```
 
-:three: **闭包的返回值**
+- **闭包的返回值**
 
-- 闭包返回值需要使用`return`关键字声明闭包的返回
-- 闭包的默认返回值是null
-
-:four: **闭包的变形写法：闭包作为方法参数**
-
-- 闭包作为参数，向闭包传递参数的格式是根据源码中闭包调动时决定的
-
-- 如果闭包是方法中唯一的形式参数，调用方法时方法的圆括号可以不写，
+  - 闭包返回值需要使用`return`关键字声明闭包的返回
+  - 闭包的默认返回值是null
+  
+- **闭包的变形写法：闭包作为方法参数**
 
   ```groovy
   number.times() {
@@ -286,6 +209,10 @@
   }
   ```
 
+  - 闭包作为参数，向闭包传递参数的格式是根据源码中闭包调动时决定的
+
+  - 如果闭包是方法中唯一的形式参数，调用方法时方法的圆括号可以不写，
+
 - 如果闭包是参数的最后一个，闭包的大括号`{}`可以写在方法圆括号`()`外面
 
   ```groovy
@@ -294,9 +221,9 @@
   }
   ```
 
-### :anchor: 闭包使用详解
+### 2. ​​ 闭包使用详解
 
-:one: **与基本类型的结合使用**
+**★ 与基本类型的结合使用**
 
 - upto方法源码：对Integer数求阶乘
 
@@ -329,7 +256,7 @@
   }
   ```
 
-:two: **与String结合使用**
+**★ 闭包与String结合使用**
 
 - each：遍历字符串
 
@@ -363,13 +290,13 @@
 
 - collect：遍历字符并处理后返回一个集合
 
-:three: **与数据结构结合使用**
+**★ 闭包与数据结构结合使用**
 
-:four: **与文件结合使用**
+**★ 闭包与文件结合使用**
 
-### :anchor: 闭包进阶
+### 3. ​​ 闭包进阶
 
-:one: **闭包关键变量**
+**★ 闭包关键变量**
 
 - this：代表闭包定义处的类
 
@@ -379,31 +306,31 @@
 
   - 如果是定义闭包中的闭包，owner会执行最近的闭包对象
 
-- delegate：delegate默认是和owner是一样的，delegate对象可以手动修改
+- delegate：delegate默认是和owner是一样的，delegate对象可以手动修改，修改委托策略的作用：
 
   ```groovy
   内部闭包名.delegate = 其他对象
   ```
 
-:two: **闭包委托策略**
+**★ 闭包委托策略**：闭包的委托测试即是闭包的内存引用，修改委托策略即可以调用其他对象的API
 
-- 闭包默认的委托策略就是：OWNER_FIRST
+- 闭包默认的委托策略就是：OWNER_FIRST（）
 
   ```groovy
-  闭包.delegate = Closure.OWNER_FIRST	// 以Owner优先
+  闭包.pretty.resolveStrategy = Closure.OWNER_FIRST	// 以Owner优先
   ```
 
 - 修改闭包委托策略：
 
   ```groovy
-  闭包.delegate = Closure.OWNER_FIRST	// 以Delegate优先
+  闭包.pretty.resolveStrategy = Closure.OWNER_FIRST	// 以Delegate优先
   ```
 
 - 其他委托策略
 
   ```groovy
-  public static final int OWNER_FIRST = 0;	//	
-  public static final int DELEGATE_FIRST = 1;	//	
+  public static final int OWNER_FIRST = 0;	//	以owner优先
+  public static final int DELEGATE_FIRST = 1;	//	以delegate优先，找不到再从owner中
   public static final int OWNER_ONLY = 2;		//	仅仅owner
   public static final int DELEGATE_ONLY = 3;	//	仅仅delegate
   ```
