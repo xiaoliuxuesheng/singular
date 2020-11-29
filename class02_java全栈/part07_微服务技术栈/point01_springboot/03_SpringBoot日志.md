@@ -184,3 +184,149 @@
 - 使用log4j2 的日志启动器 : 这个启动器和logging启动器只能二选一
   - 第一 : 排除掉logging的日志启动器
   - 第二 : 添加log4j2的日志启动器
+
+## 3.7 logback.xml
+
+### 1. 根节点configuration 
+
+- scan: 当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
+- scanPeriod: 设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
+- debug: 当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false
+
+### 2. 子节点contextName
+
+- 用来设置上下文名称，每个logger都关联到logger上下文，默认上下文名称为default。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改。
+
+  ```xml
+  <contextName>myAppName</contextName> 
+  ```
+
+### 3.子节点property
+
+- 用来定义变量值，它有两个属性name和value，通过<property>定义的值会被插入到logger上下文中，可以使“${}”来使用变量
+
+  ```xml
+  <property name="APP_Name" value="myAppName" /> 
+  <contextName>${APP_Name}</contextName> 　
+  ```
+
+  > - name: 变量的名称
+  > - value: 变量定义的值
+
+### 4.子节点timestamp
+
+- 获取时间戳字符串，他有两个属性key和datePattern
+
+  ```xml
+  <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/> 
+  <contextName>${bySecond}</contextName> 
+  ```
+
+  > - key: 标识此<timestamp> 的名字
+  > - datePattern: 设置解析配置文件的时间转换为字符串的模式，遵循SimpleDateFormat
+
+### 5.子节点appender
+
+> 负责写日志的组件，它有两个必要属性name和class。name指定appender名称，class指定appender的全限定名。
+
+- **ConsoleAppender 把日志输出到控制台，有以下子节点：**
+
+  ```xml
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> 
+      <encoder> 
+          <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern> 
+      </encoder> 
+  </appender> 
+  ```
+
+  > `<encoder>`：对日志进行格式化。
+  >
+  > `<target>`：字符串System.out(默认)或者System.err
+
+- **FileAppender：把日志添加到文件**
+
+  ```xml
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender"> 
+      <file>testFile.log</file> 
+      <append>true</append> 
+      <encoder> 
+          <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern> 
+      </encoder> 
+  </appender> 
+  ```
+
+  > - `<file>`：被写入的文件名，可以是相对目录，也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值。
+  >
+  > - `<append>`：默认是true，日志被追加到文件结尾，如果是 false，清空现存文件，。
+  >
+  > - `<encoder>`：对记录事件进行格式化。
+  > - `<prudent>`：默认是 false。如果是 true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低
+
+- **RollingFileAppender：滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件**
+
+  - **class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy**：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动。
+
+    > fileNamePattern：必要节点，包含文件名及“%d”转换符，如：%d{yyyy-MM}。直接使用 %d，默认格式是 yyyy-MM-dd
+    >
+    > file：子节点可有可无，通过设置file，可以为活动文件和归档文件指定不同位置，
+    >
+    > maxHistory：可选节点，控制保留的归档文件的最大数量，超出数量就删除旧文件
+
+  - **class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"： **查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender 触发当前活动文件滚动。只有一个节点
+
+    > maxFileSize：这是活动文件的大小，默认值是10MB。
+    >
+    > prudent：
+    >
+    > triggeringPolicy：告知 RollingFileAppender何时激活滚动
+
+  -  **class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy"**：根据固定窗口算法重命名文件的滚动策略
+
+    ```xml
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> 
+            <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern> 
+            <maxHistory>30</maxHistory> 
+        </rollingPolicy> 
+        <encoder> 
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern> 
+        </encoder> 
+    </appender> 
+    ```
+
+    > minIndex：窗口索引最小值
+    >
+    > maxIndex：窗口索引最大值，当用户指定的窗口过大时，会自动将窗口设置为12。
+    >
+    > fileNamePattern：必须包含“%i”例如，假设最小值和最大值分别为1和2，命名模式为 mylog%i.log,会产生归档文件mylog1.log和mylog2.log
+
+### 6. 子节点logger
+
+- 用来设置某一个包或具体的某一个类的日志打印级别、以及指定<appender>。<logger>仅有一个name属性，一个可选的level和一个可选的addtivity属性。包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个logger。
+  - name: 用来指定受此loger约束的某一个包或者具体的某一个类。
+  - level: 用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL和OFF，还有一个特殊值INHERITED或者同义词NULL，代表强制执行上级的级别。 如果未设置此属性，那么当前loger将会继承上级的级别。
+  - addtivity: 是否向上级logger传递打印信息。默认是true。可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个logger。
+
+- 常用logger实例
+
+  ```xml
+  <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
+  <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+  <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG" />
+  <logger name="org.hibernate.SQL" level="DEBUG" />
+  <logger name="org.hibernate.engine.QueryParameters" level="DEBUG" />
+  <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" />
+  
+  <!--myibatis log configure-->
+  <logger name="com.apache.ibatis" level="TRACE"/>
+  <logger name="java.sql.Connection" level="DEBUG"/>
+  <logger name="java.sql.Statement" level="DEBUG"/>
+  <logger name="java.sql.PreparedStatement" level="DEBUG"/>
+  ```
+
+  
+
+### 7. 子节点root
+
+- 它也是<logger>元素，但是它是根loger,是所有<loger>的上级。只有一个level属性，因为name已经被命名为"root",且已经是最上级了。可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个logger。
+  - level: 用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL和OFF，不能设置为INHERITED或者同义词NULL。 默认是DEBUG。
