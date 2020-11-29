@@ -1684,9 +1684,6 @@ var vm = new Vue({
    
    ```
 
-   
-
-
 
 # 第六章 接口调用
 
@@ -1694,6 +1691,92 @@ var vm = new Vue({
 
 ## 5.2 jQuery的Ajax
 
-## 5.3 
+## 5.3 ES6新特性Promise
 
 # 第七章 Vuex详解
+
+## 7.1 VueX介绍
+
+1. VueX说明：是专为Vue应用程序开发的状态管理模式,采用集中式存储管理应用程序中组件内部的状态变量，并以相应的规则保证状态以一种可预测的方式发生变化；
+
+2. 状态管理
+
+   - 在VueX中状态可以理解为组件内部保存的标识状态的变量；
+   - 状态管理是指将组件中的状态变量抽离统一交由VueX管理；
+   - 需要使用VueX管理的状态：①用户登录信息，如TOKEN②全局共享的
+
+3. VueX的下载与安装
+
+   - 下载VueX
+
+     ```sh
+     npm install vuex --save
+     ```
+
+   - 配置VueX：为方便管理与维护，将状态管理在store目录中
+
+     ```js
+     import Vue from 'vue'
+     import Vuex from 'vuex'
+     
+     Vue.use(Vuex)
+     
+     export default new Vuex.Store({
+         state: { 
+         },
+         actions: {
+         },
+         mutations: {
+         },
+         modules: {
+         }
+     })
+     ```
+
+   - 挂载到Vue实例之上
+
+     ```js
+     import store from './store'
+     
+     createApp(App).use(store).mount('#app')
+     // 或者
+     new Vue({
+         render: h => h(App),
+         store
+     }).$mount("#app");
+     ```
+
+   - 安装挂载后为Vue实例新增全局属性：$store属性
+
+## 7.2 VueX基础
+
+1. Vuex.Store对象参数说明
+
+   | 参数名    | 作用                                                         |
+   | --------- | ------------------------------------------------------------ |
+   | state     | 保存状态，key:value格式的数据，推荐使用单一数据源（一个store） |
+   | getters   | store中的计算属性                                            |
+   | actions   | 调用接口API，执行异步代码处理状态                            |
+   | mutations | 接收到action的结果，使用同步流程修改status，被DevTools监听<br />mutation中函数默认参数就是state对象 |
+   | Module    | 模块划分                                                     |
+
+2. VueX状态说明
+
+   - status：保存共享状态，状态的值可以被mutation进行修改；
+   - Action：组件触发的Dispatch操作，记录为一个Action，在Action中完成异步操作，异步操作完成后交给mutation
+   - mutation：获取Action的结果，同步方法修改status，可以被DevTools可以检测
+
+3. 状态操作
+
+   ```js
+   // 读取status
+   $store.state.属性
+   
+   // getters 计算属性
+   this.$store.getters.属性
+   
+   // 调用mutation
+   this.$store.commit("mutation方法名称",参数)
+   ```
+
+4. 
