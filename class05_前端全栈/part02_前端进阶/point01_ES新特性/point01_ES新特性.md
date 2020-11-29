@@ -280,4 +280,63 @@
      }
      ```
 
+## 11、Promise
+
+1. 介绍：是ES6新增的API，主要作用是提供异步编程的解决方案，比如多层异步回调具有依赖关系导致的回调地狱；
+
+2. 异步操作案例：setTimeout函数中的操作的动作是异步执行
+
+   ```js
+   console.log("开始执行");
+   setTimeout(() => {
+       console.log('执行异步操作');
+   }, 1000);
+   console.log("执行结束");
+   ```
+
+3. Promise基本使用
+
+   ```js
+   let p = new Promise((resolve,reject)=>{
+       setTimeout(() => {
+           resolve();
+       }, 1000);
+   });
+   p.then(()=>{
+       console.log("promise resolve");
+   }).catch(()=>{
+       console.log("promise reject");
+   })
+   ```
+
+   - Promise是一个类，new这个类是时候需要指定构造参数，Promise构造参数是一个函数，在初始化完成后立即回调构造的函数；
+   - 回调构造函数时候会传递两个参数：第一个参数resolve函数，第二个参数reject函数；
+   - 在回调构造函数中如果执行了resolve函数，则会调用Promise对象的then方法，作用是在Promise中封装了异步操作，异步操作完成后调用resolve方法，执行then方法，将异步操作的请求与处理分离；then方法也可以接受两个函数，第二个函数表示reject的回调；
+   - 在回调构造函数中如果执行了reject函数，则会调用Promise对象的cache方法，作用是处理异常信心；
+
+4. Promise是API说明
+
+  - Promise三种状态：
   
+    - pending：等待状态，表示正在执行异步操作
+    - fullfile：满足状态，表示主动回调了resolve，并且会回调then方法
+    - reject：拒绝状态，表示主动回调了reject，并且会回调cache方法
+  
+  - Promise链式调用：在resolve中返回一个新的Promise对象
+  
+  - Promise的all方法：如果一个操作依赖多个异步的结果，可以将多个异步封装在一起，并获取所有的结果
+  
+    ```js
+    let p1 = new Promise((resolve,reject)=>{
+        resolve("结果1");
+    })
+    let p2 = new Promise((resolve,reject)=>{
+        resolve("结果2");
+    })
+    Promise.all([p1,p2]).then(res=>{
+        console.log(res[0]);
+        console.log(res[1]);
+    })
+    ```
+  
+    
