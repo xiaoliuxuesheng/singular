@@ -1697,13 +1697,9 @@ var vm = new Vue({
 
 ## 7.1 VueX介绍
 
-1. VueX说明：是专为Vue应用程序开发的状态管理模式,采用集中式存储管理应用程序中组件内部的状态变量，并以相应的规则保证状态以一种可预测的方式发生变化；
+1. VueX说明：是专为Vue应用程序开发的状态管理模式,采用集中式存储管理应用程序中组件内部的状态变量，并以相应的规则保证状态以一种可预测的方式发生变化；在VueX中状态可以理解为组件内部保存的标识状态的变量；
 
-2. 状态管理
-
-   - 在VueX中状态可以理解为组件内部保存的标识状态的变量；
-   - 状态管理是指将组件中的状态变量抽离统一交由VueX管理；
-   - 需要使用VueX管理的状态：①用户登录信息，如TOKEN②全局共享的
+2. 状态管理：**单页面状态管理**本质是将状态属性定义在组件的data属性中，通过对data中的属性进行操作完成单页面的状态管理；**多页面状态管理**是指将多个组件中的状态变量抽离统一配置在VueX中，并且对状态的操作在VueX中定义；
 
 3. VueX的下载与安装
 
@@ -1719,20 +1715,31 @@ var vm = new Vue({
      import Vue from 'vue'
      import Vuex from 'vuex'
      
+     // 安装插件
      Vue.use(Vuex)
      
-     export default new Vuex.Store({
-         state: { 
+     // 创建仓库对象,约定创建的对象是store
+     const store = new Vuex.Store({
+         state: {
+     		// 状态属性
          },
-         actions: {
+         getters: {
+             // 状态的计算属性
          },
          mutations: {
+     		// 状态的操作方法
+      },
+         actions: {
+          // 
          },
          modules: {
+             // 状态的模块化
          }
      })
+     
+     export default store;
      ```
-
+   
    - 挂载到Vue实例之上
 
      ```js
@@ -1745,7 +1752,7 @@ var vm = new Vue({
          store
      }).$mount("#app");
      ```
-
+   
    - 安装挂载后为Vue实例新增全局属性：$store属性
 
 ## 7.2 VueX基础
@@ -1754,29 +1761,68 @@ var vm = new Vue({
 
    | 参数名    | 作用                                                         |
    | --------- | ------------------------------------------------------------ |
-   | state     | 保存状态，key:value格式的数据，推荐使用单一数据源（一个store） |
-   | getters   | store中的计算属性                                            |
-   | actions   | 调用接口API，执行异步代码处理状态                            |
-   | mutations | 接收到action的结果，使用同步流程修改status，被DevTools监听<br />mutation中函数默认参数就是state对象 |
-   | Module    | 模块划分                                                     |
+   | state     | mutations中属性必须提前初始好的才有响应式<br />保存状态，key:value格式的数据，**推荐使用单一数据源（一个store）** |
+   | getters   | store中对状态的计算属性：<br /> - 第一个参数state对象<br /> - 第二个对象是getters对象<br /> - 模块中是getter第三个参数是root<br /> - 在getters中返回参数，在调用getters时候可以传递自定义参数 |
+   | mutations | 更新VueX中states唯一的方式：提交mutation<br /> - mutations的函数分为两部分：①事件类型（方法名），②回调函数（方法体）<br /> - mutations的函数参数：第一个参数默认是states，第二个参数是自定义参数（payload）<br /> - 项目开发中将mutation的事件类型抽取为一个常量<br /> - mutation中方法推荐使用同步方法 |
+   | actions   | actions是用来替代mutation执行异步操作<br /> - action中方法默认参数是context：表示action执行的上下文store对象<br /> - 在模块中action中context参数表示是当前的store模块 |
+   | modules   | store中的模块化                                              |
 
-2. VueX状态说明
-
-   - status：保存共享状态，状态的值可以被mutation进行修改；
-   - Action：组件触发的Dispatch操作，记录为一个Action，在Action中完成异步操作，异步操作完成后交给mutation
-   - mutation：获取Action的结果，同步方法修改status，可以被DevTools可以检测
-
-3. 状态操作
+2. 状态操作
 
    ```js
-   // 读取status
+   /** 读取status */
    $store.state.属性
    
-   // getters 计算属性
+   /** getters 计算属性 */
+   getters:{
+       操作属性(state){
+           return 操作后的值
+       }
+   }
    this.$store.getters.属性
    
-   // 调用mutation
-   this.$store.commit("mutation方法名称",参数)
+   /** mutation操作state属性 payload是载荷封装参数为对象*/
+   mutations: {
+       操作方法名称(state,payload){
+           // 获取属性,操作属性
+       }
+   }
+   this.$store.commit("操作方法名称",自定义参数)
+   this.$store.commit({
+       type: "increment",
+      	参数,
+   })
+   
+   // 使用Vue的API设置states新属性并具有相应式
+   Vue.set(state.状态属性,"属性名称","属性值")
+   // 使用Vue的API删除属性并删除相应式的监听
+   Vue.delete(state.状态属性,"属性名")
+   
+   /** actions */
+   actions: {
+       action(context,payload){
+           setTimeout(()=>{
+               context.commit("increment",payload)
+           },5000)
+       }
+   }
+   this.$store.dispatch("action","action")
+   
+   /** modules */
+   modules: {
+       ma:{
+           state:{},
+           getters:{},
+           actions:{},
+           mutations:{}
+       }
+   }
+   $store.state.ma.key
+   this.$store.commit("模块中的mutation")
    ```
 
-4. 
+
+## 7.3 VueX的模块封装
+
+# 第八章 axios
+
