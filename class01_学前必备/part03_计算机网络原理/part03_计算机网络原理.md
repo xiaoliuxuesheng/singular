@@ -4,7 +4,7 @@
 
 ## ★ IT系统集成发展路线
 
-<img src="https://s1.ax1x.com/2020/04/06/G6SDqH.png" alt="G6SDqH.png" border="0" />
+<img src="https://s3.ax1x.com/2020/12/03/DHpxPJ.png" alt="DHpxPJ.png" border="0" />
 
 # 第一章 计算机网络概述
 
