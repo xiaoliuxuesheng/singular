@@ -1826,3 +1826,103 @@ var vm = new Vue({
 
 # 第八章 axios
 
+## 8.1 Vue网络请求
+
+### 1. 发送网络请求方式
+
+1. 原生的XMLHTTPRequest：使用复杂，封装难度高
+2. jQuery-Ajax：jQuery库太重
+3. Vue1.x自带的vue-resources：停止更新
+4. JSONP：跨域伪造访问
+5. axios：作者推荐，功能完善
+   - 支持在浏览器发送XMLHTTPRequest
+   - 支持在node发送http请求
+   - 支持Promise API
+   - 拦截请求和响应
+   - 转换请求和响应
+
+### 2. axios初始化
+
+- 安装axios
+
+  ```sh
+  npm install axios --save
+  ```
+
+- 配置axios
+
+  ```js
+  // 引入axios
+  import axios from "axios";
+  
+  // 发送请求
+  axios({
+      url: "http://localhost:8080/mvc/get/param?param='test'",
+  }).then((res) => {
+      console.log(res);
+  });
+  ```
+
+  
+
+## 8.2 axios发送请求的方式
+
+### 1. axios API
+
+1. axios(config)
+2. axios.request(config)
+3. axios.get(url[,config])
+4. axios.delete(url[,config])
+5. axios.post(url[,data,config])
+6. axios.put(url[,config])
+7. axios.patch(url[,data,config])
+8. axios.get(url[,data,config])
+9. axios.head(url[,config])
+10. axios.all([config,config])
+
+### 2. axios config详解
+
+- config参数详解
+
+  ```js
+  // 全局配置
+  axios.defaults.baseURL = ''
+  
+  // 单独配置
+  axios({
+  	url:'',
+      method:'',
+      timeout:'',
+      param:{
+          keu:value
+      },
+      data:{
+          key:value
+      },
+      transformRequest(){
+  		请求转换
+      },
+      transformResponse(){
+        	响应装换
+      },
+      headers:{
+          
+      }
+  })
+  ```
+
+### 3. axios封装
+
+- vue实例创建
+
+  ```js
+  let serverA = axios.create({
+      baseUrl:''
+  })
+  let serverB = axios.create({
+      baseUrl:''
+  })
+  ```
+
+- 
+
