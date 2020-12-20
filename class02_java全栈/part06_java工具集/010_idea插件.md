@@ -1,12 +1,53 @@
+# VsCode
+
+## ▲ 代码片段
+
+1. VueTemplate
+
+   ```json
+   {
+       "Print Ttemplate": {
+           "prefix": "vt",
+           "body": [
+               "<template>",
+               "  <div>",
+               "    $2",
+               "  </div>",
+               "</template>",
+               "",
+               "<script>",
+               "",
+               "  export default {",
+               "    name: '$1'",
+               "  }",
+               "</script>",
+               "",
+               "<style scoped >",
+               "",
+               "</style>"
+           ],
+           "description": "Log output to console"
+       }
+   }
+   ```
+
+## ▲ 插件
+
+| 插件名称 | 插件说明 | 备注 |
+| -------- | -------- | ---- |
+|          |          |      |
+
+
+
 # IDEA一定要改的8条配置
 
 ## 1. 自动编译开关
 
 - File | Settings | Build, Execution, Deployment | Compiler | **Build project automaticcally=true**
 
-## 2. 代码提示不区分大小写
+## 2. 代码提示区分大小写
 
-- File | Settings | Editor | General | Code Completion = NONE
+- File | Settings | Editor | General | Code Completion != NONE
 
 ## 3. 自动导入与删除
 
