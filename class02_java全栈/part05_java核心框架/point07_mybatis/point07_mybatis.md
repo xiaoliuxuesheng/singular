@@ -171,9 +171,9 @@ public class DepartmentDO {
   }
   ```
 
-<font size=4 color=blue>**2. 使用总结** 	</font>
+<font size=4 color=blue>**2. 使用总结** </font>
 
-​		JDBC最核心的步骤其实只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，其余的步骤虽然必不可少，但是可以模块化的东西；JDBC的优点不必多说，**最快的**，总结一下主要的缺点
+​	JDBC最核心的步骤其实只有两步：**SQL的编写**（正确的SQL自然能执行成功）和**结果集的处理**，其余的步骤虽然必不可少，但是可以模块化的东西；JDBC的优点不必多说，**最快的**，总结一下主要的缺点
 
 - 每次请求需要创建数据库连接，浪费资源：可以采用连接池解决
 - SQL和Java代码耦合严重，对优化不友好：解决方案将SQL和Java代码分离，SQL独立配置
@@ -661,35 +661,22 @@ public class MyBatisTest {
 
 - **MyBatis内置别名**
 
-  | 别名       | 映射类型   |
-  | ---------- | ---------- |
-  | _byte      | byte       |
-  | _long      | long       |
-  | _short     | short      |
-  | _int       | int        |
-  | _integer   | int        |
-  | _double    | double     |
-  | _float     | float      |
-  | _boolean   | boolean    |
-  | string     | String     |
-  | byte       | Byte       |
-  | long       | Long       |
-  | short      | Short      |
-  | int        | Integer    |
-  | integer    | Integer    |
-  | double     | Double     |
-  | float      | Float      |
-  | boolean    | Boolean    |
-  | date       | Date       |
-  | decimal    | BigDecimal |
-  | bigdecimal | BigDecimal |
-  | object     | Object     |
-  | map        | Map        |
-  | hashmap    | HashMap    |
-  | list       | List       |
-  | arraylist  | ArrayList  |
-  | collection | Collection |
-  | iterator   | Iterator   |
+  | 别名       | 映射类型   |      | 别名       | 隐射类型   |
+  | ---------- | ---------- | ---- | ---------- | ---------- |
+  | _byte      | byte       |      | byte       | Byte       |
+  | _long      | long       |      | long       | Long       |
+  | _short     | short      |      | short      | Short      |
+  | _int       | int        |      | int        | Integer    |
+  | _integer   | int        |      | integer    | Integer    |
+  | _double    | double     |      | double     | Double     |
+  | _float     | float      |      | float      | Float      |
+  | _boolean   | boolean    |      | boolean    | Boolean    |
+  | string     | String     |      |            |            |
+  | decimal    | BigDecimal |      | bigdecimal | BigDecimal |
+  | map        | Map        |      | hashmap    | HashMap    |
+  | list       | List       |      | arraylist  | ArrayList  |
+  | collection | Collection |      | iterator   | Iterator   |
+  | date       | Date       |      | object     | Object     |
 
 #### typeHandlers
 
@@ -781,8 +768,6 @@ public class MyBatisTest {
   > 子标签mapper的属性 : class : 基于注解的SQL映射方式注册接口
   >
   > 子标签package : 批量注册SQL配置文件 : 配置文件与接口同名且在同一个包中
-
-
 
 # 第四章 MyBatis的SQL配置文件
 
