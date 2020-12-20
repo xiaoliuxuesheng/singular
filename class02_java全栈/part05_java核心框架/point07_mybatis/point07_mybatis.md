@@ -818,6 +818,9 @@ public class MyBatisTest {
 
 ### 3. 取值方式
 
+- #{}：jdbc的SQL预编译的形式用占位符的方式替换参数；可以规定参数的规则，指定javaType，jdbcType（数据库对null的处理，Oracle会报错，Mybatis默认将null映射为jdbc=OTHER，而Oracle不认识OTHER类型，如果为null需要告诉mybatis，如果是null映射为NULL而不是OTHER），mode（存储过程），resultMap（结果集），typeHandler（类型处理器），jdbcTypeName
+- ${}：使用直接将值拼装在SQL语句中；
+
 - {} : 预编译的方式生成SQL
 
 - 可以指定取值规则JdbcType : 作用数据库可以不能识别null的处理 JdbcType = NULL改变null的处理
@@ -847,9 +850,42 @@ public class MyBatisTest {
 
 - **UUID主键** : 在执行SQL之前执行selectKey生成UUID并设置给实体对象,Oracle 获取自增序列原理相同
 
+- 返回值;
+
+  - boolean：受影响行数大于0返回true，等于0返回false
+  - int 或 Integer：受影响行数 
+  - long 或 Long：受影响行数
+
+- Oracle自增序列：在插入数据之前查询序列，或插入数据之后将序列自增1
+
+  ```sql
+  select * from user_sequences;	-- 查询Oracle中的自增序列
+  select 序列.nextval from dual;	-- 从序列中获取下一个自增值.每次查询,序列值会自增1
+  ```
+
+  ```xml
+  <!-- 在插入之前,查询下一个序列并赋值给JavaBean,从JavaBean中获取序列值 -->
+  <insert>
+      <select-key keyProperty="执行结果赋值给哪个JavaBean的属性" resultType="返回类型" order="BEFORE" >
+          select 序列.nextval from dual
+      </select-key>
+      insert table(id)value(#{id})
+  </insert>
+  <!-- 在插入之后,查询当前序列并赋值给JavaBean -->
+  <insert>
+      <select-key keyProperty="执行结果赋值给哪个JavaBean的属性" resultType="返回类型" order="AFTER" >
+          select 序列.currval from dual
+      </select-key>
+      insert table(id)value(select 序列.nextval)
+  </insert>
+  ```
+
+  - BEFORE：在
+  - AFTER：在
+
 ### 2. update
 
-### 3. selectKey
+3. selectKey
 
 - **作用 : ** 是`inset` 和 `update` 标签的子标签,可以在执行**新增和修改**SQL时额外执行的一条SQL语句
 
@@ -877,9 +913,21 @@ public class MyBatisTest {
     - (辅助)驼峰命名规则 : mapUnderscoreToCamelCase = true
 - 查询多条并封装 : 设置属性`resultType="集合中单个元素的数据类型"`
 - 查询并且将结果封装为map : 设置属性`resultType="map"`
-  - 指定map的key`@Mapkey(结果中的哪个属性作为key)   `
+- 查询并且将结果封装为map :指定map的key`@Mapkey(结果中的哪个属性作为key)   `
   - 指定返回值类型`Map<注解类型,单条记录实体类型>` 
-- 自定义查询结果集 : resultMap
+- 自定义查询结果集 : resultMap：高级结果集映射
+  - 解决列名和属性名不相符：自定义属性映射（id映射主键列,mybatis会有优化,也可以用result：result映射普通列），不映射的列会自动封装
+- 自定义查询结果集 : resultMap：关联查询
+  - 级联属性：使用SQL联查，并用采用属性赋值（property=级联属性属性）
+  - 级联属性对象：联合查询，一对多（从员工查部门），association：property指定联合的属性名称，JavaType该属性的类型，在association内进行属性映射
+  - association：分步查询：property指定联合的属性名称，select：mapper的key，column：查询用的那个字段的结果，分步查询可以使用延迟加载，全局配置开启懒加载；
+  - collection关联集合：多对一（从部门查员工）：使用SQL联查：部门letf join员工，用collection封装集合规则：property=集合的属性名称，ofType=集合中单个元素的类型，collection内部定义属性映射规则；
+  - collection关联分步查询：property=集合的属性名称，select=分步查询的mapper的key，column=用那列的值查询参数，
+  - collection关联分步查询：传递多列的值：将多列的值封装为map：column={key1=列1，key2=列2}
+  - collection配置前缀
+- 自定义查询结果集 : resultMap：借别器：根据某一列的值改变封装行为：discrimination
+  - column=鉴别的列，javaType=数据类型
+  - case value=列的值，resultType=封装规则根据类型，resultMap=封装的规则根据ResultMap,
 
 ### 6. sql与include
 
@@ -888,25 +936,25 @@ public class MyBatisTest {
 
 ## 4.3 自定义查询结果集resultMap
 
-### 1. resultMap
+1. resultMap
 
-### 2. collections
+2. collections
 
-### 3. 
+3. 
 
 ## 4.4 动态标签
 
-### 1. where
+1. where
 
-### 2. if
+2. if
 
-### 3. case-when
+3. case-when
 
 ## 4.3 缓存标签
 
 # 1. mybatis参数封装原理
 
-## ParamNameResolver.getNamedParams
+ParamNameResolver.getNamedParams
 
 ```java
 public Object getNamedParams(Object[] args) {
@@ -941,6 +989,13 @@ public Object getNamedParams(Object[] args) {
     }
 }
 ```
+
+- 单个参数 + 没有参数注解：不做特殊处理，直接用任意字符可以获取到参数
+- 多个参数 + 没有参数注解：参数分装为map，key方式一：索引（#{1}）；key方式二：param索引（#{param1}）；#{key}
+- pojo + 没有参数注解：#{pojo的字段}
+- Map<String,Object> + 没有注解：#{map中的key}
+- 参数是集合类型：将传入的集合封装在Map中，如果类型是Collection，key是collection；如果类型是List，key是list；如果是数组，可以是array
+- 命名参数：@Param("key")：参数会被封装为Map，并且map的key是@Param指定的
 
 -----
 
@@ -1465,30 +1520,30 @@ public Object getNamedParams(Object[] args) {
 
 # 第二章 MyBatis入门案例
 
-## 2.1 整合SpringBoot
+2.1 整合SpringBoot
 
 # 第三章 Mybatis全局配置
 
 #第四章 MyBatis SQL配置文件
 
-## 4.1 cache 
+4.1 cache 
 
-## 4.2 cache-ref  
+4.2 cache-ref  
 
-## 4.3 resultMap  
+4.3 resultMap  
 
 1. 级联属性封装结果集
 2. 
 
-## 4.4 sql  
+4.4 sql  
 
-## 4.5 insert  
+4.5 insert  
 
-## 4.6 update 
+4.6 update 
 
-## 4.7 delete 
+4.7 delete 
 
-## 4.8 select 
+4.8 select 
 
 1. 返回单个对象
 2. 返回单个值
