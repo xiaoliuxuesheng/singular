@@ -1,26 +1,55 @@
 # 001_spring简介
 
-- spring优点
+- SpringMVC简介：是Spring实现MVC设计理念的WEB模块，强大的注解简化web开发；
+- 核心功能：
+  - 请求映射
+  - 请求数据处理
+  - 视图和视图解析器，数据转换
+  - 国际化
+  - 上传与下载
+  - 异常处理
+  - 源码解析
+- SpringMVC流程图：请求图网上下载
 
-# 002_003_helloworld - web模块
+# 002~006_helloworld - web模块
 
-- spring + mvc
+- 配置web.xml：/会拦截除了jsp的所有请求。/*可以看了包含jsp的所有请求
 
-# 004_helloworld - 配置
+  ```xml
+  <servlet>
+      <servlet-name>SpringMVC</servlet-name>
+      <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+      <init-param>
+          <param-name>contextConfigLocation</param-name>
+          <param-value>classpath:spring-mvc.xml</param-value>
+      </init-param>
+      <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>SpringMVC</servlet-name>
+      <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  ```
 
-1. web.xml
-   - DispatcherServlet的contextConfigLocation
-   - DispatcherServlet的load-on-startup
-   - DispatcherServlet的url-pattern
-2. spring-mvc的配置文件
-   - 开启SpringIOC扫描驱动 : context:component-scan
+- 定义spring-mvc.xml配置文件，在/WEB-INF目录下新增pages目录中添加success.jsp文件
 
-# 005_006_helloworld - 请求处理器
+  ```xml
+  <context:component-scan base-package="com.mvc.controller"></context:component-scan>
+  
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+      <property name="prefix" value="/WEB-INF/pages/"/>
+      <property name="suffix" value=".jsp"/>
+  </bean>
+  ```
 
-1. @Controller
-2. @RequestMapping
-3. return + 结果视图
-4. 视图解析器 : InternalResourceAndView
+- 定义Controller
+
+  ```java
+  @RequestMapping(value = "/hello", method = RequestMethod.GET)
+  public String hello() {
+      return "seccess";
+  }
+  ```
 
 # 007_helloworld细节 : 运行流程
 
