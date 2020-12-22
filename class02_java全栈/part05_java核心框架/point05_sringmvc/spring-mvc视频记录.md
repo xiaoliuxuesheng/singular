@@ -1,4 +1,4 @@
-# 001_spring简介
+# 001、spring简介
 
 - SpringMVC简介：是Spring实现MVC设计理念的WEB模块，强大的注解简化web开发；
 - 核心功能：
@@ -11,7 +11,7 @@
   - 源码解析
 - SpringMVC流程图：请求图网上下载
 
-# 002~006_helloworld - web模块
+# 002~006、helloworld -案例
 
 - 配置web.xml：/会拦截除了jsp的所有请求。/*可以看了包含jsp的所有请求
 
@@ -51,96 +51,90 @@
   }
   ```
 
-# 007_helloworld细节 : 运行流程
+# 007~011、helloworld - 细节
 
-1. 客户端发送请求 : url
-2. 由前端控制器DispatcherServlet接收到请求
-3. 根据请求的url匹配控制器处理器的RequestMapping
-4. 根据请求处理的执行结果, 完成结果响应
+- 细节一：运行流程
+  - 客户端发送/hello请求
+  - Tomcat服务接收到请求，url-pattern拦截
+  - 由DispatcherServlet处理请求
+  - DispatcherServlet根据请求url映射到RequestMapping对应的处理器
+  - DispatcherServlet使用反射执行目标方法，获取返回值
+  - 根据返回值被InternalResourceViewResolver解析器拼接完整地址
+  - 拿到页面地址并转发到页面
+- 细节二：RequestMapping
+  - 作用是告诉SpringMVC处理的请求url：value的url中 / 可以不写，默认从当前项目下开始
+  - 可以标注在方法上和类上
+- 细节三：spring配置文件
+  - 不指定配置文件路径：SpringMVC会指定一个默认的配置文件：/WEB-INF/#{servlet-name}-servlet.xml
+  - 设置指定springmvc配置文件：DispatcherServlet.contextConfigLocation = classpath:spring配置文件
+- 细节四：url-pattern = /
+  - JavaEE应用的web.xml的配置都继承自Tomcat的web.xml
+  - Tomcat中处理请求的配置是default-servlet.url-pattern = / , 而JavaEE应用中DispatcherServlet.url-pattern = / , 表示JavaEE应用的请求处理将禁用掉Tomcat的请求处理方式, 所有的请求都交由前端控制器处理
+  - default-servlet是Tomcat处理静态资源的，Tomcat会找到这个资源原样返回；但是Tomcat的default-servlet被web应用禁用了，会来到SpringMVC的前端控制器
+  - Tomcat中的jsp-servlet处理了JSP页面的请求，
+  - url-pattern = /也为RestFul请求提供基础配置
 
-# 008_helloworld细节 : RequestMapping
+# 012~016、RequestMapping
 
-- 作用:value的url中 / 可以不写
+- 细节一：**@RequestMapping.value**：标注位置
+  - 标注在类上 : 表示为当前类中所有的方法指定基准路径
+  - 标准在方法上 : 当前方法的处理请求的URL映射
+- 细节二：**@RequestMapping.method**：表示当前方法处理的请求类型
+  - RequestMethod.GET：缺省的默认请求方式
+  - RequestMethod.POST：
+  - RequestMethod.PUT：
+  - RequestMethod.DELETE：
+  - RequestMethod.PATCH：
+  - RequestMethod.HEAD：
+  - RequestMethod.GET：
+  - RequestMethod.OPTIONS：
+  - RequestMethod.TRACE：
 
-# 009_helloworld细节 : spring配置文件
-
-- 默认 : /WEB-INF/xxx-servlet.xml
-  - xxx : 表示为servlet-name
-- 设置指定springmvc配置文件
-  - DispatcherServlet.contextConfigLocation = classpath:spring配置文件
-
-# 010_helloworld细节 : url-pattern = /
-
-1. JavaEE应用的web.xml的配置都继承自Tomcat的web.xml
-2. Tomcat中处理请求的配置是default-servlet.url-pattern = / , 而JavaEE应用中DispatcherServlet.url-pattern = / , 表示JavaEE应用的请求处理将禁用掉Tomcat的请求处理方式, 所有的请求都交由前端控制器处理
-3. Tomcat中的jsp-servlet处理了JSP页面的请求
-4. url-pattern = /也为RestFul请求提供基础配置
-
-# 011_RequestMapping细节 : 标注位置
-
-- 标注在类上 : 表示为当前类中所有的方法指定基准路径
-- 标准在方法上 : 当前方法的处理请求的URL映射
-
-# 012_RequestMapping细节 : 请求方式
-
-- 属性 : method 表示当前方法处理的请求类型 : 
-
-# 013_RequestMapping细节 : 规定请求参数
-
-- 属性params : 用于规定请求中的参数表达式
+- 细节三：**@RequestMapping.params={}**：规定请求参数，并且可以规定请求参数限制表达式
   - params = {"key"} : 表示参数中必须有指定名称的参数
   - params = {"!key"} : 表示参数中必须不能有指定名称的参数
   - params = {"key=value"} :  表示请求中的指定参数必须是指定值
   - params = {"key!=key"} : 表示请求中的指定参数不可以是指定值
-  -  params = {"key=value","key2=value2"} : 规定请求中的多个参数
+  - params = {"key=value","key2=value2"} : 规定请求中的多个参数
+- 细节四：**@RequestMapping.headers ={}**：规定请求头中的参数信息才可以访问，并且可以规定请求参数限制表达式
+  - 表达式同上
+- 细节五：**@RequestMapping.consumes={}**：规定请求头中的ContentType
+- 细节六：**@RequestMapping.produces={}**：规定告诉浏览器返回的内容是什么类型，给响应头添加的ContentType
+- 细节七：Ant风格的请求url
+  - ? : 匹配任意一个字符
+  - `*` : 匹配任意多个字符
+  - `**`  : 匹配任意多个字符  或 多层路径
+- 细节八：**@PathVariable**
+  - 在请求路径中定义变量，在请求方法的参数上获取请求路径中的占位符参数
+    - 第一步 : 在请求URL中定义占位符：/path/{id}；在该方法参数上标注获取占位符中的值
+    - 第二步 : 在方法参数中定义参数：public void method(@PathVariable("id") String id)
 
-# 014_ RequestMapping细节 : 规定请求头信息
+# 017~020、Rest风格请求
 
-- 属性 : headers : 用于规定请求的请求头中的参数信息才可以访问
-  - header 的参数规定可以使用表达式
+- Rest风格概念：Representational Status Transfer（资源状态转换），即客服端发送请求就是需要向服务请求资源，不同的URL能请求到不同的资源，因此每个URL就是每个资源的的独一无二的标识，状态转换：同一个URL如果用不同的请求方式，那么对资源的操作方式也会不同，因此根据请求方式对资源的操作方式进行状态转换；
+- 增删改查环境搭建：用html表达只能发送GET请求和POST请求，所有搭建REST的html环境需要添加配置
+  - 基本配置：DispatcherServlet、context:component-scan、InternalResourcesAndViewResover
+  - 添加字符编码过滤器：EncodingFilter
+  - 添加Rest过滤器 : HiddenMethodFilter
+  - 表单发送Rest请求：delete、put需要使用POST方式，在表单域中添加参数 _method=请求方式
+- HiddenMethodFilter源码解读
+  - 获取请求参数的值
+  - 是post并且参数有值, 则过滤器执行转换请求
+  - 将请求的值转换为大写字母
+  - 根据请求参数转换为对应的请求对象
+  - 返回转换后的请求对象，重写了getMethod()方法
+- 高版本Tomcat中的JSP
+  - 高版本中Tomcat中没有exception对象 : 需要手动添加 , 在jsp标签中添加 `isErrorPage=true`:表示将出现的错误交给exception对象
 
-# 015_Ant风格的请求方式
+# 021~SpringMVC请求参数
 
-- ? : 匹配任意一个字符
-- `*` : 匹配任意多个字符
-- `**`  : 匹配任意多个字符  或 多层路径
+- @RequestParam
+- @RequestHeader
+- @CookieValue
 
-# 016_PathVariable : 获取请求路径中的占位符参数
+# 022_获取请求参数
 
-1. 第一步 : 在请求URL中定义占位符
-2. 第二步 : 在方法参数中定义参数 
-3. 第三步 : 在该方法参数上标注@PathVariable获取占位符中的值
-
-# 017_Rest风格请求
-
-1. 什么是RestFul分隔 : 资源状态转换
-
-# 018_019_rest 环境
-
-1. DispatcherServlet
-2. EncodingFilter
-3. context:component-scan
-4. InternalResourcesAndViewResover
-5. 定义请求连接 : post get delete put
-6. 处理请求 : method = Request.PUT...
-7. 添加Rest过滤器 : HiddenMethodFilter
-8. post表单添加参数 : _method=请求方式
-9. 过滤器源码解读
-   - 获取请求参数的值
-   - 是post并且参数有值, 则过滤器执行转换请求
-   - 将请求的值转换为大写字母
-   - 根据请求参数转换为对应的请求对象
-   - 返回转换后的请求对象
-
-# 020_高版本Tomcat中的JSP
-
-- 高版本中Tomcat中国没有exception对象 : 需要手动添加 , 在jsp标签中添加 `isErrorPage=true`:表示将出现的错误交给exception对象
-
-# 021_SpringMVC请求参数_环境搭建
-
-#022_获取请求参数
-
-1.  @RequestParam + @RequestHeader + @CookieValue
+1.  + + 
 
 - 使用原生HttpRequest获取请求参数
 - 在处理器方法中定义参数获取同名请求参数
