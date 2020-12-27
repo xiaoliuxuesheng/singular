@@ -4,51 +4,31 @@
 
 ### 1. 概述
 
-- File是对系统中的文件的**抽象**
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>File是对系统中的文件的**抽象**：将电脑中的文件（file）、文件夹（directory）、路径（path）封装为一个File类，用于对电脑中的文件和文件夹进行操作：①创建文件或文件夹②删除文件或文件夹③判断文件夹或文件夹状态④获取文件信息；
 
 ### 2.系统中的路径
 
 - 相对路径 : 查看路径是参照当前文件的路径为参照
 - 绝对路径 : 查看路径是参照当系统根路径为参照
 
-### 3. 系统路径分隔符常量
+## 1.2 File类API
 
-- **路径分隔符** 
-  - String `pathSeparator `
-    - 与系统有关的**字符串**的路径分隔符 
-  - char `pathSeparatorChar `
-    - 与系统有关的**字符**的路径分隔符
-- **分隔符**
-  - String `separator `
-    - 与系统有关的默认**字符串**的名称分隔符
-  - char` separatorChar `
-    - 与系统有关的默认**字符**的名称分隔符
+### 1. 静态常量
 
-## 1.2 File类的构造方法
+| 静态成员变量             | 描述                                        |
+| ------------------------ | ------------------------------------------- |
+| String `pathSeparator`   | 与系统有关的**字符串**的路径分隔符          |
+| char `pathSeparatorChar` | 与系统有关的**字符**的路径分隔符 **分隔符** |
+| String `separator`       | 与系统有关的默认**字符串**的名称分隔符      |
+| char`separatorChar`      | 与系统有关的默认**字符**的名称分隔符        |
 
-- File(File parent, String child) 
-- File(String pathname) 
-- File(String parent, String child) 
+### 2. 构造方法
 
-## 1.3 File类API
+- File(File parent, String child)：
+- File(String pathname)：
+- File(String parent, String child)：
 
-### 1.文件判断
-
-| 方法                  | 描述                                       |
-| --------------------- | ------------------------------------------ |
-| boolean canExecute()  | 测试应用程序是否可以执行此路径表示的文件   |
-| boolean canRead()     | 测试是否可以读取此路径表示的文件           |
-| boolean canWrite()    | 测试是否可以修改此路径表示的文件。         |
-| boolean exists()      | 测试此路径表示的文件或目录是否存在。       |
-| boolean isAbsolute()  | 测试此路径是否为绝对路径名                 |
-| boolean isDirectory() | 测试此路径表示的文件是否是一个目录         |
-| boolean isFile()      | 测试此路径表示的文件是否是一个标准文件     |
-| boolean isHidden()    | 测试此路径名指定的文件是否是一个隐藏文件。 |
-
-### 2.文件查询
-
-- static File[] listRoots()
-  - 列出可用的文件系统根
+### 3. 获取文件信息
 
 | 方法                                    | 描述                                             |
 | --------------------------------------- | ------------------------------------------------ |
@@ -70,7 +50,20 @@
 | long getTotalSpace()                    | 返回此抽象路径名指定的分区大小                   |
 | ong getFreeSpace()                      | 返回此路径指定的分区中未分配的字节数             |
 
-### 3.文件的创建
+### 4.文件判断
+
+| 方法                  | 描述                                       |
+| --------------------- | ------------------------------------------ |
+| boolean canExecute()  | 测试应用程序是否可以执行此路径表示的文件   |
+| boolean canRead()     | 测试是否可以读取此路径表示的文件           |
+| boolean canWrite()    | 测试是否可以修改此路径表示的文件。         |
+| boolean exists()      | 测试此路径表示的文件或目录是否存在。       |
+| boolean isAbsolute()  | 测试此路径是否为绝对路径名                 |
+| boolean isDirectory() | 测试此路径表示的文件是否是一个目录         |
+| boolean isFile()      | 测试此路径表示的文件是否是一个标准文件     |
+| boolean isHidden()    | 测试此路径名指定的文件是否是一个隐藏文件。 |
+
+### 5.文件的创建
 
 - static File `createTempFile(String prefix, String suffix)`
   - 创建一个空文件，使用给定前缀和后缀生成其名称
@@ -114,13 +107,15 @@
 
 ## 2.1 什么是IO
 
-​		Java程序中的数据是从内存中读取而来，而内存中数据是来自网络或者电脑磁盘中，程序从磁盘中获取数据到内存是输入（Input）（数据从外部存储设置进入到内存）；程序将数据从内存中写入到存储设备是输出**Output**
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Java程序中的数据是从内存中读取而来，而内存中数据是来自网络或者电脑磁盘中，程序从磁盘中获取数据到内存是输入（Input）（数据从外部存储设置进入到内存）；程序将数据从内存中写入到存储设备是输出**Output**；
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>一切皆字节，在电脑中的文件都是以二进制的形式存储，所以在传输任意数据底层操作的始终都是二进制数据流；
 
 ## 2.2 IO 流分类
 
 - 以程序为中心：按流的方向分为输入流和输出流
 
-- 程序操作的流的内容将流划分为字节流和字符流
+- 程序操作的流的内容将流划分为字节流和字符流：一切皆字节
 
   |                         | 输入流：Input              | 输出流：Output              |
   | ----------------------- | -------------------------- | --------------------------- |
@@ -370,4 +365,4 @@ try(流的声明){
 
    
 
-   
+   ​	
