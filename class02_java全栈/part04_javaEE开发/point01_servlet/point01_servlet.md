@@ -6,37 +6,45 @@
 4. 转发与重定向
 5. cookie与session
 
-# 课程
+# 第一章 JavaWEB
 
-1. B/S、C/S
+## 1.1 架构模式
 
-2. Java WEB发展历程
+1. 系统架构分类
+   - C/S：Client/Client，客户端访问服务器，客户端运行在独立的进程中
+   - B/S：Browser/Server，本质还是CS，还是客户端访问服务器，只是客户的形式是符合Http协议的浏览器
 
-   - 1990：HTML标记语言
-   - 1993：动态WEB
-   - 1994：PHP
-   - 1995：Java、Applet
-   - 1996：ASP
-   - 1997：SUN公司发布Servlet规范
-   - 1998：JSP、EJB1.0规范
-   - 1999：J2EE规范
+## 1.2 JavaWEB的发展
 
-3. 服务器
+- 1990：HTML标记语言
+- 1993：动态WEB
+- 1994：PHP
+- 1995：Java、Applet
+- 1996：ASP
+- 1997：SUN公司发布Servlet规范
+- 1998：JSP、EJB1.0规范
+- 1999：J2EE规范是SUN公司提供的一套类库，程序员在这套类库的基础上开发出企业级的WEB应用
 
+## 1.3 服务器
+
+1. WEB概述
    - WEB概述：静态资源、动态资源JavaWEB
    - WEB服务器：
    - 服务器分类：开源（Tomcat、Jetty淘宝、Resin新浪）；收费（WebLogic Oracle、WebSphere）
 
-4. Tomcat：支持Servlet和JSP规范 
+# 第二章 Tomcat
 
-   - 安装目录：bin可执行命令文件、conf配置文件（server.xml服务器的配置、web.xml项目的配置）、lib、logs日志文件、temp临时文件、webapps存放web项目、work是项目运行时生成的文件；
-   - 基本命令的使用：startup.bat启动服务器（http://localhost:8080）、shutdown.bat停止服务器
-   - 服务器配置
-     - 修改端口：
-     - 项目部署与访问：①项目保存webapps中的一个目录中（一个目录代表一个项目）②在目录中新增WEB-INF目录③在WEB-INF中新增class目录、lib目录、web.xml④在项目目录中新增静态资源⑤启动项目，在浏览器使用url访问资源：http://localhost:端口/项目目录名称/静态资源名称
-     - 配置Host访问路径
-   - 常见错误：①闪退检查JAVA_HOME②404错误③端口冲突
-   - Tomc安全配置：tomcat-user.xml
+- 支持Servlet和JSP规范 
+- 安装目录：bin可执行命令文件、conf配置文件（server.xml服务器的配置、web.xml项目的配置）、lib、logs日志文件、temp临时文件、webapps存放web项目、work是项目运行时生成的文件；
+- 基本命令的使用：startup.bat启动服务器（http://localhost:8080）、shutdown.bat停止服务器
+- 服务器配置
+  - 修改端口：
+  - 项目部署与访问：①项目保存webapps中的一个目录中（一个目录代表一个项目）②在目录中新增WEB-INF目录③在WEB-INF中新增class目录、lib目录、web.xml④在项目目录中新增静态资源⑤启动项目，在浏览器使用url访问资源：http://localhost:端口/项目目录名称/静态资源名称
+  - 配置Host访问路径
+- 常见错误：①闪退检查JAVA_HOME②404错误③端口冲突
+- Tomc安全配置：tomcat-user.xml
+
+# 第三章 Servlet
 
 5. Servlet基础
 
