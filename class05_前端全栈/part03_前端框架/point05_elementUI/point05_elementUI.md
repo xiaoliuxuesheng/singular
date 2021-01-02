@@ -1,57 +1,82 @@
-1. 简介：element ui 是基于vue的ui框架：改框架基于vue开发了很多vue组件方便款速开发
+# 第一章 ElementUI环境搭建
 
-2. element ui在vue脚手架项目中的安装
+## 1.1 使用script标签
 
-   - 方式一：使用CND引入
+- 下载element
 
-     ```html
-     <!-- 引入样式 -->
-     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-     <!-- 引入组件库 -->
-     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-     ```
+- 在HTML页面中引入elementUI的样式和库
 
-   - 方式二：使用npm安装（创建好vue脚手架项目）
+  ```html
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  ```
 
-     ```sh
-     cnpm i element-ui -S
-     ```
+## 1.2 使用Vue Cli
 
-3. 在脚手架中使用element ui
+- 初始化Vue项目
 
-   - 在main.js中引入整个element ui 或引入部分组件：一般项目开发中会全部引入
+- npm安装ElementUI
 
-     ```js
-     import Vue from 'vue';
-     import ElementUI from 'element-ui';					// 引入elementUI全部组件
-     import 'element-ui/lib/theme-chalk/index.css';		// 引入elementUI的CSS样式
-     import App from './App.vue';
-     
-     Vue.use(ElementUI);									// 需要将elementUI进行全局注册，才能使用UI框架
-     
-     new Vue({
-       el: '#app',
-       render: h => h(App)
-     });
-     ```
+  ```sh
+  cnpm i element-ui -S
+  ```
 
-4. element UI的使用要素
+- 配置Element
 
-   - elementUI组件名称都是以`el-`开头
-   - 每个组件都有自己的属性，组件的属性必须写在组名标签之上
-   - 组件属性值是boolean值的属性默认是true
-   - 组件属性值默认是字符串，如果要转为值类型需要使用属性绑定的方式添加属性
-   
-5. elementUI组件 - Basic
+  - 完整配置Element：在main.js中引入整个element ui 或引入部分组件：一般项目开发中会全部引入
 
-   - Button
-   - Link
-   - Layout：基础的为24分栏，布局组件中由row和col标签绝定
-   - container：在页面布局中不会直接使用布局组件，而是需要将布局组件定义在布局容器中
-     - container：只有四个直接子元素
-       - header
-       - aside
-       - main
-       - footer
-     - 容器的嵌套：
+    ```js
+    import Vue from 'vue';
+    import ElementUI from 'element-ui';					// 引入elementUI全部组件
+    import 'element-ui/lib/theme-chalk/index.css';		// 引入elementUI的CSS样式
+    import App from './App.vue';
+    
+    Vue.use(ElementUI);									// 需要将elementUI进行全局注册，才能使用UI框架
+    
+    new Vue({
+      el: '#app',
+      render: h => h(App)
+    });
+    ```
+
+## 1.3 ElementUI组件使用基本说明
+
+1. elementUI组件名称都是以`el-`开头；
+2. element组件默认的类名是标签名称；
+3. element组件的属性值如果非字符串，需要使用属性绑定的格式；
+
+# 第二章 Element组件
+
+## 1.1 Basic 
+
+1. 基础组件概览
+
+   | 组件功能       | 组件名称                                                     |
+   | -------------- | ------------------------------------------------------------ |
+   | 容器Continer   | el-continer<br />el-header<br />el-aside<br />el-main<br />el-footere |
+   | 布局Layout     | el-row                                                       |
+   | 色彩Color      |                                                              |
+   | 字体Typography |                                                              |
+   | 边框Border     |                                                              |
+   | 图标Icon       | class="el-icon-名称"                                         |
+   | 按钮Button     | el-button                                                    |
+   | 链接Link       | el-link                                                      |
+
+2. 使用技巧
+
+## 1.2 Form 
+
+## 1.3 Date 
+
+## 1.4 Notice 
+
+## 1.5 Navigation
+
+## 1.6 Others
+
+
+
+
 
