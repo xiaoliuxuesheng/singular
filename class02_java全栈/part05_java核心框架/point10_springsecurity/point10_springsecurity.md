@@ -1,11 +1,3 @@
----
-title: 0505_Security
-data: 2005-05-05 00:09:00
-tags:
-    - Java基础
-categories: JAVA全栈
----
-
 # 第一章 SpringSecurity
 
 ## 1.1 SpringSecurity简介
