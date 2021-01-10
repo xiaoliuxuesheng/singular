@@ -18,7 +18,14 @@
 1. Groovy是基于JVM的一种编程语言：Groovy需要准备JDK环境
 2. Groov下载并快捷环境搭建 : [Groovy官网](http://www.groovy-lang.org/)
    - Mac系统的Groovy安装 : 解压并配置`~/bin`坏境变量
+   
    - Win系统的Groovy安装 : 解压并配置`~/bin`坏境变量
+   
+     ```sh
+     GRADLE_HOME=
+     path=%GRADLE_HOME%/bin
+     GRADLE_USER_HOME=
+     ```
 3. IDEA开发工具的Groovy环境配置
    - 开启IDEA的Groovy插件
    - 创建Groovy工程 : 选择本地的Groovy坏境
