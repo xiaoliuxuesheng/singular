@@ -142,7 +142,7 @@
 
 - **简述**：MAC（Message Authentication Code，消息认证码算法）是含有密钥散列函数算法，兼容了MD和SHA算法的特性，并在此基础上加入了密钥。因为MAC算法融合了密钥散列函数（keyed-Hash），通常我们也把MAC称为HMAC（keyed-Hash Message Authentication Code）。MAC算法主要集合了MD和SHA两大系列消息摘要算法。MD系列算法有HmacMD2、HmacMD4和HmacMD5三种算法；SHA系列算法有HmacSHA1、HmacSHA224、HmacSHA256、HmacSHA384和HmacSHA512五种算法。
 
-- **Hmac算法**
+- **Hmac算法**：
 
   ```java
   
@@ -191,25 +191,6 @@
 
 1. nimbus-jose-jwt
 2. spring-security-jwt
-
-# 5、数字摘要
-
-- 数字签名概述：
-
-- 常见数据签名算法
-
-  | 数字签名算法 | 概述 |
-  | ------------ | ---- |
-  | MD5          |      |
-  | SHA-1        |      |
-  | SHA-256      |      |
-  | SHA-512      |      |
-
-- 案例演示
-
-  ```java
-  
-  ```
 
 # 6、对称加密
 
