@@ -31,7 +31,24 @@
 
 ## 1.4 ASCII码与字符编码表
 
-1. **ASCii（美国标准信息交换码）**：
+1. **字符编码表概述**：在计算机内部，所有的信息都表示为一个二进制字符串，每个二进制位称为比特位（bit）有0和1两中状态，每8个bit称为一个字节，由8个bit（0和1）组成的一个字节可以组合出256中状态（`2*2*2*2*2*2*2*2`），把其中的每一种状态都对应到一种字符就形成了字符编码映射表，所以编程中可以把字符表示的代码翻译为计算机可以识别的二进制；
+
+2. **常见的国际码表**
+
+   - **ASCii（美国标准信息交换码）**：用一个字节的7位可以表示。所以ASCII码一共规定了128个字符的编码
+
+   - **Unicode（国际标准码表）**：世界上存在着多种编码方式，同一个二进制数字可以被解释成不同的符号。因此，要想打开一个文本文件，就必须知道它的编码方式，否则用错误的编码方式解读，就会出现乱码。可以想象，如果有一种编码，将世界上所有的符号都纳入其中。每一个符号都给予一个独一无二的编码，那么乱码问题就会消失，这就是Unicode。*注意的是，Unicode只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该如何存储*
+
+   - **iso-8859-1（拉丁码表 latin）**：用了一个字节用的8位。把位于128-255之间的字符用于拉丁字母表中特殊语言字符的编码，也因此而得名。ASCII码是包含的仅仅是英文字母，并且没有完全占满256个编码位置，所以它以ASCII为基础，在空置的0xA0-0xFF的范围内，加入192个字母及符号，藉以供使用变音符号的拉丁字母语言使用。从而支持德文，法文等。因而它依然是一个单字节编码，只是比ASCII更全面。
+
+   - **UTF-8**：事实证明，对可以用ASCII表示的字符使用UNICODE并不高效，因为UNICODE比ASCII占用大一倍的空间，而对ASCII来说高字节的0对他毫无用处。为了解决这个问题，就出现了一些中间格式的字符集，他们被称为通用转换格式，即UTF（Universal Transformation Format）。目前存在的UTF格式有：UTF-7, UTF-7.5, UTF-8, UTF-16, 以及 UTF-32
+
+     > UTF-8基于unicode，UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。
+     >
+     > - 对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。
+     > - 对于n字节的符号（n>1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。剩下的没有提及的二进制位，全部为这个符号的unicode码。
+
+   - **GBK（汉字内码扩展规范）**：由我国自主编写，（GBK即“国标”、“扩展”汉语拼音的第一个字母）目前最常用的中文码表，2万的中文和符号。用两个字节表示，其中的一部分文字，第一个字节开头是1，第二字节开头是0
 
 ## 1.5 Base64与Base58
 
@@ -44,7 +61,16 @@
    - Java案例
 
      ```java
+     // Java 8的java.util套件中，新增了Base64的类别
+     Base64.Decoder decoder = Base64.getDecoder();
+     Base64.Encoder encoder = Base64.getEncoder();
      
+     String encodedText = encoder.encodeToString(textByte);
+     byte[] decodeByte = decoder.decode(encodedText);
+     
+     // Hutool工具包
+     String encode = Base64Encoder.encode("encodeText");
+     String decodeStr = Base64Decoder.decodeStr(encode);
      ```
 
 2. **Base58**：由于Base64字符中的部分字母和数字相似度太高，在外观上对可读性仍较低，所以Base58在Base64的基础上减少了6个字符：①数字0、②大写字母O，③大写字母I，④小写的字母l、⑤加号+，⑥斜杠/，Base58是采用我们数学上经常使用的进制转换方法——辗转相除法；
@@ -57,11 +83,74 @@
 
 ## 2.1 数字摘要
 
-1. 介绍
-2. MD家族
-3. SHA家族
-4. MAC家族
-5. 其他摘要算法
+### 1. 介绍
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>消息摘要算法包含MD、SHA和MAC共3大系列，它们是三大消息摘要算法的主要代表。常用于验证数据的完整性，是数字签名算法的核心算法。核心原理是比较两个对象hashCode ()方法的值是否相同，顾名思义，hashCode就是散列值。任何消息经过散列函数处理后，都会获得唯一的散列值，这一过程称为“消息摘要”，其散列值称为“数字指纹”，其算法自然就是“消息摘要算法”了。为了方便人们识别和阅读，数字指纹常以十六进制字符串的形式出现。
+
+- **MD（Message Digest，消息摘要算法）**：MD系列算法包括MD2、MD4和MD5共3种算法；
+
+- **SHA（Secure Hash Algorithm，安全散列算法）**：SHA算法主要包括其代表算法SHA-1和SHA-1算法的变种SHA-2系列算法（包含SHA-224、SHA-256、SHA-384和SHA-512）；
+
+- **MAC（Message Authentication Code，消息认证码算法）**：MAC算法综合了上述两种算法，主要包括HmacMD5、HmacSHA1、HmacSHA256、HmacSHA384和HmacSHA512算法。
+
+### 2. MD家族
+
+- **简述**：MD5算法是典型的消息摘要算法，它由MD4、MD3、MD2算法改进而来。不论是哪一种MD算法，它们都需要获得一个随机长度的信息并产生一个128位的信息摘要。如果将这个128位的二进制摘要信息换算成十六进制，可以得到一个32位（每4位二进制数转换为1位十六进制数）的字符串；
+
+- **MD5算法**
+
+  ```java
+  // Java 工具类
+  public static String digest(String text, String algorithm) {
+      MessageDigest instance = null;
+      try {
+          instance = MessageDigest.getInstance(algorithm);
+      } catch (NoSuchAlgorithmException e) {
+          throw new RuntimeException("没有"+algorithm+"算法！");
+      }
+      byte[] digest = instance.digest(text.getBytes(StandardCharsets.UTF_8));
+      StringBuilder sb = new StringBuilder();
+      for (byte b : digest) {
+          String s = Integer.toHexString(b & 0Xff);
+          if (s.length() == 1) {
+              s = "0" + s;
+          }
+          sb.append(s);
+      }
+      return sb.toString();
+  }
+  String digest = digest("text", "md5");
+  // Hutool 工具包
+  Digester md5 = new Digester(DigestAlgorithm.MD5);
+  String digestHex = md5.digestHex(testStr);
+  ```
+
+### 3. SHA家族
+
+- **简述**：SHA算法家族目前共有SHA-1、SHA-224、SHA-256、SHA-384和SHA-512五种算法，通常将后四种算法并称为SHA-2算法。除上述五种算法外，还有发布不久就夭折的SHA-0算法。SHA算法是在MD4算法的基础上演进而来的，通过SHA算法同样能够获得一个固定长度的摘要信息。与MD系列算法不同的是：若输入的消息不同，则与其相对应的摘要信息的差异概率很高。SHA算法是FIPS所认证的五种安全杂凑算法。
+
+- **SHA算法**
+
+  ```java
+  // Java SHA算法
+  String digest = digest("text", "SHA-1");
+  String digest = digest("text", "SHA-256");
+  String digest = digest("text", "SHA-512");
+  ```
+
+### 4. MAC家族
+
+- **简述**：MAC（Message Authentication Code，消息认证码算法）是含有密钥散列函数算法，兼容了MD和SHA算法的特性，并在此基础上加入了密钥。因为MAC算法融合了密钥散列函数（keyed-Hash），通常我们也把MAC称为HMAC（keyed-Hash Message Authentication Code）。MAC算法主要集合了MD和SHA两大系列消息摘要算法。MD系列算法有HmacMD2、HmacMD4和HmacMD5三种算法；SHA系列算法有HmacSHA1、HmacSHA224、HmacSHA256、HmacSHA384和HmacSHA512五种算法。
+
+- **Hmac算法**
+
+  ```java
+  
+  ```
+
+### 5. 其他摘要算法
+
+- 除了MD、SHA和MAC这三大主流消息摘要算法外，还有许多我们不了解的消息摘要算法，包括RipeMD系列（包含RipeMD128、RipeMD160、RipeMD256和RipeMD320）、Tiger、Whirlpool和GOST3411算法。RipeMD系列算法与MAC系列算法相结合，又产生了HmacRipeMD128和HmacRipeMD160两种算法。
 
 ## 2.2 对称加密算法
 
@@ -101,51 +190,7 @@
 ## 3.2 基于Java的JWT
 
 1. nimbus-jose-jwt
-
-
-
-# 1、码表
-
-- 概述：在计算机内部，所有的信息都表示为一个二进制字符串，每个二进制位称为比特位（bit）有0和1两中状态，每8个bit称为一个字节，由8个bit（0和1）组成的一个字节可以组合出256中状态（`2*2*2*2*2*2*2*2`），把其中的每一种状态都对应到一种字符就形成了码表，所以编程中可以把字符表示的代码翻译为计算机可以识别的二进制；
-
-- 常见的国际码表
-
-  - **ASCii（美国标准信息交换码）**：用一个字节的7位可以表示。所以ASCII码一共规定了128个字符的编码
-
-  - **Unicode（国际标准码表）**：世界上存在着多种编码方式，同一个二进制数字可以被解释成不同的符号。因此，要想打开一个文本文件，就必须知道它的编码方式，否则用错误的编码方式解读，就会出现乱码。可以想象，如果有一种编码，将世界上所有的符号都纳入其中。每一个符号都给予一个独一无二的编码，那么乱码问题就会消失，这就是Unicode。*注意的是，Unicode只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该如何存储*
-
-  - **iso-8859-1（拉丁码表 latin）**：用了一个字节用的8位。把位于128-255之间的字符用于拉丁字母表中特殊语言字符的编码，也因此而得名。ASCII码是包含的仅仅是英文字母，并且没有完全占满256个编码位置，所以它以ASCII为基础，在空置的0xA0-0xFF的范围内，加入192个字母及符号，藉以供使用变音符号的拉丁字母语言使用。从而支持德文，法文等。因而它依然是一个单字节编码，只是比ASCII更全面。
-
-  - **UTF-8**：事实证明，对可以用ASCII表示的字符使用UNICODE并不高效，因为UNICODE比ASCII占用大一倍的空间，而对ASCII来说高字节的0对他毫无用处。为了解决这个问题，就出现了一些中间格式的字符集，他们被称为通用转换格式，即UTF（Universal Transformation Format）。目前存在的UTF格式有：UTF-7, UTF-7.5, UTF-8, UTF-16, 以及 UTF-32
-
-    > UTF-8基于unicode，UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。
-    >
-    > - 对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。
-    > - 对于n字节的符号（n>1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。剩下的没有提及的二进制位，全部为这个符号的unicode码。
-
-  - **GBK（汉字内码扩展规范）**：由我国自主编写，（GBK即“国标”、“扩展”汉语拼音的第一个字母）目前最常用的中文码表，2万的中文和符号。用两个字节表示，其中的一部分文字，第一个字节开头是1，第二字节开头是0
-
-# 2、URL编码与解码
-
-# 3、Base64
-
-- 概述：
-
-- Base64规则：
-
-- Base58规则：是在Base64几乎是行
-
-- Base64原理：
-
-- 案例演示：
-
-  
-
-# 4、Java String
-
-- toString与new String
-  - toString：调用的Object的toString方法，返回的的hash值
-  - new String：
+2. spring-security-jwt
 
 # 5、数字摘要
 
