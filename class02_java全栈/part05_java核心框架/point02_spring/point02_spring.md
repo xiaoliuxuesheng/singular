@@ -1,5 +1,87 @@
 # 第一章 Spring
 
+## 1.1 Spring简介
+
+1. **Spring框架的核心**
+
+   - 是抽取出来的高度可重用的代码, 多个可重用模块的集合, 形成：JavaEE领域的整体解决方案
+   - Spring框架是是一个IOC和AOP的容器框架
+   - Spring容器包含并且管理应用中的对象的关系以及生命周期
+
+2. **Spring技术栈**
+
+   | Spring技术      | 功能说明               |
+   | --------------- | ---------------------- |
+   | spring farmwork | Spring核心             |
+   | spring data     | Spring数据支持         |
+   | spring security | Spring安全认证         |
+   | spring boot     | Spring场景启动自动配置 |
+   | spring cloud    | Spring微服务解决方案   |
+
+3. **Spring优点**
+
+   - **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
+   - **非侵入** : 用Spring开发的应用不依赖Spring的API
+   - **依赖注入** : 是对IOC思想的实现
+   - **面向切面编程** : 是对面向对象的扩展与增强
+   - **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
+   - **模块化** : 添加特定模块可以解决特定场景的功能 
+
+## 1.2 Spring模块划分
+
+<img src="https://s1.ax1x.com/2020/06/16/NiVHvd.png" alt="NiVHvd.png" border="0" />
+
+| spring 测试模块 | 测试组件说明 |
+| --------------- | ------------ |
+| spring-test     | 测试组件     |
+
+| spring 核心            | 核心模块说明                         |
+| ---------------------- | ------------------------------------ |
+| spring-beans           | Bean工厂与装配                       |
+| spring-core            | 核心模块 依赖注入IOC和DI的最基本实现 |
+| spring-context         | 上下文，即IOC容器                    |
+| spring-context-support | 对IOC的扩展，以及IOC子容器           |
+| spring-context-indexer | 类管理组件和Classpath扫描            |
+| spring-expression      | 表达式语句                           |
+
+| spring AOP        | 切面编程说明                |
+| ----------------- | --------------------------- |
+| spring-aop        | 面向切面编程，CGLB,JDKProxy |
+| spring-aspects    | 集成AspectJ，Aop应用框架    |
+| spring-instrument | 动态Class Loading模块       |
+
+| spring Data | 说明                                         |
+| ----------- | -------------------------------------------- |
+| spring-jdbc | 提供JDBC主要实现模块，用于简化JDBC操作       |
+| spring-orm  | 主要集成Hibernate,jpa,jdo等                  |
+| spring-tx   | spring-jdbc事务管理                          |
+| spring-oxm  | 将java对象映射成xml数据或将xml映射为java对象 |
+| spring-jms  | 发送和接受消息                               |
+
+| spring web       | 说明                                  |
+| ---------------- | ------------------------------------- |
+| spring-web       | 最基础的web支持，主要建立在核心容器上 |
+| spring-webmvc    | 实现了spring mvc的web应用             |
+| spring-websocket | 主要与前端页的全双工通讯协议          |
+| spring-webflux   | 一个新的非阻塞函数式Reactive Web框架  |
+
+| spring message   | 说明                     |
+| ---------------- | ------------------------ |
+| spring-messaging | 主要集成基础报文传送应用 |
+
+| spring Instrumentation | 说明 |
+| ---------------------- | ---- |
+| spring-instrument      |      |
+
+## 1.3 Spring技术点
+
+| 概述                    | 技术点                                            |
+| ----------------------- | ------------------------------------------------- |
+| **Java语言特性**        | 反射、动态代理、枚举、泛型、注解、ARM、Lambda语法 |
+| **设计模式与设计思想**  | OOP、IoC、AOP、DDD、TDD、GOF23                    |
+| **JavaAPI的分装与简化** | JDBC、Servlet、JPA、JMX、Bean、Validation         |
+| **第三方框架的整合**    | Mybatis、Hibernate、Redis、SpringMVC              |
+
 # 第二章 Spring IOC
 
 # 第三章 Spring AOP

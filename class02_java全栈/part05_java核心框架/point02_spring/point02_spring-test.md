@@ -1,81 +1,4 @@
-# 前言
 
-> 面试题整理
-
-# 第一部分 Spring入门
-
-## 第一章 框架与Spring框架
-
-### 1.1 框架
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;框架是抽取出来的高度可重用的代码的集合，或者多个可重用模块的集合, 形成某个领域的整体解决方案
-
-### 1.2 Spring框架
-
-1. **Spring 框架概述**
-   - Spring框架是是一个IOC和AOP的**容器框架**
-   - Spring容器包含并且管理应用中的对象（也成Spring组件）的关系以及生命周期
-2. **Spring框架的特点**
-   - **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
-   - **非侵入** : 用Spring开发的应用不依赖Spring的API
-   - **依赖注入** : 是对IOC思想的实现
-   - **面向切面编程** : 是对面向对象的扩展与增强
-   - **轻量级** : 可以把直接在Tomcat等符合Servlet规范的web服务器上的Java应用称为轻量级的应用
-   - **模块化** : 添加特定模块可以解决特定场景的功能 
-
-### 1.3 Spring技术栈
-
-| Spring技术      | 功能说明               |
-| --------------- | ---------------------- |
-| spring farmwork | Spring核心             |
-| spring data     | Spring数据支持         |
-| spring security | Spring安全认证         |
-| spring boot     | Spring场景启动自动配置 |
-| spring cloud    | Spring微服务解决方案   |
-
-### 1.4 Spring的模块化
-
-| spring 测试模块 | 测试组件说明 |
-| --------------- | ------------ |
-| spring-test     | 测试组件     |
-
-| spring 核心            | 核心模块说明                         |
-| ---------------------- | ------------------------------------ |
-| spring-beans           | Bean工厂与装配                       |
-| spring-core            | 核心模块 依赖注入IOC和DI的最基本实现 |
-| spring-context         | 上下文，即IOC容器                    |
-| spring-context-support | 对IOC的扩展，以及IOC子容器           |
-| spring-context-indexer | 类管理组件和Classpath扫描            |
-| spring-expression      | 表达式语句                           |
-
-| spring AOP        | 切面编程说明                |
-| ----------------- | --------------------------- |
-| spring-aop        | 面向切面编程，CGLB,JDKProxy |
-| spring-aspects    | 集成AspectJ，Aop应用框架    |
-| spring-instrument | 动态Class Loading模块       |
-
-| spring Data | 说明                                         |
-| ----------- | -------------------------------------------- |
-| spring-jdbc | 提供JDBC主要实现模块，用于简化JDBC操作       |
-| spring-orm  | 主要集成Hibernate,jpa,jdo等                  |
-| spring-tx   | spring-jdbc事务管理                          |
-| spring-oxm  | 将java对象映射成xml数据或将xml映射为java对象 |
-| spring-jms  | 发送和接受消息                               |
-
-| spring web       | 说明                                  |
-| ---------------- | ------------------------------------- |
-| spring-web       | 最基础的web支持，主要建立在核心容器上 |
-| spring-webmvc    | 实现了spring mvc的web应用             |
-| spring-websocket | 主要与前端页的全双工通讯协议          |
-| spring-webflux   | 一个新的非阻塞函数式Reactive Web框架  |
-
-| spring message   | 说明                     |
-| ---------------- | ------------------------ |
-| spring-messaging | 主要集成基础报文传送应用 |
-
-| spring Instrumentation | 说明 |
-| ---------------------- | ---- |
-| spring-instrument      |      |
 
 ## 第二章 Spring入门
 
@@ -139,48 +62,10 @@ public class SpringIocTest01 {
     
     @Test
     public void testAutowiredIoc() throws Exception {
-        System.out.println("ioc = " + ioc);
+        System.out.println("ioc = " + ioc)
     }
 }
 ```
-
-## 第三章 Spring技术栈
-
-### 3.1 Java语言特性
-
-- 反射
-- 动态代理
-- 枚举
-- 泛型
-- 注解
-- ARM
-- Lambda语法
-
-###  3.2 设计思想和设计模式的实现
-
-- OOP
-- IoC
-- AOP
-- DDD
-- TDD
-- GOF23
-
-### 3.3 JavaAPI的封装与简化
-
-- JDBC
-- Servlet
-- JPA
-- JMX
-- Bean Validation
-
-### 3.4 JSR规范的适配与实现
-
-### 3.5 第三方框架的整合
-
-- Mybatis
-- Hibernate
-- Redis
-- ... ...
 
 # 第二部分 XML版Spring
 
@@ -247,31 +132,11 @@ public class SpringIocTest01 {
 
 ### 1.5 向IOC容器注入Bean
 
-## 第二章 AOP
 
-### 2.1 AOP概述
-
-### 2.2 AOP概念说明
-
-### 2.3 AOP案例
-
-## 第三章 事物
-
-# 第三部分 注解版Spring
-
-## 第一章 IOC
-
-## 第二章 AOP
-
-## 第三章 事物
 
 
 
 # ----
-
-
-
-# 第二章 Spring容器-IOC
 
 
 
@@ -867,126 +732,6 @@ public class MyBeanPost implements BeanPostProcessor {
 
 - 继承自BeanFactory工厂, 而且提供了容器之外的功能
 - 在容器启动时就会实例化bean
-
-# 第三章 Spring注解
-
-## 3.1 注解使用
-
-### 1. 标签的三要素
-
-- 被标注的元素
-- 标签类本身
-- 标签的解释器程序
-
-### 2. Spring注解的使用步骤
-
-- 开启注解解析器 : context名称空间
-- 使用注解代替xml配置
-
-## 3.2 IOC注解
-
-### 1. IOC 注解说明
-
-:anchor: **IOC注解作用** : 通过注解将bean加入到Spring容器
-
-:anchor: **context名称空间** : 在Spring配置中开启IOC注解解析器
-
-- 基本用法
-
-  ```xml
-  <context:component-scan base-package="需要扫描的包"/>
-  ```
-
-- 设置排除指定的组件
-
-  ```xml
-  <context:exclude-filter type="设置类型" expression="类型的值"/>
-  ```
-
-  > type="annotation" : 表示指定注解类型的设置
-  >
-  > type="assignable" : 表示指定类型的类设置
-  >
-  > type="aspectj" : 表示使用aspect表达式设置
-  >
-  > type="regex" : 表示使用正则表达式设置
-  >
-  > type="custom" : 表示使用自定义TypeFilter的实现设置
-
-- 设置只包含指定的组件
-
-  ```xml
-  <context:include-filter type="设置类型" expression="类型的值"/>
-  ```
-
-  > 使用包含设置规则时候, 需要禁用掉默认的过滤规则
-  >
-  > use-default-filters="false"
-
-### 2. IOC注解类型
-
-- **Spring规范的IOC注解**
-
-  > 添加的Spring中组件的id名默认是类名首字母小写
-
-  :anchor: **@Component**  : 是通用注解, 一般用于标注工具栏
-
-  :anchor: **@Repository** : 一般用于标注Dao仓库
-
-  :anchor: **@Service** : 一般用于标注Service组件
-  
-  :anchor: **@Controller** : 一般用于标注Controller前端控制器
-  
-- **向容器添加bean时候指定bean的名称**
-
-  ```java
-  给IOC标签指定value属性值
-  ```
-
-- **向容器添加bean时候指定bean的作用域**
-
-  ```java
-  在类上添加@Scope标签 : 使用value属性指定该bean的作用域
-  ```
-
-## 3.3 DI注解
-
-:anchor:**​ @Autowire**
-
-- 自动装配原理
-
-  > 第一 : 会根据属性类型匹配
-  >
-  > 第二 : 如果找到多个类型, 则以属性名作为bean的id名继续匹配
-  >
-  > 第三 : 如果找不到会抛出异常
-
-- 设置匹配指定id名称的bean
-
-  ```java
-  @Qualifier("指定名称")
-  ```
-
-- 设置如果匹配不到会取消装配
-
-  ```java
-  
-  ```
-
-- @Autowire给方法上添加
-
-  > 会对方法的参数上实现自动装配
-  >
-  > 对参数的装配过程和属性的装配过程相同
-
-:anchor: **@Resources**
-
-- 是Java中制定的规范, 用于自动注入, 功能没有Spring的Autowire强大
-- @Resources 的扩展性好, 如果切换其他容器框架也可以使用
-
-## 3.4 Spring的泛型注入
-
-- Spring中使用泛型匹配时候, 采用反射获取泛型类型, 从而对对应的类型实现自动注入
 
 # 第四章 面向切面 AOP
 
