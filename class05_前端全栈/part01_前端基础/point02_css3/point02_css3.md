@@ -649,74 +649,86 @@
 
 ## 第四章 流式布局
 
-
+ 
 
 ## 第五章 弹性布局
 
-- 布局原理：flex是flexible box的（弹性盒子）缩写，用来为盒装模型提供最大的灵活性，任何一个容器都可以指定为flex布局。
+###  5.1 Flex布局特点
 
-  - 当为父盒子设置flex布局后，子盒子的float、clear、vertical-align都失效
-  - 采用了flex布局的容器称为Flex容器，它的所有子元素自动称为容器成员，称为Flex Item，Flex Item模式是横向排列
+- **传统布局特点**：①兼容性好（PC和移动端都适应）、②布局繁琐（布局属性多且乱）、③局限性，在移动端效果不好
+- **Flex布局特点**：①操作方便，布局极为简单、②是CSS新特性，对PC端浏览器支持较差
 
-- Flex布局常见属性 - 父盒子
+### 5.2 Flex布局原理
 
-  - flex-direction：设置主轴方向。在flex布局方向分主轴和侧轴两个方向，同样的叫法行和列、x轴和y轴；
+1. Flex是Flexible Box的（弹性盒子）缩写，用来为盒装模型提供最大的灵活性，任何一个容器都可以指定为flex布局。
 
-    - 默认主轴方向是x轴方向，默认的侧轴方向是y轴方向
+2. 采用了flex的元素称为Flex Container，容器中所有的元素自动称为容器中的Flex Item；
 
-      | 值             | 说明             |
-      | -------------- | ---------------- |
-      | row            | 默认值：从左到右 |
-      | row-reverse    | 从右到左         |
-      | column         | 从上到下         |
-      | column-reverse | 从下到上         |
+   - Flex Container（FLex容器）：默认有两条轴：默认主轴是水平方向向右，默认测轴是垂直方向向下
+   - Flex Item（项）：元素的float、clear、vertical-align 的属性将会失效
 
-  - justify-content：设置主轴上子元素的排列方式，是指item在主轴上的定义方式
+3. **布局原理**：Flex布局就是通过flex container中属性的item的属性设置子元素在主轴方向和测轴方向的摆放方式；
 
-    | 值            | 说明                         |
-    | ------------- | ---------------------------- |
-    | flex-start    | 默认从头部开始，表示从左向右 |
-    | flex-end      | 从尾部开始排列               |
-    | center        | 居中对齐，                   |
-    | space-around  | 平分剩余空间                 |
-    | space-between | 先两边贴边，再平分剩余空间   |
+4. **display：flex**：①flex：父盒子是块级元素，使用flex属性值后父盒子仍然保留块级元素特点，独占一行②inline-flex：父盒子是块级元素，使用inline-flex属性值后父盒子会有行内块元素特点（如果设置父盒子的宽度和高度，flex容器的的宽度将有子元素宽度决定）
 
-    
+   ```css
+   .container {
+       display: flex | inline-flex;       //可以有两种取值
+   }
+   ```
 
-  - flex-wrap：设置子元素是否换行，item默认在一条线上，默认不换号，宽度大于父元素，会缩小子盒子宽度
+   > 例：<img src="https://s3.ax1x.com/2021/01/23/sTMZ60.png" alt="sTMZ60.png" border="0" />
+   >
+   > ```html
+   > <!DOCTYPE html>
+   > <html>
+   > <head>
+   >     <meta charset="UTF-8">
+   >     <title>Container</title>
+   >     <style>
+   >         .box1 {background: red;display: flex;}
+   >         .box1 div { width: 100px;height: 50px;background: green;}
+   >         
+   >         .box2 {background: red; display: inline-flex;}
+   >         .box2 div {width: 100px;height: background: green;}
+   >     </style>
+   > </head>
+   > <body>
+   > <div class="box1">
+   >     <div>1</div>
+   >     <div>2</div>
+   >     <div>3</div>
+   >     <div>4</div>
+   > </div>
+   > <br>
+   > <div class="box2">
+   >     <div>1</div>
+   >     <div>2</div>
+   >     <div>3</div>
+   >     <div>4</div>
+   > </div>
+   > </body>
+   > </html>
+   > ```
 
-    | 值      | 说明         |
-    | ------- | ------------ |
-    | no-wrap | 默认，不换行 |
-    | wrap    | 换行         |
+### 5.3 Flex Container
 
-  - align-content：设置侧轴上的子元素排列方式（多行），出现换行的情况
+| 容器属性            | 属性值及说明                                                 |
+| ------------------- | ------------------------------------------------------------ |
+| **flex-direction**  | **设置主轴的方向(即item的排列方向)**<br />row：默认值，主轴为水平方向，从左向右<br />row-reverse：主轴为水平方向，从右向左<br />column：主轴为垂直方向，从上向下<br />column-reverse：主轴为垂直方向，从下向上 |
+| **justify-content** | **定义了项目在主轴的对齐方式。**<br />flex-start：默认值，左对齐<br />flex-end：右对齐<br />center：居中<br />space-between：两端对齐，项目之间的间隔相等，即剩余空间等分成间隙。<br />space-around：每个项目两侧的间隔相等 |
+| **flex-wrap**       | **设置容器内item是否可换行：如果支持换行，侧轴可以有多条**<br />nowrap：不换行，当主轴尺寸固定但当空间不足时，item尺寸会调整而并不会挤到下一行。<br/>wrap：item主轴总尺寸超出容器时换行，第一行在上方<br />wrap-reverse：item主轴总尺寸超出容器时换行，，第一行在下方 |
+| **align-items**     | **定义了项目在侧轴上的对齐方式**<br />默认值为 stretch 即如果项目未设置高度或者设为 auto，将占满整个容器的高度。<br />flex-start：交叉轴的起点对齐<br />flex-end：交叉轴的终点对齐<br />center：交叉轴的中点对齐<br />baseline: 项目的第一行文字的基线对齐 |
+| **align-content**   | **定义了多根轴线的对齐方式，如果项目只有一根轴线，那么该属性将不起作用**<br />默认值为 stretch多条轴线平分容器的垂直方向上的空间。<br />flex-start：轴线全部在交叉轴上的起点对齐<br />flex-end：轴线全部在交叉轴上的终点对齐<br />center：轴线全部在交叉轴上的中间对齐<br />space-between：轴线两端对齐，之间的间隔相等，即剩余空间等分成间隙。<br />space-around：每个轴线两侧的间隔相等 |
+| flex-flow           | **flex-direction 和 flex-wrap 的简写形式**<br />没什么卵用，老老实实分开写就好了 |
 
-    | 值            | 说明                                       |
-    | ------------- | ------------------------------------------ |
-    | flex-start    | 从上到下                                   |
-    | flex-end      | 从下到上                                   |
-    | center        | 挤在一起重置居中                           |
-    | space-around  | 平分剩余空间                               |
-    | space-between | 先两边贴边，再平分剩余空间                 |
-    | stretch       | 拉伸（默认），子盒子的高度设置了会拉伸无效 |
+### 5.3 Flex Item属性
 
-  - align-item：设置侧轴上的子元素排列方式（单行）
-
-    | 值         | 说明                                       |
-    | ---------- | ------------------------------------------ |
-    | flex-start | 从上到下                                   |
-    | flex-end   | 从下到上                                   |
-    | center     | 挤在一起重置居中                           |
-    | stretch    | 拉伸（默认），子盒子的高度设置了会拉伸无效 |
-
-  - flex-flow：复合属性，相当于同时设置了flex-direction、flex-wrap
-
-- Flex布局 - 子盒子属性
-
-  - flex：子项占的份数
-  - align-self：控制子item在自己侧轴的排列方式
-  - order：定义子item的排列顺序
+| item属性       | 属性说明                                                     |
+| -------------- | ------------------------------------------------------------ |
+| **flex**       | **item用来定义分配剩余空间的范式，用flex表示占的比例**       |
+| **align-self** | **item设置自己在测轴的排列方式**<br />                       |
+| **order**      | **定义item在容器中的排列顺序**<br />数值越小，排列越靠前，默认值为 0 |
 
 ## 第六章 栅格系统
 
