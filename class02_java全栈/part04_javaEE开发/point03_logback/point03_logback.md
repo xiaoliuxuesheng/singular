@@ -18,15 +18,16 @@
 
 - **格式转换符**：在日志配置中格式转换符需要添加前缀百分号%
 
-  | 日志格式转换符                            | 说明                                                         |
-  | ----------------------------------------- | ------------------------------------------------------------ |
-  | d{pattern} date{pattern}                  | **输出**日志的打印日志，模式语法与`java.text.SimpleDateFormat` 兼容 |
-  | p<br />le<br />level                      | **输出**日志级别。                                           |
-  | t thread                                  | **输出**产生日志的线程名。                                   |
-  | c{length} <br />lo{length} logger{length} | **输出**日志的logger名，可有一个整形参数，功能是缩短<br />logger名 %logger    == mainPackage.sub.sample.Bar == mainPackage.sub.sample.Bar <br />%logger{0}== mainPackage.sub.sample.Bar == Bar <br />%logger{5}== mainPackage.sub.sample.Bar == m.s.s.Bar |
-  | cn contextName                            | **输出**上下文名称。                                         |
-  | m<br />msg message                        | **输出**应用程序提供的信息。                                 |
-  | n                                         | **输出**平台先关的分行符                                     |
+  | 日志格式转换符                                  | 说明                                                         |
+  | ----------------------------------------------- | ------------------------------------------------------------ |
+  | d{pattern}<br />date{pattern}                   | **输出**日志的打印日志，模式语法与`java.text.SimpleDateFormat` 兼容 |
+  | p<br />le<br />level                            | **输出**日志级别。                                           |
+  | t<br />thread                                   | **输出**产生日志的线程名。                                   |
+  | r<br />relative                                 | **输出**从程序启动到创建日志记录的时间，单位是**毫秒**       |
+  | c{length} <br />lo{length} <br />logger{length} | **输出**日志的logger名，可有一个整形参数，功能是缩短<br />logger名 %logger    == mainPackage.sub.sample.Bar == mainPackage.sub.sample.Bar <br />%logger{0}== mainPackage.sub.sample.Bar == Bar <br />%logger{5}== mainPackage.sub.sample.Bar == m.s.s.Bar |
+  | cn<br />contextName                             | **输出**上下文名称。                                         |
+  | m<br />msg<br />message                         | **输出**应用程序提供的信息。                                 |
+  | n                                               | **输出**平台先关的分行符                                     |
 
 - **格式修饰符**：可选的格式修饰符位于“%”和转换符之间。
 
@@ -263,6 +264,16 @@
    ```
 
 # 第四章 SpringBoot Logback
+
+## 4.1 默认配置
+
+## 4.2 读取配置文件
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>logback默认加载的日志文件名称是logback.xml，并且logback.xml加载早于application.properties，所以如果你在logback.xml使用了变量时，而恰好这个变量是写在application.properties时，那么就会获取不到；SpringBoot对Logback做了扩展，如果logback的配置文件改成logback-spring.xml则SpringBoot会首先会加载配置文件并处理配置文件，然后将处理好的配置文件交给Logback框架，使得logback-spring.xml具有是SpringBoot的Profile特性；
+
+### 4.3 Profile
+
+- springProfile的name属性指定SpringBoot项目运行的Profile环境，不同的环境可以指定不同的日志记录器；
 
 # 第五章 Logback MDC
 
