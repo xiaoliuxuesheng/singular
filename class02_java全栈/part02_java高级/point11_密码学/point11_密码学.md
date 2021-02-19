@@ -19,7 +19,7 @@
 
 ## 1.3 密码体制划分
 
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>从密码体制上划分，现代密码学工分为两种密码体制：对称密码体制和非对称密码体制。对称与非对称的差别源于加密密钥和解密密钥是否对称，即加密密钥与解密密钥是否相同（对称）。
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>从密码体制上划分，现代密码学工分为两种密码体制：*对称密码体制和非对称密码体制*。对称与非对称的差别源于加密密钥和解密密钥是否对称，即加密密钥与解密密钥是否相同（对称）。
 
 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在对称密码体制中，加密与解密操作使用相同的密钥，我们把这个密钥称为秘密密钥。DES、AES算法都是常用的对称密码算法。流密码实现简单，对环境要求低，适用于手机平台的加密，广泛应用于军事、外交领域。RC4算法就是典型的流密码算法。流密码的理论、算法受限于国家安全因素未能公布。分组密码在这一点上与流密码恰恰相反，其理论，算法公开，分类众多。DES、AES算法主要的对称密码算法均属于分组密码。分组密码共有5中工作模式：电子密码本模式（ECB）、密文链接模式（CBC）、密文反馈模式（CFB）、输出反馈模式（OFB）、计数器模式（CTR）。分组密码会产生短块，关于短块的处理方法有填充法、流密码加密法、密文挪用技术。
 
@@ -187,10 +187,141 @@
 
 ## 3.1 介绍
 
-## 3.2 基于Java的JWT
+## 3.2 Jwt原理
 
-1. nimbus-jose-jwt
-2. spring-security-jwt
+
+
+## 3.2 JWT库
+
+### 1. java-jwt
+
+- 依赖
+
+  ```xml
+  
+  ```
+
+- 案例
+
+  ```java
+  
+  ```
+
+- 测评：Auth0提供的JWT库简单实用, 依赖第三方(如JAVA运行环境)提供的证书信息(keypair)；有一问题是在 生成id_token与校验(verify)id_token时都需要 公钥(public key)与密钥(private key), 个人感觉是一不足(实际上在校验时只需要public key即可)
+
+### 2. jose4j
+
+- Maven依赖
+
+  ```xml
+  
+  ```
+
+- 使用案例
+
+  ```java
+  
+  ```
+
+- 测评：jose4j提供了完整的JWT实现，可以不依赖第三方提供的证书信息(keypair，库本身自带有RSA的实现)，类定义与JWT协议规定匹配度高,易理解与上手；对称加密与非对称加密都有提供实现
+
+### 3. nimbus-jose-jwt
+
+- Maven依赖
+
+  ```xml
+  
+  ```
+
+- 使用案例
+
+  ```java
+  
+  ```
+
+- 测评：nimbus-jose-jwt库类定义清晰,简单易用,易理解 , 依赖第三方提供的证书信息(keypair), 对称算法 与非对称算法皆有实现.
+
+### 4. jjwt
+
+- Maven依赖
+
+  ```xml
+  
+  ```
+
+- 使用案例
+
+  ```java
+  
+  ```
+
+- 测评：jjwt小巧够用, 但对JWT的一些细节包装不够, 比如 Claims (只提供获取header,body)
+
+### 5. prime-jwt
+
+- Maven依赖
+
+  ```xml
+  
+  ```
+
+- 使用案例
+
+  ```java
+  
+  ```
+
+- 测评：有些地方不符合JAVA语言规范, 支持对称算法(HMAC) 与非对称算法(RSA), 也算容易理解
+
+### 6. vertx-auth-jwt
+
+- Maven依赖
+
+  ```xml
+  
+  ```
+
+- 使用案例
+
+  ```java
+  
+  ```
+
+- 测评：Vertx Auth Jwt 库算是最不容易理解的一个库了。花了不少时间才弄通这一示例。 不容易上手， 并且生成与校验id_token 时都需要公钥与私钥。
+
+### 7. jwt-api
+
+- Maven依赖
+
+  ```xml
+  <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.10.7</version>
+  </dependency>
+  <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.10.7</version>
+      <scope>runtime</scope>
+  </dependency>
+  <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.10.7</version>
+      <scope>runtime</scope>
+  </dependency>
+  ```
+
+- 使用案例
+
+  ```java
+  
+  ```
+
+- 测评：基于 `jjwt` 库，这是一个Java圈子最流行的 `JWT` 操作库。
+
+
 
 # 6、对称加密
 
