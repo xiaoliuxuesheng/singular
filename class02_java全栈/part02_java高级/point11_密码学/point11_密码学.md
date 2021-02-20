@@ -156,6 +156,12 @@
 
 1. 介绍
 2. 数据加密标准——DES
+   - ECB：Electron Codebook电子密码本，原理是将需要加密的消费按照块密码的大小分为数个块，并对每个块进行独立加密，特定是同时加密如果原文相同，加密出来的密文也是相同的
+   - 优点：可以并行处理数据
+   - 确定：同样的原文生成同样的密文，不能很好的保护数据
+   - CBC：Cipher Block Chaining密码块链接，原理是每个明文块与密文块进行异或后，再进行加密，在这种加密模式中每个密文块都依赖与他前面的所有明文块
+   - 优点：安全系统好
+   - 确定：加密速度慢
 3. 三重DES——DESede
 4. 高级数据加密标准——AES
 5. 国际数据加密标准——IDEA
@@ -173,9 +179,9 @@
 2. 基于离散对数难题：ElGamal算法由Taher ElGamal提出，以自己的名字命名。该算法既可用于加密/解密，也可用于数字签名，并为数字签名算法形成标准提供参考。美国的DSS（Digital Signature Standard，数据签名标准）的DSA（Digital Signature Algorithm，数字签名算法）经ElGamal算法演变而来。
 3. 椭圆曲线理论： ECC（Elliptical Curve Cryptography，椭圆曲线加密）算法以椭圆曲线理论为基础，在创建密钥时可做到更快、更小，并且更有效。ECC 算法通过椭圆曲线方程式的性质产生密钥，而不是采用传统的方法利用大质数的积来产生。
 
+：特点是由两把密钥，一把公钥（pubkey）一把私钥（privateKey）；核心原理是如果信息是被公钥加密，则必须使用私钥解密
+
 ### 2. 密钥交换算法——DH&ECDH
-
-
 
 1. 介绍
 2. RSA
@@ -183,13 +189,66 @@
 
 ## 2.3 数字签名
 
+1. 签名概述：数字签名（又称[公钥](https://baike.baidu.com/item/公钥)数字签名）是只有信息的发送者才能产生的别人无法伪造的一段数字串，这段数字串同时也是对信息的发送者发送信息真实性的一个有效证明。
+2. 签名原理：
+
 # 第三章 JWT
 
 ## 3.1 介绍
 
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（RFC 7519).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
+
 ## 3.2 Jwt原理
 
+### 1. 第一部分：header
 
+- 将头部进行base64编码，构成了第一部分。
+
+  ```json
+  {
+    'typ': 'JWT',
+    'alg': 'HS256'
+  }
+  ```
+
+- 头部一般承载两部分信息：①声明类型typ，这里是jwt②加密的算法alg，如 HMAC SHA256
+
+### 2. 第二部分：payload
+
+- 将荷载进行base64加密，得到Jwt的第二部分
+
+  ```json
+  {
+    "sub": "1234567890",
+    "name": "John Doe",
+    "admin": true
+  }
+  ```
+
+- 载荷就是存放有效信息的地方。这个名字像是特指飞机上承载的货品，这些有效信息包含三个部分：①标准中注册的声明、②公共的声明、③私有的声明
+
+  - 标准中注册的声明 (建议但不强制使用) ：
+    - **jti（jwt id）**: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
+    - **iss（issuer）**: jwt签发者
+    - **iat（issued at）**: jwt的签发时间
+    - **sub（subject）**: jwt所面向的用户
+    - **aud（audience）**: 接收jwt的一方
+    - **exp（expires）**: jwt的过期时间，这个过期时间必须要大于签发时间
+    - **nbf（not before）**: 定义在什么时间之前，该jwt都是不可用的.
+  - 公共的声明 ：公共的声明可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息.但不建议添加敏感信息，因为该部分在客户端可base64
+  - 私有的声明：私有声明是提供者和消费者所共同定义的声明，一般不建议存放敏感信息，因为base64是对称解密的，意味着该部分信息可以归类为明文信息。
+
+### 3. 第三部分：signature
+
+- 第三部分是一个签证信息，这个部分需要base64加密后的header和base64加密后的payload使用`.`连接组成的字符串，然后通过header中声明的加密方式进行加盐`secret`组合加密，然后就构成了jwt的第三部分。
+
+  ```java
+  // 伪代码
+  var encodedString = base64UrlEncode(header) + '.' + base64UrlEncode(payload);
+  var signature = HMACSHA256(encodedString, 'secret'); 
+  ```
+
+- secret是保存在服务器端的，jwt的签发生成也是在服务器端的，secret就是用来进行jwt的签发和jwt的验证，所以，它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
 
 ## 3.2 JWT库
 
@@ -198,98 +257,187 @@
 - 依赖
 
   ```xml
-  
+  <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>3.11.0</version>
+  </dependency>
   ```
 
-- 案例
+- 案例：Auth0提供的JWT库简单实用, 依赖第三方（JavaAPI提供的PublicKey和PrivateKey）提供的证书信息（keypair）；有一问题是在 生成token与校验token时都需要公钥(public key)与密钥(private key)，这是一不足（实际上在校验时只需要public key即可）
 
   ```java
+  /**
+  1. Algorithm：Jwt签名算法,用于sign()方法生成完整TOKEN
+  2. JWT : 封装JWT操作相关对象
+  	2.1 JWTParser
+  3. JWTVerifier：JWT.require()方法封装验签算法，用于验证TOKEN
+  */
+  // 使用秘钥签名获取TOKEN
+  @Test
+  public void testJwt() throws Exception{
+      String token = JWT.create()
+          .withJWTId("id")
+          .withIssuer("发行人")
+          .withIssuedAt(new Date())//发行时间
+          .withAudience("接收人")
+          .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60)) 
+          .withSubject("用户")
+          .withAudience("接收方")
+          .withNotBefore(new Date(System.currentTimeMillis() + 1000 * 10))
+          .withClaim("TEST","自定义")
+          .sign(Algorithm.HMAC256("秘钥"));
   
+      JWTVerifier verifier = JWT.require(Algorithm.HMAC256("秘钥")).build();
+      verifier.verify(token);
+  }
+  // 使用秘钥对签名获取TOKEN
+  @Test
+  public void testJwt() throws Exception{
+      // hutool工具包将秘钥字符串转为秘钥对象
+      PublicKey publicKey = SecureUtil.generatePublicKey("RSA", "pubKey字节数组");
+      PrivateKey privateKey = SecureUtil.generatePrivateKey("RSA","priKey字节数组");
+      // 封装签名算法：加签与验签都需要封装公钥与私钥
+      Algorithm algorithm = Algorithm.RSA512((RSAPublicKey) publicKey, (RSAPrivateKey) privateKey);
+      // 获取TOKEN
+      String token = JWT.create()
+          .withJWTId("id")
+          .withIssuer("发行人")
+          .withIssuedAt(new Date())//发行时间
+          .withAudience("接收人")
+          .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60)) // 过期时间
+          .withSubject("用户")
+          .withAudience("接收方")
+          .withNotBefore(new Date(System.currentTimeMillis()))
+          .withClaim("TEST","自定义")
+          .sign(algorithm);
+      // 验证TOKEN的算法都需要公钥与私钥
+      JWTVerifier verifier = JWT.require(algorithm).build();
+      DecodedJWT verify = verifier.verify(token);
+  }
   ```
 
-- 测评：Auth0提供的JWT库简单实用, 依赖第三方(如JAVA运行环境)提供的证书信息(keypair)；有一问题是在 生成id_token与校验(verify)id_token时都需要 公钥(public key)与密钥(private key), 个人感觉是一不足(实际上在校验时只需要public key即可)
 
 ### 2. jose4j
 
 - Maven依赖
 
   ```xml
-  
+  <dependency>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+      <version>3.6.3</version>
+  </dependency>
   ```
 
-- 使用案例
+- 使用案例：jose4j提供了完整的JWT实现，可以不依赖第三方提供的证书信息(keypair，库本身自带有RSA的实现)，类定义与JWT协议规定匹配度高,易理解与上手；对称加密与非对称加密都有提供实现
 
   ```java
   
   ```
 
-- 测评：jose4j提供了完整的JWT实现，可以不依赖第三方提供的证书信息(keypair，库本身自带有RSA的实现)，类定义与JWT协议规定匹配度高,易理解与上手；对称加密与非对称加密都有提供实现
 
 ### 3. nimbus-jose-jwt
 
 - Maven依赖
 
   ```xml
-  
+  <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>8.19</version>
+  </dependency>
   ```
 
-- 使用案例
+- 使用案例：类定义清晰,简单易用,易理解 , 依赖Java第三方提供的证书信息(keypair), 对称算法 与非对称算法皆有实现。
 
   ```java
+  /*
+  1. SignedJWT是JWSObject的子类，构造方法需要JWSHeader 和 JWTClaimsSet
+      1.1 sign(final JWSSigner signer):设置签名算法相关参数
+      1.2 JWSSigner的实现:①ECDSASigner、②Ed25519Signer、③MACSigner、④RSASSASigner
+  2. JWSHeader的构造方法中需要指定签名算法JWSHeader(final JWSAlgorithm alg) 
+  3. JWTClaimsSet封装JwtPayload标准信息
+  3. JWSAlgorithm 签名算法
+  */        
+  @Test
+  public void testHS256() throws Exception{
+      String secret = IdUtil.fastSimpleUUID();
+      // 1. 指定签名算法
+      JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+      // 2. 为签名算法配置参数
+      JWSSigner sign = new MACSigner(secret);
+      // 3. 配置payload
+      JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+          .jwtID("id")
+          .subject("sub")
+          .expirationTime(new Date(System.currentTimeMillis() + 1000))
+          .issuer("issuer")
+          .issueTime(new Date())
+          .notBeforeTime(new Date(System.currentTimeMillis() + 100))
+          .audience("audience")
+          .claim("CLAIM","CLAIM")
+          .build();
+      // 4. 构建Token对象
+      SignedJWT jwt = new SignedJWT(header, claimsSet);
+      jwt.sign(sign);
+      // 5. 生成token
+      String token = jwt.serialize();
+      System.out.println("token = " + token);
   
+      // 验签
+      SignedJWT parse = SignedJWT.parse(token);
+      JWSVerifier verify = new MACVerifier(secret);
+      boolean result = parse.verify(verify);
+      System.out.println("result = " + result);
+      JWTClaimsSet jwtClaimsSet = parse.getJWTClaimsSet();
+      System.out.println("jwtClaimsSet = " + jwtClaimsSet);
+  }
+  @Test
+  public void testRsa() throws Exception {
+      // Java 实现密钥对
+      final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+      // 长度 至少 1024, 建议 2048
+      final int keySize = 2048;
+      keyPairGenerator.initialize(keySize);
+      final KeyPair keyPair = keyPairGenerator.genKeyPair();
+      //公钥
+      final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+      //私钥
+      final PrivateKey privateKey = keyPair.getPrivate();
+      // 1. 指定签名算法
+      final JWSHeader header = new JWSHeader(JWSAlgorithm.RS512);
+      // 2. 为签名算法配置参数，加签是私钥
+      JWSSigner signer = new RSASSASigner(privateKey);
+      // 3. 配置payload
+      JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+          .jwtID("id")
+          .subject("sub")
+          .expirationTime(new Date(System.currentTimeMillis() + 1000))
+          .issuer("issuer")
+          .issueTime(new Date())
+          .notBeforeTime(new Date(System.currentTimeMillis() + 100))
+          .audience("audience")
+          .claim("CLAIM", "CLAIM")
+          .build();
+      // 4. 构建Token对象
+      SignedJWT jwt = new SignedJWT(header, claimsSet);
+      jwt.sign(signer);
+      String token = jwt.serialize();
+      System.out.println("token = " + token);
+      // 验签
+      final SignedJWT parseJWT = SignedJWT.parse(token);
+  	// 验签是公钥
+      JWSVerifier verifier = new RSASSAVerifier(publicKey);
+      final boolean verify = parseJWT.verify(verifier);
+  
+      final JWTClaimsSet jwtClaimsSet = parseJWT.getJWTClaimsSet();
+      System.out.println("jwtClaimsSet = " + jwtClaimsSet);
+  }
   ```
 
-- 测评：nimbus-jose-jwt库类定义清晰,简单易用,易理解 , 依赖第三方提供的证书信息(keypair), 对称算法 与非对称算法皆有实现.
 
 ### 4. jjwt
-
-- Maven依赖
-
-  ```xml
-  
-  ```
-
-- 使用案例
-
-  ```java
-  
-  ```
-
-- 测评：jjwt小巧够用, 但对JWT的一些细节包装不够, 比如 Claims (只提供获取header,body)
-
-### 5. prime-jwt
-
-- Maven依赖
-
-  ```xml
-  
-  ```
-
-- 使用案例
-
-  ```java
-  
-  ```
-
-- 测评：有些地方不符合JAVA语言规范, 支持对称算法(HMAC) 与非对称算法(RSA), 也算容易理解
-
-### 6. vertx-auth-jwt
-
-- Maven依赖
-
-  ```xml
-  
-  ```
-
-- 使用案例
-
-  ```java
-  
-  ```
-
-- 测评：Vertx Auth Jwt 库算是最不容易理解的一个库了。花了不少时间才弄通这一示例。 不容易上手， 并且生成与校验id_token 时都需要公钥与私钥。
-
-### 7. jwt-api
 
 - Maven依赖
 
@@ -297,194 +445,128 @@
   <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.10.7</version>
+      <version>0.10.5</version>
   </dependency>
   <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
-      <version>0.10.7</version>
+      <version>0.10.5</version>
       <scope>runtime</scope>
   </dependency>
   <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId>
-      <version>0.10.7</version>
+      <version>0.10.5</version>
       <scope>runtime</scope>
+  </dependency>
+  <!-- 如果希望使用算法: RSASSA-PSS (PS256, PS384, PS512) algorithms: 添加该依赖
+  <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.60</version>
+      <scope>runtime</scope>
+  </dependency>
+  -->
+  ```
+
+- 使用案例：jjwt小巧够用, 但对JWT的一些细节包装不够, 比如 Claims (只提供获取header,body)
+
+  ```java
+  private static String secretKey = "ICAgIHByaXZhdGUgc3RhdGljIFN0cmluZyBzZWNyZXRLZXkgPSAiZEdocGN5QnBjeUIyWlhKNUlHeHZibWNnYzJWamNtVjAiOwo=";
+  
+  @Test
+  public void testCreate()throws Exception{
+      Map<String, Object> claims = new HashMap<>();
+      claims.put("payload","Payload");
+      Key key = Keys.hmacShaKeyFor(Base64Decoder.decode(secretKey));
+      String token = Jwts.builder()
+          //.setPayload("PayLoadPayLoadPayLoadPayLoad")
+          .setId("id")
+          .setIssuer("提交人")
+          .setIssuedAt(new Date())
+          .setExpiration(new Date(System.currentTimeMillis() + 60 * 1000))
+          .setNotBefore(new Date())
+          .setAudience("接收人")
+          .setSubject("主题")
+          .setClaims(claims)
+          .signWith(key,SignatureAlgorithm.HS512)
+          .compact();
+      System.out.println("token = " + token);
+      Jwt jws = Jwts.parser()
+          .setSigningKey(Base64Decoder.decode(secretKey))
+          .parse(token);
+  }
+  ```
+
+
+### 5. fusionauth-jwt 
+
+- Maven依赖
+
+  ```xml
+  <dependency>
+      <groupId>io.fusionauth</groupId>
+      <artifactId>fusionauth-jwt</artifactId>
+      <version>4.0.0</version>
   </dependency>
   ```
 
-- 使用案例
+- 有些地方不符合JAVA语言规范，支持对称算法(HMAC) 与非对称算法(RSA)，也算容易理解
 
-  ```java
-  
+
+### 6. vertx-auth-jwt
+
+- Maven依赖
+
+  ```xml
+  <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-auth-jwt</artifactId>
+      <version>3.5.1</version>
+  </dependency>
   ```
 
-- 测评：基于 `jjwt` 库，这是一个Java圈子最流行的 `JWT` 操作库。
+- 算是最不容易理解的一个库了， 不容易上手，生成与校验token时都需要公钥与私钥；
 
 
+### 7. jjwt
 
-# 6、对称加密
+- Maven依赖
 
-- 对称加密概述：加密方式和解密方式用的是同一把密钥
-
-- 常见的对称加密：
-
-  | 加密方式 | 概述 |
-  | -------- | ---- |
-  | DES      |      |
-  | AES      |      |
-
-- 加密模式
-
-  - ECB：Electron Codebook电子密码本，原理是将需要加密的消费按照块密码的大小分为数个块，并对每个块进行独立加密，特定是同时加密如果原文相同，加密出来的密文也是相同的
-
-    > - 优点：可以并行处理数据
-    > - 确定：同样的原文生成同样的密文，不能很好的保护数据
-
-  - CBC：Cipher Block Chaining密码块链接，原理是每个明文块与密文块进行异或后，再进行加密，在这种加密模式中每个密文块都依赖与他前面的所有明文块
-
-    > - 优点：安全系统好
-    > - 确定：加密速度慢
-
-- 填充模式
-
-  - noPadding：
-  - PKCS5Padding：
-
-- 案例演示
-
-  ```java
-  // Java API
-  
-  // Hutool 工具类
+  ```xml
+  <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt</artifactId>
+      <version>0.9.1</version>
+  </dependency>
   ```
 
-# 7、非对称加密
-
-- 非对称加密概述：特点是由两把密钥，一把公钥（pubkey）一把私钥（privateKey）；核心原理是如果信息是被公钥加密，则必须使用私钥解密
-
-- 常见非对称加密：
-
-  | 加密方式 | 概述 |
-  | -------- | ---- |
-  | RSA      |      |
-  | ECC      |      |
-
-- 案例演示
+- Token及验签
 
   ```java
-  // Java API
+  @Test
+  public void testJJwt() throws Exception {
+      //这里其实就是new一个JwtBuilder，设置jwt的body
+  	JwtBuilder builder = Jwts.builder() 
+          // 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
+          .setClaims(claims)
+          //设置jti(JWT ID)：是JWT的唯一标识，根据业务需要，这个可以设置为一个不重复的值，主要用来作为一次性token,从而回避重放攻击。
+          .setId(jwtId)
+          //iat: jwt的签发时间
+          .setIssuedAt(now)
+          //设置签名使用的签名算法和签名使用的秘钥
+          .signWith(signatureAlgorithm, secretKey);
+      System.out.println(token);
   
-  // Hutool 工具类
+      //得到DefaultJwtParser
+      String user = Jwts.parser()
+          // 设置签名的秘钥
+          .setSigningKey("MyJwtSecret")
+          // 解析token
+          .parseClaimsJws(token.replace("Bearer ", ""))
+          // 获取载荷
+          .getBody()
+          .getSubject();
+      System.out.println(user);
+  }
   ```
-
-# 8、数字签名
-
-java keytool工具
-
-# 9、jwt
-
-- 令牌组成【Header.Payload.Signature】
-
-  -  Header:json字符串格式的标头,记录了jwt的加密方式，是base64编码后的字符串
-
-    ```json
-    {
-        "typ":"JWT",	   // 表示这个令牌（token）的类型（type），JWT 令牌统一写为JWT。
-        "alg":"签名方法"	// 表示签名的算法（algorithm），默认是 HMAC SHA256（写成 HS256）
-    }
-    ```
-
-  -  Payload:json字符串的载荷，记录是jwt中保存的数据，是base64编码后的字符串
-
-    ```json
-    {
-    	"自定义Key":"自定义Value",
-        ... ...
-    }
-    ```
-
-  - Signature:用Header对Payload的签名，是使用编码后的Header和Payload以及提供的秘钥，然后使用Header中提供的算法进行签名，签名的作用是保证jwt无法被篡改
-
-- 各种jwt库
-
-  - Auth0实现 的 java-jwt:Auth0提供的JWT库简单实用, 依赖第三方(如JAVA运行环境)提供的证书信息(keypair)
-  - Brian Campbell实现的 jose4j:完整的JWT实现, 可以不依赖第三方提供的证书信息(keypair, 库本身自带有RSA的实现),类定义与JWT协议规定匹配度高,易理解与上手,对称加密与非对称加密都有提供实现
-  - connect2id实现的 nimbus-jose-jwt:定义清晰,简单易用,易理解 , 依赖第三方提供的证书信息(keypair), 对称算法 与非对称算法皆有实现.
-  - Les Haziewood实现的 jjwt:jjwt小巧够用, 但对JWT的一些细节包装不够, 比如 Claims (只提供获取header,body)
-  - Inversoft实现的prime-jwt:有些地方不符合JAVA语言规范, 支持对称算法(HMAC) 与非对称算法(RSA), 也算容易理解
-  - Vertx实现的vertx-auth-jwt: 算是最不容易理解的一个库了.花了不少时间才弄通这一示例. 不容易上手. 并且生成与校验id_token 时都需要公钥与私钥,不足.
-
-- jjwt
-
-  - 依赖
-
-    ```xml
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt</artifactId>
-        <version>0.9.1</version>
-    </dependency>
-    ```
-
-  - Token及验签
-
-    ```java
-    @Test
-    public void testJJwt() throws Exception {
-        //这里其实就是new一个JwtBuilder，设置jwt的body
-    	JwtBuilder builder = Jwts.builder() 
-            // 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
-            .setClaims(claims)
-            //设置jti(JWT ID)：是JWT的唯一标识，根据业务需要，这个可以设置为一个不重复的值，主要用来作为一次性token,从而回避重放攻击。
-            .setId(jwtId)
-            //iat: jwt的签发时间
-            .setIssuedAt(now)
-            //设置签名使用的签名算法和签名使用的秘钥
-            .signWith(signatureAlgorithm, secretKey);
-        System.out.println(token);
-    
-        //得到DefaultJwtParser
-        String user = Jwts.parser()
-            // 设置签名的秘钥
-            .setSigningKey("MyJwtSecret")
-            // 解析token
-            .parseClaimsJws(token.replace("Bearer ", ""))
-            // 获取载荷
-            .getBody()
-            .getSubject();
-        System.out.println(user);
-    }
-    ```
-
-- java-jwt
-
-  - 依赖
-
-    ```xml
-    <dependency>
-        <groupId>com.auth0</groupId>
-        <artifactId>java-jwt</artifactId>
-        <version>3.8.3</version>
-    </dependency>
-    ```
-
-  - Token及验签
-
-    ```java
-    // 使用 java-jwt 生成jwt
-            Map<String, Object> header = new HashMap<>();
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, 20);
-            String sign = JWT.create()
-                    .withHeader(header)
-                    .withClaim("name", "张三")
-                    .withClaim("age", 23)
-                    .withExpiresAt(calendar.getTime())
-                    .sign(Algorithm.HMAC256("@$!@%WER!FSEW"));
-    // 使用 java-jwt 验签
-        DecodedJWT verify = JWT.require(Algorithm.HMAC256("@$!@%WER!FSEW")).build()
-                        .verify(sign);
-    ```
-
-- 

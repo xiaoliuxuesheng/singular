@@ -187,59 +187,9 @@
 
 ## 3.1 概述
 
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（RFC 7519).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
+
 
 ## 3.2 JWT组成
-
-### 1. 第一部分：header
-
-- 将头部进行base64编码，构成了第一部分。
-
-  ```json
-  {
-    'typ': 'JWT',
-    'alg': 'HS256'
-  }
-  ```
-
-- 头部承载两部分信息：①声明类型typ，这里是jwt②加密的算法alg，如 HMAC SHA256
-
-### 2. 第二部分：payload
-
-- 将荷载进行base64加密，得到Jwt的第二部分
-
-  ```json
-  {
-    "sub": "1234567890",
-    "name": "John Doe",
-    "admin": true
-  }
-  ```
-
-- 载荷就是存放有效信息的地方。这个名字像是特指飞机上承载的货品，这些有效信息包含三个部分：①标准中注册的声明、②公共的声明、③私有的声明
-
-  - 标准中注册的声明 (建议但不强制使用) ：
-    - **iss（issuer）**: jwt签发者
-    - **sub（subject）**: jwt所面向的用户
-    - **aud（audience）**: 接收jwt的一方
-    - **exp（expires）**: jwt的过期时间，这个过期时间必须要大于签发时间
-    - **nbf（not before）**: 定义在什么时间之前，该jwt都是不可用的.
-    - **iat（issued at）**: jwt的签发时间
-    - **jti（jwt id）**: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
-  - 公共的声明 ：公共的声明可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息.但不建议添加敏感信息，因为该部分在客户端可解密
-  - 私有的声明：私有声明是提供者和消费者所共同定义的声明，一般不建议存放敏感信息，因为base64是对称解密的，意味着该部分信息可以归类为明文信息。
-
-### 3. 第三部分：signature
-
-- 第三部分是一个签证信息，这个部分需要base64加密后的header和base64加密后的payload使用`.`连接组成的字符串，然后通过header中声明的加密方式进行加盐`secret`组合加密，然后就构成了jwt的第三部分。
-
-  ```java
-  // 伪代码
-  var encodedString = base64UrlEncode(header) + '.' + base64UrlEncode(payload);
-  var signature = HMACSHA256(encodedString, 'secret'); 
-  ```
-
-- secret是保存在服务器端的，jwt的签发生成也是在服务器端的，secret就是用来进行jwt的签发和jwt的验证，所以，它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
 
 ## 3.3 Java JWT库
 
@@ -684,5 +634,3 @@ java keytool工具
         DecodedJWT verify = JWT.require(Algorithm.HMAC256("@$!@%WER!FSEW")).build()
                         .verify(sign);
     ```
-
-- 
