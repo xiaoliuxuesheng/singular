@@ -389,9 +389,8 @@
       SignedJWT parse = SignedJWT.parse(token);
       JWSVerifier verify = new MACVerifier(secret);
       boolean result = parse.verify(verify);
-      System.out.println("result = " + result);
+      
       JWTClaimsSet jwtClaimsSet = parse.getJWTClaimsSet();
-      System.out.println("jwtClaimsSet = " + jwtClaimsSet);
   }
   @Test
   public void testRsa() throws Exception {
@@ -444,6 +443,13 @@
   ```xml
   <dependency>
       <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt</artifactId>
+      <version>0.9.1</version>
+  </dependency>
+  
+  <!-- 或者 jjwt-api 基于jjwt 旨在最简单的时候jwt-->
+  <dependency>
+      <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
       <version>0.10.5</version>
   </dependency>
@@ -469,7 +475,7 @@
   -->
   ```
 
-- 使用案例：jjwt小巧够用, 但对JWT的一些细节包装不够, 比如 Claims (只提供获取header,body)
+- 使用案例：jjwt小巧够用，API注意点较多：①JwtBuilder的payload属性与其他JwtBuilder属性不可以同时设置②加签的秘钥需要封装一次Keys.hmacShaKeyFor()②JwtParser的getBody()只能获取到payload属性或claims属性中的值
 
   ```java
   private static String secretKey = "ICAgIHByaXZhdGUgc3RhdGljIFN0cmluZyBzZWNyZXRLZXkgPSAiZEdocGN5QnBjeUIyWlhKNUlHeHZibWNnYzJWamNtVjAiOwo=";
@@ -496,7 +502,38 @@
           .setSigningKey(Base64Decoder.decode(secretKey))
           .parse(token);
   }
+  
+  // 秘钥必须符合2048长度规则, 签约TOKEN需要使用私钥,API没做规范
+  @Test
+  public void testBefore() throws Exception{
+      String pub = "Base64公钥2048 字符串";
+      String pri = "Base64私钥2048 字符串";
+  
+      PublicKey ab  = SecureUtil.generatePublicKey("RSA", Base64Decoder.decode(pub));
+      PrivateKey ai = SecureUtil.generatePrivateKey("RSA",Base64Decoder.decode(pri));
+  
+      String rsa = Jwts.builder()
+          .setPayload("Publisc")
+          .signWith(ai)
+          .compact();
+      System.out.println("rsa = " + rsa);
+  
+      Jwt parse = Jwts.parser()
+          .setSigningKey(ab)
+          .parse(rsa);
+  }
+  
   ```
+  
+- 异常详情
+
+  | 异常                  | 说明                     |
+  | --------------------- | ------------------------ |
+  | SignatureException    | 密钥错误                 |
+  | MalformedJwtException | 密钥算法或者密钥转换错误 |
+  | MissingClaimException | 密钥缺少校验数据         |
+  | ExpiredJwtException   | 密钥已过期               |
+  | JwtException          | 密钥解析错误             |
 
 
 ### 5. fusionauth-jwt 
@@ -527,46 +564,3 @@
   ```
 
 - 算是最不容易理解的一个库了， 不容易上手，生成与校验token时都需要公钥与私钥；
-
-
-### 7. jjwt
-
-- Maven依赖
-
-  ```xml
-  <dependency>
-      <groupId>io.jsonwebtoken</groupId>
-      <artifactId>jjwt</artifactId>
-      <version>0.9.1</version>
-  </dependency>
-  ```
-
-- Token及验签
-
-  ```java
-  @Test
-  public void testJJwt() throws Exception {
-      //这里其实就是new一个JwtBuilder，设置jwt的body
-  	JwtBuilder builder = Jwts.builder() 
-          // 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
-          .setClaims(claims)
-          //设置jti(JWT ID)：是JWT的唯一标识，根据业务需要，这个可以设置为一个不重复的值，主要用来作为一次性token,从而回避重放攻击。
-          .setId(jwtId)
-          //iat: jwt的签发时间
-          .setIssuedAt(now)
-          //设置签名使用的签名算法和签名使用的秘钥
-          .signWith(signatureAlgorithm, secretKey);
-      System.out.println(token);
-  
-      //得到DefaultJwtParser
-      String user = Jwts.parser()
-          // 设置签名的秘钥
-          .setSigningKey("MyJwtSecret")
-          // 解析token
-          .parseClaimsJws(token.replace("Bearer ", ""))
-          // 获取载荷
-          .getBody()
-          .getSubject();
-      System.out.println(user);
-  }
-  ```
