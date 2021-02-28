@@ -1699,127 +1699,296 @@ var vm = new Vue({
 ## 7.1 VueX介绍
 
 - **VueX说明**：是为Vue应用程序开发的状态管理模式：采用集中式存储管理应用程序中的共享公共变量，并且以相应的规则管理这些公共变量；
-- **状态管理**：VueX的状态的本质是组件内定义的变量，单页面状态本质是定义在组件的data对象中的变量；VueX主要作用是多页面的状态管理，VueX状态管理指将多个组件中的变量抽取并统一配置在VueX中，并且对状态的操作在VueX中定义；
 
-3. VueX的下载与安装
+- **状态管理**：VueX的状态的本质是组件内定义的变量，单页面状态本质是定义在组件的data对象中的变量；VueX主要作用是多页面的状态管理，VueX状态管理指将多个组件中的变量抽取并统一配置在VueX中，并且对状态的操作在VueX中定义；VueX一般会管理项目中的全局共享变量；
 
-   - 下载VueX
+  - **单页面状态**：Vue的单组件数据的状态变化流程：数据的状态定义在data对象中，数据根据数据状态渲染在View中，在View中的执行了action改变了data中的数据状态，被改变的数据状态响应式的显示在View中；
 
-     ```sh
-     npm install vuex --save
-     ```
+    <img src='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/2eae72c6-f9f6-4429-a06d-f682d12fe009.png' width=50%/>
 
-   - 配置VueX：为方便管理与维护，将状态管理在store目录中
+  - **多页面状态**：而在多组件的状态管理时，单向数据流的简洁性很容易被破坏：①多个组件依赖同一个状态②不同的组件需要对状态进行变更，并且其他组件可以做到响应式；VueX为解决多组件的状态管理问题，重新定义了多组件的状态的数据流：如果直接在Vue组件中改变state，DevTools是监听不到state的变化过程，必须使用VueX中定义好的规则改变VueX中的state
 
-     ```js
-     import Vue from 'vue'
-     import Vuex from 'vuex'
-     
-     // 安装插件
-     Vue.use(Vuex)
-     
-     // 创建仓库对象,约定创建的对象是store
-     const store = new Vuex.Store({
-         state: {
-     		// 状态属性
-         },
-         getters: {
-             // 状态的计算属性
-         },
-         mutations: {
-     		// 状态的操作方法
-      	},
-         actions: {
-          // 
-         },
-         modules: {
-             // 状态的模块化
-         }
-     })
-     
-     export default store;
-     ```
-   
-   - 挂载到Vue实例之上
+    - Action：组件中的异步操作
+    - Mutations：组件中的同步操作
+    - State：多组件共享数据
+    - DevTools：Vue的浏览器插件会监听到VueX中的state的变化流
 
-     ```js
-     import store from './store'
-     
-     createApp(App).use(store).mount('#app')
-     // 或者
-     new Vue({
-         render: h => h(App),
-         store
-     }).$mount("#app");
-     ```
-   
-   - 安装挂载后为Vue实例新增全局属性：$store属性
+    <img src='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/42bf4d4a-be12-4346-8f60-305f1538fe41.png' width=70%/>
+  
+- **单一状态树**：如果项目中的状态信息是保存到多个Store对象中的，那么对状态的管理和维护都会特别困难；所有VueX采用了单一状态树（一个项目只定义一个store实例对象）管理应用层级的全部状态：单一状态树能够用最直接的方式找到某个状态的片段，并且可以做到非常方便的管理和维护；
 
-## 7.2 VueX基础
+- **vuex响应式原理**： state中属性会被加入到响应式系统中，当属性发生变化时，会通知到所有使用该属性的组件并渲染数据；
 
-1. Vuex.Store对象参数说明
+## 7.2 VueX安装与配置
 
-   | 参数名    | 作用                                                         |
-   | --------- | ------------------------------------------------------------ |
-   | state     | mutations中属性必须提前初始好的才有响应式<br />保存状态，key:value格式的数据，**推荐使用单一数据源（一个store）** |
-   | getters   | store中对状态的计算属性：<br /> - 第一个参数state对象<br /> - 第二个对象是getters对象<br /> - 模块中是getter第三个参数是root<br /> - 在getters中返回参数，在调用getters时候可以传递自定义参数 |
-   | mutations | 更新VueX中states唯一的方式：提交mutation<br /> - mutations的函数分为两部分：①事件类型（方法名），②回调函数（方法体）<br /> - mutations的函数参数：第一个参数默认是states，第二个参数是自定义参数（payload）<br /> - 项目开发中将mutation的事件类型抽取为一个常量<br /> - mutation中方法推荐使用同步方法 |
-   | actions   | actions是用来替代mutation执行异步操作<br /> - action中方法默认参数是context：表示action执行的上下文store对象<br /> - 在模块中action中context参数表示是当前的store模块 |
-   | modules   | store中的模块化                                              |
+1. 下载Vuex
 
-2. 状态操作
+   ```sh
+   npm install vuex --save
+   ```
+
+2. 安装Vue插件：①Vue.use(插件)内部调用插件的install()方法，作用是将插件的属性添加到Vue原型上②new 插件()，然后将项目中的相关数据需要new一个插件对象，才能使用定义在插件实例之中③此时new出来的插件实例对象与Vue实例对象完全独立，最后需要将插件实例对象交给Vue实例对象进行数据管理；
+
+   > 安装挂载后为Vue实例新增全局属性：$store属性
 
    ```js
-   /** 读取status */
-   $store.state.属性
+   import Vue from 'vue'
+   import Vuex from 'vuex'
    
-   /** getters 计算属性 */
-   getters:{
-       操作属性(state){
-           return 操作后的值
-       }
-   }
-   this.$store.getters.属性
+   // 安装插件
+   Vue.use(Vuex)
    
-   /** mutation操作state属性 payload是载荷封装参数为对象*/
-   mutations: {
-       操作方法名称(state,payload){
-           // 获取属性,操作属性
+   // 创建仓库对象,约定创建的对象是store
+   const store = new Vuex.Store({
+       state: {
+   		// 状态属性
+       },
+       getters: {
+           // 状态的计算属性
+       },
+       mutations: {
+   		// 状态的操作方法
+    	},
+       actions: {
+        // 
+       },
+       modules: {
+           // 状态的模块化
        }
-   }
-   this.$store.commit("操作方法名称",自定义参数)
-   this.$store.commit({
-       type: "increment",
-      	参数,
    })
    
-   // 使用Vue的API设置states新属性并具有相应式
-   Vue.set(state.状态属性,"属性名称","属性值")
-   // 使用Vue的API删除属性并删除相应式的监听
-   Vue.delete(state.状态属性,"属性名")
-   
-   /** actions */
-   actions: {
-       action(context,payload){
-           setTimeout(()=>{
-               context.commit("increment",payload)
-           },5000)
-       }
-   }
-   this.$store.dispatch("action","action")
-   
-   /** modules */
-   modules: {
-       ma:{
-           state:{},
-           getters:{},
-           actions:{},
-           mutations:{}
-       }
-   }
-   $store.state.ma.key
-   this.$store.commit("模块中的mutation")
+   export default store;
    ```
+
+3. 挂载到Vue实例之上
+
+   ```js
+   import store from './store'
+   
+   createApp(App).use(store).mount('#app')
+   // 或者
+   new Vue({
+       render: h => h(App),
+       store
+   }).$mount("#app");
+   ```
+
+## 7.3 VueX基础
+
+### 1. Vuex.Store 参数
+
+| 参数名    | 作用                                                         |
+| --------- | ------------------------------------------------------------ |
+| state     | 保存状态，key:value格式的数据，**推荐使用单一数据源（一个store）**<br />mutations中属性必须提前初始好的才有响应式 |
+| getters   | store中对状态的计算属性：<br /> - 第一个参数state对象<br /> - 第二个对象是getters对象<br /> - 模块中是getter第三个参数是root<br /> - 在getters中返回参数，在调用getters时候可以传递自定义参数 |
+| mutations | 更新VueX中states唯一的方式：提交mutation<br /> - mutations的函数分为两部分：①事件类型（方法名），②回调函数（方法体）<br /> - mutations的函数参数：第一个参数默认是states，第二个参数是自定义参数（payload）<br /> - 项目开发中将mutation的事件类型抽取为一个常量<br /> - mutation中方法推荐使用同步方法 |
+| actions   | actions是用来替代mutation执行异步操作<br /> - action中方法默认参数是context：表示action执行的上下文store对象<br /> - 在模块中action中context参数表示是当前的store模块 |
+| modules   | store中的模块化                                              |
+
+### 2. 定义State
+
+- VueX中状态的本质是变量，将共享变量定义在VueX中
+
+  ```js
+  const store = new Vuex.Store({
+      state:{
+          变量名称:变量初始值,
+          ... ...
+      }
+  })
+  ```
+
+- **扩展**：使用VueAPI修改state数据做到响应式更新
+
+  ```js
+  // 修改或新增属性
+  Vue.set(对象,属性名称,属性值)
+  // 删除属性
+  Vue.delete(对象,属性名称)
+  
+  // 如修改state的属性
+  Vue.set(state.状态属性,"属性名称","属性值")
+  Vue.delete(state.状态属性,"属性名")
+  ```
+
+### 3. 读取state
+
+- 在Vue实例上挂载VueX插件后，Vue会新增一个`$sotre`属性：代表挂载到Vue的`new Vuex.Store()`对象
+
+  ```js
+  // 使用插值表达式读取变量
+  {{$store.state.变量}}
+  // 在Vue组件实例中读取变量
+  this.$store.state.变量
+  ```
+
+### 4. mutation修改state
+
+- 在VueX中共享的state支持修改，并且可以做到响应式，但是修改共享state需要根据VueX的指定规则修改，首先需要将修改state的方法定义在`new Vuex.Store()`的mutations属性中，mutations中方法的默认参数就是state，方法名称在VueX中被称为事件类型；
+
+  ```js
+  const store = new Vuex.Store({
+      state:{
+          counter: 1000
+      },
+      mutations:{
+          // 定义无参操作方法
+          事件类型(state){
+              state.counter++
+          },
+          // 定义带参数操作方法payload表示调用事件的参数,
+          事件类型(state,payload){
+  			// payload 包含多个值会封装为一个对象
+          }
+      }
+  })
+  ```
+
+- 在Vue组件中commit（提交）VueX中mutations的方法进行数据修改
+
+  ```js
+  export default {
+      methods:{
+          组件中的方法(){
+              // 执行mutations中方法的无参数方法
+              this.$store.commit("事件类型");
+              // commit普通提交方式
+               this.$store.commit("事件类型",参数);
+              // commit对象类型参数 type制定事件类型
+              this.$store.commit({
+                  type: "事件类型",
+                  参数: value,
+                  参数: value
+                  ... ...
+              })
+          }
+      }
+  }
+  ```
+
+- **mutations类型常量**：在VueX中事件类型在使用的过程中传递的是字符串，容易发生手误导致的错误；所有在实际开发中有的项目会将事件类型定义为常量，
+
+### 5. getters修改state
+
+- **getters概述**：getters可以认为是 store 的计算属性；
+
+- **getter定义**：getters中属性对应一个用于计算的函数，函数的返回值表示该属性的计算结果，计算属性的函数的第一个参数是state对象，第二个参数是当前getter对象；
+
+  ```js
+  const store = new Vuex.Store({
+      state:{
+          counter: 1000
+      },
+      getters:{
+          // 定义无参属性
+          属性名称(state,getter){
+              return xx;
+          },
+          // 定义带参数属性
+          属性名称(state,getter){
+              return function(形参列表){
+                  return xx;
+              }
+          },
+           // 定义在module中的getter，第三个参数是rootState
+          属性名称(state,getter，rootState){
+              return function(形参列表){
+                  return xx;
+              }
+          }
+      }
+  })
+  ```
+
+- getter属性调用
+
+  ```js
+  // 使用插值表达式读取变量
+  {{$store.getters.属性名称}}
+  // 在Vue组件中使用getters中属性
+  this.$store.getters.计算属性
+  this.$store.getters.计算属性(实参列表)
+  ```
+
+### 6. action异步修改state
+
+- **action概述**：在mutations中执行异步操作，devTools工具监测不到状态的变化，所以VueX的store定义了一个action属性，改属性功能类型mutations，区别是action中执行异步操作，操作完成后commit（提交）状态给mutations，最终是由mutations进行状态的操作；
+
+- **action定义**：action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此你可以调用 `context.commit` 提交一个 mutation，或者通过 `context.state` 和 `context.getters` 来获取 state 和 getters。如果定义在module中，action中的context参数表示当前的module；
+
+  ```js
+  const store = new Vuex.Store({
+      state:{
+          counter: 1000
+      },
+      actions:{
+          // 定义无参数action事件类型
+          事件类型(context){
+               context.commit("mutations事件类型")
+          },
+          // 定义带参数action事件类型
+          事件类型(context,payload){
+               context.commit("mutations事件类型")
+          },
+          // 定义带返回值action事件类型
+          事件类型(context,payload){
+              return new Promise((resolve,reject)=>{
+                  context.commit("mutations事件类型");
+                  resolve()
+              })
+          },
+      }
+  })
+  ```
+
+- **action的使用**：
+
+  ```js
+  this.$store.dispatch("action事件类型","参数");
+  this.$store.dispatch("action事件类型","参数").then(()=>{
+      // 异步回调
+  })
+  ```
+
+### 7. modules模块化
+
+- 由于VueX使用单一状态树，所以当项目管理的状态太多，store对象就会变得相当臃肿；Vuex 允许将 store 分割成**模块（module）**。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割；
+
+  - 模块内部的 mutation 和 getter，接收的第一个参数是**模块的局部状态对象**；
+  - 模块内部的getter第三个参数是rootState：表示是store对象中的state；
+  - 对于模块内部的 action，局部状态通过 `context.state` 暴露出来，根节点状态则为 `context.rootState`；
+
+  ```JS
+  const moduleA = {
+    state: () => ({ ... }),
+    mutations: { ... },
+    actions: { ... },
+    getters: { ... }
+  }
+  
+  const moduleB = {
+    state: () => ({ ... }),
+    mutations: { ... },
+    actions: { ... }
+  }
+  
+  const store = new Vuex.Store({
+    modules: {
+      a: moduleA,
+      b: moduleB
+    }
+  })
+  ```
+
+- 调用module中的state
+
+  ```js
+  store.state.a // -> moduleA 的状态
+  store.state.b // -> moduleB 的状态
+  ```
+
+### 8. 命名空间
+
 
 
 ## 7.3 VueX的模块封装
