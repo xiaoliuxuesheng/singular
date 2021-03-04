@@ -662,7 +662,7 @@
 
 1. Flex是Flexible Box的（弹性盒子）缩写，用来为盒装模型提供最大的灵活性，任何一个容器都可以指定为flex布局。
 
-2. 采用了flex的元素称为Flex Container，容器中所有的元素自动称为容器中的Flex Item；
+2. 采用了flex的元素称为Flex Container，容器中所有的元素 自动称为容器中的Flex Item；
 
    - Flex Container（FLex容器）：默认有两条轴：默认主轴是水平方向向右，默认测轴是垂直方向向下
    - Flex Item（项）：元素的float、clear、vertical-align 的属性将会失效
