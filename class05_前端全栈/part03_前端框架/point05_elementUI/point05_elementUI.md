@@ -1,3 +1,47 @@
+
+
+# 第一章 Element安装
+
+- 新建Vue项目
+
+  ```sh
+  vue init webpack 项目名称		# vue-cli2脚手架
+  vue create 项目名称 			# vue-cli3脚手架
+  ```
+
+- 使用npm下载element-ui
+
+  ```sh
+  npm install element-ui -S
+  ```
+
+- 在Vue项目的main.js文件中配置Element
+
+  - 全量导入
+
+    ```js
+    import ElementUI from 'element-ui'
+    import 'element-ui/lib/theme-chalk/index.css'
+    
+    Vue.use(ElementUI)
+    ```
+
+  - 按需导入
+
+    ```js
+    
+    ```
+
+# 第二章 Element组件
+
+## 1.1 组件
+
+### 
+
+
+
+# --------
+
 # 第一章 ElementUI环境搭建
 
 ## 1.1 使用script标签
