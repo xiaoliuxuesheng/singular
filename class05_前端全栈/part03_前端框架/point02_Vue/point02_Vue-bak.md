@@ -1685,15 +1685,6 @@ var vm = new Vue({
    
    ```
 
-
-# 第六章 接口调用
-
-## 5.1 JavaScript原生Ajax
-
-## 5.2 jQuery的Ajax
-
-## 5.3 ES6新特性Promise
-
 # 第七章 Vuex详解
 
 ## 7.1 VueX介绍
@@ -2093,5 +2084,4 @@ var vm = new Vue({
   })
   ```
 
-- 
 
