@@ -95,20 +95,16 @@
 
 ## 1.1 Basic 
 
-1. 基础组件概览
+### 1. Layout 布局
 
-   | 组件功能       | 组件名称                                                     |
-   | -------------- | ------------------------------------------------------------ |
-   | 容器Continer   | el-continer<br />el-header<br />el-aside<br />el-main<br />el-footere |
-   | 布局Layout     | el-row                                                       |
-   | 色彩Color      |                                                              |
-   | 字体Typography |                                                              |
-   | 边框Border     |                                                              |
-   | 图标Icon       | class="el-icon-名称"                                         |
-   | 按钮Button     | el-button                                                    |
-   | 链接Link       | el-link                                                      |
+- el-row
 
-2. 使用技巧
+  | 单词    | 音标     | 注释                                                         |
+  | ------- | -------- | ------------------------------------------------------------ |
+  | gutter  | /ˈɡʌtər/ | n. 排水沟；槽；贫民区<br />vi. 流；形成沟<br />vt. 开沟于…；弄熄<br />adj. 贫贱的；粗俗的；耸人听闻的 |
+  | justify |          |                                                              |
+
+  
 
 ## 1.2 Form 
 
