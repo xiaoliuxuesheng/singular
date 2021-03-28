@@ -1,5 +1,5 @@
 - [part01_产品基础](/class04_产品开发/part01_产品基础/part01_产品基础.md)
-- [part02_交互设计](/class04_产品开发/part02_交互设计/part02_交互设计.md)
+- [part02_产品设计](/class04_产品开发/part02_产品设计/part02_产品设计.md)
 
 名词解释
 

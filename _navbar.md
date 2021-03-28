@@ -23,7 +23,7 @@
   - [part04_mongodb](/class03_数据库/part04_mongodb/part04_mongodb.md)
 - [class04_产品开发](class04_产品开发/class04_产品开发.md)
   - [part01_产品基础](/class04_产品开发/part01_产品基础/part01_产品基础.md)
-  - [part02_交互设计](/class04_产品开发/part02_交互设计/part02_交互设计.md)
+  - [part02_产品设计](/class04_产品开发/part02_产品设计/part02_产品设计.md)
 - [class05_前端全栈](class05_前端全栈/class05_前端全栈.md)
   - [part01_前端基础](/class05_前端全栈/part01_前端基础/part01_前端基础.md)
   - [part02_前端进阶](/class05_前端全栈/part02_前端进阶/part02_前端进阶.md)
