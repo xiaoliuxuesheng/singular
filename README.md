@@ -1,4 +1,4 @@
-> git remote add github https://github.com/xiaoliuxuesheng/singular.git
+> git remote add github https://github.com/xiaoliuxuesheng/singular.git 
 
 # [class00_办公软件](class00_办公软件/class00_办公软件.md)
 
