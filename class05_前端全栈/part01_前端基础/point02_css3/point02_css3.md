@@ -421,7 +421,7 @@
 |                             | 右边框：border-right                                         | border-right-color<br />border-right-style<br />border-right-width |
 
 - 内边距：padding
-  - **内边距是指；
+  - 内边距是指；
   - 内边距首先会考虑到父元素的边界，所以会有垂直方向内边距塌陷现象；
   - 内边距会修改盒子模型的大小
   - 内边距会有背景属性
