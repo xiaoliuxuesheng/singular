@@ -1963,105 +1963,128 @@ this.$router.forward()
 
 # 第七章 axios
 
-## 7.1 Vue网络请求
+## 7.1 前端网络请求
 
-### 1. 发送网络请求方式
+1. XMLHTTPRequest：原生JavaScript请求
+2. jQuery：ajax网络qingq
+3. JSONP：跨域伪造访问
+4. Axios：基于promise的HTTP 库，可以用在浏览器和node.js中
 
-1. 原生的XMLHTTPRequest：使用复杂，封装难度高
-2. jQuery-Ajax：jQuery库太重
-3. Vue1.x自带的vue-resources：停止更新
-4. JSONP：跨域伪造访问
-5. axios：作者推荐，功能完善
-   - 支持在浏览器发送XMLHTTPRequest
-   - 支持在node发送http请求
-   - 支持Promise API
-   - 拦截请求和响应
-   - 转换请求和响应
+## 7.2 Vue中安装Axios
 
-### 2. axios初始化
+1. 加载axios安装包
 
-- 安装axios
+   ```sh
+   npm install axios --save
+   ```
 
-  ```sh
-  npm install axios --save
-  ```
+2. 配置axios到Vue实例
 
-- 配置axios
+   - **方案一**：将axios挂载到Vue实例，可以全局访问axios的API
 
-  ```js
-  // 引入axios
-  import axios from "axios";
-  
-  // 发送请求
-  axios({
-      url: "http://localhost:8080/mvc/get/param?param='test'",
-  }).then((res) => {
-      console.log(res);
-  });
-  ```
+     ```js
+     // main.js
+     import axios from 'axios'
+     Vue.prototype.$axios = axios
+     
+     new Vue({
+       axios
+       render: h => h(App)
+     }).$mount('#app')
+     
+     // 在其他模块的方法中可以使用axios api
+     methods: {
+         funcName() {
+             this.$axios.get({
+                 url: 'xxx'
+             }).then(res => {
+                 
+             })
+         }
+     }
+     ```
 
-  
+   - **方案二**：将axios单独封装为模块，创建并配置axios实例对象，然后将实例对象导出到main.js入口文件中，那么和接口请求的相关配置都可以定义在这个单独的axios模块中了;
 
-## 7.2 axios发送请求的方式
+     ```js
+     // 自定义api目录：/api/index.js
+     import axios from 'axios'
+     const requests = axios.create()
+     
+     export default {
+       requests
+     }
+     
+     // main.js
+     import '@/api'
+     
+     // 其他模块可以引用api模块进行接口调用
+     import request from '@/api'
+     methods: {
+         funcName() {
+             request.get({
+                 url: 'xxx'
+             }).then(res => {
+                 
+             })
+         }
+     }
+     ```
 
-### 1. axios API
+   - **方案三**：一般项目开发中会将接口的请求与业务方法分离，第一步会定义独立模块封装接口调用的方法，第二步在业务模块中调用接口模块传入接口参数获取接口响应；在方案二的基础上需要额外定义一个封装接口的模块：如order模块的相关接口都定义在一个js文件中；
 
-1. axios(config)
-2. axios.request(config)
-3. axios.get(url[,config])
-4. axios.delete(url[,config])
-5. axios.post(url[,data,config])
-6. axios.put(url[,config])
-7. axios.patch(url[,data,config])
-8. axios.get(url[,data,config])
-9. axios.head(url[,config])
-10. axios.all([config,config])
+     ```js
+     // @/api/order/index.js
+     import request from '@/api'
+     export function getList (param) {
+       return order({
+         url: '/order/list',
+         method: 'get',
+         data: param
+       })
+     }
+     
+     // 然后在order组件的method中直接调用
+     import {getList} from '@/api/order/index'
+     methods: {
+         funcName() {
+             const param = {}
+             getList(param).then(res => {
+                 
+             })
+         }
+     }
+     ```
 
-### 2. axios config详解
+   - **方案四**：如果前端项目需要调用多个服务的接口，而且接口的规则不统一，则需要将axios模块化，不同的服务对应各自的axios实例对象，并分别配置
 
-- config参数详解
-
-  ```js
-  // 全局配置
-  axios.defaults.baseURL = ''
-  
-  // 单独配置
-  axios({
-  	url:'',
-      method:'',
-      timeout:'',
-      param:{
-          keu:value
-      },
-      data:{
-          key:value
-      },
-      transformRequest(){
-  		请求转换
-      },
-      transformResponse(){
-        	响应装换
-      },
-      headers:{
-          
-      }
-  })
-  ```
-
-### 3. axios封装
-
-- vue实例创建
-
-  ```js
-  let serverA = axios.create({
-      baseUrl:''
-  })
-  let serverB = axios.create({
-      baseUrl:''
-  })
-  ```
-
-
-
-
+     ```js
+     // @/api/index.js
+     import axios from 'axios'
+     
+     const order = axios.create({
+       timeout: 5000
+     })
+     
+     const user = axios.create({
+       timeout: 5000
+     })
+     
+     const axiosReq = axios.create({
+       timeout: 5000
+     })
+     
+     export default {
+       order, user, axiosReq
+     }
+     // @/api/order/index.js
+     import Api from '../'
+     export function orderList (param) {
+       return Api.order({
+         url: '/order/list',
+         method: 'get',
+         data: param
+       })
+     }
+     ```
 
