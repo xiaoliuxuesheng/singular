@@ -1,3 +1,5 @@
+
+
 # ES6
 
 ## 01、let
@@ -87,7 +89,7 @@
     ```js
     // 基本用法
     let colors = [ "red", "green", "blue" ];
-  let [ firstColor, secondColor ] = colors;
+    let [ firstColor, secondColor ] = colors;
     
     // 变量交换
     let a = 1,
@@ -108,7 +110,6 @@
     
     
     ```
-    
 
 ## 04、模板字符串
 
