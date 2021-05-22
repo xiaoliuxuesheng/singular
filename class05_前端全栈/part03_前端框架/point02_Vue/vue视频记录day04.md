@@ -58,7 +58,7 @@ day01_04_第一个vue代码
 
 1. 引入vue.js
 
-   ```html
+   ``` html
    <script src="../resources/js/vue.js"></script>
    ```
 

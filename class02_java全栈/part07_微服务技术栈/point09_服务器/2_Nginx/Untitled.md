@@ -165,53 +165,51 @@
 
 # 2.8 Nginx安装目录
 
-1. 安装目录
+1. 安装目录：采用yum安装其实安装的也是rpm包，列出安装目录：rpm -ql nginx
 
-   - 采用yum安装其实安装的也是rpm包，列出安装目录：rpm -ql nginx
-
-     ```properties
-     
-     # 配置文件：Nginx日志轮转，用于logrotate服务的日志切割
-     /etc/logrotate.d/nginx
-     # 目录配置文件
-     /etc/nginx
-     /etc/nginx/nginx.conf						# nginx启动读取的配置文件
-     /etc/nginx/conf.d
-     /etc/nginx/conf.d/default.conf				# 默认是server加载的配置文件
-     # 配置文件：cgi配置相关 fastcgi配置
-     /etc/nginx/fastcgi_params
-     /etc/nginx/scgi_params
-     /etc/nginx/uwsgi_params
-     # 配置文件：设置http协议的Content-Type与扩展名对应关系
-     /etc/nginx/mime.types
-     # 配置文件：配置系统守护进程管理器管理方式
-     /usr/lib/systemd/system/nginx-debug.service
-     /usr/lib/systemd/system/nginx.service
-     # 目录：Nginx模块目录
-     /etc/nginx/modules
-     /usr/lib64/nginx
-     /usr/lib64/nginx/modules
-     # 命令：Nginx服务的启动管理终端命令
-     /usr/sbin/nginx
-     /usr/sbin/nginx-debug
-     # 文件目录：Nginx手册和帮助呢就
-     /usr/share/doc/nginx-1.20.0
-     /usr/share/doc/nginx-1.20.0/COPYRIGHT
-     /usr/share/man/man8/nginx.8.gz
-     # Nginx缓存目录
-     /var/cache/nginx
-     # Nginx日志目录
-     /var/log/nginx
-     # Nginx默认首页
-     /usr/share/nginx
-     /usr/share/nginx/html
-     /usr/share/nginx/html/50x.html
-     /usr/share/nginx/html/index.html
-     
-     /usr/libexec/initscripts/legacy-actions/nginx
-     /usr/libexec/initscripts/legacy-actions/nginx/check-reload
-     /usr/libexec/initscripts/legacy-actions/nginx/upgrade
-     ```
+   ```properties
+   
+   # 配置文件：Nginx日志轮转，用于logrotate服务的日志切割
+   /etc/logrotate.d/nginx
+   # 目录配置文件
+   /etc/nginx
+   /etc/nginx/nginx.conf						# nginx启动读取的配置文件
+   /etc/nginx/conf.d
+   /etc/nginx/conf.d/default.conf				# 默认是server加载的配置文件
+   # 配置文件：cgi配置相关 fastcgi配置
+   /etc/nginx/fastcgi_params
+   /etc/nginx/scgi_params
+   /etc/nginx/uwsgi_params
+   # 配置文件：设置http协议的Content-Type与扩展名对应关系
+   /etc/nginx/mime.types
+   # 配置文件：配置系统守护进程管理器管理方式
+   /usr/lib/systemd/system/nginx-debug.service
+   /usr/lib/systemd/system/nginx.service
+   # 目录：Nginx模块目录
+   /etc/nginx/modules
+   /usr/lib64/nginx
+   /usr/lib64/nginx/modules
+   # 命令：Nginx服务的启动管理终端命令
+   /usr/sbin/nginx
+   /usr/sbin/nginx-debug
+   # 文件目录：Nginx手册和帮助呢就
+   /usr/share/doc/nginx-1.20.0
+   /usr/share/doc/nginx-1.20.0/COPYRIGHT
+   /usr/share/man/man8/nginx.8.gz
+   # Nginx缓存目录
+   /var/cache/nginx
+   # Nginx日志目录
+   /var/log/nginx
+   # Nginx默认首页
+   /usr/share/nginx
+   /usr/share/nginx/html
+   /usr/share/nginx/html/50x.html
+   /usr/share/nginx/html/index.html
+   
+   /usr/libexec/initscripts/legacy-actions/nginx
+   /usr/libexec/initscripts/legacy-actions/nginx/check-reload
+   /usr/libexec/initscripts/legacy-actions/nginx/upgrade
+   ```
 
 2. 编译参数：查看安装nginx编译参数：nginx -V
 
@@ -255,7 +253,8 @@
    --with-http_v2_module 
    --with-mail 
    --with-mail_ssl_module 
-   --with-stream --with-stream_realip_module 
+   --with-stream 
+   --with-stream_realip_module 
    --with-stream_ssl_module 
    --with-stream_ssl_preread_module 
    # 设置额外的参数将被添加到CFLAGS变量
@@ -322,7 +321,8 @@
 
      - http服务配置：http://127.0.0.1:8080/api
        - http：包含多个server（一个server有独立的IP和端口）
-         - include：只配置文件
+         - include：包含配置文件ContentType
+         -  include /etc/nginx/conf.d/*.conf; 只有一个下面的default.conf
          - default_type：ContentType
          - log_format：日志类型
          - access_log：
@@ -337,18 +337,231 @@
              - proxy
            - error_page：当前server统一错误页面
            - location：控制上个error_page的访问路径
-             - root：
-
-   - default.conf
-
+          - root：
+   
+- default.conf
+   
      ```properties
+     server {
+      listen       80;
+       server_name  localhost;
+     
+         #access_log  /var/log/nginx/host.access.log  main;
+     
+         location / {
+             root   /usr/share/nginx/html;
+             index  index.html index.htm;
+         }
+     
+         #error_page  404              /404.html;
+     
+         # redirect server error pages to the static page /50x.html
+         # 
+         error_page   500 502 503 504  /50x.html;
+         location = /50x.html {
+             root   /usr/share/nginx/html;
+         }
+     
+         # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+         #
+         #location ~ \.php$ {
+         #    proxy_pass   http://127.0.0.1;
+         #}
+     
+         # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+         #
+         #location ~ \.php$ {
+         #    root           html;
+         #    fastcgi_pass   127.0.0.1:9000;
+         #    fastcgi_index  index.php;
+         #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+         #    include        fastcgi_params;
+         #}
+     
+         # deny access to .htaccess files, if Apache's document root
+         # concurs with nginx's one
+         #
+         #location ~ /\.ht {
+         #    deny  all;
+         #}
+     }
      
      ```
-
+     
      - server
        - listen：
        - server_name：
        - location：
-       - error_page
-       - location  
+       - error_page：表示这些状态码会返回 /50x.html这个地址 
+       - location  ：下面的location指定这个 /50x.html所在的地址
+
+# 2-12 http请求
+
+1. http请求：基于tcp
+   - request：请求头 + 请求行 + 请求数据
+   - response：响应头 + 状态行 + 响应数据
+
+# 2-13 Nginxlog 2-14
+
+2. 日志类型
+
+   - error.log： 包含nginx处理http请错误的日志和nginx自生服务的错误日志，
+
+   - access.log：每次nginx请求记录的日志，分析每次访问的，依赖与log_format配置：nginx的log会记录很多信息，对应nginx的变量，通过log_format将变量以一定格式组织在一起并记录到日志文件中
+
+     ```properties
+     Syntax：配置语法（配置关键字 这个格式的名字 添加的所有的字符串变量 ）
+     Default：默认配置（）
+     Context：只能配置在http块中
+     ```
+
+   - 默认nginxlog配置：remote_addr（客户端地址）、remote_user（请求nginx的认证用户名，没有则不激烈）、time_local、request（请求行）、status（响应码）、body_bytes_sent（body大小）、http_referer（上个页面地址）、http_user_agent（客户端agent）、http_x_forwarded_for（）
+
+     ```properties
+     # log_format 是日志格式化标识
+     # main 是日志的名称
+     # 读取变量组织日志 $符号读取变量 
+     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                           '$status $body_bytes_sent "$http_referer" '
+                           '"$http_user_agent" "$http_x_forwarded_for"';
+     # 配置访问日志： 日志地址 采用的日志格式名称
+     access_log  /var/log/nginx/access.lo  main;
+     ```
+
+3. nginx变量
+
+   - http请求变量：`arg_参数名`、`http_请求头`（请求头）、`sent_http_响应头`（响应头）
+   - 内置变量： 从nginx官网：
+   - 自定义变量：
+
+# 2-15 nginx模块
+
+1. Nginx模块分类
+
+   - nginx官方模块：源码包内置的模块
+   - 第三方模块：第三方开发模块
+
+2. 模块http_stub_status_module：Nginx客户端状态，配置语法
+
+   ```properties
+   Syntax：stub_status;	# 开启 配置语法
+   Default：--		# 默认没有配置
+   Context：server，location 在这两级可以配置
+   ```
+
+   - 配置案例：如下配置表示开启的nginx服务状态配置
+
+     ```properties
+     location /path {
+     	stub_status;
+     }
+     ```
+
+   - 查看nginx状态：ip：端口/path
+
+3. 模块：http_random_index_module：目录中选择一个随机主页，配置语法
+
+   ```properties
+   Syntax：random_index on|off;	# 配置语法
+   Default：off		# 默认没有配置
+   Context：location 在这两级可以配置
+   ```
+
+   - 配置案例
+
+     ```properties
+     location /path {
+     	root /opt/app/code；
+     	random_index on;
+     	# index 就不需要了
+     }
+     ```
+
+   - 查看配置是否生效：`http://ip:端口/path`
+
+4. 模块：http_sub_module：客户端给服务端响应内容的时候用于对http内容替换，配置语法
+
+   ```properties
+   Syntax：sub_filter 要替换的内容  替换以后的内容;	# 配置语法
+   Default：		# 默认没有配置
+   Context：http/server/location 在这两级可以配置
+   
+   Syntax：sub_filter_last_modified on|off;	# 配置语法  nginx服务完成和客户端每次请求时候 校验服务端的内容是否有变更,判断是否有更新
+   Default：off		# 默认没有配置
+   Context：http/server/location 在这两级可以配置
+   
+   Syntax：sub_filter_once on|off;	 # 匹配所有html里的第一个还是所有字符串 on匹配第一个
+   Default：on		#  默认值
+   Context：http/server/location 在这两级可以配置
+   ```
+
+# 2-20 nginx请求限制
+
+1. 链接频率限制：-limit_conn_module：http的连接与请求,三次握手四次挥手连接是一个请求;还天天请求是建立在一次tcp请求基础上,一次tcp请求至少可以产生一次http请求,
+
+   ```properties
+   Syntax：limit_conn_zone key zone=name:size;	 # 
+   Default： 		#  默认值
+   Context：http;    在这两级可以配置
+   
+   Syntax：limit_conn zone number;	 #  
+   Default： 		#  默认值
+   Context：http/server/location 在这两级可以配置
+   ```
+
+2. 请求频率限制：-limit_req_module：
+
+   ```properties
+   Syntax：limit_req_zone key zone=name:size rate=速率;	 # 
+   Default： 		#  默认值
+   Context：http;    在这两级可以配置
+   
+   Syntax：limit_req zone=name;	 # 
+   Default： 		#  默认值
+   Context：http/server/location 在这两级可以配置
+   ```
+
+# 2-23 访问控制
+
+1. 基于IP的访问控制 - http_access_module：客户端可以被代理，只能通过remote_addr，用x_forwarded_for是头信息规定携带的,包含了通过代理所有的IP，要求遵循协议，方式二：结合geo模块；方式三：通过http自定义变量传递；
+
+   ```properties
+   Syntax：alow ip值 | CIDR(网段)|unix(sockt)|all; 允许
+   Default： 		#  默认值
+   Context：http/server/location/limit_except;    在这两级可以配置
+   
+   
+   Syntax：deny ip值 | CIDR(网段)|unix(sockt)|all; 不允许
+   Default： 		#  默认值
+   Context：http/server/location/limit_except;    在这两级可以配置
+   ```
+
+2. x_forwarded_for：可以配置一系列IP
+
+3. 基于用户的信息登陆 - http_auth_basic_module 根据官方格式生成密码文件
+
+   ```PRO
+   Syntax：auth_basic string|off; # string 开启或显示登陆提示
+   Default： off  #  默认值
+   Context：http/server/location/limit_except;    在这两级可以配置
+   
+   Syntax：auth_basic_user_file file; #存储用户密码信息的文件
+   Default： off  #  默认值
+   Context：http/server/location/limit_except;    在这两级可以配置
+   ```
+
+   - 依赖文件方式
+   - 操作管理机械 管理复杂
+   - Nginx结合LUA
+   - Nginx和LDAP打通
+
+# 3-1 Nginx中间件架构
+
+
+
+
+
+
+
+
 
