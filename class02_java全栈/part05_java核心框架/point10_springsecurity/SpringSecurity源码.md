@@ -124,7 +124,7 @@ SecurityContext context = SecurityContextHolder.createEmptyContext();
 Authentication authentication =
     new TestingAuthenticationToken("username", "password", "ROLE_USER"); 
 context.setAuthentication(authentication);
-// 将SecurityContext设置到SecurityContextHolder
+// 将SecurityContext设置到SecurityContextHolder	
 SecurityContextHolder.setContext(context);
 ```
 
