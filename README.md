@@ -60,3 +60,21 @@
 - <font size=5>[part02_docker](/class06_大数据全栈/part02_docker/part02_docker.md)</font>
 - <font size=5>[part03_技术栈](/class06_大数据全栈/part03_技术栈/part03_技术栈.md)</font>
 - <font size=5>[part04_大数据](/class06_大数据全栈/part04_大数据/part04_大数据.md)</font>
+
+# 面试整理
+
+## 001_Redis面试题
+
+1. Redis有哪些数据类型
+   - String、List、Set、ZSet、Hash
+2. 什么是Redis的持久化
+   - RDB：是Redis默认的持久化方式，按照一定的时间把内存的数据用快照的方式保存到磁盘；
+   - AOP：是把Redis执行的写命令记录到文件中，Redis会优先选择AOF恢复
+3. Redis过期键的删除策略
+   - 定时过期：每个设置过过期时间的key会创建对应的定时器，到期就清除；会占用CPU资源处理过期数据
+   - 惰性过期：访问key的时候才会判断是否过期，过期则清除；过期的数据任然在内存中；
+   - 定期清理：每隔一段时间，扫描数据库中的key；
+4. 为什么Redis效率高
+   - 纯内存操作
+   - 核心是基于非阻塞的IO多路复用
+   - 单线程避免线程之间切换的损耗
