@@ -468,6 +468,321 @@ class LoginController {
 }
 ```
 
+#### 10.10.2 Basic Authentication
+
+让我们看看HTTP基本身份验证是如何在Spring Security中工作的。首先，我们看到WWW-Authenticate头被发回给一个未经过身份验证的客户端。
+
+<img src='https://docs.spring.io/spring-security/site/docs/current/reference/html5/images/servlet/authentication/unpwd/basicauthenticationentrypoint.png'/>
+
+> 1. 首先，用户向未授权的资源/私有发出未经身份验证的请求。
+> 2. Spring Security的FilterSecurityInterceptor通过抛出AccessDeniedException来拒绝未经身份验证的请求。
+> 3. 由于用户没有经过身份验证，ExceptionTranslationFilter将启动启动身份验证。配置的AuthenticationEntryPoint是一个BasicAuthenticationEntryPoint的实例，它发送一个WWW-Authenticate报头。RequestCache通常是一个不保存请求的NullRequestCache，因为客户机能够重放它最初请求的请求。
+
+当客户端接收到WWW-Authenticate报头时，它知道应该用用户名和密码重试。下面是正在处理的用户名和密码的流程。
+
+<img src='https://docs.spring.io/spring-security/site/docs/current/reference/html5/images/servlet/authentication/unpwd/basicauthenticationfilter.png'/>
+
+> 1. *：*当用户提交他们的用户名和密码时，BasicAuthenticationFilter通过从HttpServletRequest中提取用户名和密码来创建UsernamePasswordAuthenticationToken，这是一种身份验证类型。
+> 2. 接下来，将UsernamePasswordAuthenticationToken传递到AuthenticationManager中进行身份验证。AuthenticationManager的详细信息取决于用户信息的存储方式。
+> 3. 如果身份验证失败，则失败
+> 4. 如果身份验证成功，则Success。
+
+默认情况下，Spring Security的HTTP基本身份验证支持是启用的。但是，只要提供了任何基于servlet的配置，就必须显式地提供HTTP Basic。
+
+一个最小的，显式的配置可以找到如下:
+
+```java
+protected void configure(HttpSecurity http) {
+    http
+        // ...
+        .httpBasic(withDefaults());
+}
+```
+
+####  10.10.3 Digest Authentication
+
+本节详细介绍Spring Security如何提供摘要身份验证支持，摘要身份验证是由DigestAuthenticationFilter提供的。
+
+> 您不应该在现代应用程序中使用摘要身份验证，因为它被认为不安全。最明显的问题是必须以明文、加密或MD5格式存储密码。所有这些存储格式都是不安全的。相反，您应该使用单向自适应密码散列(即bCrypt, PBKDF2, SCrypt等)存储凭证，这是摘要认证不支持的。
+
+#### 10.10.4 In-Memory Authenticatio
+
+Spring Security的InMemoryUserDetailsManager实现了UserDetailsService，以支持在内存中检索的基于用户名/密码的身份验证。InMemoryUserDetailsManager通过实现UserDetailsManager接口来提供对UserDetails的管理。当Spring Security配置为接受用户名/密码进行身份验证时，将使用基于UserDetails的身份验证。
+
+在这个示例中，我们使用Spring Boot CLI对password的密码进行编码，并获得编码后的密码{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW。
+
+```java
+@Bean
+public UserDetailsService users() {
+    UserDetails user = User.builder()
+        .username("user")
+        .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
+        .roles("USER")
+        .build();
+    UserDetails admin = User.builder()
+        .username("admin")
+        .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
+        .roles("USER", "ADMIN")
+        .build();
+    return new InMemoryUserDetailsManager(user, admin);
+}
+```
+
+> 上面的示例以安全的格式存储密码，但在入门经验方面还有很多不足之处。
+
+在下面的示例中，我们利用了User。withDefaultPasswordEncoder来确保存储在内存中的密码是受保护的。但是，它不能通过反编译源代码来防止获得密码。出于这个原因，用户。withDefaultPasswordEncoder应该只用于“开始”，而不是用于生产。
+
+```java
+@Bean
+public UserDetailsService users() {
+    // The builder will ensure the passwords are encoded before saving in memory
+    UserBuilder users = User.withDefaultPasswordEncoder();
+    UserDetails user = users
+        .username("user")
+        .password("password")
+        .roles("USER")
+        .build();
+    UserDetails admin = users
+        .username("admin")
+        .password("password")
+        .roles("USER", "ADMIN")
+        .build();
+    return new InMemoryUserDetailsManager(user, admin);
+}
+```
+
+没有简单的方法来使用User。withDefaultPasswordEncoder基于XML的配置。对于演示或刚刚开始，您可以选择在密码前加上{noop}，以表示不应该使用编码。
+
+*：*<user-service> {noop} XML配置
+
+```xml
+<user-service>
+    <user name="user"
+        password="{noop}password"
+        authorities="ROLE_USER" />
+    <user name="admin"
+        password="{noop}password"
+        authorities="ROLE_USER,ROLE_ADMIN" />
+</user-service>
+```
+
+#### 10.10.5  JDBC Authentication
+
+Spring Security的JdbcDaoImpl实现了UserDetailsService来提供对使用JDBC检索的基于用户名/密码的身份验证的支持。JdbcUserDetailsManager扩展了JdbcDaoImpl，通过UserDetailsManager接口提供对UserDetails的管理。当Spring Security配置为接受用户名/密码进行身份验证时，将使用基于UserDetails的身份验证。
+
+在下面的章节中，我们将讨论:
+
+- Spring安全JDBC身份验证使用的默认模式
+- 设置数据源
+- JdbcUserDetailsManager bean
+
+**Default Schema**
+
+Spring Security为基于JDBC的身份验证提供默认查询。本节提供与默认查询相对应的默认模式。您将需要调整模式，以匹配与您正在使用的查询和数据库方言相匹配的定制。
+
+**User Schema**
+
+JdbcDaoImpl需要表来加载用户的密码、帐户状态(启用或禁用)和权限(角色)列表。需要的默认模式可以在下面找到。默认模式也公开为一个名为org/springframework/security/core/userdetails/jdbc/users.ddl的类路径资源。
+
+- Default User Schema
+
+  ```sql
+  create table users(
+      username varchar_ignorecase(50) not null primary key,
+      password varchar_ignorecase(500) not null,
+      enabled boolean not null
+  );
+  
+  create table authorities (
+      username varchar_ignorecase(50) not null,
+      authority varchar_ignorecase(50) not null,
+      constraint fk_authorities_users foreign key(username) references users(username)
+  );
+  create unique index ix_auth_username on authorities (username,authority);
+  ```
+
+- Oracle是一种流行的数据库选择，但是需要略微不同的模式。您可以在下面找到用于用户的默认Oracle Schema。
+
+  ```sql
+  CREATE TABLE USERS (
+      USERNAME NVARCHAR2(128) PRIMARY KEY,
+      PASSWORD NVARCHAR2(128) NOT NULL,
+      ENABLED CHAR(1) CHECK (ENABLED IN ('Y','N') ) NOT NULL
+  );
+  
+  
+  CREATE TABLE AUTHORITIES (
+      USERNAME NVARCHAR2(128) NOT NULL,
+      AUTHORITY NVARCHAR2(128) NOT NULL
+  );
+  ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_UNIQUE UNIQUE (USERNAME, AUTHORITY);
+  ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_FK1 FOREIGN KEY (USERNAME) REFERENCES USERS (USERNAME) ENABLE;
+  ```
+
+**Group Schema**
+
+如果您的应用程序利用组，您将需要提供组模式。组的默认模式可以在下面找到。
+
+```sql
+create table groups (
+    id bigint generated by default as identity(start with 0) primary key,
+    group_name varchar_ignorecase(50) not null
+);
+
+create table group_authorities (
+    group_id bigint not null,
+    authority varchar(50) not null,
+    constraint fk_group_authorities_group foreign key(group_id) references groups(id)
+);
+
+create table group_members (
+    id bigint generated by default as identity(start with 0) primary key,
+    username varchar(50) not null,
+    group_id bigint not null,
+    constraint fk_group_members_group foreign key(group_id) references groups(id)
+);
+```
+
+**Setting up a DataSource**
+
+在配置JdbcUserDetailsManager之前，必须创建一个数据源。在我们的示例中，我们将设置一个使用默认用户模式初始化的嵌入式数据源
+
+```java
+@Bean
+DataSource dataSource() {
+    return new EmbeddedDatabaseBuilder()
+        .setType(H2)
+        .addScript("classpath:org/springframework/security/core/userdetails/jdbc/users.ddl")
+        .build();
+}
+```
+
+> 在生产环境中，您将希望确保建立到外部数据库的连接。
+
+**JdbcUserDetailsManager Bean**
+
+在这个示例中，我们使用Spring Boot CLI对password的密码进行编码，并获得编码后的密码{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW。有关如何存储密码的更多细节，请参阅PasswordEncoder一节。
+
+#### 10.10.6. UserDetails
+
+UserDetails由UserDetailsService返回。DaoAuthenticationProvider验证UserDetails，然后返回一个Authentication，该Authentication有一个主体，该主体是由已配置的UserDetailsService返回的UserDetails。
+
+#### 10.10.7. UserDetailsService
+
+DaoAuthenticationProvider使用UserDetailsService检索用户名、密码和其他属性，以验证用户名和密码。Spring Security提供了UserDetailsService的内存和JDBC实现。
+
+您可以通过将自定义UserDetailsService公开为bean来定义自定义身份验证。例如，以下将自定义身份验证，假设CustomUserDetailsService实现了UserDetailsService:
+
+> 只有当AuthenticationManagerBuilder没有被填充并且AuthenticationProviderBean没有被定义时才会使用。
+
+```java
+@Bean
+CustomUserDetailsService customUserDetailsService() {
+    return new CustomUserDetailsService();
+}
+```
+
+#### 10.10.8. PasswordEncoder
+
+Spring Security的servlet通过与PasswordEncoder集成来支持安全存储密码。定制Spring Security使用的PasswordEncoder实现可以通过公开PasswordEncoder Bean来完成
+
+####  10.10.9. DaoAuthenticationProvider
+
+DaoAuthenticationProvider是一个AuthenticationProvider实现，它利用UserDetailsService和PasswordEncoder来验证用户名和密码。
+
+让我们看看DaoAuthenticationProvider是如何在Spring Security中工作的。图中解释了读取用户名和密码中的AuthenticationManager如何工作的细节。
+
+<img src='https://docs.spring.io/spring-security/site/docs/current/reference/html5/images/servlet/authentication/unpwd/daoauthenticationprovider.png'/>
+
+> 1. 读取用户名和密码的身份验证过滤器将UsernamePasswordAuthenticationToken传递给AuthenticationManager，这是由ProviderManager实现的。
+> 2. ProviderManager被配置为使用DaoAuthenticationProvider类型的AuthenticationProvider。
+> 3. DaoAuthenticationProvider从UserDetailsService中查找UserDetails。
+> 4. 然后，DaoAuthenticationProvider使用PasswordEncoder验证上一步返回的UserDetails上的密码。
+> 5. 当身份验证成功时，返回的身份验证类型为UsernamePasswordAuthenticationToken，并且具有一个主体，该主体是由已配置的UserDetailsService返回的UserDetails。最终，返回的UsernamePasswordAuthenticationToken将由身份验证过滤器在SecurityContextHolder上设置。
+
+#### 10.10.10. LDAP Authentication
+
+LDAP经常被组织用作用户信息的中心存储库和身份验证服务。它还可以用于存储应用程序用户的角色信息。
+
+当Spring Security被配置为接受用户名/密码进行身份验证时，Spring Security将使用基于LDAP的身份验证。但是，尽管利用用户名/密码进行身份验证，但它并没有使用UserDetailsService集成，因为在绑定身份验证中，LDAP服务器没有返回密码，因此应用程序不能执行密码验证。
+
+对于如何配置LDAP服务器，有许多不同的场景，因此Spring Security的LDAP提供者是完全可配置的。它使用单独的策略接口进行身份验证和角色检索，并提供可以配置为处理各种情况的缺省实现。
+
+**预备知识**
+
+在尝试将LDAP与Spring Security一起使用之前，您应该熟悉LDAP。下面的链接很好地介绍了相关的概念，并提供了使用免费LDAP服务器OpenLDAP设置目录的指南:https://www.zytrax.com/books/ldap/。熟悉一些用于从Java访问LDAP的JNDI api可能也很有用。我们在LDAP提供程序中没有使用任何第三方LDAP库(Mozilla、JLDAP等)，但是Spring LDAP得到了广泛的使用，所以如果您计划添加自己的自定义，对该项目有所了解可能会有所帮助。
+
+在使用LDAP身份验证时，一定要确保正确配置LDAP连接池。如果您不熟悉如何做到这一点，可以参考Java LDAP文档。
+
+**设置嵌入式LDAP服务器**
+
+您需要做的第一件事是确保有一个LDAP Server来指向您的配置。为简单起见，最好从嵌入式LDAP Server开始。Spring Security支持使用以下任意一种:
+
+- 嵌入式UnboundID服务器
+- 嵌入式ApacheDS服务器
+
+在下面的示例中，我们将以下内容作为用户公开。ldif作为类路径资源来初始化嵌入的LDAP服务器，其中用户user和admin的密码都是password。
+
+```
+
+```
+
+**嵌入式UnboundID服务器**
+
+如果你想使用UnboundID，请指定以下依赖项:
+
+```xml
+<dependency>
+    <groupId>com.unboundid</groupId>
+    <artifactId>unboundid-ldapsdk</artifactId>
+    <version>4.0.14</version>
+    <scope>runtime</scope>
+</dependency>
+```
+
+然后可以配置嵌入式LDAP服务器
+
+```java
+@Bean
+UnboundIdContainer ldapContainer() {
+    return new UnboundIdContainer("dc=springframework,dc=org",
+                "classpath:users.ldif");
+}
+```
+
+**嵌入式ApacheDS服务器**
+
+> Spring Security使用ApacheDS 1。X不再保持。不幸的是,ApacheDS 2。X只发布了里程碑版本，没有稳定的版本。一旦ApacheDS 2稳定发布。X有了，我们会考虑更新
+
+如果你想使用Apache DS，那么指定以下依赖项:
+
+```xml
+<dependency>
+    <groupId>org.apache.directory.server</groupId>
+    <artifactId>apacheds-core</artifactId>
+    <version>1.5.5</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.directory.server</groupId>
+    <artifactId>apacheds-server-jndi</artifactId>
+    <version>1.5.5</version>
+    <scope>runtime</scope>
+</dependency>
+```
+
+然后可以配置嵌入式LDAP服务器
+
+```java
+@Bean
+ApacheDSContainer ldapContainer() {
+    return new ApacheDSContainer("dc=springframework,dc=org",
+                "classpath:users.ldif");
+}
+```
+
+**LDAP ContextSource**
+
 
 
 # 12 OAuth2
@@ -637,7 +952,7 @@ spring:
 
 > provider.okta: base属性允许对协议端点位置进行自定义配置。
 
-### 12.1.5 覆盖Spring Boot 2。x自动配置
+### 12.1.5 覆盖Spring Boot 2.x自动配置
 
 SpringBoot 2 支持OAuth Client的自动配置类是oauth2clienttautoconfiguration。
 
@@ -1146,13 +1461,13 @@ OAuth 2.0客户端特性支持在OAuth 2.0授权框架中定义的客户端角�
   - 刷新令牌
   - 客户端凭证
   - 资源所有者密码凭据
-  - JWT无记名
+  - JWT Bearer
 - 客户端身份验证的支持
-  - JWT无记名
+  - JWT Bearer
 - HTTP客户端支持
   - Servlet环境的集成(用于请求受保护的资源)
 
-oauth2client () DSL提供了许多配置选项，用于定制OAuth 2.0客户端使用的核心组件。另外，HttpSecurity.oauth2Client(). authorizationcodegrant()允许自定义授权代码授权。
+HttpSecurity.oauth2Client() DSL提供了许多配置选项，用于定制OAuth 2.0客户端使用的核心组件。另外，HttpSecurity.oauth2Client(). authorizationcodegrant()允许自定义授权代码授权。
 
 下面的代码显示了HttpSecurity.oauth2Client() DSL提供的完整配置选项:
 
@@ -1177,9 +1492,7 @@ public class OAuth2ClientSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
-除了HttpSecurity.oauth2Client() DSL之外，还支持XML配置。
-
-以下代码显示了安全命名空间中可用的完整配置选项:
+除了HttpSecurity.oauth2Client() DSL之外，还支持XML配置。以下代码显示了安全命名空间中可用的完整配置选项:
 
 ```xml
 <http>
@@ -1224,24 +1537,24 @@ public OAuth2AuthorizedClientManager authorizedClientManager(
 下面几节将详细介绍OAuth 2.0客户端使用的核心组件和可用的配置选项:
 
 - 核心接口/类
-  - ClientRegistration
-  - ClientRegistrationRepository
-  - OAuth2AuthorizedClient
-  - OAuth2AuthorizedClientRepository / OAuth2AuthorizedClientService
-  - OAuth2AuthorizedClientManager / OAuth2AuthorizedClientProvider
+  - ClientRegistration - 新客户注册
+  - ClientRegistrationRepository - 客户端注册库
+  - OAuth2AuthorizedClient - OAuth2授权客户端
+  - OAuth2AuthorizedClientRepository / OAuth2AuthorizedClientService - 授权客户端存储库/授权客户端服务
+  - OAuth2AuthorizedClientManager / OAuth2AuthorizedClientProvider - 
 - 授权给予支持
-  - 授权代码
-  - 刷新令牌
-  - 客户端凭证
-  - 资源所有者密码凭据
-  - JWT无记名
+  - Authorization Code - 授权码
+  - Refresh Token - 刷新令牌
+  - Client Credentials - 客户端凭证
+  - Resource Owner Password Credentials - 资源所有者密码凭据
+  - JWT Bearer
 - 客户端身份验证的支持
-  - JWT无记名
+  - JWT Bearer
 - 附加功能
   - 解析授权客户端
 - 用于Servlet环境的WebClient集成
 
-### 12.2.1 Core Interfaces / Classes
+### 12.2.1 核心接口和类
 
 #### ClientRegistration
 
