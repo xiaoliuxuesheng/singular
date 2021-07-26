@@ -787,6 +787,39 @@ ApacheDSContainer ldapContainer() {
 
 # 12 OAuth2
 
+## 12.0 OAuth2 概述
+
+### 12.0.1 什么是OAuth2
+
+OAuth2 是一个验证授权的(Authorization)的开放标准
+
+## 12.0.1 OAuth2 核心组件
+
+1. Scopes and Consent:Scopes即Authorizaion时的一些请求权限，即与access token绑定在一起的一组权限。OAuth Scopes将授权策略（Authorization policy decision）与授权执行分离开来。并会很明确的表示OAuth Scopes将会获得的权限范围。
+
+2. Actors:OAuth的流程中，主要有如下四个角色。其关系如下图所示：
+
+   <img src='https://pic2.zhimg.com/80/v2-7f724c320f76f07e7667ca9efafd0041_720w.jpg'/>
+
+   - Resource Owner: 用户拥有资源服务器上面的数据。例如：我是一名Facebook的用户，我拥有我的Facebook 个人简介的信息。
+   - Resource Server: 存储用户信息的API Service
+   - Client: 想要访问用户的客户端
+   - Authorization Server: OAuth的主要引擎，授权服务器，获取token。
+
+3. OAuth Tokens:Token从Authorization server上的不同的endpoint获取。主要两个endpoint为`authorize endpoint`和`token endpoint`. authorize endpoint主要用来获得来自用户的许可和授权(consent and authorization)，并将用户的授权信息传递给`token endpoint`。token endpoint对用户的授权信息，处理之后返回`access token`和`refresh token`。 当access token过期之后，可以使用refresh token去请求token endpoint获取新的token。（开发者在开发endpoint时，需要维护token的状态，refresh token rotate）
+
+   <img src='https://pic4.zhimg.com/80/v2-4c08d08ea39dfcf1d4b89e50812c7103_720w.jpg'/>
+
+   - Access token: 即客户端用来请求Resource Server(API). Access tokens通常是short-lived短暂的。access token是short-lived, 因此没有必要对它做revoke, 只需要等待access token过期即可。
+   - Refresh token: 当access token过期之后refresh token可以用来获取新的access token。refresh token是long-lived。refresh token可以被revoke。
+
+4. OAuth有两个流程，1.获取Authorization，2. 获取Token。这两个流程发送在不同的channel，Authorization发生在Front Channel（发生在用户浏览器）而Token发生在Back Channel。
+
+   <img src='https://pic2.zhimg.com/80/v2-f2ac72dd2848265ac1b2deeab5cbec75_720w.jpg'/>
+
+   - Front Channel: 客户端通过浏览器发送Authorization请求，由浏览器重定向到Authorization Server上的Authorization Endpoint，由Authorization Server返回对话框，并询问“是否允许这个应用获取如下权限”。Authorization通过结束后通过浏览器重定向到回调URL（Callback URL）。
+   - Back Channel: 获取Token之后，token应有由客户端应用程序使用，并与资源服务器（Resource Service）进行交互。
+
 ## 12.1 OAuth2 登陆
 
 OAuth2.0 登陆特性提供一个应用程序：这个特性的能力可以使允许用户在OAuth 2.0提供商(如GitHub)或OpenID Connect 1.0提供商(如谷歌)上使用现有帐户登录应用程序的能力，OAuth 2.0登录实现了用例:“用谷歌登录”或“用GitHub登录”。
@@ -1454,22 +1487,22 @@ DefaultOAuth2UserService是OAuth2UserService的一个实现，它支持标准的
 
 ## 12.2 OAuth2 客户端
 
-OAuth 2.0客户端特性支持在OAuth 2.0授权框架中定义的客户端角色。在高层次上，可用的核心特性是:
+OAuth2 Client产品功能也提供了对OAuth2授权框架中的OAuth2Client角色的支持。在底层设计中核心功能如下:
 
-- 授权给予支持
-  - 授权代码
-  - 刷新令牌
-  - 客户端凭证
-  - 资源所有者密码凭据
-  - JWT Bearer
+- 授权支持
+  - [授权代码]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.1))
+  - [刷新令牌]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-6))
+  - [客户端凭证]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-6))
+  - [资源所有者密码凭据]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.3))
+  - [JWT Bearer]([rfc7523 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7523#section-2.1))
 - 客户端身份验证的支持
   - JWT Bearer
 - HTTP客户端支持
   - Servlet环境的集成(用于请求受保护的资源)
 
-HttpSecurity.oauth2Client() DSL提供了许多配置选项，用于定制OAuth 2.0客户端使用的核心组件。另外，HttpSecurity.oauth2Client(). authorizationcodegrant()允许自定义授权代码授权。
+`HttpSecurity.oauth2Client()` DSL提供了许多配置选项来定制OAuth 2.0客户端使用的核心组件。此外，`HttpSecurity.oauth2Client().authorizationCodeGrant()`支持自定义授权代码授予。
 
-下面的代码显示了HttpSecurity.oauth2Client() DSL提供的完整配置选项:
+下面的代码显示了`HttpSecurity.oauth2Client()` DSL提供的完整配置选项:
 
 ```java
 @EnableWebSecurity
@@ -1507,9 +1540,9 @@ public class OAuth2ClientSecurityConfig extends WebSecurityConfigurerAdapter {
 </http>
 ```
 
-OAuth2AuthorizedClientManager负责管理OAuth 2.0客户端的授权(或重新授权)，与一个或多个OAuth2AuthorizedClientProvider(s)协作。
+OAuth2AuthorizedClientManager与一个或多个OAuth2AuthorizedClientProvider合作，负责管理OAuth 2.0客户端的授权(或重新授权)。
 
-下面的代码演示了如何注册OAuth2AuthorizedClientManager @Bean，并将其与OAuth2AuthorizedClientProvider组合关联，该组合提供了对authorization_code、refresh_token、client_credentials和密码授权授权类型的支持:
+下面的代码演示了如何注册一个OAuth2AuthorizedClientManager @Bean，并将其与一个OAuth2AuthorizedClientProvider组合关联，该组合提供了对authorization_code、refresh_token、client_credentials和密码授权授予类型的支持:
 
 ```java
 @Bean
@@ -1823,4 +1856,12 @@ public OAuth2AuthorizedClientManager authorizedClientManager(
     return authorizedClientManager;
 }
 ```
+
+### 12.2.2 授权给予支持
+
+### 12.2.3 客户端身份验证的支持
+
+### 12.2.4 附加特性
+
+### 12.2.5 用于Servlet环境的WebClient集成
 
