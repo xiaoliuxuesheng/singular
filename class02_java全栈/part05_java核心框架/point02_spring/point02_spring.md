@@ -858,3 +858,31 @@ try {
 
 # 第六章 Spring源码解析
 
+## 6.1 SpringBoot启动
+
+1. new SpringApplication(Class<?> primarySources)
+   - `Set<Class<?>> SpringApplication.primarySources`：将主启动类赋值给该属性
+   - `WebApplicationType SpringApplication.webApplicationType`：如果存在DispatcherServlet以WEB应用启动
+   - `List<BootstrapRegistryInitializer> SpringApplication.bootstrapRegistryInitializers`：读取/META-INFO/spring.actories配置文件汇中key为`org.springframework.boot.BootstrapRegistryInitializer`的配置的全类名反射生成实例对象存储在集合中；作用：
+   - `List<ApplicationListener<?>> SpringApplication.listeners`：读取/META-INFO/spring.actories配置文件汇中key为`org.springframework.context.ApplicationListener`的配置的全类名反射生成实例对象存储在集合中；SpringBoot监听器：作用是在Spring容器初始化Bean时候的回调；
+   - `Class<?> SpringApplication#mainApplicationClass`：获取到主启动类类名，获取main方法所在类的类名；
+2. SpringApplication#run(String... args)
+   1. getRunListeners(args) & starting()：获取并启动监听器
+      - 读取/META-INFO/spring.actories配置文件汇中key为`org.springframework.boot.SpringApplicationRunListener`：主要负责SpringBoot启动不同阶段广播出不同消息，传递给ApplicationListener监听器器实现类；
+   2. prepareEnvironment()：启动并构造应用Context
+      - 创建环境对象StandardEnvironment：
+        - ①读取系统配置
+        - ②添加应用启动命令行参数
+        - ③启动ConfigFileApplicationListener
+        - ④应用配置文件属性：
+   3. createApplicationContext()：初始化Context，就是包含了当前环境所依赖的属性的一个对象
+      - AnnotationConfigServletWebServerApplicationContext初始化两个属性AnnotatedBeanDefinitionReader和ClassPathBeanDefinitionScanner
+      - 创建了BeanFactory：DefaultListableBeanFactory
+   4. prepareContext()：刷新Context的准备阶段
+      - 设置环境变量Environment
+      - 执行容器后置处理器：给IOC容器添加内置转换器
+      - 向各个监听器发送容器准备完成：
+      - 主启动类对象定义到BeanDefinitionRegistry中，
+   5. refreshContext()：刷新Context-执行SpringBean的创建
+   6. afterRefresh()：刷新Context后的扩展接口
+      - 是空实现：模板方法模式；

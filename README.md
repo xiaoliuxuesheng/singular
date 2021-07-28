@@ -78,3 +78,24 @@
    - 纯内存操作
    - 核心是基于非阻塞的IO多路复用
    - 单线程避免线程之间切换的损耗
+
+## 002_MySQL面试
+
+## 003_Spring
+
+1. Spring项目添加事物的方式
+   - 使用在Spring Beand的方法上@Transactional注解：事物粒度比较大，只能控制整个方法；
+   - TransactionTemplate：在execute方法方法中执行事物，事物粒度小，执行单条SQL，但是不能设置事物属性；
+   - PlatformTransactionManager通过TransactionDefinition获取到TransactionStatus：执行完成后commit，执行失败后rollback，，事物粒度小，执行单条SQL，并且可以设置事物属性；
+2. 事物嵌套
+   - 
+
+# 架构
+
+1. 高并发相关理论
+   - 瓶颈分析
+   - CPA理论
+2. 高并发技术
+   - 流量网关：全局流量控制、日志统计、SQL注入、web攻击、黑名单控制、
+   - 业务网关：安全、权限、路由、过滤、流控、缓存、服务路由、业务聚合
+   -  
