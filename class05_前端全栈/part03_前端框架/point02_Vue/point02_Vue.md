@@ -904,7 +904,7 @@ var vm = new Vue({
 
 ## 3.1 组件开发思想
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;前端代码开发中，程序实现是希望尽可能多的做到代码重用，然而前端在代码重用中可能会产生CSS样式和JS业务逻辑的冲突；由此产生的Web Components开发标准：其核心思想是通过创建封装特定功能的定制元素（是一个自定义标签并且具有特定功能），并且能够解决冲突问题；
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>前端代码开发中，程序实现是希望尽可能多的做到代码重用，然而前端在代码重用中可能会产生CSS样式和JS业务逻辑的冲突；由此产生的Web Components开发标准：其核心思想是通过创建封装特定功能的定制元素（是一个自定义标签并且具有特定功能），并且能够解决冲突问题；
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是这个Web Components标准没有被浏览器广泛支持，但是Vue部分实现了Web Components开发标准。把不同的功能在不同的组件中开发，通过组件组合的方式实现功能的同一实现。
 
@@ -1160,17 +1160,94 @@ var vm = new Vue({
 
 ### 1. 插槽概述
 
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在定义Vue组件的时候，在组件内预留指定位置作为插槽（slot），当在使用组件的时候在这个插槽位置的展示内容可以由使用者指定，所以插槽的目的是为了让Vue组件更具有扩展性
 
+### 2. 插槽使用
 
-### 2. 插槽使用-子组件接收内容
+- **插槽的基本使用**：①在子组件内定义`<slot>`作为插槽②父组件使用子组件时候，在组件内自定义内容替换子组件的插槽
 
+  ```html
+  定义子组件,在子组件内指定<slot></slot>
+  <template id="cpn">
+      <div>
+          <p>我是组件</p>
+          <slot></slot>
+      </div>
+  </template>
+  在父组件中使用子组件时候,在组件内自定义内容
+  <cpn>
+      <button>用按钮代替插槽内容</button>
+  </cpn>
+  ```
 
+- **插槽默认值**：在定义插槽时候可以为slot内指定默认内容
 
-### 3. 插槽使用-具名插槽
+  ```html
+  <template id="cpnC">
+      <div>
+          <p>我是组件C</p>
+          <slot>
+              <button>这是插槽内的默认值</button>
+          </slot>
+      </div>
+  </template>
+  ```
 
+- **具名插槽**：如果在子组件中要定义多个没有命名的slot，子组件的多个插槽都会被父组件提供的内容替换
 
+  ```html
+  在子组件中定义插槽时候为slot指定name值
+  <template id="cpnB">
+      <div>
+          <p>我是组件B</p>
+          <slot name="a"></slot>
+          <slot name="b"></slot>
+          <slot name="c"></slot>
+      </div>
+  </template>
+  在父组件总中使用组件时候，给替换的内容添加slot属性并指定插槽的名称
+  <cpn-b>
+      <button slot="a">替换插槽A</button>
+      <button slot="b">替换插槽B</button>
+      <button slot="c">替换插槽C</button>
+  </cpn-b>
+  ```
 
-### 4. 插槽使用-子组件返回值
+- **作用域插槽**：在父组件替换子组件时候，定义在插槽上的数据是来自子组件，而不是来自使用组件的实例；
+
+  ```html
+  第一步 首先在子组件中定义插槽并定义data
+  <script>
+      const vm = new Vue({
+          el: '#app',
+          components:{
+              'cpn-a':{
+                  template:'#cpnA',
+                  data(){
+                      return{
+                          list: ['java','vue','c++']
+                      }
+                  }
+              }
+          }
+      })
+  </script>
+  
+  第二步 在子组件中定义插槽并在插槽中绑定数据
+  <template id="cpnA">
+      <div>
+          <p>我是子组件</p>
+          <slot :data="list"></slot>
+      </div>
+  </template>
+  
+  第三步 父组件中在使用子组件的插槽时候, 在插槽中定义根标签, 在标签中添加slot-scope属性绑定到插槽并使用插槽作用域中数据
+  <cpn-a>
+      <div slot-scope="slot">
+          <span v-for="item in slot.data">{{item}} </span>
+      </div>
+  </cpn-a>
+  ```
 
 # 第四章 vue-cli
 
