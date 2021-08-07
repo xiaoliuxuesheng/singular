@@ -27,8 +27,6 @@
 
    - 安装Gradle
 
-   - 安装Androidstudio
-
    - 下载Flutter SDK：[WIN]([Flutter SDK releases - Flutter](https://flutter.dev/docs/development/tools/sdk/releases#windows))
 
      - 配置Fluuter环境变量
@@ -38,7 +36,17 @@
        Path=%FLUUTER_HOME%/bin
        ```
 
-       
+   - 安装AndroidStudio
+
+     - 下载
+     - 安装
+     - 配置AndroidSDK
+       - 检查工具网站：http://ping.chinaz.com/dl.google.com
+       - 配置host：180.163.151.33 dl.google.com
+
+   - 配置AndroidSDK
+
+     - 
 
 3. Dart概述
 
@@ -50,18 +58,28 @@
 
    - 官网：https://dart.dev/get-dart
 
+   - win环境检查
+
+     ```sh
+     Get-ExecutionPolicy
+     > Restricted
+     Set-ExecutionPolicy AllSigned
+     or
+     Set-ExecutionPolicy Bypass -Scope Process.
+     ```
+
    - Powershell
 
      ```sh
      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
      ```
-
+   
    - 安装Dart
 
      ```sh
      choco install dart-sdk
      ```
-
+   
 5. Dart语言风格
 
    - 所有能够使用变量引用的都是对象；

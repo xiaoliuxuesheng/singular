@@ -1487,18 +1487,52 @@ DefaultOAuth2UserService是OAuth2UserService的一个实现，它支持标准的
 
 ## 12.2 OAuth2 客户端
 
-OAuth2 Client产品功能也提供了对OAuth2授权框架中的OAuth2Client角色的支持。在底层设计中核心功能如下:
+OAuth2 Client产品功能也提供了对OAuth2授权框架中的OAuth2Client角色的支持。在底层设计中核心功能如下：OAuth2提供以下角色：
+
+> 1.  resource owner：（资源所有者）能够给受保护的资源授予访问权的主体，如：微信保存着我的手机号，别人如果要访问我的手机号需要得到我的授权，我就是资源所有者
+> 2. resource server：（资源服务器）用来保护资源的服务器，对外提供访问端点，需要访问资源的时候带着令牌可以查看到服务器内的指定资源数据；
+> 3. client：（客户端）“客户”（一般指应用程序）发出对受保护资源的请求，需要得到资源所有者授权（授权是指资源所有者从认证服务器拿到令牌给到客户端，客户端拿着令牌访问资源服务器上的资源）
+> 4. authorization server（认证服务器）验证资源所有者这的授权，并给客户端发送访问令牌，验证客户端的访问令牌并提供资源访问权限
 
 - 授权支持
-  - [授权代码]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.1))
-  - [刷新令牌]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-6))
-  - [客户端凭证]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-6))
-  - [资源所有者密码凭据]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.3))
+  - [授权代码]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.1))：授权码模式
+
+    ```http
+    /oauth/authorize
+    ?response_type=code
+    &client_id=client_id
+    &redirect_uri=http://example.com
+    &scop=all
+    
+    client_id：客户端的ID，必选项　　
+    redirect_uri：重定向URI，必选项　　
+    scope：申请的权限范围，可选项　　
+    state：任意值，认证服务器会原样返回,用于抵制CSRF(跨站请求伪造)攻击。
+    ```
+
+    
+
+    <img src='https://img-blog.csdn.net/20181019142335962?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQ3MzAxNjU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70'/>
+
+    > - （A）用户访问客户端，客户端将用户引导向认证服务器。（B）
+    > - （B）用户选择是否给予客户端授权，（C并且带授权码）
+    > - （C）如用户给予授权，认证服务器将用户引导向客户端指定的redirection uri，同时加上授权码code。
+    > - （D）客户端收到code后，通过后台的服务器向认证服务器发送code和redirection uri。
+    > - （E）认证服务器验证code和redirection uri，确认无误后，响应客户端访问令牌（access token）和刷新令牌（refresh token）
+
+    
+
+  - [刷新令牌]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-6))：Spring Security Oauth2中，当access_token即将过期时，需要调用/oauth/token，使用refresh_token刷新access_token
+
+  - [客户端凭证]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-6))：客户端以自己的名义访问资源
+
+  - [资源所有者密码凭据]([rfc6749 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.3))：
+
   - [JWT Bearer]([rfc7523 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7523#section-2.1))
 - 客户端身份验证的支持
   - JWT Bearer
 - HTTP客户端支持
-  - Servlet环境的集成(用于请求受保护的资源)
+  - Servlet环境的WebClient集成(用于请求受保护的资源)
 
 `HttpSecurity.oauth2Client()` DSL提供了许多配置选项来定制OAuth 2.0客户端使用的核心组件。此外，`HttpSecurity.oauth2Client().authorizationCodeGrant()`支持自定义授权代码授予。
 
