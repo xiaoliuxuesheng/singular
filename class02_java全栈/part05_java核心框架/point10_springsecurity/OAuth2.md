@@ -803,7 +803,7 @@ OAuth2 是一个验证授权的(Authorization)的开放标准
 
    - Resource Owner: 用户拥有资源服务器上面的数据。例如：我是一名Facebook的用户，我拥有我的Facebook 个人简介的信息。
    - Resource Server: 存储用户信息的API Service
-   - Client: 想要访问用户的客户端
+   - Client: 想要访问用户信息的客户端
    - Authorization Server: OAuth的主要引擎，授权服务器，获取token。
 
 3. OAuth Tokens:Token从Authorization server上的不同的endpoint获取。主要两个endpoint为`authorize endpoint`和`token endpoint`. authorize endpoint主要用来获得来自用户的许可和授权(consent and authorization)，并将用户的授权信息传递给`token endpoint`。token endpoint对用户的授权信息，处理之后返回`access token`和`refresh token`。 当access token过期之后，可以使用refresh token去请求token endpoint获取新的token。（开发者在开发endpoint时，需要维护token的状态，refresh token rotate）
@@ -1530,8 +1530,10 @@ OAuth2 Client产品功能也提供了对OAuth2授权框架中的OAuth2Client角�
 
   - [JWT Bearer]([rfc7523 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7523#section-2.1))
 - 客户端身份验证的支持
+  
   - JWT Bearer
 - HTTP客户端支持
+  
   - Servlet环境的WebClient集成(用于请求受保护的资源)
 
 `HttpSecurity.oauth2Client()` DSL提供了许多配置选项来定制OAuth 2.0客户端使用的核心组件。此外，`HttpSecurity.oauth2Client().authorizationCodeGrant()`支持自定义授权代码授予。
