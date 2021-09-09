@@ -316,6 +316,62 @@
 
 # 第六章 Docker Compose
 
+## 6.1 简介
+
+- Compose项目上Docker官方的开源项目：负责实现对Docker集群的快速编排
+- Compose定位：定义和运行多个Docker容器的应用，允许用户通过单独的docker-compose.yml模版文件来定义一组相关联的容器作为一个项目。
+- Compose中有两个重要概念
+  1. 服务（Service）：一个应用的容器，实际上可以保护若干允许相同惊喜的容器实例；
+  2. 项目（Project）：由一组关联应用容器组成的一个完整的业务单元，在docker-copose.yml中定义（一个配置文件代表一个项目）
+
+## 6.2 Compose安装
+
+- Windows系统
+  - DockerDesktop自带docker-compose
+- Linux系统
+- IOS系统
+  - DockerDesktop自带docker-compose
+
+## 6.3 Compose指令
+
+1. docker-compose使用方式：由于一个docker-compose.yml是一个项目，约定文件名称固定，便于区分，需要将配置文件定义在单独的目录中，将这个文件作为项目；
+
+2. 基本语法
+
+   - version：必须指定，说明项目的版本
+   - services：一个配置文件中可以定义多个服务（service），是在这个services的配置项之下；
+   - services.<服务名>：服务名称不能重复
+   - services.<服务名>.image：当前服务所要使用的镜像，如果镜像不存在会从docker hub拉取，说明镜像和版本
+   - services.<服务名>.ports：数组，用于映射端口，host与容器的端口映射，建议使用字符串
+   - services.<服务名>.volumes：数组，宿主机和容器数据卷映射，
+
+3. 案例：
+
+   ```yaml
+   version: "3.0"
+   services: 
+   	<服务名：tomcat>: 
+   		image: tomcat:8.0-jre8
+   		ports: 
+   			- "8080:8080"
+   		volumes:
+   		  - 宿主机路径:容器路径
+   		  - 容器卷名称（必须在容器中声明容器卷名称）:容器路径
+   		
+   volumes:
+     - 容器卷名称: 宿主机路径
+   ```
+
+4. 使用docker-compose命令执行配置文件：要求执行命令的目录必须要有一个docker-compose.yml文件
+
+   - docker-compose up：启动
+
+   ```sh
+   
+   ```
+
+   
+
 # 第七章 Docker常用安装
 
 ## 6.1 MySql
@@ -348,6 +404,10 @@
    - docker build -t 镜像名称:[tag] dockerFile路径 
 
 ## 7.2 Docker-Compose
+
+- Compose项目上Docker官方的开源项目，负责实现对Docker容器集群的快速编排。
+
+- 
 
 - 运行一个Docker镜像,需要大量的参数,可以通过Docker-Compose编写这些参数,可以批量管理容器,只需要通过docker-compose.yml文件维护
 
