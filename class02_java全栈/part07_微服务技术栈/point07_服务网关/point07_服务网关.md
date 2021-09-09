@@ -1,3 +1,115 @@
+
+
+# gateway
+
+1. 什么是SpringCloud Gateway
+
+   - 作为SpringCloud生态中的网关，目标是替代Netflix Zuul，提供了统一的路由方式，并且基于Filter的方式提供了网关的基本功能；
+
+2. 什么是服务网关：简单理解服务网关就是多个服务架构系统中所有服务的统一入口：客户端请求统一到服务网关，再由服务网关将请求路由转发到指定服务；
+
+3. 为什么要使用网关：减少客户端与微服务的直接交互次数，由网关进行统一认证；
+
+4. 网关解决了什么问题：
+
+   - 性能
+   - 安全
+
+5. 常用网关：
+
+   - Nginx+Lua：Nginx适合做门户网站，作为这个那个全局网关；而gateway属于业务网关，主要用来对应不同的客户端提供服务，用于聚合业务；
+   - Kong：是Mashape提供的API管理软件，是对Nginx+Lua进行二次开发，
+   - Traefic：是开源GO语言开发的让部署微服务更加便捷的HTTP反向代理
+   - SpringCloud Netflix zuul：开发团队延期
+   - Spring Cloud gateway：替代Zuul
+
+6. 环境准备
+
+   - 注册中心：Nacos
+
+   - Product微服务
+
+     - Maven配置
+
+       ```xml
+       <dependency>
+         <groupId>com.alibaba.cloud</groupId>
+         <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+       </dependency>
+       ```
+
+     - Yaml配置
+
+       ```yaml
+       server:
+         port: 8099
+       spring:
+         application:
+           name: service-product
+         cloud:
+           nacos:
+             discovery:
+               server-addr: 1.116.215.185:8848
+       ```
+
+7. Gateway核心概念
+
+   - 路由（Route）：是网关最基础的部分，路由信息有ID，目标URL，一组断言和一组过滤器组成
+   - 断言（Perdicate）：Java8中的断言函数，Gateway中断言函数输入类型是Spring5.0框架中的ServerWebExchange，断言函数允许开发者去定义匹配来自Http Request中的任何信息
+   - 过滤器（Filter）：一个标准的Spring Web Filter，主要包含两种类型：Gateway Filter和Global Filter
+
+8. Gateway工作原理
+
+   - 请求发送到路由，网关处理程序Handler Mapping映射确定与请求相匹配的路由
+   - 然后将其发送到网关Web处理程序Web Handler，
+   - 该处理程序通过制定的过滤器链将请求发送到实际的服务执行业务逻辑
+   - 处理完成后再通过网关Filter将结果返回
+
+9. 网关服务创建
+
+   - 添加Maven依赖
+
+     ```xml
+     <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-gateway</artifactId>
+     </dependency>
+     ```
+
+   - 配置入门路由
+
+     ```yaml
+     server:
+       port: 8888
+     spring:
+       application:
+         name: server-gateway
+       cloud:
+         gateway:
+           routes:
+             - id: service-product
+               uri: http://localhost:8099/
+               predicates:
+                 - Path=/product/*
+     ```
+
+10. 路由规则-path
+
+    - 速度
+
+11. 路由规则-Query：匹配请求中参赛是否包含制定参赛
+
+    - Query=token：匹配请求中包含token的请求
+    - Query=token,abc.：匹配请求中包含token并且其参赛只满足表达式abc.的请求
+
+12. 
+
+
+
 # nacos 脑残
 
 1. 1.3.2后默认启动是集群启动
