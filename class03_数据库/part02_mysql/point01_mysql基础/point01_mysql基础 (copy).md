@@ -1,27 +1,5 @@
 # 前言
 
-
-
-# 第一章 MySQL安装
-
-# 第二章 SQL基础
-
-## 2.1 SQL简介
-
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>SQL（Structure Query Language）：结构化查询语言，是用于和数据库进行交互的一种语言；
-
-## 2.2 SQL语言
-
-1. DDL（Data Definition Language）：数据定义语言，作用是对数据库对象的定义：如数据库，数据表、列、索引等等；DDL包含的sql关键字包含：create、drop、alert；
-2. DML（Data Manipulation Language）：数据库操作语言，作用是添加，删除，更新和查询数据库记录，并检查数据完整性；DML包含的SQL关键字包含：insert、update、delete、select；
-3. DCL（Data Control Language）：数据库控制语言，作用是控制不同的数据段的许可级别和访问级别的语句：如定义数据库、表、字段不同用户的访问权限和安全级别；DCL包含的SQL关键字包含：grant、revoke。
-
-## 2.3 小结
-
-
-
-# 前言
-
 1. MySQL功能迭代
 
    | 时间         | 特点                                           |
