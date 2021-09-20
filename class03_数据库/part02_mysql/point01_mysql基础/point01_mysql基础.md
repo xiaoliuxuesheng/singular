@@ -453,3 +453,141 @@
 
 ## 6.3 Datagrip
 
+# 存储过程
+
+1. 使用说明：存储过程是数据库的一个重要对象，可以封装SQL语句集，可以用来完成一些较复杂的业务逻辑，并且可以指定参数，传教时会先预编译，用户后续调用都不需要再次编译；
+
+2. 存储过程特点
+
+   - 优点
+     - 在生产环境下，可以通过直接修改存储过程的方式修改业务逻辑，不需要重启服务器
+     - 执行速度快，存储过程经过编译后比单独执行要快
+     - 角色网络传输力量
+     - 方便优化
+   - 缺点
+     - 过程化编译，复杂业务处理维护成本高
+     - 调试不方便
+     - 可移植性差，不同数据库的存储过程语法不一样
+
+3. 环境准备
+
+   ```sql
+   ```
+
+4. 声明结束符：mysql使用‘;’作为结束符，而在存储过程中，使用‘;’作为一段sql语句的结束，会导致存储过程冲突
+
+   ```sql
+   delimiter $$
+   ```
+
+5. 语法结构
+
+   ```sql
+   CREATE
+   	[DEFINER = user]
+   	PROCEDURE 存储过程名称(参数[,参数])
+   	[特性定义]
+   	BEGIN
+   		执行体
+   	END$$
+   ```
+
+6. 基本语法
+
+   - 局部变量：只能定义在begin-end语句中有效
+
+     ```sql
+     -- 声明变量
+     declare 变量名称 varchar(10) default '';
+     -- 变量赋值
+     set 变量名称 = '变量值';
+     -- into 关键字赋值
+     select 字段 into 变量名 from 表名 where...
+     ```
+
+   - 用户变量：在一个客户端链接中的sql执行都有效
+
+     ```sql
+     -- 使用@作为变量前缀作为用户变量，不需要变量定义
+     ```
+
+   - 会话变量
+
+   - 全局变量：直接使用，不需要变量声明
+
+     ```sql
+     @全局变量名称
+     ```
+
+7. 参数
+
+   - 基本语法：参数使用逗号分隔
+
+     ```sql
+     -- 入参
+     create procedure 存储过程名称(in 参数名 参数类型,...)
+     -- 出参
+     create procedure 存储过程名称(out 参数名 参数类型,...)
+     -- 入参并且出参
+     create procedure 存储过程名称(inout 参数名 参数类型,...)
+     ```
+
+8. 流程控制 - 判断
+
+   - If语法
+
+     ```sql
+     IF 条件判断 THEN 执行语句
+     ELSEIF 条件判断 THEN 执行语句
+     ELSE 执行语句
+     END IF
+     ```
+
+   - case语法
+
+     ```sql
+     CASE '值'
+     WHEN '' THEN 执行语句
+     WHEN '' THEN 执行语句
+     END CASE
+     ```
+
+   - case语法二
+
+     ```sql
+     CASE
+     	WHEN 条件 THEN 执行语句
+     END CASE
+     ```
+
+9. 流程控制
+
+   - loop语法：是死循环，需要手动退出，leave=breale；iteratior=continue
+
+     ```sql
+     别名:loop
+     	-- leave = breake
+     	leave 别名
+     	-- iterate = continue
+     	iterate 别名
+     end loop 别名
+     ```
+
+   - repeat语法：类似于do-while
+
+     ```sql
+     循环别名:repeat
+     	执行语句
+     until 条件语句
+     end repeat 循环别名
+     ```
+
+   - while语法
+
+     ```sql
+     while 条件语句 do
+     	执行语句
+     end while
+     ```
+
+10. 游标：使用游标得到某个结果集，逐行处理结果

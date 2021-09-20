@@ -318,19 +318,64 @@
 
 ## 6.1 简介
 
-- Compose项目上Docker官方的开源项目：负责实现对Docker集群的快速编排
-- Compose定位：定义和运行多个Docker容器的应用，允许用户通过单独的docker-compose.yml模版文件来定义一组相关联的容器作为一个项目。
+- Compose项目上Docker官方的开源项目：负责实现对Docker集群的快速编排；（解释一下为什么需要容器编排：使用dokerfile可以额方便的定义一饿单独的应用容器，但是在日常工作中，经常是多个容器相互配合，并且有时候还需要容器间按顺序启动，使用docker compose就可以满足这样的需求）
+- Compose定位：定义和运行多个Docker容器的应用，允许用户通过单独的docker-compose.yml模版文件来定义一组相关联的容器作为一个项目。但是Compose做不到特别复杂的工作：如容器的资源调度，由k8s解决；
 - Compose中有两个重要概念
-  1. 服务（Service）：一个应用的容器，实际上可以保护若干允许相同惊喜的容器实例；
-  2. 项目（Project）：由一组关联应用容器组成的一个完整的业务单元，在docker-copose.yml中定义（一个配置文件代表一个项目）
+  1. 服务（Service）：一个应用的容器，服务可以存在多个；
+  2. 项目（Project）：由一组关联应用容器组成的一个完整的业务单元，在docker-copose.yml中定义（可以理解为一个配置文件代表一个项目）
 
 ## 6.2 Compose安装
 
-- Windows系统
-  - DockerDesktop自带docker-compose
-- Linux系统
-- IOS系统
-  - DockerDesktop自带docker-compose
+### 1. Windows系统
+
+- DockerDesktop自带docker-compose
+
+### 2. Mac系统
+
+- DockerDesktop自带docker-compose
+
+### 3. Linux系统
+
+- **安装compose方式一**
+
+  1. 下载
+
+     ```sh
+     # Github官网
+     sudo curl -L https://github.com/docker/compose/releases/download/。。。 /docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+     
+     # 国内下载地址
+     https://get.daocloud.io/#install-compose
+     ```
+
+  2. 安装：是个shell脚本，需要修改下载的文件的执行权限s
+
+     ```sh
+     chmod +x /usr/local/bin/docker-compose
+     ```
+
+- **安装compose方式二**
+
+  1. 安装pip
+
+     ```sh
+     yum -y install epel-release
+     yum -y install python-pip
+     
+     pip --version
+     ```
+
+  2. 更新pip
+
+     ```sh
+     pip install --upgrade pip
+     ```
+
+  3. 安装docker-compose
+
+     ```sh
+     pip install docker-compose 
+     ```
 
 ## 6.3 Compose指令
 
@@ -341,36 +386,94 @@
    - version：必须指定，说明项目的版本
    - services：一个配置文件中可以定义多个服务（service），是在这个services的配置项之下；
    - services.<服务名>：服务名称不能重复
+   - services.<服务名>.container_name：相当于`run --name`；容器之间通信可以使用这个名称进行通信
    - services.<服务名>.image：当前服务所要使用的镜像，如果镜像不存在会从docker hub拉取，说明镜像和版本
    - services.<服务名>.ports：数组，用于映射端口，host与容器的端口映射，建议使用字符串
-   - services.<服务名>.volumes：数组，宿主机和容器数据卷映射，
+   - services.<服务名>.volumes：数组，宿主机和容器数据卷映射，或者容器卷名和容器路径 ；
+   - services.<服务名>. networks：指定当前服务使用的网络桥，同一个网络桥的服务可以相互通信
+   - services.<服务名>.environment：设置环境变量，可以使用数组可字典两种形式
+   - services.<服务名>.env_file：用于替换environment，可以是相对路径或绝对路径；环境变量可以定义再指定配置文件中，配置文件必须是`.env`文件，配置文件中配置格式：key=value；
+   - services.<服务名>：
+     - build：启动服务时，先将build命令中指定的docker-file打包为镜像然后运行该镜像
+       - context：指定上下文目录，是指docker-file所在的目录，相对于yaml文件的目录或绝对路径；
+       - dockerfile：指定dockerfile文件名称；
+   - services.<服务名>.command：覆盖容器启动后默认执行的命令
+   - services.<服务名>.depends_on：解决容器依赖的顺序，代表这个容器的启动必须依赖其他容器，在其他容器启动到一定程度后就会启动，是个数组，可以指定多个服务名；
+   - services.<服务名>.healthcheck：检测容器是否允许健康
+     - test：[“CMD”， “curl”， “-f”， “检查的URL”]
+     - interval：检查间隔时间
+     - timeout：超时时间
+     - retries：重试次数
+   - services.<服务名>.sysctls：修改容器内核参数
+   - services.<服务名>.ulimts：指定容器的ulimits限制值，修改容器系统内部进程最大限制
+     - nproc：进程数 
+     - nofile：
+       - soft：
+       - hard：
+   - volumes：用于声明容器卷，`run -v`
+   - volumes.<容器卷名称>：定义服务中使用到的容器卷名称
+   - volumes.<容器卷名称>.external.true|false：否使用指定的容器卷，如果没有需要提前创建好
+   - network：定义服务中用到的网桥，默认创建的是bridge，同一个网桥的服务可以相互通信  
+   - network.<网桥名称>：同一个网桥名称服务可以相互通信
+   - network.<网桥名称>.external.true|false：否使用外部指定的网桥，如果没有需要提前创建好
 
 3. 案例：
 
    ```yaml
-   version: "3.0"
+   version: "3.8"
    services: 
-   	<服务名：tomcat>: 
+   	<服务名：如tomcat>: 
    		image: tomcat:8.0-jre8
    		ports: 
    			- "8080:8080"
    		volumes:
    		  - 宿主机路径:容器路径
    		  - 容器卷名称（必须在容器中声明容器卷名称）:容器路径
+   		environment:
+   			ENV: dev
+   		environment:
+   			- ENV=DEV
+   		command: "redis-server --appendonly yes"
    		
    volumes:
-     - 容器卷名称: 宿主机路径
+     容器卷名称: <宿主机路径>声明指定的卷名，compose自动创建容器卷但是会新增项目名称
+       external:
+       	false: 是否使用指定的容器卷，如果没有需要提前创建好
    ```
+
+   > 1. version：
+   > 2. services：表示可以定义多个服务
+   > 3. services.服务名称：表示定义再服务下的一个服务，服务名唯一
+   > 4. services.服务名称.image：表示这个服务所需要的镜像
+   > 5. services.服务名称.ports：端口映射数组，服务内可能有多个端口，可以配置多个端口映射，每个映射项使用双引号，防止数字可冒号解析异常
+   > 6. services.服务名称.volumes：容器数据卷配置
+   > 7. volumes：容器卷数组，每个配置项的key是容器卷名称，value是宿主机路径
 
 4. 使用docker-compose命令执行配置文件：要求执行命令的目录必须要有一个docker-compose.yml文件
 
-   - docker-compose up：启动
+   | docker-compose选项     | 说明                                                         |
+   | ---------------------- | ------------------------------------------------------------ |
+   | -f、--file             | 默认启动文件名称docker-compose.yaml<br />-f <文件名>：指定启动文件 |
+   | -p                     | 指定项目的名称，默认用目录名当作项目名称                     |
+   | -v                     | 显示版本信息                                                 |
+   | **docker-compose参数** | **说明**                                                     |
+   | images                 | 列出镜像列表                                                 |
+   | top                    | 查看项目中进程信息                                           |
+   | logs                   | 查看项目中日志信息                                           |
+   | ps                     | 列出项目中目前所有容器                                       |
+   | up [serviceId]         | 创建并启动所有容器或指定容器<br />-d：容器后台运行           |
+   | exec [serviceId] bash  | 进入到项目中指定容器，并使用bash命令                         |
+   | down                   | 停止up命令所启动的容器，并移除网络                           |
+   | stop [serviceId]       | 停止项目中的服务，不会移除网络                               |
+   | start [serviceId]      | 启动项目中的服务                                             |
+   | restart [serviceId]    | 重启项目中的服务                                             |
+   | rm [serviceId]         | 删除项目中的某个服务<br /> -f：强制删除<br /> -v：删除服务并删除数据卷 |
+   | pause [serviceId]      | 暂停项目中的服务                                             |
+   | unpause [serviceId]    | 恢复项目中暂停的服务                                         |
 
-   ```sh
-   
-   ```
+## 6.4 compose示例
 
-   
+
 
 # 第七章 Docker常用安装
 
@@ -406,8 +509,6 @@
 ## 7.2 Docker-Compose
 
 - Compose项目上Docker官方的开源项目，负责实现对Docker容器集群的快速编排。
-
-- 
 
 - 运行一个Docker镜像,需要大量的参数,可以通过Docker-Compose编写这些参数,可以批量管理容器,只需要通过docker-compose.yml文件维护
 
