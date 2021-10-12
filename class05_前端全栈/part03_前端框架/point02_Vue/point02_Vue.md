@@ -1745,26 +1745,29 @@ this.$router.forward()
 
 ## 6.1 VueX介绍
 
-- **VueX说明**：是为Vue应用程序开发的状态管理模式：采用集中式存储管理应用程序中的共享公共变量，并且以相应的规则管理这些公共变量；
+1. **VueX说明**：是为Vue应用程序开发的状态管理模式：采用集中式存储管理应用程序中的共享公共变量，并且以相应的规则管理这些公共变量；
 
-- **状态管理**：VueX的状态的本质是组件内定义的变量，单页面状态本质是定义在组件的data对象中的变量；VueX主要作用是多页面的状态管理，VueX状态管理指将多个组件中的变量抽取并统一配置在VueX中，并且对状态的操作在VueX中定义；VueX一般会管理项目中的全局共享变量；
+2. **状态管理**：VueX的状态的本质是组件内定义的变量，单页面状态本质是定义在组件的data对象中的变量；VueX主要作用是多页面的状态管理，VueX状态管理指将多个组件中的变量抽取并统一配置在VueX中，并且对状态的操作在VueX中定义；VueX一般会管理项目中的全局共享变量；
 
-  - **单页面状态**：Vue的单组件数据的状态变化流程：数据的状态定义在data对象中，数据根据数据状态渲染在View中，在View中的执行了action改变了data中的数据状态，被改变的数据状态响应式的显示在View中；
+   - **单页面状态**：Vue的单组件数据的状态变化流程：数据的状态定义在data对象中，数据根据数据状态渲染在View中，在View中的执行了action改变了data中的数据状态，被改变的数据状态响应式的显示在View中；
 
-    <img src='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/2eae72c6-f9f6-4429-a06d-f682d12fe009.png' width=50%/>
+     <img src='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/2eae72c6-f9f6-4429-a06d-f682d12fe009.png' width=50%/>
 
-  - **多页面状态**：而在多组件的状态管理时，单向数据流的简洁性很容易被破坏：①多个组件依赖同一个状态②不同的组件需要对状态进行变更，并且其他组件可以做到响应式；VueX为解决多组件的状态管理问题，重新定义了多组件的状态的数据流：如果直接在Vue组件中改变state，DevTools是监听不到state的变化过程，必须使用VueX中定义好的规则改变VueX中的state
+   - **多页面状态**：而在多组件的状态管理时，单向数据流的简洁性很容易被破坏：①多个组件依赖同一个状态②不同的组件需要对状态进行变更，并且其他组件可以做到响应式；VueX为解决多组件的状态管理问题，重新定义了多组件的状态的数据流：如果直接在Vue组件中改变state，DevTools是监听不到state的变化过程，必须使用VueX中定义好的规则改变VueX中的state
 
-    - Action：组件中的异步操作
-    - Mutations：组件中的同步操作
-    - State：多组件共享数据
-    - DevTools：Vue的浏览器插件会监听到VueX中的state的变化流
+     - Action：组件中的异步操作
 
-    <img src='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/42bf4d4a-be12-4346-8f60-305f1538fe41.png' width=70%/>
+     - Mutations：组件中的同步操作
 
-- **单一状态树**：如果项目中的状态信息是保存到多个Store对象中的，那么对状态的管理和维护都会特别困难；所有VueX采用了单一状态树（一个项目只定义一个store实例对象）管理应用层级的全部状态：单一状态树能够用最直接的方式找到某个状态的片段，并且可以做到非常方便的管理和维护；
+     - State：多组件共享数据
 
-- **vuex响应式原理**： state中属性会被加入到响应式系统中，当属性发生变化时，会通知到所有使用该属性的组件并渲染数据；
+     - DevTools：Vue的浏览器插件会监听到VueX中的state的变化流
+
+       <img src='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/42bf4d4a-be12-4346-8f60-305f1538fe41.png' width=70%/>
+
+3. **单一状态树**：如果项目中的状态信息是保存到多个Store对象中的，那么对状态的管理和维护都会特别困难；所有VueX采用了单一状态树（一个项目只定义一个store实例对象）管理应用层级的全部状态：单一状态树能够用最直接的方式找到某个状态的片段，并且可以做到非常方便的管理和维护；
+
+4. **vuex响应式原理**： state中属性会被加入到响应式系统中，当属性发生变化时，会通知到所有使用该属性的组件并渲染数据；
 
 ## 6.2 VueX安装与配置
 
@@ -2036,7 +2039,233 @@ this.$router.forward()
 
 ### 8. 命名空间
 
+- 概述：Vuex由于使用单一状态树，即应用的所有状态都会集中到一个比较大的对象；当应用变得复杂时候，store对象就会变得相当臃肿。因此，Vuex允许将store分隔为模块（module），每个模块都拥有自己的state、mutation、action、getter甚至是嵌套子模块（但是不建议这么用）。默认情况模块内的action、mutation和getter都是注册在全局名命空间的，如果使用分隔模块（module）具有封装性和复用性，就需要使用到moduel到命名空间（namespaced）
 
+- 设置模块（module）为一个命名空间：在模块中添加熟悉namespaced:true
+
+  ```js
+  const moduleA ={
+      namespaced:true,  //开启namespace:true，该模块就成为命名空间模块了
+      state:{
+          count:10,
+          countA:888
+      },
+      getters:{...},
+      mutations:{...},
+      actions:{...}
+  }
+  ```
+
+- 获取module中数据
+
+  1. 获取state数据
+
+     ```js
+     // 1. 基本方式
+     this.$store.state.moduleA.countA
+     
+     // 2. mapState辅助函数方式
+       ...mapState({
+         count:state=>state.moduleB.countB
+       })
+     ```
+
+  2. 获取getters
+
+     ```js
+     // 共有三种方式，如下：
+     // 1.
+     commonGetter(){
+         this.$store.getters['moduleA/moduleAGetter']
+     },
+     // 2. 此处的moduleA，不是以前缀的形式出现！！！
+     ...mapGetters('moduleA',['moduleAGetter'])
+     // 3.别名状态下
+     ...mapGetters({
+         paramGetter:'moduleA/moduleAGetter'
+     }),
+     ```
+
+  3. 获取mutations
+
+     ```js
+     // 共有三种方式，如下：
+     //1,3加个前缀moduleA/，都可以实现。2使用辅助函数未变名称的特殊点！！！
+     //1.
+     commonMutation(){
+         this.$store.commit('moduleA/moduleAMutation');
+     },
+     //2.
+     ...mapMutations('moduleA',['moduleAMutation']),
+     //3.别名状态下
+     ...mapMutations({
+         changeNameMutation:'moduleA/moduleAMutation'
+     }),
+     ```
+
+  4. 获取actions
+
+     ```js
+     //共有三种方式，如下：
+     //1,3加个前缀moduleA/，都可以实现。2使用辅助函数未变名称的特殊点！！！
+     //1.
+     commonAction(){
+         this.$store.dispatch('moduleA/moduleAAction')
+     },
+     //2.
+     ...mapActions('moduleA',['moduleAAction']),
+     //3.别名状态下
+     ...mapActions({
+         changeNameAction:'moduleA/moduleAAction'
+     })
+     ```
+
+- 获取根store，当前模块，兄弟模块中的action，mutations ，getters
+
+  - **state数据**： 通过rootState参数   即：rootState.属性名
+
+  - **getter方法**：通过rootGetters参数来获取  即:rootGetters.increNum
+
+  - 获取根store模块中的：
+
+              state数据： 通过rootState参数    即：rootState.属性名
+        
+              getter方法：通过rootGetters参数来获取   即:rootGetters.increNum
+        
+                                    附：向根getters中传递参数方式：rootGetters.increNum({id:11,name:'lucy'});
+                                           根store中getters定义接多参数：getters:{   //目前个人研究：只能传递一个参数，或者一个对象
+                                                                                                      increNum:(state)=>(obj)=>{
+                                                                                                            console.log(obj)
+                                                                                                      }
+                                                                                               }
+        
+              提交mutations：commit('increment',null,{root:true});       //increment为根store中的mutation
+        
+              分发actions：dispatch('incrementAction',null,{root:true});   //incrementAction为根store中的action
+        
+               参数部分示例：actions:{
+                                               moduleAAction({state,commit,dispatch,getters,rootState,rootGetters}){
+                                                          //处理逻辑
+                                               }
+                                         }
+
+    获取当前模块中的：
+
+               state数据：通过state参数来获取     即：state.属性名
+        
+               getter方法：通过getters参数来执行    即：getters.moduleAIncreNum();  //传递参数：可以是多个，也可以是一个obj对象
+        
+               提交mutations：通过commit参数来执行   即：commit('moduleAMutation);  
+        
+               分发actions：通过dispatch参数来执行   即：dispatch('nextmoduleAAction');
+        
+               参数部分示例：actions:{
+                                              moduleAAction({state,commit,dispatch,getters,rootState,rootGetters}){
+                                                           //处理逻辑
+                                              }
+                                        }
+
+    获取兄弟模块中的：(当前模块名：moduleA)
+
+                state数据：通过rootState参数来获取     即：rootState.moduleA.属性名
+        
+                getter方法：通过getters参数来执行    即：rootGetters['moduleB/moduleBGetter']  
+        
+                提交mutations：通过commit参数来执行   即：commit('moduleB/moduleBMutation',{},{root:true}); 
+        
+                分发actions：通过dispatch参数来执行   即：dispatch('moduleB/moduleBAction',{},{root:true});
+
+    7.在带命名空间的模块中，如何将action注册为全局actions
+         两个条件：
+
+               ①添加 root: true
+               ②并将这个 action 的定义放在函数 handler 中
+
+    //storeAction在命名空间moduleA中，但是它是一个全局actions
+    const moduleA = {
+        namespaced:true,
+        storeAction:{
+            root:true,  //条件1
+            handler(namespacedContext, payload){//条件2：handler
+                //namespacedContext 上下文信息
+                //payload 载荷，即参数
+                console.log(namespacedContext)
+                console.log(payload)
+                alert("我是模块A中的全局storeAction")
+            }
+        }
+    }
+    8.当使用 mapState, mapGetters, mapActions 和 mapMutations 这些函数来绑定带命名空间的模块时，写起来可能比较繁琐，该怎么解决呢？
+    computed: {
+        ...mapState({
+            a: state => state.some.nested.module.a,
+            b: state => state.some.nested.module.b
+        })
+    },
+    methods: {
+        ...mapActions([
+            'some/nested/module/foo', // -> this['some/nested/module/foo']()
+            'some/nested/module/bar' // -> this['some/nested/module/bar']()
+        ])
+    }
+    解决办法：对于这种情况，你可以将模块的空间名称字符串作为第一个参数传递给上述函数，这样所有绑定都会自动将该模块作为上下文。于是上面的例子可以简化为：
+
+    computed: {
+        ...mapState('some/nested/module', {
+            a: state => state.a,
+            b: state => state.b
+        })
+    },
+    methods: {
+        ...mapActions('some/nested/module', [
+            'foo', // -> this.foo()
+            'bar' // -> this.bar()
+        ])
+    }
+    9.除了8中的将空间名称作为第一个参数传递外，还有其它别的方法吗？
+           你可以通过使用 createNamespacedHelpers 创建基于某个命名空间辅助函数。它返回一个对象，对象里有新的绑定在给定命名空间值上的组件绑定辅助函数：
+
+    import { createNamespacedHelpers } from 'vuex'
+
+    const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')
+
+    export default {
+      computed: {
+        // 在 `some/nested/module` 中查找
+        ...mapState({
+          a: state => state.a,
+          b: state => state.b
+        })
+      },
+      methods: {
+        // 在 `some/nested/module` 中查找
+        ...mapActions([
+          'foo',
+          'bar'
+        ])
+      }
+    }
+
+## 6.4 mapXxx
+
+1. mapState
+2. mapGetters
+3. mapMutations
+4. mapActions
+
+- 使用方式：每个组件都有自己的computed计算属性，从vuex中引入mapGetters
+
+  ```js
+  import { mapGetters } from 'vuex'
+  export default{
+    computed: {
+      // 通过结构赋值将指定的属性添加到组件的计算属性中
+      ...mapGetters(['vuex中getter计算属性字符串'])
+    }
+  }
+  ```
+
+  
 
 # 第七章 axios
 
