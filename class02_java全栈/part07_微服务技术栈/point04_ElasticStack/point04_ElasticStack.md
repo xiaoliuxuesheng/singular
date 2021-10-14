@@ -1,3 +1,11 @@
+数据的分类：
+
+- 结构化数据：关系型表中保存的数据，由特定的结构组织和管理数据
+- 半结构化数据：将数据的结构和数据内容混合在一起，如xml/html
+- 非结构化数据：无法用特定结构表示的数据，如日志等等，一般是key:value格式
+
+
+
 # 第一章 ElasticStack
 
 ## 1.1 ELK
@@ -15,7 +23,7 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
 ## 1.3 ElasticSearch技术栈简介
 
-<img src='http://m.qpic.cn/psc?/V52xXkY417Nw310rbooN1OUGO41S4u1u/TmEUgtj9EK6.7V8ajmQrEF4zy*CieSN8Uhj8zeDpSgTlBYc5LHj1RyWWS.gDe9xDGXNAQ0cW8YvecBKZpC7ms8MzIKOkg3ybCpIgajVKeH8!/b&bo=LwUlAy8FJQMDORw!&rf=viewer_4&t=5'/>
+[![GfcENQ.png](https://s1.ax1x.com/2020/04/08/GfcENQ.png)](https://imgtu.com/i/GfcENQ)
 
 1. **ElasticSearch**：是使用Java语言编写的并且基于Lucene编写的搜索引擎框架，主要特点是：分布式，零配置，自动发现，索引自动分片，索引副本机制，RESTful风格接口，多数据源，自动搜索负载等。核心技术是倒排索引：在ElasticSrearch中数据存储在索引中，ElasticSearch会根据索引中的数据进行分词保存在分词库中；当需要检索数据时候，首先会根据检索关键字在分词库中检索出索引ID，再根据检索的索引ID去索引中直接查找对应的数据；
    - Lucene：本身就是一个搜索引擎的底层；
@@ -337,6 +345,13 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
   su - elsearch
   /opt/kibana/kibana &
   ```
+  
+- docker安装
+
+  ```sh
+  ```
+
+  
 
 ## 2.5 LogStash安装
 
@@ -348,6 +363,11 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 - 打开下载地址找到es-head.crx文件：/elasticsearch-head/blob/master/crx/es-head.crx
 - 文件后缀名".crx"改为“.rar”解压到文件夹中
 - Chrome“加载已解压的扩展程序”按钮加入文件夹。
+
+## 2.8 ES基础知识
+
+1. ES是分布式，支持RESTFul搜索和分析的：资源根据请求状态的不同而产生不同的响应；
+2. 倒排索引：ES是面向文档型数据库，一条数据就是表示一个文档；可以与关系性数据库做对比：es中的索引在关系性数据库中表示为一个database，es中的type相当于表，一个文档（json格式的字符串）表示一行数据，文档中的Field（json中的key）表示列名；es中为了做到快速检索，使用倒排索引加速检索：将文档中的内容作为查询的key，而将文档ID作为对应的value；在新版es中type被淘汰了；
 
 # 第三章 ElasticSearch基础
 
@@ -401,6 +421,489 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 ### 9、映射
 
 所有文档写进索引之前都会先进行分析：如何将输入的文本分隔为词条、哪些词条又会被过滤；这种行为称为映射，一般由用户自定义规则，比如使用中文分词
+
+- settings：设置索引分片和部分
+- mappings：设置索引映射
+  - properties：该对象包含映射到字段
+    - [fields]：该对象用于说明字段相关的约束
+      - type：表示字段的类型
+      - format：表示字段的格式化方式，针对date类型
+      - analyzer：表示使用的查询分析器
+      - properties：同上表示嵌套对象，嵌套对象的type类型是默认是object
+
+💛原文地址为https://www.cnblogs.com/haixiang/p/12040272.html，转载请注明出处!
+🍎**es与SpringBoot的整合以及常用CRUD、搜索API已被作者封装,开箱即用效果很好,欢迎star谢谢!**[github](https://github.com/Motianshi/all-search)
+
+## Mapping简介[#](https://www.cnblogs.com/haixiang/p/12040272.html#1119358845)
+
+mapping 是用来定义文档及其字段的存储方式、索引方式的手段，例如利用`mapping` 来定义以下内容：
+
+- 哪些字段需要被定义为全文检索类型
+- 哪些字段包含`number`、`date`类型等
+- 格式化时间格式
+- 自定义规则，用于控制动态添加字段的映射
+
+## Mapping Type[#](https://www.cnblogs.com/haixiang/p/12040272.html#3257295578)
+
+每个索引都拥有唯一的 `mapping type`，用来决定文档将如何被索引。`mapping type`由下面两部分组成
+
+- Meta-fields
+  元字段用于自定义如何处理文档的相关元数据。 元字段的示例包括文档的_index，_type，_id和_source字段。
+- Fields or properties
+  映射类型包含与文档相关的字段或属性的列表。
+
+## 分词器最佳实践[#](https://www.cnblogs.com/haixiang/p/12040272.html#3142227410)
+
+因为后续的`keyword`和`text`设计分词问题，这里给出分词最佳实践。即**索引时用ik_max_word，搜索时分词器用ik_smart**，这样索引时最大化的将内容分词，搜索时更精确的搜索到想要的结果。
+
+例如我想搜索的是小米手机，我此时的想法是想搜索出小米手机的商品，而不是小米音响、小米洗衣机等其他产品，也就是说商品信息中必须只有小米手机这个词。
+
+我们后续会使用`"search_analyzer": "ik_smart"`来实现这样的需求。
+
+## 字段类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2026557297)
+
+- 一种简单的数据类型，例如`text`、`keyword`、`double`、`boolean`、`long`、`date`、`ip`类型。
+- 也可以是一种分层的json对象（支持属性嵌套）。
+- 也可以是一些不常用的特殊类型，例如`geo_point`、`geo_shape`、`completion`
+
+针对同一字段支持多种字段类型可以更好地满足我们的搜索需求，例如一个`string`类型的字段可以设置为`text`来支持全文检索，与此同时也可以让这个字段拥有`keyword`类型来做排序和聚合，另外我们也可以为字段单独配置分词方式，例如`"analyzer": "ik_max_word",`
+
+### text 类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#4164760018)
+
+`text`类型的字段用来做全文检索，例如邮件的主题、淘宝京东中商品的描述等。这种字段在被索引存储前**先进行分词**，存储的是分词后的结果，而不是完整的字段。`text`字段不适合做排序和聚合。如果是一些结构化字段，分词后无意义的字段建议使用`keyword`类型，例如邮箱地址、主机名、商品标签等。
+
+常有参数包含以下
+
+- analyzer：用来分词，包含**索引存储阶段**和**搜索阶段**（其中查询阶段可以被**search_analyzer**参数覆盖），该参数默认设置为index的analyzer设置或者standard analyzer
+- index：是否可以被搜索到。默认是`true`
+- fields：Multi-fields允许同一个字符串值同时被不同的方式索引，例如用不同的analyzer使一个field用来排序和聚类，另一个同样的string用来分析和全文检索。下面会做详细的说明
+- search_analyzer：这个字段用来指定**搜索阶段**时使用的分词器，默认使用`analyzer`的设置
+- search_quote_analyzer：搜索遇到短语时使用的分词器，默认使用`search_analyzer`的设置
+
+### keyword 类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#3592965838)
+
+`keyword`用于索引结构化内容（例如电子邮件地址，主机名，状态代码，邮政编码或标签）的字段，这些字段被拆分后不具有意义，所以在es中应**索引完整的字段**，而不是分词后的结果。
+
+通常用于过滤（例如在博客中根据发布状态来查询所有已发布文章），排序和聚合。`keyword`只能按照字段精确搜索，例如根据文章id查询文章详情。如果想根据本字段进行全文检索相关词汇，可以使用`text`类型。
+
+Copy
+
+```json
+PUT my_index
+{
+  "mappings": {
+    "properties": {
+      "tags": {
+        "type":  "keyword"
+      }
+    }
+  }
+}
+```
+
+- index：是否可以被搜索到。默认是`true`
+- fields：Multi-fields允许同一个字符串值同时被不同的方式索引，例如用不同的analyzer使一个field用来排序和聚类，另一个同样的string用来分析和全文检索。下面会做详细的说明
+- null_value：如果该字段为空，设置的默认值，默认为`null`
+- ignore_above：设置索引字段大小的阈值。该字段不会索引大小超过该属性设置的值，默认为2147483647，代表着可以接收任意大小的值。但是这一值可以被`PUT Mapping Api`中新设置的`ignore_above`来覆盖这一值。
+
+### date类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#4169588024)
+
+支持排序，且可以通过`format`字段对时间格式进行格式化。
+
+`json`中没有时间类型，所以在es在规定可以是以下的形式：
+
+- 一段格式化的字符串，例如`"2015-01-01"`或者`"2015/01/01 12:10:30"`
+- 一段`long`类型的数字，指距某个时间的毫秒数，例如`1420070400001`
+- 一段`integer`类型的数字，指距某个时间的秒数
+
+### object类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#3164138260)
+
+`mapping`中不用特意指定field为`object`类型，因为这是它的默认类型。
+
+`json`类型天生具有层级的概念，文档内部还可以包含`object`类型进行嵌套。例如：
+
+Copy
+
+```json
+PUT my_index/_doc/1
+{ 
+  "region": "US",
+  "manager": { 
+    "age":     30,
+    "name": { 
+      "first": "John",
+      "last":  "Smith"
+    }
+  }
+}
+```
+
+在es中上述对象会被按照以下的形式进行索引：
+
+Copy
+
+```json
+{
+  "region":             "US",
+  "manager.age":        30,
+  "manager.name.first": "John",
+  "manager.name.last":  "Smith"
+}
+```
+
+`mapping`可以对不同字段进行不同的设置
+
+Copy
+
+```json
+PUT my_index
+{
+  "mappings": {
+    "properties": { 
+      "region": {
+        "type": "keyword"
+      },
+      "manager": { 
+        "properties": {
+          "age":  { "type": "integer" },
+          "name": { 
+            "properties": {
+              "first": { "type": "text" },
+              "last":  { "type": "text" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### nest类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#1806022256)
+
+`nest`类型是一种特殊的`object`类型，它允许`object`可以以数组形式被索引，而且数组中的某一项都可以被独立检索。
+
+而且es中没有内部类的概念，而是通过简单的列表来实现`nest`效果，例如下列结构的文档：
+
+Copy
+
+```json
+PUT my_index/_doc/1
+{
+  "group" : "fans",
+  "user" : [ 
+    {
+      "first" : "John",
+      "last" :  "Smith"
+    },
+    {
+      "first" : "Alice",
+      "last" :  "White"
+    }
+  ]
+}
+```
+
+上面格式的对象会被按照下列格式进行索引，因此会发现一个user中的两个属性值不再匹配，`alice`和`white`失去了联系
+
+Copy
+
+```json
+{
+  "group" :        "fans",
+  "user.first" : [ "alice", "john" ],
+  "user.last" :  [ "smith", "white" ]
+}
+```
+
+### range类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2473687704)
+
+支持以下范围类型：
+
+| 类型          | 范围                                 |
+| ------------- | ------------------------------------ |
+| integer_range | `-2的31次` 到 `2的31次-1`.           |
+| float_range   | 32位单精度浮点数                     |
+| long_range    | `-2的63次` 到 `2的63次-1`.           |
+| double_range  | 64位双精度浮点数                     |
+| date_range    | unsigned 64-bit integer milliseconds |
+| ip_range      | ipv4和ipv6或者两者的混合             |
+
+使用范例为：
+
+Copy
+
+```json
+PUT range_index
+{
+  "settings": {
+    "number_of_shards": 2
+  },
+  "mappings": {
+    "properties": {
+      "age_range": {
+        "type": "integer_range"
+      },
+      "time_frame": {
+        "type": "date_range", 
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      }
+    }
+  }
+}
+
+PUT range_index/_doc/1?refresh
+{
+  "age_range" : { 
+    "gte" : 10,
+    "lte" : 20
+  },
+  "time_frame" : { 
+    "gte" : "2015-10-31 12:00:00", 
+    "lte" : "2015-11-01"
+  }
+}
+```
+
+## 实战：同时使用keyword和text类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2674254835)
+
+**注：term是查询时对关键字不分词，keyword是索引时不分词**
+
+上述我们讲解过`keyword`和`text`一个不分词索引，一个是分词后索引，我们利用他们的`fields`属性来让当前字段同时具备`keyword`和`text`类型。
+
+首先我们创建索引并指定`mapping`，为`title`同时设置`keyword`和`text`属性
+
+Copy
+
+```json
+PUT /idx_item/
+{
+  "settings": {
+    "index": {
+        "number_of_shards" : "2",
+        "number_of_replicas" : "0"
+    }
+  },
+  "mappings": {
+    "properties": {
+      "itemId" : {
+        "type": "keyword",
+        "ignore_above": 64
+      },
+      "title" : {
+        "type": "text",
+        "analyzer": "ik_max_word", 
+        "search_analyzer": "ik_smart", 
+        "fields": {
+          "keyword" : {"ignore_above" : 256, "type" : "keyword"}
+        }
+      },
+      "desc" : {"type": "text", "analyzer": "ik_max_word"},
+      "num" : {"type": "integer"},
+      "price" : {"type": "long"}
+    }
+  }
+}
+```
+
+我们已经往es中插入以下数据
+
+| _index   | _type | _id                  | _score | itemId | title                     | desc                                 | num  | Price |
+| -------- | ----- | -------------------- | ------ | ------ | ------------------------- | ------------------------------------ | ---- | ----- |
+| idx_item | _doc  | rvsX-W4Bo-iJGWqbQ8dk | 1      | 1      | 苏泊尔煮饭SL3200          | 让煮饭更简单，让生活更快乐           | 100  | 200   |
+| idx_item | _doc  | sPsY-W4Bo-iJGWqbscfU | 1      | 3      | 厨房能手威猛先生          | 你煲粥，我洗锅                       | 100  | 30    |
+| idx_item | _doc  | r_sX-W4Bo-iJGWqbhMew | 1      | 2      | 苏泊尔煲粥好能手型号SL322 | 你煲粥，我煲粥，我们一起让煲粥更简单 | 100  | 190   |
+
+`title=”苏泊尔煮饭SL3200“` 根据`text`以及最细粒度分词设置`"analyzer": "ik_max_word"`，在es中按照以下形式进行索引存储
+
+Copy
+
+```
+{ "苏泊尔","煮饭", "sl3200", "sl","3200"}
+```
+
+`title.keyword=”苏泊尔煮饭SL3200`因为不分词，所以在es中索引存储形式为
+
+Copy
+
+```
+苏泊尔煮饭SL3200
+```
+
+我们首先对`title.keyword`进行搜索，只能搜索到第一条数据，因为`match`搜索会将关键字分词然后去搜索，分词后的结果包含`"苏泊尔煮饭SL3200"`所以搜索成功，我们将搜索关键字改为`苏泊尔`、`煮饭`等都不会查到数据。
+
+Copy
+
+```json
+GET idx_item/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {"title.keyword": "苏泊尔煮饭SL3200"}
+        }
+    }
+  }
+}
+```
+
+我们改用`term`搜索，他搜索不会分词，正好与es中的数据精准匹配，也只有第一条数据，我们将搜索关键字改为`苏泊尔`、`煮饭`等都不会查到数据。
+
+Copy
+
+```json
+GET idx_item/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "term": {"title.keyword": "苏泊尔煮饭SL3200"}
+        }
+    }
+  }
+}
+```
+
+我们继续对`title`使用`match`进行查询，结果查到了第一条和第三条数据，因为它们在es中被索引的数据包含`苏泊尔`关键字
+
+Copy
+
+```json
+GET idx_item/_search
+{
+  "query": {
+    "bool": {
+      "must": {"match": {"title": "苏泊尔"}
+        }
+    }
+  }
+}
+```
+
+我们如果搜索`苏泊尔煮饭SL3200`会发现没有返回数据，因为`title`在索引时没有`苏泊尔煮饭SL3200`这一项，而`term`时搜索关键字也不分词，所以无法匹配到数据。但是我们将内容改为`苏泊尔`时，就可以搜索到第一条和第三条内容，因为第一条和第三条的`title`被分词后的索引包含`苏泊尔`字段，所以可以查出第一三条。
+
+Copy
+
+```jsaon
+"term": {"title": "苏泊尔煮饭SL3200"}
+```
+
+## 实战：格式化时间、以及按照时间排序[#](https://www.cnblogs.com/haixiang/p/12040272.html#2847931562)
+
+我们创建索引`idx_pro`，将`mytimestamp`和`createTime`字段分别格式化成两种时间格式
+
+Copy
+
+```json
+PUT /idx_pro/
+{
+  "settings": {
+    "index": {
+        "number_of_shards" : "2",
+        "number_of_replicas" : "0"
+    }
+  },
+  "mappings": {
+    "properties": {
+      "proId" : {
+        "type": "keyword",
+        "ignore_above": 64
+      },
+      "name" : {
+        "type": "text",
+        "analyzer": "ik_max_word", 
+        "search_analyzer": "ik_smart", 
+        "fields": {
+          "keyword" : {"ignore_above" : 256, "type" : "keyword"}
+        }
+      },
+      "mytimestamp" : {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "createTime" : {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      }
+    }
+  }
+}
+```
+
+插入四组样本数据
+
+Copy
+
+```json
+POST idx_pro/_doc
+{
+  "proId" : "1",
+  "name" : "冬日工装裤",
+  "timestamp" : 1576312053946,
+  "createTime" : "2019-12-12 12:56:56"
+}
+POST idx_pro/_doc
+{
+  "proId" : "2",
+  "name" : "冬日羽绒服",
+  "timestamp" : 1576313210024,
+  "createTime" : "2019-12-10 10:50:50"
+}
+POST idx_pro/_doc
+{
+  "proId" : "3",
+  "name" : "花花公子外套",
+  "timestamp" : 1576313239816,
+  "createTime" : "2019-12-19 12:50:50"
+}
+POST idx_pro/_doc
+{
+  "proId" : "4",
+  "name" : "花花公子羽绒服",
+  "timestamp" : 1576313264391,
+  "createTime" : "2019-12-12 11:56:56"
+}
+```
+
+我们可以使用`sort`参数来进行排序，并且支持数组形式，即同时使用多字段排序，只要改为`[]`就行
+
+Copy
+
+```json
+GET idx_pro/_search
+{
+  "sort":{"createTime": {"order": "asc"}}, 
+  "query": {
+    "bool": {
+      "must": {"match_all": {}}
+    }
+  }
+}
+```
+
+我们也可以使用`range`参数来搜索指定时间范围内的数据，当然`range`也支持`integer`、`long`等类型
+
+Copy
+
+```json
+GET idx_pro/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "range": {
+          "timestamp": {
+            "gt": "1576313210024",
+            "lt": "1576313264391"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+所有内容皆为个人总结或转载别人的文章，只为学习技术。 若您觉得文章有用，欢迎点赞分享！ 若无意对您的文章造成侵权，请您留言，博主看到后会及时处理，谢谢。
 
 ### 10、field
 
@@ -1140,9 +1643,79 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
 ## 3.5 ElasticSearch集群
 
+1. 集群（Cluster）：一个集群就是就是由一个或多个服务器节点组织在一起，共同持有整个数据，并一起提供索引功能。一个ElasticSearch集群由一个唯一的名称标识，集群中节点只能通过指定某个集群名称来加入到这个集群
+
+2. 节点（Node）：集群中包含很多ES服务器，一个节点就是一个服务器；
+
+3. 集群搭建
+
+   - Windows系统：修改配置文件、
+   - Linux系统：
+   - Docker环境：
+
+4. 核心概念
+
+   - 索引：
+   - 类型：过时，默认是_doc
+   - 文档
+   - 字段
+   - 映射：索引中文档字段的约束
+   - 分片：一个索引会非常大，索引可以分片，放在不同的服务中，可以水平切割，并且支持分布式查询；
+   - 副本：单个分片的服务宕机后使用分片副本保证数据
+
+5. 系统架构：有一个master
+
+6. 但节点集群
+
+   - 创建索引并指定分片和副本
+
+     ```json
+     {
+       "settings": {
+         "number_of_shards": 5,
+         "number_of_replicas": 1
+       }
+     }
+     ```
+
+7. 故障转移：当集群中只有一个节点在运行时，意味着会有单点故障问题（没有冗余），解决方案时再启动一个节点即可防止数据丢失。节点加入集群后副本会重新分配
+
+8. 水平扩容：正在增长的应用添加ES服务容量，需要添加新的服务节点：为了分散负载对分片重新分配；主分片的数量在创建索引时候就确定下来了，实际上这个数目定义了这个索引能够储存的最大数据量，但是读操作可以同时被主分片和副本分片所处理，所以副本可以提高检索吞吐量；
+
+9. 应对故障：主节点宕机后，master被从节点获取，再复活后变成了从节点；
+
+10. 路由计算：hash主键并且对分片数量取模，计算的结果就是分片索引；查询时候由分片控制去哪个分片查询；
+
+11. 数据写流程：客户端请求集群、协调节点将请求分发到指定节点、主分片保存数据、主分片将数据分发给副本、副本保存成功反馈、主分片反馈、客户端获取反馈；通过一致性参数进行设置
+
+12. 数据读流程：请求发送到集群协调节点、协调节点计算数据所在分片以及全部副本位置、将请求转发给指定节点、返回查询结果
+
+13. 更新流程：部分更新需要先读取再更新；
+
+14. 批量新增流程：
+
+15. 分片远离：分片是ES最小工作单元，
+
+16. 倒排索引：
+
+17. 文档搜索：
+
 ## 3.6 Java连接ElasticSearch
 
 ## 3.6 SpringBoot集成ElasticSearch
+
+1. 高版本ES使用RestHighLevelClient
+
+   ```java
+   @Bean
+   public RestHighLevelClient restHighLevelClient() {
+     HttpHost host = new HttpHost("127.0.0.1",9200,"http");
+     RestClientBuilder clientBuilder = RestClient.builder(host);
+     return new RestHighLevelClient(clientBuilder);
+   }
+   ```
+
+2. 
 
 # 第四章 Kibana基础
 
