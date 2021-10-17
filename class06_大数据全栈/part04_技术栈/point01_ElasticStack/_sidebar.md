@@ -1,2 +1,2 @@
-- [返回](class02_java全栈/part07_微服务技术栈/part07_微服务技术栈.md)
-- [目录](class02_java全栈/part07_微服务技术栈/point04_ElasticStack/point04_ElasticStack.md)
+- [返回](/class06_大数据全栈/part04_技术栈/part04_技术栈.md)
+- [目录](/class06_大数据全栈/part04_技术栈/point01_ElasticStack/point01_ElasticStack.md)

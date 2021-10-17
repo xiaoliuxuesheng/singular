@@ -1,2 +1,2 @@
 - [返回](class03_数据库/class03_数据库.md)
-- [目录](class03_数据库/part03_redis/part03_redis.md)
+- [目录](/class03_数据库/part03_redis/part03_redis.md)

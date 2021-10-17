@@ -2,4 +2,8 @@
 - [point02_Vue](/class05_前端全栈/part03_前端框架/point02_Vue/point02_Vue.md)
 - [point03_React](/class05_前端全栈/part03_前端框架/point03_React/point03_React.md)
 - [point04_weixin](/class05_前端全栈/part03_前端框架/point04_weixin/point04_weixin.md)
+- [point06_layui](/class05_前端全栈/part03_前端框架/point06_layui/point06_layui.md)
+- [point05_elementUI](/class05_前端全栈/part03_前端框架/point05_elementUI/point05_elementUI.md)
+- [point07_mint](/class05_前端全栈/part03_前端框架/point07_mint/point07_mint.md)
+- [point08_electron](/class05_前端全栈/part03_前端框架/point08_electron/point08_electron.md)
 - [point05_elementUI](/class05_前端全栈/part03_前端框架/point05_elementUI/point05_elementUI.md)

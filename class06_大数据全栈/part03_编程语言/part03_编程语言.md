@@ -1,1 +1,2 @@
-- null
+- [point01_python](/class06_大数据全栈/part03_编程语言/point01_python/point01_python.md) 
+- [point02_golang](/class06_大数据全栈/part03_编程语言/point02_golang/point02_golang.md) 

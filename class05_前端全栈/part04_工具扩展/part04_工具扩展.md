@@ -1,2 +1,3 @@
 - [point01_webpack](/class05_前端全栈/part04_工具扩展/point01_webpack/point01_webpack.md)
 - [point02_vue-cli](/class05_前端全栈/part04_工具扩展/point02_vue-cli/point02_vue-cli.md)
+- [point03_vite](/class05_前端全栈/part04_工具扩展/point03_vite/point03_vite.md)

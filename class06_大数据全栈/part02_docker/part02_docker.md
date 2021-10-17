@@ -1,2 +1,3 @@
-- [point01_docker基础](/class06_大数据全栈/part02_docker/point01_docker基础.md)
-- [point02_docker高级](/class06_大数据全栈/part02_docker/point02_docker高级.md)
+- [point01_docker基础](/class06_大数据全栈/part02_docker/point01_docker基础/point01_docker基础.md)
+- [point02_docker高级](/class06_大数据全栈/part02_docker/point02_docker高级/point02_docker高级.md)
+- [point03_k8s](/class06_大数据全栈/part02_docker/point03_k8s/point03_k8s.md)  
