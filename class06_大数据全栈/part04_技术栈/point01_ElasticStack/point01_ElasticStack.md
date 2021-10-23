@@ -444,7 +444,7 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 - 格式化时间格式
 - 自定义规则，用于控制动态添加字段的映射
 
-## Mapping Type[#](https://www.cnblogs.com/haixiang/p/12040272.html#3257295578)
+## Mapping Type
 
 每个索引都拥有唯一的 `mapping type`，用来决定文档将如何被索引。`mapping type`由下面两部分组成
 
@@ -523,8 +523,6 @@ PUT my_index
 
 `json`类型天生具有层级的概念，文档内部还可以包含`object`类型进行嵌套。例如：
 
-Copy
-
 ```json
 PUT my_index/_doc/1
 { 
@@ -541,8 +539,6 @@ PUT my_index/_doc/1
 
 在es中上述对象会被按照以下的形式进行索引：
 
-Copy
-
 ```json
 {
   "region":             "US",
@@ -553,8 +549,6 @@ Copy
 ```
 
 `mapping`可以对不同字段进行不同的设置
-
-Copy
 
 ```json
 PUT my_index
@@ -586,8 +580,6 @@ PUT my_index
 
 而且es中没有内部类的概念，而是通过简单的列表来实现`nest`效果，例如下列结构的文档：
 
-Copy
-
 ```json
 PUT my_index/_doc/1
 {
@@ -606,8 +598,6 @@ PUT my_index/_doc/1
 ```
 
 上面格式的对象会被按照下列格式进行索引，因此会发现一个user中的两个属性值不再匹配，`alice`和`white`失去了联系
-
-Copy
 
 ```json
 {
@@ -631,8 +621,6 @@ Copy
 | ip_range      | ipv4和ipv6或者两者的混合             |
 
 使用范例为：
-
-Copy
 
 ```json
 PUT range_index
@@ -717,23 +705,17 @@ PUT /idx_item/
 
 `title=”苏泊尔煮饭SL3200“` 根据`text`以及最细粒度分词设置`"analyzer": "ik_max_word"`，在es中按照以下形式进行索引存储
 
-Copy
-
 ```
 { "苏泊尔","煮饭", "sl3200", "sl","3200"}
 ```
 
 `title.keyword=”苏泊尔煮饭SL3200`因为不分词，所以在es中索引存储形式为
 
-Copy
-
 ```
 苏泊尔煮饭SL3200
 ```
 
 我们首先对`title.keyword`进行搜索，只能搜索到第一条数据，因为`match`搜索会将关键字分词然后去搜索，分词后的结果包含`"苏泊尔煮饭SL3200"`所以搜索成功，我们将搜索关键字改为`苏泊尔`、`煮饭`等都不会查到数据。
-
-Copy
 
 ```json
 GET idx_item/_search
@@ -750,8 +732,6 @@ GET idx_item/_search
 
 我们改用`term`搜索，他搜索不会分词，正好与es中的数据精准匹配，也只有第一条数据，我们将搜索关键字改为`苏泊尔`、`煮饭`等都不会查到数据。
 
-Copy
-
 ```json
 GET idx_item/_search
 {
@@ -767,8 +747,6 @@ GET idx_item/_search
 
 我们继续对`title`使用`match`进行查询，结果查到了第一条和第三条数据，因为它们在es中被索引的数据包含`苏泊尔`关键字
 
-Copy
-
 ```json
 GET idx_item/_search
 {
@@ -783,17 +761,13 @@ GET idx_item/_search
 
 我们如果搜索`苏泊尔煮饭SL3200`会发现没有返回数据，因为`title`在索引时没有`苏泊尔煮饭SL3200`这一项，而`term`时搜索关键字也不分词，所以无法匹配到数据。但是我们将内容改为`苏泊尔`时，就可以搜索到第一条和第三条内容，因为第一条和第三条的`title`被分词后的索引包含`苏泊尔`字段，所以可以查出第一三条。
 
-Copy
-
 ```jsaon
 "term": {"title": "苏泊尔煮饭SL3200"}
 ```
 
 ## 实战：格式化时间、以及按照时间排序[#](https://www.cnblogs.com/haixiang/p/12040272.html#2847931562)
 
-我们创建索引`idx_pro`，将`mytimestamp`和`createTime`字段分别格式化成两种时间格式
-
-Copy
+我们创建索引`idx_pro`，将`mytimestamp`和`createTime`字段分别格式化成两种时间格
 
 ```json
 PUT /idx_pro/
@@ -833,8 +807,6 @@ PUT /idx_pro/
 
 插入四组样本数据
 
-Copy
-
 ```json
 POST idx_pro/_doc
 {
@@ -868,8 +840,6 @@ POST idx_pro/_doc
 
 我们可以使用`sort`参数来进行排序，并且支持数组形式，即同时使用多字段排序，只要改为`[]`就行
 
-Copy
-
 ```json
 GET idx_pro/_search
 {
@@ -883,8 +853,6 @@ GET idx_pro/_search
 ```
 
 我们也可以使用`range`参数来搜索指定时间范围内的数据，当然`range`也支持`integer`、`long`等类型
-
-Copy
 
 ```json
 GET idx_pro/_search

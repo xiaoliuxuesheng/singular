@@ -145,7 +145,7 @@
    - Container：容器，相当于一台独立的服务器，任务运行在容器中；容器中任务可以夸节点执行； 每个NM上可以有多个Container，并且Container资源之和不能大于NodeManager所拥有的资源 
    - Client：作业提交任务，运行在Container容器中，每个容器中的任务都由该容器中的Application Manager管理，
 
-![image-20211016081546534](/Volumes/Storage/panda_code_note/note_blogs_docsify/class06_大数据全栈/part04_大数据/part02_hadoop/imgs/image-20211016081546534.png)
+![image-20211016081546534](./imgs/image-20211016081546534.png)
 
 015-MapReduce
 
@@ -165,7 +165,7 @@
 
    
 
-   ![image-20211016082700338](/Volumes/Storage/panda_code_note/note_blogs_docsify/class06_大数据全栈/part04_大数据/part02_hadoop/imgs/image-20211016082700338.png)
+   ![image-20211016082700338](./imgs/image-20211016082700338.png)
 
 017-大数据技术生态体系
 
@@ -180,13 +180,13 @@
    - Zookeeper：整个数据平台的配置和调度
    - 业务模型层：业务模型的课可视化
 
-   ![image-20211016083337923](/Volumes/Storage/panda_code_note/note_blogs_docsify/class06_大数据全栈/part04_大数据/part02_hadoop/imgs/image-20211016083337923.png)
+   ![image-20211016083337923](./imgs/image-20211016083337923.png)
 
 2. 框架概述
 
 3. 推荐系统架构图
 
-   ![image-20211016083744197](/Volumes/Storage/panda_code_note/note_blogs_docsify/class06_大数据全栈/part04_大数据/part02_hadoop/imgs/image-20211016083744197.png)
+   ![image-20211016083744197](./imgs/image-20211016083744197.png)
 
 018-Vmware安装
 
@@ -582,10 +582,8 @@
    4. WEB查看HSFS：http://hadoop201:9870
 
    5. WEB查看YARN：http://hadoop202:8088
-
-
-
-
+   
+   6. 
 
 
 
