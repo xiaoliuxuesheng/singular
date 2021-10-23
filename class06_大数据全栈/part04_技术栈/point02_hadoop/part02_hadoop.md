@@ -582,8 +582,228 @@
    4. WEB查看HSFS：http://hadoop201:9870
 
    5. WEB查看YARN：http://hadoop202:8088
+
+
+   032-集群崩溃处理
+
+   033-历史服务器配置
+
+   1. 添加历史服务配置
+
+      ```xml
+        <!-- 历史服务器地址 -->
+        <property>
+          <name>mapreduce.jobhistory.address</name>
+          <value>hadoop201:10020</value>
+        </property>
+        <!-- 历史服务器WEB地址 -->
+        <property>
+          <name>mapreduce.jobhistory.webapp.address</name>
+          <value>hadoop201:19888</value>
+        </property>
+      ```
+
+   2. 启动
+
+      ```sh
+      mr-jobhistory-daemon.sh start historyserver
+      ```
+
+   034-日志聚集
+
+   1. 配置yarn-site
+
+      ```xml
+      <!-- 开启日志聚集功能 -->
+      <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+      </property>
+      <!-- 设置日志聚集服务地址 -->
+      <property>
+        <name>yarn.log.server.url</name>
+        <value>http://hadoop102:19888/jobhistory/logs</value>
+      </property>
+      <!-- 设置日志保留7天 -->
+      <property>
+        <name>yarn.log-aggregation.retain-seconds</name>
+        <value>604800</value>
+      </property> 
+      ```
+
+   2. 分发配置
+
+   3. 关闭：NameNode、ResourceManager、historyserver
+
+   035-两个常用脚本
+
+   1. 各个模块分开启动停止
+
+      ```sh
+      # HDFS
+      start-dfs.sh
+      stop-dfs.sj
+      ```
+
+   2. 各个服务组件逐一启动停止
+
+      ```sh
+      # 分别启动停止HDFS
+      hdfs --daemon start|stop namenode/datanode/secondarynamenode
+      # 启动停止yarn
+      yarn --daemon start|stop resourcesmanagere/nodemanager
+      ```
+
+   3. hadoop常用脚本
+
+      ```sh
+      #!/bin/bash
+      if [ $# -lt 1]
+      then
+      	echo "ERROR:no args"
+      	exit ;
+      fi
+      
+      case $1 in
+      "start")
+      	echo "=============== 启动Hadoop集群 ==============="
+      	echo "==== 启动 hdfs"
+      	ssh hadoop201 "/opt/module/hadoop3/sbin/start-dfs.sh"
+        echo "==== 启动 yarn"
+      	ssh hadoop202 "/opt/module/hadoop3/sbin/start-yarn.sh"
+        echo "==== 启动 historyserver"
+      	ssh hadoop201 "/opt/module/hadoop3/sbin/mr-jobhistory-daemon.sh start historyserver"
+      ;;
+      "stop")
+      	echo "=============== 关闭Hadoop集群 ==============="
+        echo "==== 关闭 historyserver"
+      	ssh hadoop201 "/opt/module/hadoop3/sbin/mr-jobhistory-daemon.sh stop historyserver"
+        echo "==== 关闭 yarn"
+      	ssh hadoop202 "/opt/module/hadoop3/sbin/stop-yarn.sh"
+      	echo "==== 关闭 hdfs"
+      	ssh hadoop201 "/opt/module/hadoop3/sbin/stop-dfs.sh"
+      ;;
+      "status")
+      	for host in hadoop201 hadoop202 hadoop203
+      	do
+      		echo =============== $host ===============
+      		ssh $host jps
+      	done
+      ;;
+      "*")
+      	echo "ERROR:input error args"
+      ;;
+      esac
+      ```
+
+   036-面试题
+
+   1. 常用端口号
+
+      | 服务名            | Hadoop2.x端口号 | Hadoop3.x      |
+      | ----------------- | --------------- | -------------- |
+      | NameNodeServer    | 8020/9000       | 8020/9000/9820 |
+      | NameNodeWeb       | 50070           | 9870           |
+      | MapReduce任务查看 | 8088            | 8088           |
+      | 历史服务器通信    | 19888           | 19888          |
+
+   037-集群时间同步
+
+   1. 查看所有ntpd服务状态和开机自启动状态
+
+      ```sh
+      systemctl status ntpd
+      systemctl start ntpd
+      systemctl is-enabled ntpd
+      ```
+
+   2. 修改ntp.conf：/etc/ntp.conf
+
+      ```sh
+      
+      ```
+
+   038-常见问题
+
+   1. 防火墙关闭
+   2. 主机名称修改
+   3. ssh免密配置
+   4. 用户系统统一
+   5. 检查配置文件
+   6. 主机名称映射配置
+
+   # HDFS
+
+   039-HDFS课程介绍
+
+   1. 课程大纲
+      - 第一章 HDFS概述
+      - 第二章 HDFS的shell操作
+      - 第三章 HDFS的API操作
+      - 第四章 HDFS的读写流程
+      - 第五章 NameNode和SecondaryNameNode
+      - 第六章 DataNode
+
+   040-hdfs产生背景
+
+   1. 背景：数据量越来越大，单个操作服务器无法保存，需要分配到其他的服务器管理的磁盘中，但是又要求可以做到方便管理多台服务器种的文件（分布式文件管理系统），HDFS就是分布式文件挂历系统种的一种；
+   2. HDFS定义：是一个文件系统，用于存储文件，通过目录树定位文件，并且是分布式的，可以实现多台服务器中的文件定位和管理；
+
+   041-HDFS优缺点
+
+   1. 优点
+      - 高容错性：数据自动保存其他副本
+      - 适合处理大数据：数据规模很大、文件规模很多都可以处理
+      - 可以构建在廉价的机器
+   2. 缺点
+      - 不适合低延时数据访问
+      - 无法高效的对大量小文件存储：小文件存储的寻址时间超过读取时间
+      - 不支持并发写入、文件所及修改
+
+   042-HDFS组成
+
+   1. NameNode
+      - 管理HDFS的名称空间
+      - 配置副本策略
+      - 挂历数据块的映射信息
+      - 处理客户端读写请求
+   2. DataNode
+      - 存储实际数据的数据块
+      - 执行数据块的读写操作
+   3. Client
+      - 文件切分：文件上传HDFS的时候，Client将文件切分为一个个的Block然后上传
+      - 与NameNode交互获取文件的位置信息
+      - 与DataNode交互读取或写入数据
+      - Client提供一些命令管理HDFS
+      - 可以通过命令访问HDFS
+   4. SecondaryNameNode：并非NameNode的热备，当NameNode挂掉时候不能马上替换NameNode
+      - 辅助NameNode，分担工作量
+      - 在紧急情况下可以恢复NameNode
+
+   043-文件块大小
+
+   1. HDFS在物理上是分块存储，块的大小可以根据参数配置（dfs.blocksize），默认是128MB
+      - 寻址时间-建议是传输时间的1%
+      - 传输时间
+      - 传输时间*传输速率=文件块大小
+   2. 块太小会增加寻址时间
+   3. 块太大会增加传输时间
+
+   044-045-shell命令
+
    
-   6. 
+
+   # MapReduce
+
+   # Yarn
+
+   # 生产调优
+
+   # 源码解析
+
+   
+
+   
 
 
 
