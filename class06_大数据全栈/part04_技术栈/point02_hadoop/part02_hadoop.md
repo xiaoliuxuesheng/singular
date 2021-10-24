@@ -789,9 +789,299 @@
    2. 块太小会增加寻址时间
    3. 块太大会增加传输时间
 
-   044-045-shell命令
+044-045-shell命令
 
+1. 基本语法：命令分三大类①上传②下载③hdfs操作指令
+
+   ```sh
+   hadoop fs <具体命令>
+   hadoop dfs <具体命令>
+   ```
+
+2. -help
+
+3. -ls
+
+4. -cat
+
+5. -mkdir
+
+6. -mv
+
+7. -cp
+
+8. -rm
+
+9. -rmdir
+
+10. -chgrp
+
+11. -chmod
+
+12. -chown
+
+13. -copyFromLocal
+
+14. -copyToLocal
+
+15. -moveFromLocal
+
+16. -moveToLocal
+
+17. -count
+
+18. -put
+
+19. -df
+
+20. -du
+
+21. -get
+
+22. -setrep
+
+23. -stat
+
+24. 案例演示
+
+    - 上传
+
+    - 创建一个三国的文件，
+
+      ```sh
+      hadoop fs -mkdir /sanguo
+      ```
+
+    - 在hadoop根目录新增一个演示目录/sanguo,并进入目录新增一个shuguo.txt并添加内容蜀国
+
+      ```sh
+      cd $HADOOP_HOME
+      mkdir sanguo
+      cd sanguo
+      echo "shuguo" >> shuguo.txt
+      ```
+
+    - 将本地文件剪切粘贴到hdfs
+
+      ```sh
+      hadoop fs -moveFromLocal ./shuguo.txt /sanguo
+      ```
+
+    - 将本地文件复制到hdfs
+
+      ```sh
+      echo "weiguo" >> weiguo.txt
+      hadoop fs -copyFromLocal ./weiguo.txt /sanguo
+      ```
+
+    - 将本地文件上传到hdfs
+
+      ```sh
+      echo "wuguo" >> wuguo.txt
+      hadoop fs -put ./wuguo.txt /sanguo
+      ```
+
+    - 追加一个文件追加到已存在的文件的末尾
+
+      ```sh
+      echo "liubei" >> liubei.txt
+      hadoop fs -appendToFile liubei.txt /sanguo/shuguo.txt
+      ```
+
+    - 下载
+
+    - 从hdfs拷贝到本地
+
+      ```sh
+      hadoop fs -copyToLocal /sanguo/shuguo.txt ./
+      ```
+
+    - -get
+
+      ```sh
+      hadoop fs -get /sanguo/shuguo.txt ./
+      ```
+
+    - hdfs操作
+
+      ```sh
+      # 显示目录信息
+      hadoop fs -ls /sanguo
+      # 显示文件内容
+      hadoop fs -cat /sanguo/wuguo.txt
+      # 修改文件所属 -chmod | -chown | -chgrp
+      hadoop fs -chown panda:panda /sanguo/shuguo.txt
+      # 创建文件路径
+      hadoop fs -mkdir /jinguo
+      # 从一个 目录拷贝到另一个目录
+      hadoop fs -cp /sanguo/shuguo.txt /jinguo
+      # 从hdfs目录移动文件
+      hadoop fs -mv /sanguo/wuguo.txt /jinguo
+      # 显示一个文件末尾的数据
+      hadoop fs -tail /jinguo/wuguo.txt
+      # 删除文件或文件夹
+      hadoop fs rm /jinguo/wuguo.txt
+      # 递归删除目录及内容
+      hadoop fs -rm -r /jinguo
+      # 统计文件大小
+      hadoop fs -du -s -h /sanguo
+      hadoop fs -du -h /sanguo
+      ```
+
+    - 设置HDFS中文件副本数量：这里设置的副本数量只会记录在元数据中，具体副本需要根据DateNode的数量
+
+      ```sh
+       hadoop fs -setrep 10 /sanguo/wuguo.txt
+      ```
+
+046-Haoop API环境准备
+
+1. 宿主机添加Haoop在本地添加到环境变量
+
+2. 创建Maven项目
+
+   ```xml
+   <dependency>
+     <groupId>org.apache.hadoop</groupId>
+     <artifactId>hadoop-client</artifactId>
+     <version>3.1.3</version>
+   </dependency>
+   <dependency>
+     <groupId>org.slf4j</groupId>
+     <artifactId>slf4j-log4j12</artifactId>
+   </dependency>
+   ```
+
+3. 日志配置文件
+
+   ```properties
+   log4j.rootLogger=INFO, stdout
+   log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+   log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+   log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m%n
+   log4j.appender.logfile=org.apache.log4j.FileAppender
+   log4j.appender.logfile.File=target/spring.log
+   log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
+   log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
+   ```
+
+047-新建目录
+
+1. 新建目录
+
+   ```java
+   public class ClientHdfs {
    
+       FileSystem fileSystem;
+   
+       @Before
+       public void testBefore() throws Exception{
+           URI uri = new URI("hdfs://hadoop201:8020");
+           Configuration configuration = new Configuration();
+           fileSystem = FileSystem.get(uri,configuration);
+       }
+       @After
+       public void testAfter() throws Exception{
+           if (null != fileSystem){
+               fileSystem.close();
+           }
+       }
+   
+       @Test
+       public void testCreate() throws Exception{
+           boolean mkdirs = fileSystem.mkdirs(new Path("/xiyou/huaguoshan"));
+           System.out.println("mkdirs = " + mkdirs);
+       }
+   }
+   ```
+
+048-Hadoop上传操作
+
+1. 上传
+
+   ```java
+   @Test
+   public void testPut() throws Exception{
+     Path src = new Path("/Users/panda/Desktop/行业分类.xmind");
+     Path dist = new Path("/xiyou/huaguoshan");
+     fileSystem.copyFromLocalFile(false,false,src,dist);
+   }
+   ```
+
+049-Hadoop API 参数优先级
+
+1. 参数优先级
+   - dfs-site.xml中优先级高于默认的
+   - Configuration中优先级高于xlm中配置
+
+050-Hadoop API文件下载
+
+1. 文件下载
+
+   ```java
+   ```
+
+051-API 文件山催促
+
+1. 文件删除
+
+   ```java
+   ```
+
+052-文件更新和文件移动
+
+1. 文件更新
+
+   ```java
+   ```
+
+2. 文件移动
+
+   ```java
+   ```
+
+053-API文件详情查看
+
+1. 文件详情查看
+
+   ```java
+   ```
+
+054-文件判断
+
+1. 文件判断
+
+   ```java
+   ```
+
+2. 文件夹判断
+
+   ```java
+   ```
+
+055-写数据流程
+
+056-节点距离计算
+
+057-机架感知
+
+058-读数据流程
+
+059-NN和2NN
+
+060-FsImage镜像文件
+
+061-Edits编辑日志
+
+062-检查点时间设置
+
+063-DN工作机制
+
+064-数据完整性
+
+065-掉线时限参数设置
+
+066-总结
 
    # MapReduce
 
