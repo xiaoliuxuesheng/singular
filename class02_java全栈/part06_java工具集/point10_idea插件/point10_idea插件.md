@@ -133,7 +133,7 @@
     ```
 
   - service.java
-  
+
     ```java
     ##定义初始变量
     #set($tableName = $tool.append($tableInfo.name, "Service"))
@@ -195,7 +195,7 @@
     ```
 
   - serviceImpl.java
-  
+
     ```java
     ##定义初始变量
     #set($tableName = $tool.append($tableInfo.name, "ServiceImpl"))
@@ -278,7 +278,7 @@
     ```
 
   - controller.java
-  
+
     ```java
     ##定义初始变量
     #set($tableName = $tool.append($tableInfo.name, "ServiceImpl"))
@@ -361,7 +361,7 @@
     ```
     
   - mapper.xml
-  
+
     ```xml
     ##引入mybatis支持
     $!mybatisSupport
@@ -439,7 +439,46 @@
     
     </mapper>
     ```
-  
-    
-  
+
+    地品
+    		1、Background Image Plus 换壁纸
+
+    ​		2、Chinese(Simplified)... 中文语言包
+
+    ​		3、Translation	代码翻译
+
+    ​		4、Key Promoter X 快捷键提示插件
+
+    ​		5、Rainbow bracket 彩虹括号插件
+
+    ​		6、Code Glance 代码小地图
+
+    ​		7、Walk Time / Statistic 代码统计插件
+    天品
+    ​		1、String Manipulation 字符串处理插件
+
+    ​		2、Tabnine AI Code Completion... 代码补全
+
+    ​		3、GsonFormatPlus json代码生成
+
+    ​		3、JUnitGenerator V2.0  代码生成
+
+    ​		4、Sequence Giagram 生成代码时序图
+
+    ​		5、RestfulTool Restful服务开发工具集
+
+    ​		6、代码检查
+
+    ​			CheckStyle-IDEA、Alibaba JAVA CodingGuidelines、SonarLint
+
+    ​		7、MyBatis X
+
+    # Mac
+
+    1. 开启触控板所有功能
+       - 打开偏好设置中的所有选项
+       - 辅助功能-指针控制-触控板选项-启用拖移-三指拖移
+    2. 仿达编号设置
+       - 仿达偏好设置
+
     
