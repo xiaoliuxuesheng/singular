@@ -305,3 +305,397 @@
 
 4. 
 
+
+
+# DML
+
+029-加载数据load
+
+1. load-向表中加载数据
+
+   ```sql
+   load data [local] inpath '数据文件路径' [overwrite] 
+   into table 表名
+   [partition(分区字段=分区值)]
+   ```
+
+   > - load data：表示加载数据的命令
+   > - local：表示从本地加载数据到hive，否则会从HDFS路径查找路径对应的数据
+   > - overwrite：表示覆盖表中已有的数据，否则表示追加
+   > - partition：可选表示追加到表中的指定分区中
+
+2. 案例1
+
+   - 创建一张表
+
+     ```sql
+      create table student01(
+     	id string,
+     	name string
+      )row format delimited fields terminated by '\t';
+     ```
+
+   - 准备数据文：student01.txt
+
+     ```tex
+     1001	张三
+     1002	李四
+     ```
+
+   - 加载数据
+
+     ```sql
+     load data local inpath ./student.txt
+     into table student01;
+     ```
+
+   - 小结：put不会走MR，所以count * 是为空；如果执行load命令，会执行MR修改元数据信息；
+
+3. 案例2：加载HDFS路径中的文件到数据表，HFDS下的文件会移动到表目录下
+
+030-加载数据insert
+
+1. insert向表中插入数据
+
+   - 创建一张表
+
+     ```sql
+      create table student02(
+     	id string,
+     	name string
+      )row format delimited fields terminated by '\t';
+     ```
+
+   - insert 插入数据
+
+     ```sql
+     insert into table student02 values
+     (1,'王五'),(2,'赵六');
+     ```
+
+   - insert select插入数据
+
+     ```sql
+     -- 插入 table可以省
+     insert into [table] student02
+     select id,name form student01;
+     -- 覆盖 table必须由
+     insert overwrite table student02
+     select id,name form student01;
+     ```
+
+   - 多表插入
+
+     ```sql
+     form student01
+     insert overwrite table student02 partition(month='201706')
+     select id,name where month='201706'
+     insert overwrite table student02 partition(month='201707')
+     select id,name where month='201707';
+     ```
+
+031-加载数据-as select
+
+1. as select：查询结果创建新表并插入
+
+   ```sql
+   create table if not exists student03
+   as select id,name form student02;
+   ```
+
+032-加载数据-通过location指定加载数据
+
+1. 上传文件掉hdfs
+
+   ```sh
+   dfs -put ./student01.txt /student
+   ```
+
+2. 创建表并指定在hdfs上的位置
+
+   ```sql
+   create external table if not exists student04(
+   	id string,
+     name string
+   )row format delimited fields terminated by '\t'
+   location '/student';
+   ```
+
+033-加载数据-import
+
+1. 需要先export导出后,再讲数据导入
+
+   ```sql
+   -- 导出
+   export table default.student01 to '本地的path';
+   -- 导入
+   import table student02 form '/export/student';
+   ```
+
+034-导出数据-insert
+
+1. 导出数据
+
+   - 经查询结果导出到本地
+
+     ```sql
+     insert overwrite local directory './student'
+     select * from student;
+     ```
+
+   - 经查询结果格式化导出
+
+     ```sql
+     insert overwrite local directory './student'
+     row format delimited fields terminated by '\t'
+     select * from student;
+     ```
+
+   - 将查询结果导出到hdfs上 - 关键字local
+
+     ```sql
+     insert overwrite directory './student'
+     select * from student;
+     ```
+
+035-036-导出数据-到hdfs
+
+1. 通过dfs命令导出到本地
+
+   ```sh
+   dfs -get hdfs文件的path 本地的path 
+   ```
+
+2. hive shell命令导出
+
+   ```sh
+   hive -e 'select * from student01' > 本地path
+   ```
+
+3. export导出
+
+   ```sql
+   export table default.student01 to '本地的path';
+   ```
+
+4. Sqoop导出:
+
+037-清空全表
+
+1. 清空全表
+
+   ```sql
+   truncate table student01;
+   ```
+
+038-查询-准备数据
+
+1. 准备数据
+
+   ```tex
+   -- student.txt
+   id name birth,gender,t_id 
+   1,赵雷,1990-01-01,男,1
+   2,钱电,1990-12-21,男,1
+   3,孙风,1990-12-20,男,1
+   6,吴兰,1991-01-01,女,1
+   7,郑竹,1991-01-01,女,1
+   13,孙七,1992-06-01,女,1
+   4,李云,1990-12-06,男,2
+   9,张三,1992-12-20,女,2
+   5,周梅,1991-12-01,女,2
+   12,赵六,1990-06-13,女,2
+   17,陈三,1991-10-10,男,2
+   14,郑双,1993-06-01,女,3
+   15,王一,1992-05-01,男,3
+   16,冯二,1990-01-02,男,3
+   10,李四,1992-12-25,女,3
+   11,李四,1991-06-06,女,3
+   8,梅梅,1992-06-07,女,3
+   
+   -- course.txt
+   id,name,t_id
+   1,语文,2
+   2,数学,1
+   3,英语,3
+   4,政治,5
+   5,历史,4
+   
+   -- teacher.txt
+   id,name
+   1,张三
+   2,李四
+   3,王五
+   4,梅李
+   5,汪杨
+   
+   -- score
+   t_id,c_id,score
+   1,1,80
+   1,2,90
+   1,3,70
+   2,1,80
+   2,2,50
+   2,3,60
+   3,1,60
+   3,2,90
+   3,3,50
+   4,1,30
+   4,2,90
+   4,3,100
+   5,1,90
+   5,2,90
+   5,3,90
+   6,1,60
+   6,2,50
+   7,1,40
+   7,2,30
+   7,3,40
+   8,2,30
+   8,3,100
+   9,1,10
+   9,2,100
+   10,1,70
+   10,2,65
+   10,3,85
+   11,1,66
+   12,1,55
+   13,2,90
+   1,4,60
+   2,5,80
+   3,4,60
+   3,5,80
+   14,1,50
+   14,2,60
+   14,3,70
+   14,4,45
+   14,5,80
+   15,1,99
+   15,2,88
+   15,3,77
+   15,4,66
+   15,5,55
+   16,1,10
+   16,2,20
+   16,3,30
+   16,4,40
+   16,5,50
+   17,1,100
+   17,2,99
+   17,3,98
+   17,4,97
+   17,5,96
+   4,4,10
+   4,5,30
+   5,5,100
+   6,5,80
+   7,4,80
+   8,4,90
+   9,4,60
+   10,4,20
+   ```
+
+2. 创建表
+
+   ```sql
+   
+   ```
+
+3. 导入数据
+
+   ```sh
+   ```
+
+039-040-b  查询全表
+
+1. 查询全表
+
+   ```sql
+   select * from employee;
+   ```
+
+2. 查询指定字段
+
+3. 查询字段并给字段定义别名
+
+4. 运算符
+
+   | 运算符 | 描述 |
+   | ------ | ---- |
+   | +      |      |
+   | -      |      |
+   | *      |      |
+   | /      |      |
+   | %      |      |
+   | &      |      |
+   | \|     |      |
+   | !      |      |
+   | ^      |      |
+
+041-042-043-044常用函数
+
+1. 求总行数 - count
+
+2. 求最大值 - max
+
+3. 求最小值 - min
+
+4. 求和 - sum
+
+5. 求平均值 - ave
+
+6. limit语句
+
+   ```sql
+   limit n; 						-- 查询指定条数
+   limit offsite,size;	-- 从offsite开始查询,查询size条
+   ```
+
+7. where语句
+
+8. 比较运算符
+
+   | 比较运算符            | 说明                                          |
+   | --------------------- | --------------------------------------------- |
+   | =                     |                                               |
+   | <=>                   | 如果都为null返回true，如果一边为null返回false |
+   | `<>` `!=`             |                                               |
+   | <=                    |                                               |
+   | <                     |                                               |
+   | >=                    |                                               |
+   | >                     |                                               |
+   | [not] like            |                                               |
+   | [not] in              |                                               |
+   | [not] between ... and |                                               |
+   | is null               |                                               |
+   | is not null           |                                               |
+   | `rlike` `regexp`      |                                               |
+
+9. group by ... having
+
+   1. group by
+   2. hiving
+
+10. 小结：
+
+045-053-JOIN内连接 - 百度一下7中JOIN
+
+1. join：两张表关联的字段在两张表中都存在
+2. left join：两张表关联的字段在  左表中
+
+054-排序
+
+1. order by
+   - 升序：默认asc
+   - 降序：desc
+2. 全局排序,只有1个Reducer
+
+055-每个Reduce内部排序 sortby
+
+1. 对于大鬼狐的数据集使用order by效率非常低,在很多情况下,并不需要全需排序,可以使用sort by,sort by为每个reduce生成 一个排序文件,每个Reducer内部进行排序,对全局结果集来说不是排序;
+
+
+
+# 分区表
+
+ 
