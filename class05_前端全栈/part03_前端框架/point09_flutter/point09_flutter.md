@@ -233,3 +233,57 @@
     2. 内置库：dart SDK内置的库，默认导入dart.core库：
     3. 第三方库：管理在pub包,依赖配置文件:pubspec.yaml
 
+# Dart
+
+1. Flutter简介
+
+   - Google开发的开源的基于Dart语言的UI框架，可以快速在iOS和Android尚构建高质量的原生应用，他最大特点就是跨平台和高性能
+   - Dart语言是由Google在2011年开发的计算机编程语言，他可以被用于WEB、服务器、移动应用和物联网应用等多个领域，号称要取代JavaScript
+   - 跨平台：移动端、iOS、WEB端、桌面端
+   - 高性能：
+     - 采用GPU图形渲染技术
+     - Flutter应用的刷新率最高能打到120fsp（可以用来开发游戏）
+
+2. Flutter发展历史
+
+3. 跨平台框架比较
+
+   ![image-20211124213254091](./imgs/image-20211124213254091.png)
+
+4. Flutter环境搭建
+
+   - 提前安装配置
+     - JDK
+     - 安装AndroidStudio并安装SDK
+
+   - Windows系统
+     - 只能搭建Android环境
+     - 下载Flutter并配置环境变量
+     - 登陆Flutter官网配置镜像
+   - Mac系统
+     - 可以搭建Android和iOS环境
+     - 下载XCode
+     - 下载Flutter并配置 环境变量
+     - 登陆Flutter官网配置镜像
+
+5. VSCode安装Flutter插件
+
+   - flutter
+   - dart
+
+# Dart
+
+> 大纲：
+>
+> - 概述
+> - 语法基础
+> - 数据类型
+> - 运算符
+> - 流程控制语句：同JavaScript
+> - 函数
+> - 面向对象
+> - 库与生态
+
+1.1 Dart概述
+
+1. Dart是什么：
