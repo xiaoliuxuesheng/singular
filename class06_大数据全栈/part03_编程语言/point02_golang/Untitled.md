@@ -78,7 +78,7 @@
      - GOPATH=是 Go语言中使用的一个环境变量，它使用绝对路径提供项目的工作目录
      - Path=%GOPATH%\bin
 2. Linux系统
-3. Mac系统s
+3. Mac系统
 
 ### 2.4 目录说明
 

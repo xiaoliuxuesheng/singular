@@ -1,14 +1,44 @@
 1. 简介
 
    - Google开发的跨平台UI框架：支持IOS、Android、WEB、桌面端、嵌入式
+
    - 发展历程
+     - 2015年：Flutter（当时叫sky）在Dart峰会上亮相
      - 2017-5：发布第一个版本
+     - 2018-6：发布第一个预览版本 
      - 2018-12：发布第一个稳定版本
-     - 2019：MWC发布1.2版本
+     - 2019-9：Flutter发布1.9版本，支持了web端支持
+     - 2020-9：Flutter发布1.22，带来对IOS14和Android 11的支持
+     
+   - 高性能
+     
+     - Flutter应用性能接近原生App
+     - Flutter才用呢GPU（图形显示）渲染技术
+     - Flutter应用刷新频率最高可达到120fps（帧每秒）
+     
+   - 移动应原生开发：
+
+     - 原生开发 -> 原生App -> Android、IOS、Windows（已经淘汰）
+
+     - 混合开发 -> 混合App -> React Native、Weex、Flutter
+
+       | 框架     | ReactNative | Weex            | Flutter             |
+       | -------- | ----------- | --------------- | ------------------- |
+       | 公司     | FaceBook    | Alibaba         | Google              |
+       | 语言     | React       | Vue             | Dart                |
+       | 引擎     | JSCore      | V8              | Flutter engine      |
+       | 支持系统 | Android+IOS | Android+IOS+WEB | Android+IOS+Fuchsia |
+       | 性能     | 一般        | 较快            | 较快                |
+       | 使用场景 | 整体App     | 单页面          | 整体App             |
+       | 学习成本 | 难          | 易              | 一般                |
+
+       
+
    - 技术核心点：采用虚拟DOM技术：三个层次的树结构
      - ①Widget树（UI控件）
      - ②Element树（渲染树）
      - ③RenderObject树（渲染上下文）
+
    - flutter架构图：
      - Framework：框架层
      - Engine：引擎层
@@ -286,4 +316,235 @@
 
 1.1 Dart概述
 
-1. Dart是什么：
+
+
+第一章 Dart概述
+
+1.1 Dart介绍
+
+Dart是google于2011发布的计算机语言，其志向是为了改变web开发的现状，主要是fix javascript的问题。随着时间的发展，Dart自身也经历了无数次的颠覆性迭代，几乎现代语言该有的特征，Dart都有，比如async/await异步模式编程、完全内存隔离的isolate多线程编程范式、函数编程范式、面向对象编程范式、静态数据类型、JIT+AOT的编译优化等等。而Dart的生态，已经逐渐成型。虽然还不敢说超越Javascript，但是后起之势非常迅猛。首先就是，flutter框架横扫APP，Android和iOS平台日臻完善。Flutter for web也已经合并到稳定版本，桌面版Flutter的应用最早从MacOS开始，Linux平台的桌面版Fluuter应用也已官宣，windows版的桌面应用也正在加紧开发。Dart从没放弃server端的开发，Dart-Native是一个制霸后端的一个神器， Aqueduct已经在发力。
+
+1.2 Dart特点
+
+- Dart的金主，背靠Google，用于Dart统一前端，GO统一后端的野心。
+- Dart的编程范式：是目前编程范式和语言覆盖面最广的语言，比Java更面向对象的一种编程语言。
+- Dart的生态：目前，能够和FLutter比生态的，几乎没有。假以时日，Aqueduct的生态蓬勃而起，Dart的全栈时代就真的到来了。
+
+1.3 Dart安装配置
+
+- 安装方式：从 Flutter 1.21 版本开始，Flutter SDK 会同时包含完整的 Dart SDK
+
+  - Flutter SDK：https://docs.flutter.dev/get-started/install
+
+- 配置Flutter和Dart环境变量
+
+  ```sh
+  ```
+
+- Flutter 开发依赖于 SDK 的升级 和 Dart Package 生态，需要将开发设备的如下两个环境变量设置指向 TUNA 镜像站：
+
+  - `PUB_HOSTED_URL`
+
+  - `FLUTTER_STORAGE_BASE_URL`
+
+    ```sh
+    export FLUTTER_STORAGE_BASE_URL="https://mirrors.tuna.tsinghua.edu.cn/flutter"
+    export PUB_HOSTED_URL="https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
+    ```
+
+- 在编译android项目时，需要设置Gradle仓库源，修改配置文件build.gradle 
+
+  ```groovy
+  allprojects {
+      repositories {
+          google()
+          jcenter()
+          maven { url 'https://mirrors.tuna.tsinghua.edu.cn/flutter/download.flutter.io' }
+      }
+  }
+  ```
+
+第二章 Dart基础
+
+2.1 注释
+
+- 单行注释：以//开头
+
+  ```dart
+  // 单行注释
+  ```
+
+- 多行注释：以 /* 开头， 以*/结束
+
+  ```dart
+  /*
+  多行注释
+  */
+  ```
+
+- 文档注释：以/**  */或者 ///开头。/// 是 Dart 推荐使用的文档注释语法
+
+  ```dart
+  /// Feeds your llama [Food].
+  ///
+  /// The typical llama eats one bale of hay per week.
+  void feed(Food food) {
+  }
+  ```
+
+2.2 变量
+
+1. 定义变量规则
+
+   - 标识符不能是关键字。
+   - 标识符可以包含字母和数字。
+   - 标识符不能包含空格和特殊字符，但下划线(`_`)和美元(`$`)符号除外。
+   - 变量名称不能以数字开头。
+
+2. 变量语法
+
+   - 使用`var`关键字来标识一个变量：是通过在变量名前加上数据类型前缀来支持类型检查
+
+     ```dart
+     var name = 'smith';
+     ```
+
+   - 使用数据类型加变量名：支持类型检查
+
+     ```dart
+     String name = 'Maxsu'; 
+     int number = 99;
+     ```
+
+   - 变量初始值：未初始化的变量的初始值为`null`
+
+     ```dart
+     int num; 
+     print(num);
+     // 输出结果：Null
+     ```
+
+   - dynamic：声明没有未指定静态类型的变量则会隐式声明为 `dynamic` 
+
+     ```dart
+     void main() { 
+        dynamic x = "tom"; 
+        print(x);  
+     }
+     ```
+
+   - final和const：`final`和`const`关键字用于声明常量
+
+     ```dart
+     const pi = 3.14; 
+     final f = fun();
+     ```
+
+     > - `const`关键字用于表示编译时常量
+     > - `final`关键字用于表示运行时常量
+
+2.3 数据类型
+
+1. Number
+
+   - 数据类型
+
+     - num：数值类型
+
+     - int：是num的亚类型，整数值不大于64位
+
+     - double：是num的亚类型，值是64位（双精度）浮点数
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+2. String
+
+   - 数据类型：String是一组 UTF-16 单元序列。 字符串通过单引号或者双引号创建。使用连续三个单引号或者三个双引号实现多行字符串对象的创建。字符串可以通过 ${expression} 的方式内嵌表达式
+
+     > == 运算符用来测试两个对象是否相等
+     >
+     > 用 + 运算符来把多个字符串连接为一个
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+3. Boolean
+
+   - 数据类型：bool 类型。只有字面量 true and false 是布尔类型
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+4. List (也被称为 Array)
+
+   - 数据类型：Array就是list对象
+
+     ```dart
+     var list = [1, 2, 3];
+     
+     ```
+
+   - 常用API 
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+5. Map
+
+   - 数据类型:
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+6. Set
+
+   - 数据类型:
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+7. Rune (用于在字符串中表示 Unicode 字符)
+
+   - 数据类型:
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+8. Symbol
+
+   - 数据类型:
+
+   - API
+
+     | 常用API | 说明 |
+     | ------- | ---- |
+     |         |      |
+
+2.4 运算符
+
+2.5 流程控制
+
+第三章 Dart函数
+
+第四章 Dart面向对象
+
