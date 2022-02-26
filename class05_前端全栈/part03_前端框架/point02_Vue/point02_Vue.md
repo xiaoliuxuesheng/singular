@@ -1739,7 +1739,194 @@ this.$router.forward()
 
 ### 4. 路由动态匹配
 
+# 第五章 vue-router4
 
+## 5.1 路由入门
+
+### 1. 安装与配置
+
+1. 下载
+
+   ```sh
+   npm install vue-router@4 --save
+   # 或者
+   npm install vue-router@next --save
+   ```
+
+2. 创建一个vue视图：Xxx.vue
+
+3. 添加路由配置：src/router/index.ts
+
+   ```tsx
+   // 1. 导入创建路由对象需要的依赖
+   import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router';
+   // 2. 定义路由映射表
+   export const routes: RouteRecordRaw[] = [
+     path: '/xxx',
+     name: 'Xxx',
+     component: () => import("@/view/Xxx.vue")
+   ]
+   // 3. 创建路由对象:添加路由映射表
+   const router = createRouter({
+       history: createWebHistory(),
+       routes,
+   });
+   // 4. 导出路由对象
+   export default router;
+   ```
+
+4. 将路由对象挂载到Vue实例中：main.ts
+
+   ```tsx
+   import { createApp } from 'vue'
+   import App from './App.vue'
+   
+   import router from "@/router";
+   
+   createApp(App)
+       .use(router)
+       .mount('#app')
+   ```
+
+5. 最后在App.vue中添加路由容器
+
+   ```html
+   <router-view></router-view>
+   ```
+
+6. 访问路由测试
+
+### 2. 路由说明
+
+- createRouter：创建一个可以被 Vue 应用程序使用的路由实例。查看 [`RouterOptions`](https://next.router.vuejs.org/zh/api/#routeroptions) 中的所有可以传递的属性列表。
+
+- createWebHistory：创建一个 hash 历史记录
+
+- createWebHashHistory：创建一个基于内存的历史记录
+
+- `<router-link>`：是定义在VueRouter中的组件
+
+  | 属性               | 类型             | 说明                                                         |
+  | ------------------ | ---------------- | ------------------------------------------------------------ |
+  | to                 | RouteLocationRaw | 表示目标路由的链接                                           |
+  | replace            | boolean          | 导航后是否会留下历史记录<br /> = true:  router.replace()<br /> = falsue: router.push() |
+  | active-class       | string           | 链接激活时，应用于渲染的标签的 class                         |
+  | exact-active-class |                  | 链接精准激活时，应用于渲染的标签的 class                     |
+  | aria-current-value |                  | 当链接激活时，传递给属性 `aria-current` 的值                 |
+  | custom             | boolean          |                                                              |
+  | `v-slot`           |                  |                                                              |
+
+  > 1. to示例
+  >
+  >    ```tsx
+  >    <!-- 字符串 -->
+  >    <router-link to="/home">Home</router-link>
+  >    <!-- 渲染结果 -->
+  >    <a href="/home">Home</a>
+  >    
+  >    <!-- 使用 v-bind 的 JS 表达式 -->
+  >    <router-link :to="'/home'">Home</router-link>
+  >    
+  >    <!-- 同上 -->
+  >    <router-link :to="{ path: '/home' }">Home</router-link>
+  >    
+  >    <!-- 命名的路由 -->
+  >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
+  >    
+  >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
+  >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
+  >      Register
+  >    </router-link>
+  >    ```
+  >
+  >    
+
+- `<router-view>`
+
+  | 属性     | 类型                    | 说明                                                         |
+  | -------- | ----------------------- | ------------------------------------------------------------ |
+  | name     | string                  | 命名视图                                                     |
+  | route    | RouteLocationNormalized | 如果所有组件都被懒加载                                       |
+  | `v-slot` |                         | 使用 `<transition>` 和 `<keep-alive>` 组件来包裹你的路由组件 |
+
+  
+
+## 5.2 路由基础
+
+### 1. 基本用法
+
+> 如上路由安装配置中的基本用法
+
+### 2. 动态路由
+
+- 
+
+### 3. 路由嵌套
+
+### 4. 编程式导航
+
+- push
+
+  ```tsx
+  // 字符串路径
+  router.push('/users/eduardo')
+  
+  // 带有路径的对象
+  router.push({ path: '/users/eduardo' })
+  
+  // 命名的路由，并加上参数，让路由建立 url
+  router.push({ name: 'user', params: { username: 'eduardo' } })
+  
+  // 带查询参数，结果是 /register?plan=private
+  router.push({ path: '/register', query: { plan: 'private' } })
+  
+  // 带 hash，结果是 /about#team
+  router.push({ path: '/about', hash: '#team' })
+  const username = 'eduardo'
+  // 我们可以手动建立 url，但我们必须自己处理编码
+  router.push(`/user/${username}`) // -> /user/eduardo
+  // 同样
+  router.push({ path: `/user/${username}` }) // -> /user/eduardo
+  // 如果可能的话，使用 `name` 和 `params` 从自动 URL 编码中获益
+  router.push({ name: 'user', params: { username } }) // -> /user/eduardo
+  // `params` 不能与 `path` 一起使用
+  router.push({ path: '/user', params: { username } }) // -> /user
+  ```
+
+- replace
+
+  ```tsx
+  router.push({ path: '/home', replace: true })
+  // 相当于
+  router.replace({ path: '/home' })
+  ```
+
+- go
+
+  ```tsx
+  // 向前移动一条记录，与 router.forward() 相同
+  router.go(1)
+  
+  // 返回一条记录，与router.back() 相同
+  router.go(-1)
+  
+  // 前进 3 条记录
+  router.go(3)
+  
+  // 如果没有那么多记录，静默失败
+  router.go(-100)
+  router.go(100)
+  ```
+
+### 5. 命名路由
+
+
+
+### 6. 命名视图
+
+### 7. 重定向和别名
+
+### 8. 路由传参
 
 # 第六章 Vuex详解
 
@@ -2129,20 +2316,20 @@ this.$router.forward()
   - 获取根store模块中的：
 
               state数据： 通过rootState参数    即：rootState.属性名
-        
+              
               getter方法：通过rootGetters参数来获取   即:rootGetters.increNum
-        
+              
                                     附：向根getters中传递参数方式：rootGetters.increNum({id:11,name:'lucy'});
                                            根store中getters定义接多参数：getters:{   //目前个人研究：只能传递一个参数，或者一个对象
                                                                                                       increNum:(state)=>(obj)=>{
                                                                                                             console.log(obj)
                                                                                                       }
                                                                                                }
-        
+              
               提交mutations：commit('increment',null,{root:true});       //increment为根store中的mutation
-        
+              
               分发actions：dispatch('incrementAction',null,{root:true});   //incrementAction为根store中的action
-        
+              
                参数部分示例：actions:{
                                                moduleAAction({state,commit,dispatch,getters,rootState,rootGetters}){
                                                           //处理逻辑

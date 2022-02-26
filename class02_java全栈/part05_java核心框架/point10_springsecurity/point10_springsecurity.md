@@ -627,7 +627,7 @@ public interface AuthenticationProvider {
      }
      ```
 
-##8. 获取认证信息
+## 8. 获取认证信息
 
 1. 方式一：使用SecurityContextHolder的静态方法
 

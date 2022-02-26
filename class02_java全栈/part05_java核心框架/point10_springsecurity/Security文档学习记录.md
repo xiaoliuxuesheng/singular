@@ -216,6 +216,21 @@
 
 # 11. Authorization
 
-- 不同的AbstractSecurityInterceptor实现，然后继续探讨如何通过使用域访问控制列表来调整授权。
 
-1. 认证架构
+
+# 12. OAuth2
+
+## 1. OAuth2 login
+
+## 2. OAuth3 Client
+
+- Authorization Grant support
+  - Authorization Code
+  - Refresh Token
+  - Client Credentials
+  - Resource Owner Password Credentials
+  - JWT Bearer
+- Client Authentication support
+  - JWT Bearer
+- HTTP Client support
+  - Servlet 环境的 WebClient 集成（用于请求受保护的资源）

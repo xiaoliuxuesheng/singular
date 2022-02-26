@@ -1,550 +1,372 @@
-1. 简介
+# 第一章 Flutter概述
 
-   - Google开发的跨平台UI框架：支持IOS、Android、WEB、桌面端、嵌入式
+## 1.1 移动开发
 
-   - 发展历程
-     - 2015年：Flutter（当时叫sky）在Dart峰会上亮相
-     - 2017-5：发布第一个版本
-     - 2018-6：发布第一个预览版本 
-     - 2018-12：发布第一个稳定版本
-     - 2019-9：Flutter发布1.9版本，支持了web端支持
-     - 2020-9：Flutter发布1.22，带来对IOS14和Android 11的支持
-     
-   - 高性能
-     
-     - Flutter应用性能接近原生App
-     - Flutter才用呢GPU（图形显示）渲染技术
-     - Flutter应用刷新频率最高可达到120fps（帧每秒）
-     
-   - 移动应原生开发：
+### 1. 原生开发
 
-     - 原生开发 -> 原生App -> Android、IOS、Windows（已经淘汰）
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>原生应用程序是指某一个移动平台（比如iOS或安卓）所特有的应用，使用相应平台支持的开发工具和语言，并直接调用系统提供的SDK API。比如Android原生应用就是指使用Java或Kotlin语言直接调用Android SDK开发的应用程序；而iOS原生应用就是指通过Objective-C或Swift语言直接调用iOS SDK开发的应用程序。原生开发优缺点：
 
-     - 混合开发 -> 混合App -> React Native、Weex、Flutter
+- 主要优势：①可访问平台全部功能（GPS、摄像头）；②速度快、性能高、可以实现复杂动画及绘制，整体用户体验好；
+- 主要缺点：①平台特定，开发成本高；不同平台必须维护不同代码，人力成本随之变大；②内容固定，动态化弱，大多数情况下，有新功能更新时只能发版；
 
-       | 框架     | ReactNative | Weex            | Flutter             |
-       | -------- | ----------- | --------------- | ------------------- |
-       | 公司     | FaceBook    | Alibaba         | Google              |
-       | 语言     | React       | Vue             | Dart                |
-       | 引擎     | JSCore      | V8              | Flutter engine      |
-       | 支持系统 | Android+IOS | Android+IOS+WEB | Android+IOS+Fuchsia |
-       | 性能     | 一般        | 较快            | 较快                |
-       | 使用场景 | 整体App     | 单页面          | 整体App             |
-       | 学习成本 | 难          | 易              | 一般                |
+总结一下，纯原生开发主要面临动态化和开发成本两个问题，而针对这两个问题，诞生了一些跨平台的动态化框架。
 
-       
+### 2. 跨平台技术
 
-   - 技术核心点：采用虚拟DOM技术：三个层次的树结构
-     - ①Widget树（UI控件）
-     - ②Element树（渲染树）
-     - ③RenderObject树（渲染上下文）
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>针对原生开发面临问题，业界一直都在努力寻找好的解决方案，而时至今日，已经有很多跨平台框架（注意，本书中所指的“跨平台”若无特殊说明，即特指 Android 和 iOS 两个平台），根据其原理，主要分为三类：
 
-   - flutter架构图：
-     - Framework：框架层
-     - Engine：引擎层
-     - Embedder：嵌入层
+- H5 + 原生（Cordova、Ionic、微信小程序）：主要原理就是将 App 中需要动态变动的内容通过HTML5（简称 H5）来实现，通过原生的网页加载控件WebView （Android）或 WKWebView（iOS）来加载；H5 部分是可以随时改变而不用发版，动态化需求能满足；同时，由于 H5 代码只需要一次开发，就能同时在 Android 和 iOS 两个平台运行，这也可以减小开发成本，混合应用的优点是动态内容是 H5，Web 技术栈，社区及资源丰富，缺点是性能体验不佳，对于复杂用户界面或动画，WebView 有时会不堪重任。
+- JavaScript 开发 + 原生渲染 （React Native、Weex）：React Native （简称 RN ）是 Facebook 于 2015 年 4 月开源的跨平台移动应用开发框架，是 Facebook 早先开源的 Web 框架 React 在原生移动应用平台的衍生产物，目前支持 iOS 和 Android 两个平台
+- 自绘UI + 原生 (Qt for mobile、Flutter)：自绘UI + 原生。这种技术的思路是：通过在不同平台实现一个统一接口的渲染引擎来绘制UI，而不依赖系统原生控件，所以可以做到不同平台UI的一致性。
 
-2. Win安装
+## 1.2 Flutter概述
 
-   - 网络配置：需要将网络配置到Win环境变量中
+### 1. Flutter简介
 
-     ```sh
-     PUB_HOSTED_URL=https://pub.flutter-io.cn
-     FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
-     ```
-
-   - 安装GIT
-
-   - 安装Gradle
-
-   - 下载Flutter SDK：[WIN]([Flutter SDK releases - Flutter](https://flutter.dev/docs/development/tools/sdk/releases#windows))
-
-     - 配置Fluuter环境变量
-
-       ```sh
-       FLUUTER_HOME=
-       Path=%FLUUTER_HOME%/bin
-       ```
-
-   - 安装AndroidStudio
-
-     - 下载
-     - 安装
-     - 配置AndroidSDK
-       - 检查工具网站：http://ping.chinaz.com/dl.google.com
-       - 配置host：180.163.151.33 dl.google.com
-
-   - 配置AndroidSDK
-
-     - 
-
-3. Dart概述
-
-   - Dart是Google2011年推出
-   - Dart属于应用层编程语言，有自己的DartVM，但是也可以编译成Native Code运行在硬件上
-   - 比Java简单，易于理解；比JavaScript更加规范，工程化；
-
-4. Dart SDK安装
-
-   - 官网：https://dart.dev/get-dart
-
-   - win环境检查
-
-     ```sh
-     Get-ExecutionPolicy
-     > Restricted
-     Set-ExecutionPolicy AllSigned
-     or
-     Set-ExecutionPolicy Bypass -Scope Process.
-     ```
-
-   - Powershell
-
-     ```sh
-     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-     ```
-   
-   - 安装Dart
-
-     ```sh
-     choco install dart-sdk
-     ```
-   
-5. Dart语言风格
-
-   - 所有能够使用变量引用的都是对象；
-   - 下划线开头表示私有属性
-   - 程序执行入口是main函数
-
-6. 变量和常量
-
-   - 使用var关键字声明变量：可以赋予不同类型的值
-
-   - 未初始化时，默认值是null
-
-   - 变量使用final声明只能赋值一次
-
-   - dynamic 声明的变量是
-
-   - const声明常量：同时也是final，比final更加严格，final的值可以在编译时候赋值，
-
-     ```dart
-     final a = getNum()
-     ```
-
-7. 内置数据类型
-   1. numbers：变量关键字（int、double、num）：强类型声明变量
-   
-   2. strings：变量关键字（String）：
-      1. 可以使用单引号、双引号、三单引号（多行字符串）
-      2. 双引号中使用·`$变量`引用变量
-      3. 字符前添加`r`表示原始字符串：不转义特殊字符
-      
-   3. booleans：变量关键字（bool）：
-   
-   4. lists：使用变量字面量（`[]`）、List、
-      1. 定义方式：①[]、②List 变量、③var 变量 = new List()
-      2. 操作下标：
-      3. const[]：表示不可变数组，不可变
-      
-   5. maps：
-      1. 定义Map：使用Map字面量{}
-      2. 使用Map关键字：Map 变量 = {}
-      3. 使用new Map()：定义字典
-      
-   6. runes：在Dart中，Runes代表字符串的UTF32字符集，
-      1. Dart中字符串是UTF-16的字符序列，
-      2. 定义一个Runter：使用\uXXXX或\u{XXXXX}表示
-      3. 强类型声明：Runter r = new Runter("\uXXX")
-      4. Runter转字符串：new String.formatCharCodes(runter)
-      
-   7. sysbols：Dart语言的标识符，在反射中使用很普及
-   
-      1. 一个Symbol对象代表Dart程序中声明的操作符或标识符
-   
-      2. 作用：混淆后的代码，标识符名称别混淆了，但是Symbol的名字不会变，使用Symbol字面量来获取标识符的symble对象，在标识符签名添加一个#号
-   
-         ```dart
-         var sm2 = #name;
-         var sm1 = Symbol("name");
-         ```
-   
-8. 运算符：可以创建表达式，可以重新表达式
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Flutter 是 Google 发布的一个用于创建跨平台、高性能移动应用的框架。Flutter 和 Qt mobile 一样，都没有使用原生控件，相反都实现了一个自绘引擎，使用自身的布局、绘制系统。但是Flutter是背靠Google，有着丰富的社区资源，并且性能高，在 iOS 和 Android 模拟器或真机上可以实现毫秒级热重载，并且不会丢失状态。Flutter 提供了丰富的组件、接口，开发者可以很快地为 Flutter 添加 Native 扩展。
 
-   | 运算符   | 符号                                               |
-   | -------- | -------------------------------------------------- |
-   | 一元后缀 | expr++、expr--、()、[]、？、.                      |
-   | 一元前缀 | ++expr、--expr、!expr、~expr、-expr                |
-   | 乘法     | *、/、%、~/                                        |
-   | 加法     | +、-                                               |
-   | 移位     | <<、>>                                             |
-   | 与       | &                                                  |
-   | 或       | \|                                                 |
-   | 关系类型 | \>=、、<=、>、<、as、is、is！                      |
-   | 等式     | ==、!=                                             |
-   | 逻辑与   | &&                                                 |
-   | 逻辑或   | \|\|                                               |
-   | 三元     | bool ？ true : false                               |
-   | 级联     | ..                                                 |
-   | 赋值     | +=、-=、*=、/=、~=、%=、>>=、<<=、&=、\|=、^=、??= |
+| 技术类型              | UI渲染方式      | 性能 | 开发效率        | 动态化     | 框架代表       |
+| --------------------- | --------------- | ---- | --------------- | ---------- | -------------- |
+| H5 + 原生             | WebView渲染     | 一般 | 高              | 支持       | Cordova、Ionic |
+| JavaScript + 原生渲染 | 原生控件渲染    | 好   | 中              | 支持       | RN、Weex       |
+| 自绘UI + 原生         | 调用系统API渲染 | 好   | Flutter高, Qt低 | 默认不支持 | Qt、Flutter    |
 
-9. 流程控制：同JavaScript
+### 2. Flutter框架
 
-10. 方法定义：在Dart中方法（函数）也是对象，其类型是Function，所以方法可以赋值给变量也可以当做其他方法的参数；同时Dart中的函数对象也是方法；
+- Flutter 从上到下可以分为三层：框架层、引擎层和嵌入层
 
-    - 函数定义：标准定义，同java
+  <img src='https://s4.ax1x.com/2022/01/06/TzVD5n.png' width='80%'/>
 
-    - dynamic返回值类型推断的方式
-
-    - 使用箭头函数：=>：表示{return }
+  - **Flutter Framework，即框架层**。这是一个纯 Dart实现的 SDK，它实现了一套基础库
+    - 底下两层（Foundation 和 Animation、Painting、Gestures）在 Google 的一些视频中被合并为一个dart UI层，对应的是Flutter中的`dart:ui`包，它是 Flutter Engine 暴露的底层UI库，提供动画、手势及绘制能力。
+    - Rendering 层，即渲染层，这一层是一个抽象的布局层，它依赖于 Dart UI 层，渲染层会构建一棵由可渲染对象的组成的**渲染树**，当动态更新这些对象时，渲染树会找出变化的部分，然后更新渲染。渲染层可以说是Flutter 框架层中最核心的部分，它除了确定每个渲染对象的位置、大小之外还要进行坐标变换、绘制（调用底层 dart:ui ）。
+    - Widgets 层是 Flutter 提供的的一套基础组件库，在基础组件库之上，Flutter 还提供了 Material 和 Cupertino 两种视觉风格的组件库，它们分别实现了 Material 和 iOS 设计规范。
+  - **Engine，即引擎层**。毫无疑问是 Flutter 的核心， 该层主要是 C++ 实现，其中包括了 Skia 引擎、Dart 运行时、文字排版引擎等。在代码调用 `dart:ui`库时，调用最终会走到引擎层，然后实现真正的绘制和显示。
+  - **Embedder，即嵌入层**。Flutter 最终渲染、交互是要依赖其所在平台的操作系统 API，嵌入层主要是将 Flutter 引擎 ”安装“ 到特定平台上。嵌入层采用了当前平台的语言编写，例如 Android 使用的是 Java 和 C++， iOS 和 macOS 使用的是 Objective-C 和 Objective-C++，Windows 和 Linux 使用的是 C++。 Flutter 代码可以通过嵌入层，以模块方式集成到现有的应用中，也可以作为应用的主体。Flutter 本身包含了各个常见平台的嵌入层，假如以后 Flutter 要支持新的平台，则需要针对该新的平台编写一个嵌入层。
 
-      ```dart
-      String getName(String name) => name;
-      ```
+### 3. Flutter应用结构
 
-    - 必传参数：默认在方法上声明的参数就是必传参数；
 
-    - 可选参数：位置参数：将参数定义在[]中，参数传递时是根据参数的位置赋值，如果不传也要赋值null；
 
-    - 可选参数：命名参数：将参数定义在字典中：{k，v}；参数传递时候需要指定名称（key:v）
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在Flutter应用中一切兼是Weight，不同的类型的Weight有着不同的功能，可以理解为HTML中内容是由标签标记，不同的标签有不同的样式；在HTML中有html基础骨架：html、head、title、body，FLutter也有自己的骨架，如上图，MaterialApp组件是根组件，根组件的home属性是Scaffold组件，表示是页面脚手架：如appBar是页面的头部，body是页面的主要内容区，floatingActionButton是页面底部导航栏；
 
-    - 参数默认值：定义参数参数时候给参数赋值称为默认值
+## 1.3 Flutter环境
 
-    - 匿名方法：是匿名或者闭包
-
-11. 变量作用域：指定义在代码块中的变量在代码块内有效
-
-12. 函数闭包：是一个方法的对象，不论改对象子啊何处被调用，该对象都能访问自己作用域内的变量；
-
-    ```dart
-    count(){
-      int n = 0;
-      return (){
-        return n++;
-      };
-    }
-    ```
+### 1. Window系统
 
-13. 面向对象
+### 2. Mac系统
 
-    - 定义类关键字：class：包含构造方法、成员变量、成员方法、类变量（静态变量）、类方法（静态方法）
-    - 实例化对象：new 类名()；
-      - 一个类只有一个构造方法
-      - 类中的构造方法不支持重载
-      - 使用命名的构造方法来实现构造方法的重载；
-    - 常量构造方法：创建对象后不允许被修改
-    - 常量私有属性设置：变量名称使用下划线开头；
+- 下载FlutterSDK：
 
-14. 对象的仿真函数：如果类实现的call方法，则该类的对象可以作为方法使用
+  - 中文网址：https://flutter.cn/
+  - 官网网址：https://flutter.dev/
 
-    ```dart
-    
-    ```
-
-15. 类的基础与构造方法的继承：单继承：extends，与方法的重写，构造方法的重写；
-
-16. 抽象类：abstract
-
-17. 接口定义：可以使用implements关键字，可以把需要继承的类当做一个接口用；接口中的属性或方法子类都需要实现，可以使用多继承
-
-18. 混合：minx：实现类的多继承 with关键字
-
-19. 枚举：class关键字是enum关键字
-
-20. 泛型：是指类型的参数化；泛型类，泛型方法
-
-21. 异步编程：Dart是单线程语言，异步代码主要是用async  await实现；类似JavaScript
-
-    - Future类型Promise：为了解决异步回调，方法内使用await关键字，当前方法必须是async方法
-
-22. dart库
-
-    1. 自定义库：使用import as指定库名关键字引入库,使用下划线就不会被导出
-    2. 内置库：dart SDK内置的库，默认导入dart.core库：
-    3. 第三方库：管理在pub包,依赖配置文件:pubspec.yaml
-
-# Dart
-
-1. Flutter简介
-
-   - Google开发的开源的基于Dart语言的UI框架，可以快速在iOS和Android尚构建高质量的原生应用，他最大特点就是跨平台和高性能
-   - Dart语言是由Google在2011年开发的计算机编程语言，他可以被用于WEB、服务器、移动应用和物联网应用等多个领域，号称要取代JavaScript
-   - 跨平台：移动端、iOS、WEB端、桌面端
-   - 高性能：
-     - 采用GPU图形渲染技术
-     - Flutter应用的刷新率最高能打到120fsp（可以用来开发游戏）
-
-2. Flutter发展历史
-
-3. 跨平台框架比较
-
-   ![image-20211124213254091](./imgs/image-20211124213254091.png)
-
-4. Flutter环境搭建
-
-   - 提前安装配置
-     - JDK
-     - 安装AndroidStudio并安装SDK
-
-   - Windows系统
-     - 只能搭建Android环境
-     - 下载Flutter并配置环境变量
-     - 登陆Flutter官网配置镜像
-   - Mac系统
-     - 可以搭建Android和iOS环境
-     - 下载XCode
-     - 下载Flutter并配置 环境变量
-     - 登陆Flutter官网配置镜像
-
-5. VSCode安装Flutter插件
-
-   - flutter
-   - dart
-
-# Dart
-
-> 大纲：
->
-> - 概述
-> - 语法基础
-> - 数据类型
-> - 运算符
-> - 流程控制语句：同JavaScript
-> - 函数
-> - 面向对象
-> - 库与生态
-
-1.1 Dart概述
-
-
-
-第一章 Dart概述
-
-1.1 Dart介绍
-
-Dart是google于2011发布的计算机语言，其志向是为了改变web开发的现状，主要是fix javascript的问题。随着时间的发展，Dart自身也经历了无数次的颠覆性迭代，几乎现代语言该有的特征，Dart都有，比如async/await异步模式编程、完全内存隔离的isolate多线程编程范式、函数编程范式、面向对象编程范式、静态数据类型、JIT+AOT的编译优化等等。而Dart的生态，已经逐渐成型。虽然还不敢说超越Javascript，但是后起之势非常迅猛。首先就是，flutter框架横扫APP，Android和iOS平台日臻完善。Flutter for web也已经合并到稳定版本，桌面版Flutter的应用最早从MacOS开始，Linux平台的桌面版Fluuter应用也已官宣，windows版的桌面应用也正在加紧开发。Dart从没放弃server端的开发，Dart-Native是一个制霸后端的一个神器， Aqueduct已经在发力。
-
-1.2 Dart特点
-
-- Dart的金主，背靠Google，用于Dart统一前端，GO统一后端的野心。
-- Dart的编程范式：是目前编程范式和语言覆盖面最广的语言，比Java更面向对象的一种编程语言。
-- Dart的生态：目前，能够和FLutter比生态的，几乎没有。假以时日，Aqueduct的生态蓬勃而起，Dart的全栈时代就真的到来了。
-
-1.3 Dart安装配置
-
-- 安装方式：从 Flutter 1.21 版本开始，Flutter SDK 会同时包含完整的 Dart SDK
-
-  - Flutter SDK：https://docs.flutter.dev/get-started/install
-
-- 配置Flutter和Dart环境变量
+- 解压并配置环境变量：`~/.bash——profile`
 
   ```sh
+  export PATH=[FLUTTER_INSTALL_PATH]/flutter/bin:$PATH
   ```
 
-- Flutter 开发依赖于 SDK 的升级 和 Dart Package 生态，需要将开发设备的如下两个环境变量设置指向 TUNA 镜像站：
+  > - FLUTTER_INSTALL_PATH：表示flutter的解压安装目录
+  > - 配置完成后执行source $HOME/.bash_profile刷新变量，Mac系统需要在`～/.zshrc` ，在其中添加：source ～/.bash_profile保证每次打开终端可以刷新.bash_profile配置文件
 
-  - `PUB_HOSTED_URL`
+- 安装开发必须软件：xCode、AndroidStudio（或VSCode）、Chrome等等
 
-  - `FLUTTER_STORAGE_BASE_URL`
+- 安装开发工具的Flutter插件：flutter
 
-    ```sh
-    export FLUTTER_STORAGE_BASE_URL="https://mirrors.tuna.tsinghua.edu.cn/flutter"
-    export PUB_HOSTED_URL="https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
+- Flutter升级：Flutter SDK有多个分支，如beta、dev、master、stable，其中stable分支为稳定分支；安装flutter后，你可以运行`flutter channel`查看所有分支，切换分支只需要执行命令flutter channel 分支名称 `即可，升级Flutter只需要一条命令
+
+  ```sh
+  flutter upgrade
+  ```
+
+# 第二章 Flutter基础
+
+## 2.1 Flutter项目结构
+
+- 使用AndroidStudio或者VSCode开发工具创建Flutter项目：目录结构说明
+
+  | 文件或目录      | 说明                                                         |
+  | --------------- | ------------------------------------------------------------ |
+  | .dart_tool      | 记录了一些dart工具库所在的位置和信息                         |
+  | .idea           | android studio 是基于idea开发的，.idea 记录了项目的一些文件的变更记录 |
+  | android         | Android项目文件夹                                            |
+  | ios             | iOS项目文件夹                                                |
+  | lib             | lib文件夹内存放我们的dart语音代码                            |
+  | test            | 用于存放我们的测试代码                                       |
+  | .gitignore      | git忽略配置文件                                              |
+  | .metadata       | IDE 用来记录某个 Flutter 项目属性的的隐藏文件                |
+  | .packages       | pub 工具需要使用的，包含 package 依赖的 yaml 格式的文件      |
+  | flutter_app.iml | 工程文件的本地路径配置                                       |
+  | pubspec.lock    | 当前项目依赖所生成的文件                                     |
+  | pubspec.yaml    | 当前项目的一些配置文件，包括依赖的第三方库、图片资源文件等   |
+  | README.md       | READEME文件                                                  |
+
+## 2.2 Flutter UI风格
+
+1. **Material**：Material Design是由谷歌推出的全新设计语言，这种设计语言旨在为手机、平板电脑、台式机和其他平台提供更一致、更广泛的外观和感觉。Material Design风格是一直非常有质感的设计风格，并会提供一些默认的交互动画，对于搞Android开发的来说应该耳熟能详了。MaterialApp代表使用Material Design风格的应用，里面包含了其他所需的基本控件。
+
+   ```dart
+   import 'package:flutter/material.dart';
+   ```
+
+2. **Cupertino**：Cupertino风格组件即IOS风格组件。主要有CupertinoTabBar、CupertinoPageScaffold、CupertinoTabScaffold、CupertinoTabView等。目前组件库还没有Material Design风格组件丰富。
+
+   ```dart
+   import 'package:flutter/cupertino.dart';
+   ```
+
+## 2.3 Widget概述
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Flutter Widget采用现代响应式框架构建，这是从React中获得的灵感，中心思想是用widget构建你的UI。 Widget描述了他们的视图在给定其当前配置和状态时应该看起来像什么。当widget的状态发生变化时，widget会重新构建UI，Flutter会对比前后变化的不同， 以确定底层渲染树从一个状态转换到下一个状态所需的最小更改。
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在Flutter中几乎所有的对象都是一个 widget，它不仅可以表示UI元素，也可以表示一些功能性的组件。在 Flutter中widget 的功能是“描述一个UI元素的配置信息（是 Widget 接收的参数）”，它就是说， Widget 其实并不是表示最终绘制在设备屏幕上的显示元素，而是根据配置信息最终生成Layer树然后显示。Flutter中根据Widget的布局绘制流程如下：
+
+1. 根据 Widget 树生成一个 Element 树，Element 树中的节点都继承自 `Element` 类。
+2. 根据 Element 树生成 Render 树（渲染树），渲染树中的节点都继承自`RenderObject` 类。
+3. 根据渲染树生成 Layer 树，然后上屏显示，Layer 树中的节点都继承自 `Layer` 类。
+
+**这里需要注意：**
+
+1. 三棵树中，Widget 和 Element 是一一对应的，但并不和 RenderObject 一一对应。比如 `StatelessWidget` 和 `StatefulWidget` 都没有对应的 RenderObject。
+2. 渲染树在上屏前会生成一棵 Layer 树
+
+## 2.4 MaterialApp结构
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>一个最简单的Flutter应用程序，只需一个widget即可！如下面示例：将一个widget传给`runApp`函数即可。使用Material的UI风格，可以继承主题数，widget需要位于MaterialApp内才能正常显示， 因此我们使用MaterialApp来运行该应用。Material也是widget组件树组成一套UI风格，就好像html也是由不同html标签组成的DOM树，**所以学习Flutter主要是学习Material中的组件使用方式**；MaterialApp中的组件基本结构如下图：
+
+<img src='https://s4.ax1x.com/2022/01/08/7PHXo8.png' width='80%'/>
+
+- Scallold是Material中提供的基础的页面脚手架，包含Flutter应用主要展示的页面；
+
+## 2.5 组件状态
+
+1. 状态概述：项目开发中，通常根据是否需要进行数据交互分为有状态组件（StatefulWidget）和无状态组件（StatelessWidget）。widget的主要工作是实现一个build函数，用以构建自身。
+
+2. 无状态组件：StatelessWidget
+
+   ```dart
+   class 组件类名 extends StatelessWidget {
+     const 组件类名({Key? key}) : super(key: key);
+   
+     @override
+     Widget build(BuildContext context) {
+       return Container();
+     }
+   }
+   ```
+
+3. 有状态组件：StatefulWidget：可以在_State对象中定义需要交互的数据信息
+
+   ```dart
+   class 组件类名 extends StatefulWidget {
+     const 组件类名({Key? key}) : super(key: key);
+   
+     @override
+     _State createState() => _State();
+   }
+   
+   class _State extends State<> {
+     @override
+     Widget build(BuildContext context) {
+       return Container();
+     }
+   }
+   ```
+
+## 2.6 包管理
+
+1. pubspec.yaml
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在软件开发中，将代码单独抽到一个独立模块，项目需要使用时再直接集成这个模块，便可大大提高开发效率。一个 App 在实际开发中往往会依赖很多包，手动来管理应用中的依赖包将会非常麻烦。 Flutter 使用配置文件`pubspec.yaml`（位于项目根目录）来管理第三方依赖包。
+
+```yaml
+name: flutter_in_action
+description: First Flutter Application.
+
+version: 1.0.0+1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+    
+flutter:
+  uses-material-design: true
+```
+
+> - `name`：应用或包名称。
+> - `description`: 应用或包的描述、简介。
+> - `version`：应用或包的版本号。
+> - `dependencies`：应用或包依赖的其它包或插件。
+> - `dev_dependencies`：开发环境依赖的工具包（而不是flutter应用本身依赖的包）。
+> - `flutter`：flutter相关的配置选项。
+
+2. Pub仓库
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Pub（https://pub.dev/ ）是 Google 官方的 Dart Packages 仓库，类似于 node 中的 npm仓库。我们可以在 Pub 上面查找我们需要的包和插件，也可以向 Pub 发布我们的包和插件。使用方式
+
+- 搜索支持Flutter的包以及对应的版本
+
+- 将包添加到Flutter项目的配置文件中
+
+  ```yaml
+  dependencies:
+    flutter:
+      sdk: flutter
+    # 新添加的依赖
+    english_words: ^4.0.0
+  ```
+
+- 执行pub get命令将第三方包拉取到当前项目中
+
+- 在dart项目中import对应的包（dart基础：每个dart文件就属于一个包，引入后可以使用非私有对象）
+
+3. 其它依赖方式
+
+   - 依赖本地包
+
+     ```dart
+     dependencies:
+     	pkg1:
+             path: ../../code/pkg1
+     ```
+
+   - 依赖Git -> 软件包位于仓库的根目录中
+
+     ```dart
+     dependencies:
+       pkg1:
+         git:
+           url: git://github.com/xxx/pkg1.git
+     ```
+
+   - 依赖Git -> 软件包不在仓库的根目录中可以使用path参数指定相对位置
+   
+     ```dart
+     dependencies:
+       package1:
+         git:
+           url: git://github.com/flutter/packages.git
+           path: packages/package1    
+     ```
+
+# 第三章 Material基础
+
+
+
+## 3.1 AppBar
+
+## 3.2 
+
+## 3.3 路由管理
+
+### 1. 路由概述
+
+- Flutter路由说明
+
+  - 路由（Route）在移动开发中通常指页面（Page），这跟 Web 开发中单页应用的 Route 概念意义是相同的，Route 在 Android中 通常指一个 Activity，在 iOS 中指一个 ViewController。所谓路由管理，就是管理页面之间如何跳转，通常也可被称为导航管理。Flutter 中的路由管理和原生开发类似，无论是 Android 还是 iOS，导航管理都会维护一个路由栈，路由入栈（push）操作对应打开一个新页面，路由出栈（pop）操作对应页面关闭操作，而路由管理主要是指如何来管理路由栈。
+  - 管理多个页面时有两个核心概念和类：Route和 Navigator。 一个route是一个屏幕或页面的抽象，Navigator是管理route的Widget。Navigator可以通过route入栈和出栈来实现页面之间的跳转。
+
+- 核心对象
+
+  - Route：一个页面要想被路由统一管理，必须包装为一个Route；
+
+    ```dart
+    // push参数是一个Route,在Route的builder中包装一个组件
+    Navigator.of(context)
+      .push(MaterialPageRoute(
+      	builder: (context) {
+          return const 组件对象();
+        }
+      );
     ```
 
-- 在编译android项目时，需要设置Gradle仓库源，修改配置文件build.gradle 
+    > Route是一个抽象类，不能直接new，Route在不同的平台有不同的实现对应着不同的表现；对于material的表现是打开一个页面会从屏幕底部滑动到屏幕的顶部，关闭页面时从顶部滑动到底部消失；对于cupertino的表现是打开一个页面会从屏幕右侧滑动到屏幕的左侧，关闭页面时从左侧滑动到右侧消失
 
-  ```groovy
-  allprojects {
-      repositories {
-          google()
-          jcenter()
-          maven { url 'https://mirrors.tuna.tsinghua.edu.cn/flutter/download.flutter.io' }
-      }
-  }
-  ```
+  - MaterialPageRoute和CupertinoPageRoute：Route的构造参数如下
 
-第二章 Dart基础
+    ```dart
+    MaterialPageRoute({
+      WidgetBuilder builder,
+      RouteSettings settings,
+      bool maintainState = true,
+      bool fullscreenDialog = false,
+    })
+    ```
 
-2.1 注释
+    > - builder： 是一个WidgetBuilder类型的回调函数，它的作用是构建路由页面的具体内容，返回值是一个widget。我们通常要实现此回调，返回新路由的实例。
+    > - settings： 包含路由的配置信息，如路由名称、是否初始路由（首页）。
+    > - maintainState：默认情况下，当入栈一个新路由时，原来的路由仍然会被保存在内存中，即设置为true
+    > - fullscreenDialog：表示新的路由页面是否是一个全屏的模态对话框，在iOS中，如果fullscreenDialog为true，新页面将会从屏幕底部滑入（而不是水平方向）。
 
-- 单行注释：以//开头
+  - Navigator：是一个路由管理的组件，它提供了打开和退出路由页方法。Navigator通过一个栈来管理活动路由集合。通常当前屏幕显示的页面就是栈顶的路由。Navigator提供了一系列方法来管理路由栈开发中使用的MaterialApp、CupertinoApp、WidgetsApp它们默认是有插入Navigator的。所以，我们在需要的时候，只需要直接使用即可
 
-  ```dart
-  // 单行注释
-  ```
+    ```dart
+    // 创建Navigator对象
+    Navigator.of(context);
+    
+    // Navigator类中第一个参数为context的静态方法都对应一个Navigator的实例方法,等价方法
+    Navigator.push(BuildContext context, Route route);
+    Navigator.of(context).push(Route route)
+    
+    // 路由跳转：传入一个路由对象（返回值是一个Future对象，用以接收新路由出栈（即关闭）时的返回的数据）
+    Future<T> push<T extends Object>(Route<T> route);
+    
+    // 路由跳转：传入一个名称（命名路由）
+    Future<T> pushNamed<T extends Object>(
+      String routeName, {
+        Object arguments,
+      })
+    
+    // 路由返回：可以传入一个参数，result为页面关闭时返回给上一个页面的数据。
+    bool pop<T extends Object>([ T result ])
+    ```
 
-- 多行注释：以 /* 开头， 以*/结束
+### 2. 简单路由
 
-  ```dart
-  /*
-  多行注释
-  */
-  ```
+```dart
+// 点击按钮跳转到其他路由
+TextButton(onPressed: (){
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context){
+                  return const ProductPage();
+                }
+              )
+          );
+        }, child: const Text("product")),
+```
 
-- 文档注释：以/**  */或者 ///开头。/// 是 Dart 推荐使用的文档注释语法
+### 3. 命名路由
 
-  ```dart
-  /// Feeds your llama [Food].
-  ///
-  /// The typical llama eats one bale of hay per week.
-  void feed(Food food) {
-  }
-  ```
+## 3.4 资源管理
 
-2.2 变量
+# 第四章 基础组件
 
-1. 定义变量规则
+# 第五章 布局组件
 
-   - 标识符不能是关键字。
-   - 标识符可以包含字母和数字。
-   - 标识符不能包含空格和特殊字符，但下划线(`_`)和美元(`$`)符号除外。
-   - 变量名称不能以数字开头。
+# 第六章 容器组件
 
-2. 变量语法
+# 第七章 滚动组件
 
-   - 使用`var`关键字来标识一个变量：是通过在变量名前加上数据类型前缀来支持类型检查
+# 第八章 功能组件
 
-     ```dart
-     var name = 'smith';
-     ```
+# 第九章 事件与通知
 
-   - 使用数据类型加变量名：支持类型检查
+# 第十章 动画
 
-     ```dart
-     String name = 'Maxsu'; 
-     int number = 99;
-     ```
+# 第十一章 自定义组件
 
-   - 变量初始值：未初始化的变量的初始值为`null`
+# 第十二章 文件操作与网络请求
 
-     ```dart
-     int num; 
-     print(num);
-     // 输出结果：Null
-     ```
+# 第十三章 国际化
 
-   - dynamic：声明没有未指定静态类型的变量则会隐式声明为 `dynamic` 
+# 第十四章 Flutter核心原理
 
-     ```dart
-     void main() { 
-        dynamic x = "tom"; 
-        print(x);  
-     }
-     ```
-
-   - final和const：`final`和`const`关键字用于声明常量
-
-     ```dart
-     const pi = 3.14; 
-     final f = fun();
-     ```
-
-     > - `const`关键字用于表示编译时常量
-     > - `final`关键字用于表示运行时常量
-
-2.3 数据类型
-
-1. Number
-
-   - 数据类型
-
-     - num：数值类型
-
-     - int：是num的亚类型，整数值不大于64位
-
-     - double：是num的亚类型，值是64位（双精度）浮点数
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-2. String
-
-   - 数据类型：String是一组 UTF-16 单元序列。 字符串通过单引号或者双引号创建。使用连续三个单引号或者三个双引号实现多行字符串对象的创建。字符串可以通过 ${expression} 的方式内嵌表达式
-
-     > == 运算符用来测试两个对象是否相等
-     >
-     > 用 + 运算符来把多个字符串连接为一个
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-3. Boolean
-
-   - 数据类型：bool 类型。只有字面量 true and false 是布尔类型
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-4. List (也被称为 Array)
-
-   - 数据类型：Array就是list对象
-
-     ```dart
-     var list = [1, 2, 3];
-     
-     ```
-
-   - 常用API 
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-5. Map
-
-   - 数据类型:
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-6. Set
-
-   - 数据类型:
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-7. Rune (用于在字符串中表示 Unicode 字符)
-
-   - 数据类型:
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-8. Symbol
-
-   - 数据类型:
-
-   - API
-
-     | 常用API | 说明 |
-     | ------- | ---- |
-     |         |      |
-
-2.4 运算符
-
-2.5 流程控制
-
-第三章 Dart函数
-
-第四章 Dart面向对象
+# 第十五章 Flutter项目总结
 
