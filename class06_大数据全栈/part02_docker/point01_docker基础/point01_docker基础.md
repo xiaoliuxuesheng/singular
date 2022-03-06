@@ -34,7 +34,6 @@
 
 8. **联合文件系统(Union file systems)**：是通过创建层来操作的文件系统，这使得它们非常轻量和快速。Docker引擎使用UnionFS为容器提供构建块。Docker引擎可以使用多个UnionFS变体，包括AUFS、btrfs、vfs和DeviceMapper。
 
-9. 
 
 # 第二章 Docker安装
 
