@@ -1,5 +1,9 @@
 # 前言
 
+- 学习资料
+  - https://www.cnblogs.com/yadongliang/p/5851606.html
+  - http://c.biancheng.net/hibernate/mapping.html
+  - https://www.cnblogs.com/sharpest/p/7845108.html
 - ORM
   - ORM：Object Relation Mapping对象关系映射
   - ORM思想：将关系型数据库中一行数据映射为一个Java对象，程序员可以把对Java对象的操作映射为对数据库的操作
