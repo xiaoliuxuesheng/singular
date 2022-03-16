@@ -18,36 +18,40 @@
 
 # 第一部分 Xml配置Hibernate
 
-## 第一章 HelloWorld
+## 第一章 Hibernate入门
+
+### 1.1 HelloWorld
 
 1. 新建Maven功能，添加Hibernate相关依赖
 
    ```xml
-   <dependency>
-     <groupId>org.hibernate</groupId>
-     <artifactId>hibernate-core</artifactId>
-     <version>5.6.5.Final</version>
-   </dependency>
-   <dependency>
-     <groupId>mysql</groupId>
-     <artifactId>mysql-connector-java</artifactId>
-     <version>8.0.26</version>
-   </dependency>
-   <dependency>
-     <groupId>junit</groupId>
-     <artifactId>junit</artifactId>
-     <version>4.13.2</version>
-   </dependency>
-   <dependency>
-     <groupId>org.projectlombok</groupId>
-     <artifactId>lombok</artifactId>
-     <version>1.18.22</version>
-   </dependency>
-   <dependency>
-     <groupId>cn.hutool</groupId>
-     <artifactId>hutool-all</artifactId>
-     <version>5.6.2</version>
-   </dependency>
+   <dependencies>
+       <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-core</artifactId>
+           <version>5.6.5.Final</version>
+       </dependency>
+       <dependency>
+           <groupId>mysql</groupId>
+           <artifactId>mysql-connector-java</artifactId>
+           <version>8.0.26</version>
+       </dependency>
+       <dependency>
+           <groupId>junit</groupId>
+           <artifactId>junit</artifactId>
+           <version>4.13.2</version>
+       </dependency>
+       <dependency>
+           <groupId>org.projectlombok</groupId>
+           <artifactId>lombok</artifactId>
+           <version>1.18.22</version>
+       </dependency>
+       <dependency>
+           <groupId>cn.hutool</groupId>
+           <artifactId>hutool-all</artifactId>
+           <version>5.6.2</version>
+       </dependency>
+   </dependencies>
    ```
 
 2. 新建Java实体类
@@ -56,42 +60,46 @@
    @Getter
    @Setter
    @ToString
-   public class Person {
-     private String id;
-     private Long cardId;
-     private String name;
-     private Date gmtCreate;
-     private Date gmtModify;
+   public class Person01 {
+       private String id;
+       private Long cardId;
+       private String name;
+       private Date gmtCreate;
+       private Date gmtModify;
    }
    ```
 
 3. 在Maven的resources目录中新建Hibernate的配置文件：**hibernate.cfg.xml**
 
    ```xml
+   <?xml version='1.0' encoding='utf-8'?>
+   <!DOCTYPE hibernate-configuration PUBLIC
+           "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+           "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
    <hibernate-configuration>
-     <!-- 通常，一个session-factory节点代表一个数据库 -->
-     <session-factory>
-       <!-- 1. 数据库连接配置 -->
-       <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-       <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/xlxs_jap</property>
-       <property name="hibernate.connection.username">root</property>
-       <property name="hibernate.connection.password">root</property>
-       <!--数据库方法配置，hibernate在运行时，会根据不同的方言生成符合当前数据库语法的sql-->
-       <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
-       <!-- 2. 其他相关配置 -->
-       <!-- 2.1 显示hibernate在运行时候执行的sql语句 -->
-       <property name="hibernate.show_sql">true</property>
-       <!-- 2.2 格式化sql -->
-       <property name="hibernate.format_sql">true</property>
-       <!-- 2.3 自动建表  -->
-       <property name="hibernate.hbm2ddl.auto">update</property>
-       <!--3. 加载所有映射-->
-       <mapping resource="hibernate/mapping/Person.hbm.xml"/>
-     </session-factory>
+       <!-- 通常，一个session-factory节点代表一个数据库 -->
+       <session-factory>
+           <!-- 1. 数据库连接配置 -->
+           <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+           <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/xlxs_jap</property>
+           <property name="hibernate.connection.username">root</property>
+           <property name="hibernate.connection.password">root</property>
+           <!-- 数据库方法配置， hibernate在运行的时候，会根据不同的方言生成符合当前数据库语法的sql-->
+           <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+           <!-- 2. 其他相关配置 -->
+           <!-- 2.1 显示hibernate在运行时候执行的sql语句 -->
+           <property name="hibernate.show_sql">true</property>
+           <!-- 2.2 格式化sql -->
+           <property name="hibernate.format_sql">true</property>
+           <!-- 2.3 自动建表  -->
+           <property name="hibernate.hbm2ddl.auto">update</property>
+           <!--3. 加载所有映射-->
+           <mapping resource="hibernate/mapping/Person01.hbm.xml"/>
+       </session-factory>
    </hibernate-configuration>
    ```
 
-4. 为Java对象添加和数据库的mapping映射：映射配置文件由hibernate.cfg.xml配置文件中的mapping中配置
+4. 为Java对象添加和数据库的mapping映射：映射配置文件由hibernate.cfg.xml配置文件中的mapping中设置，配置文件名称`Person01.hbm.xml`：①加载配置文件自动根据实体类生成数据表②持久化对象会自动新增主键UUID值
 
    ```xml
    <?xml version="1.0"?>
@@ -99,242 +107,282 @@
            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
            "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
    <hibernate-mapping package="com.jpa.hibernate.entity">
-   
-     <class name="Person" lazy="true" table="person">
-       <id name="id">
-         <generator class="uuid"/>
-       </id>
-       <property name="name" column="name"/>
-       <property name="cardId" column="card_id"/>
-       <property name="gmtCreate" column="gmt_create"/>
-       <property name="gmtModify" column="gmt_modify"/>
-     </class>
+       <class name="Person01" lazy="true" table="person_01">
+           <id name="id">
+               <generator class="uuid"/>
+           </id>
+           <property name="name" column="name"/>
+           <property name="cardId" column="card_id"/>
+           <property name="gmtCreate" column="gmt_create"/>
+           <property name="gmtModify" column="gmt_modify"/>
+       </class>
    </hibernate-mapping>
    ```
-
+   
 5. 编写测试类读取配置文件（默认读取根目录hibernate.cfg.xml文件），调用Hibernate的API创建数据表并存储对象
 
    ```java
-   @Test
-   public void testInit() throws Exception{
-     //获取加载配置管理类
-     Configuration configuration = new Configuration();
-     //不给参数就默认加载hibernate.cfg.xml文件，
-     configuration.configure();
-     //创建Session工厂对象
-     SessionFactory factory = configuration.buildSessionFactory();
-     //得到Session对象
-     Session session = factory.openSession();
-     //使用Hibernate操作数据库，都要开启事务,得到事务对象
-     Transaction transaction = session.getTransaction();
-     //开启事务
-     transaction.begin();
-     //把对象添加到数据库中
-     Person person = new Person();
-     person.setName("张三");
-     person.setCardId(1001L);
-     session.save(person);
-     //提交事务
-     transaction.commit();
-     //关闭Session
-     session.close();
-   }
+   public class PersonInitTest {
+       /**
+        * 使用HibernateAPI加载配置文件，生成数据表并新增数据
+        */
+       @Test
+       public void testInitType01() throws Exception {
+           //获取加载配置管理类
+           Configuration configuration = new Configuration();
+           //不给参数就默认加载hibernate.cfg.xml文件，
+           configuration.configure();
+           //创建Session工厂对象
+           SessionFactory factory = configuration.buildSessionFactory();
+           //得到Session对象
+           Session session = factory.openSession();
+           //使用Hibernate操作数据库，都要开启事务,得到事务对象
+           Transaction transaction = session.getTransaction();
+           //开启事务
+           transaction.begin();
+           //把对象添加到数据库中
+           Person01 person = new Person01();
+           person.setName("张三");
+           person.setCardId(1001L);
+           person.setGmtCreate(new Date());
+           person.setGmtModify(new Date());
+           try {
+               session.save(person);
+           } catch (Exception e) {
+               transaction.rollback();
+           }
+           //提交事务
+           transaction.commit();
+           //关闭Session
+           session.close();
+       }
    
-   @Test
-   public void test() {
-     StandardServiceRegistry sr = new StandardServiceRegistryBuilder().configure().build();
-     SessionFactory fa = new MetadataSources(sr).buildMetadata().buildSessionFactory();
-     Session session = fa.openSession();
-     //使用Hibernate操作数据库，都要开启事务,得到事务对象
-     Transaction transaction = session.getTransaction();
-     //开启事务
-     transaction.begin();
-     Person person = new Person();
-     person.setName("张三");
-     person.setCardId(1001L);
-     session.save(person);
-     //提交事务
-     transaction.commit();
-     //关闭Session
-     session.close();
+       /**
+        * 使用Hibernate 4.2版本的API加载配置文件，生成数据表并新增数据
+        */
+       @Test
+       public void testInitType02() {
+           StandardServiceRegistry sr = new StandardServiceRegistryBuilder().configure().build();
+           SessionFactory fa = new MetadataSources(sr).buildMetadata().buildSessionFactory();
+           Session session = fa.openSession();
+           //使用Hibernate操作数据库，都要开启事务,得到事务对象
+           Transaction transaction = session.getTransaction();
+           //开启事务
+           transaction.begin();
+           Person01 person = new Person01();
+           person.setName("张三");
+           person.setCardId(1001L);
+           person.setGmtCreate(new Date());
+           person.setGmtModify(new Date());
+           session.save(person);
+           //提交事务
+           transaction.commit();
+           //关闭Session
+           session.close();
+       }
    }
    ```
 
-# 第二章 Hibernate基础操作
+### 1.2 案例说明
+
+1. **hibernate.cfg.xml**：
+2. **Xxx.hbm.xml**：
+3. **SessionFactory**：
+4. **Session**：
+5. **Transaction**：
+
+## 第二章 Hibernate基础操作
+
+### 2.0 基础操作环境准备
+
+1. 新增基础测试类，加载配置文件，新建Session对象
+
+   ```java
+   public class BaseTest {
+       SessionFactory sessionFactory;
+       Session session;
+   
+       @Before
+       public void testBefore() throws Exception {
+           //加载 Hibernate 核心配置文件
+           Configuration configuration = new Configuration().configure();
+           //创建一个 SessionFactory 用来获取 Session 连接对象
+           sessionFactory = configuration.buildSessionFactory();
+           //获取session 连接对象
+           session = sessionFactory.openSession();
+       }
+       @After
+       public void testAfter() throws Exception {
+           //释放资源
+           session.close();
+           sessionFactory.close();
+       }
+   }
+   ```
+   
+2. 自定义测试类继承BaseTest，直接使用session对象
+
+   ```java
+   public class Test01Person extends BaseTest{
+   	// TODO
+   }
+   ```
 
 ### 2.1 新增
 
-- Session接口提供的save()方法
+```java
+public class Test01Person extends BaseTest {
 
-  ```java
-  @Test
-  public void testSave() {
-      //加载 Hibernate 核心配置文件
-      Configuration configuration = new Configuration().configure();
-      //创建一个 SessionFactory 用来获取 Session 连接对象
-      SessionFactory sessionFactory = configuration.buildSessionFactory();
-      //获取session 连接对象
-      Session session = sessionFactory.openSession();
-      //开始事务
-      Transaction transaction = session.beginTransaction();
-      //创建实体对象
-      Person person = new Person();
-      person.setName("新增数据");
-      person.setCardId(1001L);
-      person.setGmtCreate(new Date());
-      person.setGmtModify(new Date());
-      session.save(person);
-      //提交事务
-      transaction.commit();
-      //释放资源
-      session.close();
-      sessionFactory.close();
-  }
-  ```
+    /**
+     * 新增记录
+     */
+    @Test
+    public void testSave() {
+        //开始事务
+        Transaction transaction = session.beginTransaction();
+        //创建实体对象
+        Person01 person = new Person01();
+        person.setName("新增数据");
+        person.setCardId(1001L);
+        person.setGmtCreate(new Date());
+        person.setGmtModify(new Date());
+        try {
+            session.save(person);
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+        //提交事务
+        transaction.commit();
+    }
+}
+```
 
 ### 2.2 修改
 
-- Session接口提供的update方法
-
-  ```java
-  @Test
-  public void testUpdate() {
-      //加载 Hibernate 核心配置文件
-      Configuration configuration = new Configuration().configure();
-      //创建一个 SessionFactory 用来获取 Session 连接对象
-      SessionFactory sessionFactory = configuration.buildSessionFactory();
-      //获取session 连接对象
-      Session session = sessionFactory.openSession();
-      //开始事务
-      Transaction transaction = session.beginTransaction();
-      //现将需要修改的记录查询出来
-      Person user = session.get(Person.class, "ff8080817f808f1b017f808f1cd40000");
-      //设置需要修改的字段
-      user.setName("更新用户名");
-      //直接调用 update() 方法进行修改
-      session.update(user);
-      //提交事务
-      transaction.commit();
-      //释放资源
-      session.close();
-      sessionFactory.close();
-  }
-  ```
+```java
+public class Test01Person extends BaseTest {
+    /**
+     * 修改记录
+     */
+    @Test
+    public void testUpdate() {
+        //开始事务
+        Transaction transaction = session.beginTransaction();
+        //现将需要修改的记录查询出来
+        Person01 user = session.get(Person01.class, "ff8080817f808f1b017f808f1cd40000");
+        //设置需要修改的字段
+        user.setName("更新用户名");
+        //直接调用 update() 方法进行修改
+        try {
+            session.update(user);
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+        //提交事务
+        transaction.commit();
+    }
+}
+```
 
 ### 2.3 删除
 
-- Session接口提供的delete()方法
-
-  ```java
-  @Test
-  public void testDelete() {
-      //加载 Hibernate 核心配置文件
-      Configuration configuration = new Configuration().configure();
-      //创建一个 SessionFactory 用来获取 Session 连接对象
-      SessionFactory sessionFactory = configuration.buildSessionFactory();
-      //获取session 连接对象
-      Session session = sessionFactory.openSession();
-      //开始事务
-      Transaction transaction = session.beginTransaction();
-      Person person = new Person();
-      person.setId("ff8080817f5e6512017f5e6514950000");
-      //删除指定的记录
-      session.delete(person);
-      //提交事务
-      transaction.commit();
-      //释放资源
-      session.close();
-      sessionFactory.close();
-  }
-  ```
+```java
+public class Test01Person extends BaseTest {
+    /**
+     * 删除记录
+     */
+    @Test
+    public void testDelete() {
+        //开始事务
+        Transaction transaction = session.beginTransaction();
+        Person01 person = new Person01();
+        person.setId("ff8080817f5e6512017f5e6514950000");
+        //删除指定的记录
+        try {
+            session.delete(person);
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+        //提交事务
+        transaction.commit();
+    }
+}
+```
 
 ### 2.4 查询
 
-- HQL 查询：Hibernate Query Language，它是一种面向对象的查询语言
+1. HQL 查询：Hibernate Query Language，它是一种面向对象的查询语言
 
-  ```java
-  @Test
-  public void testQueryHql() throws Exception{
-      //加载 Hibernate 核心配置文件
-      Configuration configuration = new Configuration().configure();
-      //创建一个 SessionFactory 用来获取 Session 连接对象
-      SessionFactory sessionFactory = configuration.buildSessionFactory();
-      //获取session 连接对象
-      Session session = sessionFactory.openSession();
-      //创建 HQL 语句，语法与 SQL 类似，但操作的是实体类及其属性
-      Query query = session.createQuery("from Person where name like ?1");
-      //查询所有使用 163 邮箱的用户
-      query.setParameter(1, "%三%");
-      //获取结果集
-      List<Person> resultList = query.getResultList();
-      //遍历结果集
-      for (Person person : resultList) {
-          System.out.println(person);
-      }
-      //释放资源
-      session.close();
-      sessionFactory.close();
-  }
-  ```
+   ```java
+   public class Test01Person extends BaseTest {
+       /**
+        * 使用HQL语法查询数据
+        */
+       @Test
+       public void testQueryHql() throws Exception {
+           //创建 HQL 语句，语法与 SQL 类似，但操作的是实体类及其属性
+           Query query = session.createQuery("from Person01 where name like ?1");
+           //查询所有使用 163 邮箱的用户
+           query.setParameter(1, "%三%");
+           //获取结果集
+           List<Person01> resultList = query.getResultList();
+           //遍历结果集
+           for (Person01 person : resultList) {
+               System.out.println(person);
+           }
+       }
+   }
+   ```
 
-- QBC 查询：Query By Criteria，是一种完全面向对象（比 HQL 更加面向对象）的对数据库查询技术
+2. QBC 查询：Query By Criteria，是一种完全面向对象（比 HQL 更加面向对象）的对数据库查询技术
 
-  ```java
-  @Test
-  public void testQbcQuery() {
-      //加载 Hibernate 核心配置文件
-      Configuration configuration = new Configuration().configure();
-      //创建一个 SessionFactory 用来获取 Session 连接对象
-      SessionFactory sessionFactory = configuration.buildSessionFactory();
-      //获取session 连接对象
-      Session session = sessionFactory.openSession();
-      //获得 CriteriaBuilder 对象
-      CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-      //构建 CriteriaQuery 查询对象
-      CriteriaQuery<Person> criteria = criteriaBuilder.createQuery(Person.class);
-      //添加查询条件
-      Root<Person> from = criteria.from(Person.class);
-      Predicate like = criteriaBuilder.like(from.get("name"), "%三%");
-      criteria.where(criteriaBuilder.and(like));
-      //获取结果集
-      List<Person> list = session.createQuery(criteria).getResultList();
-      //遍历结果集
-      for (Person person : list) {
-          System.out.println(person);
-      }
-      //释放资源
-      session.close();
-      sessionFactory.close();
-  }
-  ```
+   ```java
+   public class Test01Person extends BaseTest {
+       /**
+        * 使用QBC 查询查询数据
+        */
+       @Test
+       public void testQbcQuery() {
+           //获得 CriteriaBuilder 对象
+           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+           //构建 CriteriaQuery 查询对象
+           CriteriaQuery<Person01> criteria = criteriaBuilder.createQuery(Person01.class);
+           //添加查询条件
+           Root<Person01> from = criteria.from(Person01.class);
+           Predicate like = criteriaBuilder.like(from.get("name"), "%三%");
+           criteria.where(criteriaBuilder.and(like));
+           //获取结果集
+           List<Person01> list = session.createQuery(criteria).getResultList();
+           //遍历结果集
+           for (Person01 person : list) {
+               System.out.println(person);
+           }
+       }
+   
+   }
+   ```
 
-- SQL 查询：支持使用原生的 SQL 语句对数据库进行查询
+3. SQL 查询：支持使用原生的 SQL 语句对数据库进行查询
 
-  ```java
-  @Test
-  public void testSqlQuery() {
-      //加载 Hibernate 核心配置文件
-      Configuration configuration = new Configuration().configure();
-      //创建一个 SessionFactory 用来获取 Session 连接对象
-      SessionFactory sessionFactory = configuration.buildSessionFactory();
-      //获取session 连接对象
-      Session session = sessionFactory.openSession();
-      //构建 sql 查询
-      NativeQuery sqlQuery = session.createSQLQuery("select * from person where name like '%三%'");
-      sqlQuery.addEntity(Person.class);
-      //获得结果集
-      List<Person> resultList = sqlQuery.getResultList();
-      //遍历结果集
-      for (Person person : resultList) {
-          System.out.println(person);
-      }
-      //释放资源
-      session.close();
-      sessionFactory.close();
-  }
-  ```
-
-  
+   ```java
+   public class Test01Person extends BaseTest {
+       /**
+        * 使用 SQL 查询查询数据
+        */
+       @Test
+       public void testSqlQuery() {
+           //构建 sql 查询
+           NativeQuery sqlQuery = session.createSQLQuery("select * from person where name like '%三%'");
+           sqlQuery.addEntity(Person01.class);
+           //获得结果集
+           List<Person01> resultList = sqlQuery.getResultList();
+           //遍历结果集
+           for (Person01 person : resultList) {
+               System.out.println(person);
+           }
+       }
+   }
+   ```
 
 ## 第三章Hibernate配置说明
 
@@ -375,7 +423,7 @@
    | schema          | 指定映射文件所对应的数据库名字空间                           | 否   |
    | package         | 为映射文件对应的实体类指定包名                               | 否   |
    | catalog         | 指定映射文件所对应的数据库目录                               | 否   |
-   | default-access  | 指定 Hibernate 用于访问属性时所使用的策略，默认为 property。当 default-access="property" 时，使用 getter 和 setter 方法访问成员变量；当 default-access = "field"时，使用反射访问成员变量。 | 否   |
+   | default-access  | 指定 Hibernate 用于访问属性时所使用的策略，默认为 property。<br />当 default-access="property" 时，使用 getter 和 setter 方法访问成员变量；<br />当 default-access = "field"时，使用反射访问成员变量。 | 否   |
    | default-cascade | 指定默认的级联风格                                           | 否   |
    | default-lazy    | 指定 Hibernate 默认使用的延迟加载策略                        | 否   |
 
@@ -427,6 +475,8 @@
    | lazy     | 该属性使用延迟加载，默认值是 false                           |
    | unique   | 是否对该字段使用唯一性约束。                                 |
    | not-null | 是否允许该字段为空                                           |
+   
+6. 
 
 ## 第四章 Hibernate规范
 
@@ -556,145 +606,488 @@
 
 ## 第五章 Hibernate关联映射
 
-### 5.1 一对一
+### 5.1 对象之间关系
 
--  Student 的映射文件 Student.hbm.xml
-
-  ```xml
-  <?xml version='1.0' encoding='utf-8'?>
-  <!DOCTYPE hibernate-mapping PUBLIC
-          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-          "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping>
-      <class name="net.biancheng.www.po.Student" table="student" schema="bianchengbang_jdbc" lazy="true">
-          <!--主键映射-->
-          <id name="id" column="id" type="java.lang.Integer">
-              <!--主键生成策略-->
-              <generator class="native"></generator>
-          </id>
-          <property name="name" column="name" length="100" type="java.lang.String"></property>
-          <!--维护关联关系-->
-          <many-to-one name="grade" class="net.biancheng.www.po.Grade" column="gid"/>
-      </class>
-  </hibernate-mapping>
-  ```
-
-- 创建 Grade 的映射文件 Grade.hbm.xml
-
-  ```xml
-  <?xml version='1.0' encoding='utf-8'?>
-  <!DOCTYPE hibernate-mapping PUBLIC
-          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-          "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping>
-      <class name="net.biancheng.www.po.Grade" table="grade" schema="bianchengbang_jdbc">
-          <id name="id" column="id" type="java.lang.Integer">
-              <generator class="native"></generator>
-          </id>
-          <property name="name" column="name" length="100" type="java.lang.String"/>
-          <!--使用 set 元素维护一对多关联关系-->
-          <set name="students">
-              <key column="gid"></key>
-              <one-to-many class="net.biancheng.www.po.Student"></one-to-many>
-          </set>
-      </class>
-  </hibernate-mapping>
-  ```
+- 依赖关系: 相互离开不能编译
+- 关联关系:是依赖关系的一种,一个是另一个的属性
+  - 多重性：一对一、一对多、多对一、多对多
+  - 导航性：单向、多向
+- 聚合关系：（从业务的关系理解）整体和部分，单独也可以存在
+- 组合关系：（从业务的关系理解）是一种强聚合，不可独立存在
+- 泛化关系：继承关系
 
 ### 5.2 一对多
 
-- 创建 Course 的映射文件 Coures.hbm.xml
+- 对象关系设计
+
+  ```java
+  /**
+   * 一对多：一个人可以有多个收货地址
+   */
+  @Getter
+  @Setter
+  @ToString
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Person02 {
+      private String id;
+      private String name;
+      private Date gmtCreate;
+      private Date gmtModify;
+      private Set<Person02Address> address;
+  }
+  @Getter
+  @Setter
+  @ToString(exclude = "person")
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Person02Address {
+      private String id;
+      private String address;
+  }
+  ```
+
+- 对象映射文件：一对多单向关系映射配置
 
   ```xml
-  <?xml version='1.0' encoding='utf-8'?>
+  <?xml version="1.0"?>
   <!DOCTYPE hibernate-mapping PUBLIC
           "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
           "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping>
-      <class name="net.biancheng.www.po.Course" table="course" schema="bianchengbang_jdbc">
-          <id name="id" column="id" >
-              <generator class="native"></generator>
+  <hibernate-mapping package="com.jpa.hibernate.entity">
+  
+      <class name="Person02" lazy="true" table="person02">
+          <id name="id">
+              <generator class="uuid"/>
           </id>
-          <property name="name" column="name" length="100"/>
-         
-          <set name="students" table="student_course" cascade="save-update">
-              <key column="cid"></key>
-              <many-to-many class="net.biancheng.www.po.Student" column="sid"></many-to-many>
+          <property name="name" column="name"/>
+          <property name="gmtCreate" column="gmt_create"/>
+          <property name="gmtModify" column="gmt_modify"/>
+          <set name="address" cascade="save-update">
+              <key column="person_id"/>
+              <one-to-many class="Person02Address"/>
           </set>
+      </class>
+  
+      <class name="Person02Address" table="person02_address">
+          <id name="id">
+              <generator class="uuid"/>
+          </id>
+          <property name="address" column="address"/>
       </class>
   </hibernate-mapping>
   ```
 
-- 改 Student.hbm.xml 的配置，在其中添加 <set> 标签映射关联关系
+- 自动生成表结构：
+
+  ```sql
+  create table person02
+  (
+      id         varchar(255) not null,
+      name       varchar(255),
+      gmt_create datetime(6),
+      gmt_modify datetime(6),
+      primary key (id)
+  ) engine = InnoDB;
+  create table person02_address
+  (
+      id        varchar(255) not null,
+      address   varchar(255),
+      person_id varchar(255),
+      primary key (id)
+  ) engine = InnoDB;
+  alter table person02_address
+      add constraint FK15v6qhjs1g4v6qdmupaif5ws2 foreign key (person_id) references person02 (id);
+  ```
+
+- 测试代码级联新增
+
+  ```java
+  public class Person02Test extends BaseTest{
+      @Test
+      public void testSavePerson() throws Exception {
+          // 开始事务
+          Transaction transaction = session.beginTransaction();
+          // 级联新增操作
+          Person02Address address1 = Person02Address.builder().address("address01").build();
+          Person02Address address2 = Person02Address.builder().address("address02").build();
+          Set<Person02Address> set = new HashSet<>();
+          set.add(address1);
+          set.add(address2);
+          Person02 person02 = Person02.builder()
+              .name("savePerson02")
+              .gmtCreate(new Date())
+              .gmtModify(new Date())
+              .address(set)
+              .build();
+          try {
+              session.save(person02);
+          } catch (Exception e) {
+              transaction.rollback();
+          }
+          // 提交事务
+          transaction.commit();
+      }
+  }
+  ```
+
+- 执行SQL
+
+  ```sql
+  Hibernate: insert into person02 (name, gmt_create, gmt_modify, id) values (?, ?, ?, ?)
+  Hibernate: insert into person02_address (address, id) values (?, ?)
+  Hibernate: insert into person02_address (address, id) values (?, ?)
+  Hibernate: update person02_address set person_id=? where id=?
+  Hibernate: update person02_address set person_id=? where id=?
+  ```
+
+### 5.3 多对一
+
+- 对象关系设计：使用一对多的关系设计，新增双向关系
+
+  ```java
+  /**
+   * 一对多：一个人可以有多个收货地址
+   */
+  @Getter
+  @Setter
+  @ToString
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Person02 {
+      private String id;
+      private String name;
+      private Date gmtCreate;
+      private Date gmtModify;
+      private Set<Person02Address> address;
+  }
+  @Getter
+  @Setter
+  @ToString(exclude = "person")
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Person02Address {
+      private String id;
+      private String address;
+      private Person02 person;
+  }
+  ```
+
+- 对象映射文件：一对多单向关系映射配置
 
   ```xml
-  <?xml version='1.0' encoding='utf-8'?>
+  <?xml version="1.0"?>
   <!DOCTYPE hibernate-mapping PUBLIC
           "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
           "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping>
-      <class name="net.biancheng.www.po.Student" table="student" schema="bianchengbang_jdbc" lazy="true">
-          <!--主键映射-->
-          <id name="id" column="id" type="java.lang.Integer">
-              <!--主键生成策略-->
-              <generator class="native"></generator>
+  <hibernate-mapping package="com.jpa.hibernate.entity">
+  
+      <class name="Person02" lazy="true" table="person02">
+          <id name="id">
+              <generator class="uuid"/>
           </id>
-          <property name="name" column="name" length="100" type="java.lang.String"></property>
-          <!--维护关联关系-->
-          <many-to-one name="grade" class="net.biancheng.www.po.Grade" column="gid"/>
-          <set name="courses" table="student_course" lazy="false">
-              <key column="sid"></key>
-              <many-to-many class="net.biancheng.www.po.Course" column="cid"></many-to-many>
+          <property name="name" column="name"/>
+          <property name="gmtCreate" column="gmt_create"/>
+          <property name="gmtModify" column="gmt_modify"/>
+          <set name="address" cascade="save-update">
+              <key column="person_id"/>
+              <one-to-many class="Person02Address"/>
           </set>
+      </class>
+  
+      <class name="Person02Address" table="person02_address">
+          <id name="id">
+              <generator class="uuid"/>
+          </id>
+          <property name="address" column="address"/>
+          <many-to-one name="person" class="Person02" column="person_id" cascade="save-update"/>
       </class>
   </hibernate-mapping>
   ```
 
-### 5.3 多对多
+- 测试代码级联新增
 
-- 修改映射文件 Grade.hbm.xml 的配置
+  ```java
+  public class Person02Test extends BaseTest{    
+      @Test
+      public void testSaveAddress() throws Exception{
+          Transaction transaction = session.beginTransaction();
+          Person02 person02 = Person02.builder()
+              .name("saveAddress")
+              .gmtCreate(new Date())
+              .gmtModify(new Date())
+              .build();
+          Person02Address address = Person02Address.builder()
+              .address("address01")
+              .person(person02)
+              .build();
+          try {
+              session.save(address);
+          } catch (Exception e) {
+              transaction.rollback();
+          }
+          // 提交事务
+          transaction.commit();
+      }
+  }
+  ```
+
+- 知识SQL日志
+
+  ```sql
+  Hibernate: insert into person02 (name, gmt_create, gmt_modify, id) values (?, ?, ?, ?)
+  Hibernate: insert into person02_address (address, person_id, id) values (?, ?, ?)
+  ```
+
+### 5.4 多对多
+
+- 对象关系设计
+
+  ```java
+  @Getter
+  @Setter
+  @ToString
+  public class Person03 {
+      private String id;
+      private String name;
+      private Date gmtCreate;
+      private Date gmtModify;
+      private Set<Person03Class> classes;
+  }
+  @Getter
+  @Setter
+  @ToString
+  public class Person03Class {
+      private String id;
+      private String subject;
+  }
+  ```
+
+- 对象关系映射配置文件
 
   ```xml
-  <?xml version='1.0' encoding='utf-8'?>
+  <?xml version="1.0"?>
   <!DOCTYPE hibernate-mapping PUBLIC
           "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
           "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping>
-      <class name="net.biancheng.www.po.Grade" table="grade" schema="bianchengbang_jdbc">
-          <id name="id" column="id" type="java.lang.Integer">
-              <generator class="native"></generator>
+  <hibernate-mapping package="com.jpa.hibernate.entity">
+  
+      <class name="Person03" lazy="true" table="person03">
+          <id name="id">
+              <generator class="uuid"/>
           </id>
-          <property name="name" column="name" length="100" type="java.lang.String"/>
-          <!--设置 inverse 属性为 true，使其丧失对关联关系的控制权，由 Student 来管理关联关系-->
-          <set name="students" inverse="true">
-              <key column="gid"></key>
-              <one-to-many class="net.biancheng.www.po.Student"></one-to-many>
+          <property name="name" column="name"/>
+          <property name="gmtCreate" column="gmt_create"/>
+          <property name="gmtModify" column="gmt_modify"/>
+          <set name="classes" table="person03_class_rel" cascade="save-update">
+              <key column="person_id"></key>
+              <many-to-many class="Person03Class" column="class_id"/>
           </set>
       </class>
+  
+      <class name="Person03Class" table="person03_class">
+          <id name="id">
+              <generator class="uuid"/>
+          </id>
+          <property name="subject" column="subject"/>
+      </class>
+  
   </hibernate-mapping>
   ```
 
-- 修改映射文件 Course.hbm.xml 的配置
+- 自动生成表结构
+
+  ```sql
+  create table person03
+  (
+      id         varchar(255) not null,
+      name       varchar(255),
+      gmt_create datetime(6),
+      gmt_modify datetime(6),
+      primary key (id)
+  ) engine = InnoDB
+  create table person03_class
+  (
+      id      varchar(255) not null,
+      subject varchar(255),
+      primary key (id)
+  ) engine = InnoDB
+  create table person03_class_rel
+  (
+      person_id varchar(255) not null,
+      class_id  varchar(255) not null,
+      primary key (person_id, class_id)
+  ) engine = InnoDB
+  alter table person03_class_rel
+      add constraint FK7pk2vo9np9q57h7hqhwx8sx9 foreign key (class_id) references person03_class (id)
+  alter table person03_class_rel
+      add constraint FK56rv907mnwiya5j464pa2su9j foreign key (person_id) references person03 (id)
+  ```
+
+- 测试新增
+
+  ```java
+  public class Person03Test extends BaseTest{
+      @Test
+      public void testSavePerson() throws Exception{
+          Transaction transaction = session.beginTransaction();
+          Person03Class c1 =   Person03Class.builder().subject("数学").build();
+          Person03Class c2 =   Person03Class.builder().subject("语文").build();
+          Set<Person03Class> set = new HashSet<>();
+          set.add(c1);
+          set.add(c2);
+          Person03 person = Person03.builder()
+                  .name("saveClass")
+                  .gmtCreate(new Date())
+                  .gmtModify(new Date())
+                  .classes(set)
+                  .build();
+          try {
+              session.save(person);
+          } catch (Exception e) {
+              transaction.rollback();
+          }
+          // 提交事务
+          transaction.commit();
+      }
+  }
+  ```
+
+- 执行SQL
+
+  ```sql
+  Hibernate: insert into person03 (name, gmt_create, gmt_modify, id) values (?, ?, ?, ?)
+  Hibernate: insert into person03_class (subject, id) values (?, ?)
+  Hibernate: insert into person03_class (subject, id) values (?, ?)
+  Hibernate: insert into person03_class_rel (person_id, class_id) values (?, ?)
+  Hibernate: insert into person03_class_rel (person_id, class_id) values (?, ?)
+  ```
+
+### 5.5 一对一
+
+- 对象设计
+
+  ```java
+  @Getter
+  @Setter
+  @ToString
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Person04 {
+      private String id;
+      private String name;
+      private Date gmtCreate;
+      private Date gmtModify;
+      private Person04Card card;
+  }
+  @Getter
+  @Setter
+  @ToString
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Person04Card {
+      private Long id;
+      private String code;
+  }
+  ```
+
+- 对象映射文件
 
   ```xml
-  <?xml version='1.0' encoding='utf-8'?>
+  <?xml version="1.0"?>
   <!DOCTYPE hibernate-mapping PUBLIC
           "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
           "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping>
-      <class name="net.biancheng.www.po.Course" table="course" schema="bianchengbang_jdbc">
-          <id name="id" column="id">
-              <generator class="native"></generator>
+  <hibernate-mapping package="com.jpa.hibernate.entity">
+  
+      <class name="Person04" lazy="true" table="person04">
+          <id name="id">
+              <generator class="uuid"/>
           </id>
-          <property name="name" column="name" length="100"/>
-          <!--设置 inverse 属性为 true，使其丧失对关联关系的控制权，由 Student 来管理关联关系-->
-          <set name="students" table="student_course" inverse="true">
-              <key column="cid"></key>
-              <many-to-many class="net.biancheng.www.po.Student" column="sid"></many-to-many>
-          </set>
+          <property name="name" column="name"/>
+          <property name="gmtCreate" column="gmt_create"/>
+          <property name="gmtModify" column="gmt_modify"/>
+          <one-to-one name="card" cascade="save-update"/>
       </class>
+  
+      <class name="Person04Card" table="person04_card">
+          <id name="id">
+              <generator class="native"/>
+          </id>
+          <property name="code" column="code"/>
+      </class>
+  
   </hibernate-mapping>
   ```
+
+- 一般不会使用OneToOne标签，
+
+  ```sql
+  create table person04
+  (
+      id         varchar(255) not null,
+      name       varchar(255),
+      gmt_create datetime(6),
+      gmt_modify datetime(6),
+      primary key (id)
+  ) engine = InnoDB;
+  create table person04_card
+  (
+      id   bigint not null auto_increment,
+      code varchar(255),
+      primary key (id)
+  ) engine = InnoDB;
+  alter table person04
+      add constraint FKfcofyxttumnnhx6pl6qvvfhcm foreign key (id) references person04_card (id);
+  ```
+
+- 执行测试
+
+  ```java
+  public class Person04Test extends BaseTest{
+  
+      @Test
+      public void testSavePersonCard() throws Exception{
+          Transaction transaction = session.beginTransaction();
+          Person04Card card = Person04Card.builder().code("addCode").build();
+          Person04 person = Person04.builder().name("addCard").card(card).build();
+          try {
+              session.save(person);
+          } catch (Exception e) {
+              transaction.rollback();
+          }
+          // 提交事务
+          transaction.commit();
+      }
+  }
+  ```
+
+- zhixsql 
+
+  ```sql
+  Hibernate: insert into person04 (name, gmt_create, gmt_modify, id) values (?, ?, ?, ?)
+  Hibernate: insert into person04_card (code) values (?)
+  ```
+
+  
+
+- 总结
+
+  - many-to-one：
+    - name：用户的收货地址，name是指地址中用户的属性名称
+    - column：用户的收货地址，column是指用户表中对应地址的列名
+  - set：inverse反转：是否管理关系，Hibernate中集合只用set
+    - name：集合的属性名称
+    - key：指集合中对象在表中的外键列名称
+    - one-to-many：
+      - class：集合中对象的类型
+      - 双向one-to-many：可以删除many方，但是不能删除one方，如果双向关系被one管理会打破这种关系
 
 # 第二部分 Java注解Hibernate
 

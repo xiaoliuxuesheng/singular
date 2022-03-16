@@ -148,7 +148,7 @@
 
 - SpringDataJPA依赖关系
 
-  <img src="/Volumes/Storage/panda_code_note/note_blogs_docsify/class02_java全栈/part05_java核心框架/point04_jpa/imgs/image-20220313113512051.png" alt="image-20220313113512051" style="zoom:80%;" />
+  <img src="./imgs/image-20220313113512051.png" alt="image-20220313113512051" style="zoom:80%;" />
 
 - 核心内容：Repository是SpringDataCommon里的顶级接口，是操作DB的入口类
 
@@ -160,7 +160,7 @@
 
 - 继承体系
 
-  <img src="/Volumes/Storage/panda_code_note/note_blogs_docsify/class02_java全栈/part05_java核心框架/point04_jpa/imgs/image-20220313115100251.png" alt="image-20220313115100251" style="zoom:80%;" />
+  <img src="./imgs/image-20220313115100251.png" alt="image-20220313115100251" style="zoom:80%;" />
 
   > - ReactiveCrudRepository：是为了支持响应式编程，当前支持NoSql相关操作
   > - RxJava2CrudRepository：为了支持RxJava2做的标准响应式接口
