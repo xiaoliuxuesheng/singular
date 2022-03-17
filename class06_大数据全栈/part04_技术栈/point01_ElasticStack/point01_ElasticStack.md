@@ -1672,18 +1672,103 @@ GET idx_pro/_search
 
 ## 3.6 SpringBoot集成ElasticSearch
 
-1. 高版本ES使用RestHighLevelClient
+1. 概述：
+
+2. 客户端类型
+
+   - Java Client [8.1]：这是 Elasticsearch 的官方 Java API 客户端的文档。客户端为所有 Elasticsearch API 提供强类型请求和响应。
+   - Java REST Client (过期) [7.17] ：Java REST 客户端已弃用，取而代之的是 Java API 客户端。包括①Java Low Level REST Client：低级客户端，允许通过 http 与 Elasticsearch 集群通信②Java High Level REST Client：基于低级客户端，它公开 API 特定的方法，并负责请求编组和响应解编组。
+   - Java Transport Client (过期) [7.17]：TransportClient 已弃用，取而代之的是 Java 高级 REST 客户端，并将在 Elasticsearch 8.0 中删除。Java Transport Client是Java操作ES的一种客户端，是ES5版本就存在的一中API操作方式
+
+3. 安装依赖
+
+   - gradle 
+
+     ```groovy
+     dependencies {
+         implementation 'co.elastic.clients:elasticsearch-java:8.1.0'
+         implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+     }
+     ```
+
+   - maven
+
+     ```xml
+     <dependencies>
+         <dependency>
+             <groupId>co.elastic.clients</groupId>
+             <artifactId>elasticsearch-java</artifactId>
+             <version>8.1.0</version>
+         </dependency>
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-databind</artifactId>
+             <version>2.12.3</version>
+         </dependency>
+     </dependencies>
+     ```
+
+4. 链接ES核心组件
+
+   - API client classes：它们为 Elasticsearch API 提供强类型数据结构和方法。由于 Elasticsearch API 很大，它以功能组（也称为“命名空间”）的形式构成，每个组都有自己的客户端类。 Elasticsearch 核心功能在 ElasticsearchClient 类中实现。
+   - A JSON object mapper：这会将您的应用程序类映射到 JSON 并将它们与 API 客户端无缝集成。
+   - A transport layer implementation：这是所有 HTTP 请求处理发生的地方。
+
+5. 组合三个组件，建立链接
 
    ```java
-   @Bean
-   public RestHighLevelClient restHighLevelClient() {
-     HttpHost host = new HttpHost("127.0.0.1",9200,"http");
-     RestClientBuilder clientBuilder = RestClient.builder(host);
-     return new RestHighLevelClient(clientBuilder);
+   // Create the low-level client
+   RestClient client = RestClient.builder(new HttpHost("localhost", 9200)).build();
+   // 创建 the transport with a Jackson mapper
+   ElasticsearchTransport tp = new RestClientTransport(client, new JacksonJsonpMapper());
+   // 创建 the API client
+   ElasticsearchClient client = new ElasticsearchClient(tp);
+   ```
+
+6. 发送请求测试
+
+   ```java
+   SearchResponse<Product> search = 
+       client.search(s -> s
+                     .index("products")
+                     .query(q -> q
+                            .term(t -> t
+                                  .field("name")
+                                  .value(v -> v.stringValue("bicycle"))
+                                 )),
+                     Product.class);
+   
+   for (Hit<Product> hit: search.hits().hits()) {
+       processProduct(hit.source());
    }
    ```
 
-2. 
+7. 从High Level Rest Client客户端迁移：Java API Client是一个权限的客户端，与旧的High Level Rest Client没有任何关系，提供了一个独立于ES服务器代码的库，并为索引的ES功能提供API，因此从HLRC迁移的开销并不大：迁移策略
+
+   - 保持原有的API，新增的请求使用JavaAPI
+   - 重写应用程序中JavaAPI客户端的部分
+   - 利用新的Java API与JSON映射修改
+
+8. 作为ES的http传输，同样可以使用HLRC
+
+   ```java
+   // Create the low-level client
+   RestClientBuilder builder = RestClient.builder(new HttpHost("localhost", 9200));
+   
+   // Create the HLRC
+   RestHighLevelClient hlrc = new RestHighLevelClient(builder);
+   
+   // Create the new Java Client with the same low level client
+   ElasticsearchTransport tr = new RestClientTransport(hlrc.getLowLevelClient(),new JacksonJsonpMapper());
+   
+   ElasticsearchClient esClient = new ElasticsearchClient(tr);
+   ```
+
+9. Java Api Client
+
+10. 源代码
+
+    -  https://github.com/elastic/elasticsearch-java/
 
 # 第四章 Kibana基础
 

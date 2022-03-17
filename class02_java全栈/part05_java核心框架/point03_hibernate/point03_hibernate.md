@@ -543,14 +543,14 @@ public class Test01Person extends BaseTest {
 
 5. Query是 Hibernate 提供的查询接口，主要用执行 Hinernate 的查询操作。Query 对象中通常包装了一个 HQL（Hibernate Query Language）语句，HQL 语句与 SQL 语句存在相似之处，但 HQL 语句是面向对象的，它使用的是类名和类的属性名，而不是表名和表中的字段名。HQL 能够提供更加丰富灵活、更为强大的查询能力，因此 Hibernate 官方推荐使用 HQL 进行查询。
 
-   | 方法                               | 描述                                                         |
-   | ---------------------------------- | ------------------------------------------------------------ |
-   | setXxx()                           | Query 接口中提供了一系列 setXxx() 方法，用于设置查询语句中的参数。这些方法都需要两个参数，分别是：参数名或占位符位置、参数值。我们需要根据参数类型的不同，分别调用不同的 setXxx() 方法，例如 setString()、setInteger()、setLong()、setBoolean() 和 setDate() 等等。 |
-   | Iterator<R> iterate();             | 该方法用于执行查询语句，并返回一个 Iterator 对象。我们可以通过返回的 Iterator 对象，遍历得到结果集。 |
-   | Object uniqueResult();             | 该方法用户执行查询，并返回一个唯一的结果。使用该方法时，需要确保查询结果只有一条数据，否则就会报错。 |
-   | int executeUpdate();               | 该方法用于执行 HQL 的更新和删除操作。                        |
-   | Query<R> setFirstResult(int var1); | 该方法用户设置结果集第一条记录的位置，即设置从第几条记录开始查询，默认从 0 开始。 |
-   | Query<R> setMaxResults(int var1);  | 该方法用于设置结果集的最大记录数，通常与 setFirstResult() 方法结合使用，用于限制结果集的范围，以实现分页功能。 |
+   | 方法                                | 描述                                                         |
+   | ----------------------------------- | ------------------------------------------------------------ |
+   | setXxx()                            | Query 接口中提供了一系列 setXxx() 方法，用于设置查询语句中的参数。<br /> - 参数名或占位符位置、参数值。<br /> - 我们需要根据参数类型的不同，分别调用不同的 setXxx() 方法，<br /> - 例如 setString()、setInteger()、setLong()、setBoolean() 和 setDate() 等等。 |
+   | `Iterator<R> iterate()`             | 该方法用于执行查询语句，并返回一个 Iterator 对象。<br />可以通过返回的 Iterator 对象，遍历得到结果集。 |
+   | `Object uniqueResult()`             | 该方法用户执行查询，并返回一个唯一的结果。<br />使用该方法时，需要确保查询结果只有一条数据，否则就会报错。 |
+   | `int executeUpdate()`               | 该方法用于执行 HQL 的更新和删除操作。                        |
+   | `Query<R> setFirstResult(int var1)` | 该方法用户设置结果集第一条记录的位置，<br />即设置从第几条记录开始查询，默认从 0 开始。 |
+   | `Query<R> setMaxResults(int var1)`  | 该方法用于设置结果集的最大记录数，通常与 setFirstResult() 方法结合使用，<br />用于限制结果集的范围，以实现分页功能。 |
 
 ### 4.3 Hibernate对象状态
 
