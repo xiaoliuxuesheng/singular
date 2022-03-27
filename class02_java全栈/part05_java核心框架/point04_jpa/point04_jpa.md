@@ -40,21 +40,21 @@
            <groupId>mysql</groupId>
            <artifactId>mysql-connector-java</artifactId>
        </dependency>
-               <dependency>
-               <groupId>junit</groupId>
-               <artifactId>junit</artifactId>
-               <version>4.13.2</version>
-           </dependency>
-           <dependency>
-               <groupId>org.projectlombok</groupId>
-               <artifactId>lombok</artifactId>
-               <version>1.18.22</version>
-           </dependency>
-           <dependency>
-               <groupId>cn.hutool</groupId>
-               <artifactId>hutool-all</artifactId>
-               <version>5.6.2</version>
-           </dependency>
+       <dependency>
+           <groupId>junit</groupId>
+           <artifactId>junit</artifactId>
+           <version>4.13.2</version>
+       </dependency>
+       <dependency>
+           <groupId>org.projectlombok</groupId>
+           <artifactId>lombok</artifactId>
+           <version>1.18.22</version>
+       </dependency>
+       <dependency>
+           <groupId>cn.hutool</groupId>
+           <artifactId>hutool-all</artifactId>
+           <version>5.6.2</version>
+       </dependency>
    </dependencies>
    ```
 
@@ -148,7 +148,7 @@
 
 - SpringDataJPA依赖关系
 
-  <img src="./imgs/image-20220313113512051.png" alt="image-20220313113512051" style="zoom:80%;" />
+  <img src="./imgs/SpringDataJPA依赖关系.png" alt="image-20220313113512051" style="zoom:80%;" />
 
 - 核心内容：Repository是SpringDataCommon里的顶级接口，是操作DB的入口类
 
@@ -160,7 +160,7 @@
 
 - 继承体系
 
-  <img src="./imgs/image-20220313115100251.png" alt="image-20220313115100251" style="zoom:80%;" />
+  <img src="./imgs/Repository的继承体系.png" alt="image-20220313115100251" style="zoom:80%;" />
 
   > - ReactiveCrudRepository：是为了支持响应式编程，当前支持NoSql相关操作
   > - RxJava2CrudRepository：为了支持RxJava2做的标准响应式接口
@@ -169,7 +169,7 @@
 
 - Repository类层次结构图
 
-  ![JpaRepository](./imgs/JpaRepository-7154445.png)
+  ![JpaRepository](./imgs/JpaRepository.png)
 
   > - 七大接口
   >   - Repository：顶级接口，没规定任何方法
