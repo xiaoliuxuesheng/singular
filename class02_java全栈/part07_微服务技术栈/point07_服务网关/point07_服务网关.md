@@ -1,21 +1,29 @@
+# 学习内容
 
+1. 什么是SpringCloudGateway
 
-# gateway
+   - SpringCloudGateway是SpringCloud生态中的网关组件，目标是用来替代Netflix Zuul：SpringCloud中引用的Zuul是1.x，是阻塞IO不支持长链接；Zuul 2.x版本一致延期，直到2019年5月开源了支持异步模式的Zuul 2，但是SpringCloud已经不再支持Zuul 2.x了；
+   - SpringCloud Gateway是基于Spring生态构建的，提供了统一的路由方式，并且基于Fliter提供了网关的基本功能；提供了简单有效的路由方式；
 
-1. 什么是SpringCloud Gateway
+2. 什么是服务网关
 
-   - 作为SpringCloud生态中的网关，目标是替代Netflix Zuul，提供了统一的路由方式，并且基于Filter的方式提供了网关的基本功能；
+   ![image-20220514104740801](E:\AdminCode\NoteStudy\note_blogs_docsify\class02_java全栈\part07_微服务技术栈\point07_服务网关\resource\point07_服务网关\image-20220514104740801.png)
 
-2. 什么是服务网关：简单理解服务网关就是多个服务架构系统中所有服务的统一入口：客户端请求统一到服务网关，再由服务网关将请求路由转发到指定服务；
+   - API Gateway（网关）是出现在系统边界的面向API请求的强管控服务，主要作用是隔离外部访问与内部系统服务访问的作用，API网关的流程源于互联网的快速兴起，多种WEB场景对应到不同的后台服务，直接通过前后台的API请求，增加了服务的复杂性；增加API网关，面向用户的WEB场景直接对接API网关，隔离WEB和后台的直接交互；
+   - 简单理解服务网关就是多个服务架构系统中所有服务的统一入口：客户端请求统一到服务网关，再由服务网关将请求路由转发到指定服务；
 
-3. 为什么要使用网关：减少客户端与微服务的直接交互次数，由网关进行统一认证；
+3. 为什么要用服务网关
 
-4. 网关解决了什么问题：
+   - 减少客户端与微服务的直接交互次数，由网关进行统一认证；
 
-   - 性能
-   - 安全
+4. 网关解决了什么问题
 
-5. 常用网关：
+   - 统一接入
+   - 协议适配
+   - 流量监控
+   - 安全防护
+
+5. 常用的网关解决方案
 
    - Nginx+Lua：Nginx适合做门户网站，作为这个那个全局网关；而gateway属于业务网关，主要用来对应不同的客户端提供服务，用于聚合业务；
    - Kong：是Mashape提供的API管理软件，是对Nginx+Lua进行二次开发，
@@ -24,6 +32,80 @@
    - Spring Cloud gateway：替代Zuul
 
 6. 环境准备
+
+   - Naxos安装
+
+   - Maven项目搭建
+
+     ```xml
+     ```
+
+   - 
+
+7. Nginx实现API网关
+
+   - 默认80端口
+
+   - 修改配置文件：根据uri路由到后台服务
+
+     ```ini
+     http {
+     	server {
+     		listen 80;
+     		server_name localhost;
+     		
+     		# 如果路径中有/api-uri就会转发到http://localhost:7070并将uri后面的追加到代理服务地址后
+     		location /api-uri {
+     			proxy_pass http://localhostL7070/;
+     		}
+     	}
+     }
+     ```
+
+8. Gateway实现API网关
+
+   - Gateway核心概念
+
+     1. 路由（Route）：是网关最基础的部分，路由信息有ID，目标URL，一组断言和一组过滤器组成
+
+     2. 断言（Perdicate）：Java8中的断言函数，Gateway中断言函数输入类型是Spring5.0框架中的ServerWebExchange，断言函数允许开发者去定义匹配来自Http Request中的任何信息
+
+     3. 过滤器（Filter）：一个标准的Spring Web Filter，主要包含两种类型：Gateway Filter和Global Filter
+
+        ```yaml
+        # 向访问网关服务,网关服务会检查uri
+        # 检查uil是否匹配predicates的path,然后代理转发到uri配置的地址
+        spring:
+          cloud:
+            gateway:
+              # 路由规则
+              routes:
+                - id: user-service
+                  uri: http://localhost:8301/
+                  predicates:
+                    - Path=/user
+        ```
+
+   - 工作原理
+
+     - 请求发送到路由，网关处理程序Handler Mapping映射确定与请求相匹配的路由
+     - 然后将其发送到网关Web处理程序Web Handler，
+     - 该处理程序通过制定的过滤器链将请求发送到实际的服务执行业务逻辑
+     - 处理完成后再通过网关Filter将结果返回
+
+9. 路由规则
+
+10. 动态路由
+
+11. 过滤器
+
+12. 网关限流
+
+13. 高可用网关
+
+# gateway
+
+1. 环境准备
 
    - 注册中心：Nacos
 
@@ -52,20 +134,7 @@
                server-addr: 1.116.215.185:8848
        ```
 
-7. Gateway核心概念
-
-   - 路由（Route）：是网关最基础的部分，路由信息有ID，目标URL，一组断言和一组过滤器组成
-   - 断言（Perdicate）：Java8中的断言函数，Gateway中断言函数输入类型是Spring5.0框架中的ServerWebExchange，断言函数允许开发者去定义匹配来自Http Request中的任何信息
-   - 过滤器（Filter）：一个标准的Spring Web Filter，主要包含两种类型：Gateway Filter和Global Filter
-
-8. Gateway工作原理
-
-   - 请求发送到路由，网关处理程序Handler Mapping映射确定与请求相匹配的路由
-   - 然后将其发送到网关Web处理程序Web Handler，
-   - 该处理程序通过制定的过滤器链将请求发送到实际的服务执行业务逻辑
-   - 处理完成后再通过网关Filter将结果返回
-
-9. 网关服务创建
+2. 网关服务创建
 
    - 添加Maven依赖
 
@@ -97,16 +166,16 @@
                  - Path=/product/*
      ```
 
-10. 路由规则-path
+3. 路由规则-path
 
-    - 速度
+   - 速度
 
-11. 路由规则-Query：匹配请求中参赛是否包含制定参赛
+4. 路由规则-Query：匹配请求中参赛是否包含制定参赛
 
-    - Query=token：匹配请求中包含token的请求
-    - Query=token,abc.：匹配请求中包含token并且其参赛只满足表达式abc.的请求
+   - Query=token：匹配请求中包含token的请求
+   - Query=token,abc.：匹配请求中包含token并且其参赛只满足表达式abc.的请求
 
-12. 
+5. 
 
 
 
@@ -150,22 +219,6 @@
    ```
 
    
-
-# 学习内容
-
-- 什么是SpringCloudGateway
-- 什么是服务网关
-- 为什么要用服务网关
-- 网关解决的什么问题
-- 常用网关解决方案
-- 环境准备
-- Nginx实现API网关
-- Gateway实现API网关
-- 路由规则
-- 动态路由
-- 过滤器
-- 网关限流
-- 高可用网关
 
 # 课程
 

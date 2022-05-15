@@ -677,29 +677,29 @@
    > <!DOCTYPE html>
    > <html>
    > <head>
-   >     <meta charset="UTF-8">
-   >     <title>Container</title>
-   >     <style>
-   >         .box1 {background: red;display: flex;}
-   >         .box1 div { width: 100px;height: 50px;background: green;}
-   >         
-   >         .box2 {background: red; display: inline-flex;}
-   >         .box2 div {width: 100px;height: background: green;}
-   >     </style>
+   >  <meta charset="UTF-8">
+   >  <title>Container</title>
+   >  <style>
+   >      .box1 {background: red;display: flex;}
+   >      .box1 div { width: 100px;height: 50px;background: green;}
+   > 
+   >      .box2 {background: red; display: inline-flex;}
+   >      .box2 div {width: 100px;height: background: green;}
+   >  </style>
    > </head>
    > <body>
    > <div class="box1">
-   >     <div>1</div>
-   >     <div>2</div>
-   >     <div>3</div>
-   >     <div>4</div>
+   >  <div>1</div>
+   >  <div>2</div>
+   >  <div>3</div>
+   >  <div>4</div>
    > </div>
    > <br>
    > <div class="box2">
-   >     <div>1</div>
-   >     <div>2</div>
-   >     <div>3</div>
-   >     <div>4</div>
+   >  <div>1</div>
+   >  <div>2</div>
+   >  <div>3</div>
+   >  <div>4</div>
    > </div>
    > </body>
    > </html>
