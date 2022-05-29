@@ -81,7 +81,7 @@
 
 ## 002_MySQL面试
 
-### ▲事务的四大特性
+### ▲ 事务的四大特性
 
 1. A（Atomic）：原子性，事务中的操作要不全部成功，要不全部失败；
 2. C（Consistency）：一致性，在事务执行前后，数据保持一致
@@ -95,7 +95,7 @@
 3. 可重复读：是MySQL默认的隔离级别，指同一个事务中多次读的数据是一致的，
 4. 串行读：串行执行事物；
 
-### ▲MySQL的SQL执行步骤
+### ▲ MySQL的SQL执行步骤
 
 1. 连接器：管理连接，权限验证；
 2. 查询缓存：默认是关闭的，命中缓存返回结果；
@@ -118,7 +118,7 @@
   6. never（永远不）：不能运行在事务中，如果运行在事务中抛出异常；
   7. nested（嵌套事务）：如果上下文中存在事务，则运行在事务中，如果不存在事务，则新建事务；
 
-### ▲Spring事务失效
+### ▲ Spring事务失效
 
 - Spring事务在使用@Transactional注解事务失效的原因是AOP不起作用
   1. 方法不是public的
@@ -135,6 +135,19 @@
 4. 前端控制器根据ModelAndView交给视图解析器（ViewREslover），返回具体View；
 5. 前端控制器根据View进行渲染视图，封装数据交给前端控制器并相应给客户端；
 
+### ▲Spring启动流程
+
+1. 首先是读取配置文件，解析出来需要加载到Spring中的Bean的信息封装成BeanDefinition（有不同的实现，解析xml、Java主键，yaml等等）
+2. Spring中BeanFactory的作用就是通过 解析BeanDefinition，通过反射创建出Bean的实例对象，添加到IOC容器中，但是BeanDefinition交给BeanFactory之前，Spring还可以通过BeanFactoryPostProcessor对BeanDefinition进行修改；
+3. BeanFactory拿到修改后的BeanDefinition后，就开始实例化Bean了，实例化过程：
+   - 第一步：反射创建未初始化的对象；
+   - 第二步：初始化对象，给属性赋值：三级缓存解决循环依赖，为属性赋值；
+   - 第三步：通过Aware接口，对对象进行功能扩展；
+   - 第四步：通过BeanPostProcessor，在执行init方法前后执行接口中的两个方法；
+   - 第五步：创建完整对象完成，销毁对象之前执行销毁方法；
+
+### Spring三级缓存
+
 
 
 1. Spring项目添加事物的方式
@@ -142,7 +155,16 @@
    - TransactionTemplate：在execute方法方法中执行事物，事物粒度小，执行单条SQL，但是不能设置事物属性；
    - PlatformTransactionManager通过TransactionDefinition获取到TransactionStatus：执行完成后commit，执行失败后rollback，，事物粒度小，执行单条SQL，并且可以设置事物属性；
    
-   
+
+## 004_SpringCloud
+
+
+
+### 005_JVM
+
+
+
+
 
 # 架构
 
