@@ -313,9 +313,17 @@
 
 - idea中的Docker插件：
 
-# 第六章 Docker Compose
+# 第六章 Docker Network
 
 ## 6.1 简介
+
+## 6.2 
+
+
+
+# 第七章 Docker Compose
+
+## 7.1 简介
 
 - Compose项目上Docker官方的开源项目：负责实现对Docker集群的快速编排；（解释一下为什么需要容器编排：使用dokerfile可以额方便的定义一饿单独的应用容器，但是在日常工作中，经常是多个容器相互配合，并且有时候还需要容器间按顺序启动，使用docker compose就可以满足这样的需求）
 - Compose定位：定义和运行多个Docker容器的应用，允许用户通过单独的docker-compose.yml模版文件来定义一组相关联的容器作为一个项目。但是Compose做不到特别复杂的工作：如容器的资源调度，由k8s解决；
@@ -323,7 +331,7 @@
   1. 服务（Service）：一个应用的容器，服务可以存在多个；
   2. 项目（Project）：由一组关联应用容器组成的一个完整的业务单元，在docker-copose.yml中定义（可以理解为一个配置文件代表一个项目）
 
-## 6.2 Compose安装
+## 7.2 Compose安装
 
 ### 1. Windows系统
 
@@ -376,7 +384,7 @@
      pip install docker-compose 
      ```
 
-## 6.3 Compose指令
+## 7.3 Compose指令
 
 1. docker-compose使用方式：由于一个docker-compose.yml是一个项目，约定文件名称固定，便于区分，需要将配置文件定义在单独的目录中，将这个文件作为项目；
 
@@ -470,33 +478,33 @@
    | pause [serviceId]      | 暂停项目中的服务                                             |
    | unpause [serviceId]    | 恢复项目中暂停的服务                                         |
 
-## 6.4 compose示例
+## 7.4 compose示例
 
 
 
-# 第七章 Docker常用安装
+# 第八章 Docker常用安装
 
-## 6.1 MySql
+## 8.1 MySql
 
-## 6.2 Oracle
+## 8.2 Oracle
 
-## 6.3 Redis
+## 8.3 Redis
 
-##  6.4 MongoDB
+##  8.4 MongoDB
 
-## 6.5 Tomcat
+## 8.5 Tomcat
 
-## 6.6 Nginx
+## 8.6 Nginx
 
-## 6.7 Jenkins
+## 8.7 Jenkins
 
-## 6.8 ElasticSearch
+## 8.8 ElasticSearch
 
 ## CI&CD
 
-# 第八章  本地镜像发布
+# 第九章  本地镜像发布
 
-## 7.1 手动
+## 9.1 手动
 
 1. 创建DockerFile文件:自定义镜像信息. File文件没有后缀
    - from:当前镜像依赖的文件
@@ -505,7 +513,7 @@
    - cmd:需要执行的命令(在workdir下执行的  以最后一个为准)
    - docker build -t 镜像名称:[tag] dockerFile路径 
 
-## 7.2 Docker-Compose
+## 9.2 Docker-Compose
 
 - Compose项目上Docker官方的开源项目，负责实现对Docker容器集群的快速编排。
 
@@ -549,7 +557,7 @@
      - docker-compose ps
      - docker-compose logs -f
 
-## 7.3 compose&file
+## 9.3 compose&file
 
 - 使用docker-compose.yml文件以及dockerFile文件在生成自定义镜像的同时启动当前镜像并由docker-compose管理容器
 

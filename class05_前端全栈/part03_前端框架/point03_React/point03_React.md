@@ -68,9 +68,152 @@
 1. 模块：是指具有特定功能的JS程序，一般一个JS文件就是一个模块，主要是用于复用，简化JS的编写
 2. 组件：是指在浏览器页面具有特定显示区域的部分称为组件，组件化开发，可以复用相同功能的的组件
 
-## 2.2 
+## 2.2 组件定义
 
-[尚硅谷React技术全家桶全套完整版（零基础入门到精通/男神天禹老师亲授）_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1wy4y1D7JT?p=9&spm_id_from=pageDriver)
+1. 函数式组件：自定义组件是首字母大写
+
+   ```html
+   <script type="text/babel">
+   	// 自定义组件: 返回一个html，函数中的this是undefined，被bable翻译后this指向不能是window
+     function Com() {
+       return <h2>这是个函数式组件</h2>
+     }
+     // 使用组件
+     ReactDOM.render(<Com/>,document.getElementById("test"))
+   </script>
+   ```
+
+   > - 使用组件时候以标签的形式使用，React会根据组件名称调用这个函数
+
+2. 类式组件：
+
+   - 定义类
+
+     ```js
+     class Person{
+       // 实例属性
+       属性名称;
+       
+       // 构造函数
+       constructor(){}
+       
+       // 实例方法:开启了严格模式
+       方法名称(){}
+     }
+     ```
+
+   - React中类式组件：类组件中this指向是组件实例对象的
+
+     ```jsx
+     class MyCom extends React.Component{
+       render(){
+         return <h2>必须包含render函数</h2>
+       }
+     }
+     
+     ReactDOM.render(<MyCom/>,document.getElementById("test"))
+     ```
+
+   - 组件三大属性：继承React.Component的组件具有三大属性
+
+     - state：表示 组件状态，有状态的是指复杂组件，反之称为简单组件；组件的状态的作用是驱动页面，意思是组件中的数据是存放在状态中的；①值搜索对象，包含多个key-value的组合②通过更新组件的state来更新对应页面的显示
+
+       ```jsx
+       // 绑定事件的原生方式
+       el.addEventListener('事件名称'.()=>{})
+       el.onclick = ()=>{}
+       el onclick=方法名称()
+       
+       // React绑定事件:推荐在元素上添加方法,需要解决方法上的this的指向问题
+       class MyCom extends React.Component{
+         constructor(props) {
+           super(props);
+           this.state = {
+             isHot: false
+           }
+           this.changeWither = this.changeWither.bind(this)
+         }
+         render(){
+           return <h2 onClick={this.changeWither}>静态天气{this.state.isHot?  '炎热' : '凉爽'}</h2>
+         }
+       
+         changeWither(){
+           // 错误写法
+           this.state.isHot = !this.state.isHot
+         }
+       }
+       // status不可以直接更改,需要使用内置api修改,且更新是合并更新,构造器调用一次,render调用1+n(首次会调用一次)
+       changeWither(){
+         this.setState({isHot: !this.state.isHot})
+       }
+       
+       // state的简写方式:成员变量status ,箭头函数
+       class MyCom extends React.Component{
+         state = {
+           isHot: false
+         }
+       
+         constructor(props) {
+           super(props);
+         }
+         render(){
+           return <h2 onClick={this.changeWither}>静态天气{this.state.isHot?  '炎热' : '凉爽'}</h2>
+         }
+       
+         // 箭头函数没有this,会找其外部调用该方法的this
+         changeWither = () =>{
+           this.setState({isHot: !this.state.isHot})
+         }
+       }
+       ```
+
+     - props：组件传值，在定义标签的时候在标签上添加到属性会封装到组件对象的props对象中
+
+       ```jsx
+       class Person extends React.Component{
+         render(){
+           return (
+                   <ul>
+                     <li>姓名: {this.props.name}</li>
+                   </ul>
+           )
+         }
+       }
+       
+       ReactDOM.render(<Person name='tom' />, document.getElementById("test1"))
+       ReactDOM.render(<Person name='Jerry' />, document.getElementById("test2"))
+       ReactDOM.render(<Person name='Age' />, document.getElementById("test3"))
+       ```
+     
+       > - 使用展开运算符
+       >
+       >   ```jsx
+       >   class Person extends React.Component{
+       >     render(){
+       >       const {name} = this.props
+       >       return (
+       >               <div>
+       >                 <h1>props封装</h1>
+       >                 <ul>
+       >                   <li>props: {name}</li>
+       >                 </ul>
+       >               </div>
+       >       )
+       >     }
+       >   }
+       >   const p = {name:"tom"}
+       >   // ...运算符不能展开对象, {...对象}表示复制一个对象
+       >   ReactDOM.render(<Person {...p}/>, document.getElementById("test"));
+       >   ```
+       >
+       > - 简写方式：
+       >
+       > - 构造函数和props：①通过给this.state复制对象来初始化内部state②为事件处理函数绑定实例，③如果使用了构造函数，但是没有调用super会出bug④构造器中是否super不传props，则构造器中使用不了poprs
+     
+     - refs：
+     
+     - context：
+     
 
 # 第三章 React脚手架
 
