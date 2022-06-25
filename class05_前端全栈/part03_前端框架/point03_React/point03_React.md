@@ -210,9 +210,58 @@
        >
        > - 构造函数和props：①通过给this.state复制对象来初始化内部state②为事件处理函数绑定实例，③如果使用了构造函数，但是没有调用super会出bug④构造器中是否super不传props，则构造器中使用不了poprs
      
-     - refs：
+     - refs：给自定义组件中的html中定义res属性，React会将这些标签收集到当前组件对象的refs对象中，key是ref的值，value是这个组件的DOM对象
      
-     - context：
+       - 字符串形式的ref：后续的字符串的ref是不可用的，字符串ref的效率不高。
+     
+         ```jsx
+             class Test extends React.Component {
+                 showData = () => {
+                     console.log(this.refs['input1'])
+                     let {input1} = this.refs
+                     alert(input1.value)
+                 }
+                 showData2 = () => {
+                     let {input2} = this.refs
+                     alert(input2.value)
+                 }
+         
+                 render() {
+                     return (
+                         <div>
+                             <input ref="input1" type="text" placeholder="点击按钮提示"/>
+                             <button ref="btn" onClick={this.showData}>点击提示</button>
+                             <input ref="input2" onBlur={this.showData2} type="text" placeholder="失去焦点提示"/>
+                         </div>
+                     )
+                 }
+             }
+         
+             ReactDOM.render(<Test/>, document.getElementById("test"));
+         ```
+     
+       - 回调形式ref：回调函数默认的一个参数是这个ref所在的节点，在回调函数中把这个参数赋值给组件实例之中，获取回调ref中定义的属性直接从实例上去；这个回调函的调用次数：
+     
+         ```jsx
+           class Test extends React.Component {
+             render() {
+               return (
+                       <div>
+                         <input ref={cn => this.input1 = cn} type="text" placeholder="点击按钮提示"/>
+                         <button onClick={this.showData}>点击提示</button>
+                         <input onBlur={this.showData2} type="text" placeholder="失去焦点提示"/>
+                       </div>
+               )
+             }
+             showData = () => {
+               let {input1} = this
+               alert(input1.value)
+             }
+           }
+           ReactDOM.render(<Test/>, document.getElementById("test"));
+         ```
+     
+     - context：https://www.bilibili.com/video/BV1wy4y1D7JT?p=29
      
 
 # 第三章 React脚手架
