@@ -1,5 +1,3 @@
-> 
->
 > git remote add github https://github.com/xiaoliuxuesheng/singular.git 
 
 # [class00_办公软件](class00_办公软件/class00_办公软件.md)
@@ -40,7 +38,7 @@
 - <font size=5>[part03_redis](/class03_数据库/part03_redis/part03_redis.md)</font>
 - <font size=5>[part04_mongodb](/class03_数据库/part04_mongodb/part04_mongodb.md)</font>
 
-#  [class04_产品开发](class04_产品开发/class04_产品开发.md)
+# [class04_产品开发](class04_产品开发/class04_产品开发.md)
 
 - <font size=5>[part01_产品基础](/class04_产品开发/part01_产品基础/part01_产品基础.md)</font>
   - [part01_产品基础](/class04_产品开发/part01_产品基础/part01_产品基础.md)
@@ -103,8 +101,6 @@
 4. 优化器：生成执行计划，选择索引
 5. 执行器：执行优化后的SQL，调用存储引擎获取数据，返回结果
 
-
-
 ## 003_Spring
 
 ### ▲ 事务传播机制
@@ -148,23 +144,14 @@
 
 ### Spring三级缓存
 
-
-
 1. Spring项目添加事物的方式
    - 使用在Spring Beand的方法上@Transactional注解：事物粒度比较大，只能控制整个方法；
    - TransactionTemplate：在execute方法方法中执行事物，事物粒度小，执行单条SQL，但是不能设置事物属性；
    - PlatformTransactionManager通过TransactionDefinition获取到TransactionStatus：执行完成后commit，执行失败后rollback，，事物粒度小，执行单条SQL，并且可以设置事物属性；
-   
 
 ## 004_SpringCloud
 
-
-
 ### 005_JVM
-
-
-
-
 
 # 架构
 
@@ -174,5 +161,3 @@
 2. 高并发技术
    - 流量网关：全局流量控制、日志统计、SQL注入、web攻击、黑名单控制、
    - 业务网关：安全、权限、路由、过滤、流控、缓存、服务路由、业务聚合
-   
-   
