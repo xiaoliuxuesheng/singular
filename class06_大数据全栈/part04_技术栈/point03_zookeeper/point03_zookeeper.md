@@ -40,39 +40,39 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
 
 2. 下载[Zookeeper](https://zookeeper.apache.org/releases.html)，并解压到需要的安装目录中
 
-2. zookeeper可视化桌面工具：https://github.com/vran-dev/PrettyZoo/releases
+3. zookeeper可视化桌面工具：https://github.com/vran-dev/PrettyZoo/releases
 
-3. Linux系统安装
-
+4. Linux系统安装
+   
    - 安装配置JDK8环境
-
+   
    - 进入Zookeeper安装目录中，修改`$ZK_HOME/config`路径中的配置文件，将`zoo_sample.cfg`拷贝一份并修名称为`zoo.cfg`
-
+   
    - 修改配置文件
-
+     
      ```properties
      # 修改数据保存目录
      dataDir=D:/AppProgram/zookeeper3.7.1/data
      ```
-
+   
    - 启动Zookeeper：`$ZK_HOME/bin/zkServer.sh`
 
 ### 2.2 配置参数说明
 
-| zoo.cfg    | 默认值 | 说明                             |
-| ---------- | ------ | -------------------------------- |
-| tickTime   | 2000   | 通信心跳时间，单位毫秒           |
-| initLimit  | 10     | Leader和Follower初始化通信时限   |
-| syncLimit  | 5      | Leader和Follower通信时间超时时限 |
-| dataDir    |        | 默认样例配置，需要修改           |
-| clientPort | 2181   | 默认端口号                       |
+| zoo.cfg    | 默认值  | 说明                      |
+| ---------- | ---- | ----------------------- |
+| tickTime   | 2000 | 通信心跳时间，单位毫秒             |
+| initLimit  | 10   | Leader和Follower初始化通信时限  |
+| syncLimit  | 5    | Leader和Follower通信时间超时时限 |
+| dataDir    |      | 默认样例配置，需要修改             |
+| clientPort | 2181 | 默认端口号                   |
 
 ## 第三章 Zookeeper集群操作
 
 ### 3.1 集群安装
 
 1. 集群规划：需要安装多少台的节点？需要是奇数台服务器，服务器IP设置为静态IP，并且修改服务器主机名称，在host配置主机对应的IP地址；比如：
-
+   
    ```sh
    192.168.10.101 BigDataNode101
    192.168.10.102 BigDataNode102
@@ -82,16 +82,16 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
 2. 解压安装，修改配置文件并且重置dataDIR配置项
 
 3. 配置服务器编号：在`$ZK_HOME/config/zoo.cfg`中`dataDir`配置项的目录中新建`myid`的文件，在文件中添加server对应的编号
-
+   
    > 编号上下不能有空行、左右不能有空格
 
 4. 修改配置文件`$ZK_HOME/config/zoo.cfg`，增加zookeeper的集群配置项
-
+   
    ```sh
    server.服务器编号=服务器IP:2888:3888
    ... ...
    ```
-
+   
    > - 服务器编号：是一个数字，表示是第几号服务器，就是每台机器下的myid中配置的值；
    > - 服务器IP：服务器的地址；
    > - 2888：是服务器Follower与集群中Leader服务器交换信息的端口；
@@ -100,13 +100,13 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
 ### 3.2 集群启动选举机制
 
 1. 相关概念
-
+   
    - SID：服务器ID，用来唯一标识一台Zookeeper集群中的机器，每台机器不能重复
    - ZXID：事务ID，ZXID是一个事务ID，用来标识一次服务器状态的更改，在某一时刻，机器中的每台机器的ZXID值不一定完全一致；
    - Epoch：每个Leader任期的代号，没有Leader时同一轮投票过程中的逻辑时钟值是相同的，每投完一次这个数据就会增加；
 
 2. 第一次启动
-
+   
    - 服务器1启动，发起第一次选举：投自己1票，不够半数，服务器保持LOOKING；
    - 服务器2启动，再发起一次选举：服务器1和2分别头自己一票并交换选票信息，此时服务器1发现服务器2的myid比自己的大，服务器1更改选举为服务器2，仍然没有达到半数，服务器1,2保持LOOKING；
    - 服务器3启动，再次发起一次选举：服务器1,2,3根据myid更改选举为服务器3，此时服务器票数超过集群总数的半数，服务器3选举为Leader，服务器1,2更改状态为FLLOWING，服务器3更改状态为LEADING；
@@ -114,40 +114,40 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
    - 服务器5启动，同服务器4一样当小弟；
 
 3. 非第一次启动：服务器发现以下两种情况之一时，集群再发起Leader选举：①服务器初始化启动②服务器在运行期间无法和Leader保持联系；当情况②发生时，集群可能会有两种状态：
-
+   
    - 集群中本来就已经存在一个Leader：该机器仅仅需要和Leader机器建立连接，并进行状态同步即可；
    - 集群中确实不存在Leader：假设Zookeeper集群有5台机器，SID分别是1,2,3,4,5；ZXID分步是8,8,87,7；此时3和5机器故障，剩余三台机器进行Leader选举，投票情况为（EPoch，ZXID，SID）
      - 投票情况：机器1（1,8,1）、机器2（1,8,2）、机器1（1,7,4）
      - Leader选举规则：①EPoch大的直接胜出②EPoch相同，事务id大的胜出
 
 4. 集群启动脚本：自学时使用，在VMware虚拟器创建的3台虚拟机，
-
+   
    ```sh
    #!/bin/bash
    
    case $1 in
    "start"){
-   	for i in BigDataNode101 BigDataNode102 BigDataNode103
-   	do
-   		echo  ------------- zookeeper $i 启动 ------------
-   		ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh start"
-   	done
+       for i in BigDataNode101 BigDataNode102 BigDataNode103
+       do
+           echo  ------------- zookeeper $i 启动 ------------
+           ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh start"
+       done
    }
    ;;
    "stop"){
-   	for i in BigDataNode101 BigDataNode102 BigDataNode103
-   	do
-   		echo  ------------- zookeeper $i 停止 ------------
-   		ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh stop"
-   	done
+       for i in BigDataNode101 BigDataNode102 BigDataNode103
+       do
+           echo  ------------- zookeeper $i 停止 ------------
+           ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh stop"
+       done
    }
    ;;
    "status"){
-   	for i in BigDataNode101 BigDataNode102 BigDataNode103
-   	do
-   		echo  ------------- zookeeper $i 状态 ------------
-   		ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh status"
-   	done
+       for i in BigDataNode101 BigDataNode102 BigDataNode103
+       do
+           echo  ------------- zookeeper $i 状态 ------------
+           ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh status"
+       done
    }
    ;;
    esac
@@ -156,23 +156,23 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
 ### 3.2 客户端命令操作
 
 > [【尚硅谷】大数据技术之Zookeeper 3.5.7版本教程_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1to4y1C7gw?p=13)
->
+> 
 > - 课程第13课：节点类型
 
 1. 启动zookeeper客户端
-
+   
    ```sh
    zkCli.sh -server BigDataNode101:21821
    ```
 
 2. 基本命令
-
-   | 命令 | 说明 |
-   | ---- | ---- |
-   |      |      |
+   
+   | 命令  | 说明  |
+   | --- | --- |
+   |     |     |
 
 3. ls
-
+   
    ```sh
    [zk: BigDataNode101:2181(CONNECTED) 1] ls -s /
    [kafka, zookeeper]
@@ -198,7 +198,7 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
    ```
 
 4. 节点类型：持久、短暂、有序号、无序号
-
+   
    - 持久：客户端和服务端断开连接后，创建的节点不删除
    - 短暂：客户端和服务端断开连接后，创建的节点自己删除
    - 
@@ -250,4 +250,3 @@ Zookeeper数据模型的结构与Unix文件系统很类似：整体上看做一�
 ### 2.6 服务端Leader启动
 
 ### 2.7 服务端Follower启动
-

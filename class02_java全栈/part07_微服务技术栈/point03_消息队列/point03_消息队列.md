@@ -1,14 +1,15 @@
-
 - [1_kafka](/class02_java全栈/part07_微服务技术栈/point03_消息队列/1_kafka/1_kafka.md)
 - [2_rabbitmq](/class02_java全栈/part07_微服务技术栈/point03_消息队列/2_rabbitmq/2_rabbitmq.md)
 - [3_activemq](/class02_java全栈/part07_微服务技术栈/point03_消息队列/3_activemq/3_activemq.md)
 - [4_rocketmq](/class02_java全栈/part07_微服务技术栈/point03_消息队列/4_rocketmq/4_rocketmq.md)
+
 -----
+
 # 第一章 消息队列
 
 ## 1.1 消息队列介绍
 
-​		
+​        
 
 ## 1.2 消息队列的消息传递模式
 
@@ -55,25 +56,17 @@
 
 RabbitMQ是使用Erlang编写的一个开源的消息队列，本身支持很多的协议：AMQP，XMPP, SMTP, STOMP，也正因如此，它非常重量级，更适合于企业级的开发。同时实现了Broker构架，这意味着消息在发送给客户端时先在中心队列排队。对路由，负载均衡或者数据持久化都有很好的支持。
 
-
-
 ### 3.2　Redis
 
 Redis是一个基于Key-Value对的NoSQL数据库，开发维护很活跃。虽然它是一个Key-Value数据库存储系统，但它本身支持MQ功能，所以完全可以当做一个轻量级的队列服务来使用。对于RabbitMQ和Redis的入队和出队操作，各执行100万次，每10万次记录一次执行时间。测试数据分为128Bytes、512Bytes、1K和10K四个不同大小的数据。实验表明：入队时，当数据比较小时Redis的性能要高于RabbitMQ，而如果数据大小超过了10K，Redis则慢的无法忍受；出队时，无论数据大小，Redis都表现出非常好的性能，而RabbitMQ的出队性能则远低于Redis。
-
-
 
 ### 3.3　ZeroMQ
 
 ZeroMQ号称最快的消息队列系统，尤其针对大吞吐量的需求场景。ZeroMQ能够实现RabbitMQ不擅长的高级/复杂的队列，但是开发人员需要自己组合多种技术框架，技术上的复杂度是对这MQ能够应用成功的挑战。ZeroMQ具有一个独特的非中间件的模式，你不需要安装和运行一个消息服务器或中间件，因为你的应用程序将扮演这个服务器角色。你只需要简单的引用ZeroMQ程序库，可以使用NuGet安装，然后你就可以愉快的在应用程序之间发送消息了。但是ZeroMQ仅提供非持久性的队列，也就是说如果宕机，数据将会丢失。其中，Twitter的Storm 0.9.0以前的版本中默认使用ZeroMQ作为数据流的传输（Storm从0.9版本开始同时支持ZeroMQ和Netty作为传输模块）。
 
-
-
 ### 3.4　ActiveMQ
 
 ActiveMQ是Apache下的一个子项目。 类似于ZeroMQ，它能够以代理人和点对点的技术实现队列。同时类似于RabbitMQ，它少量代码就可以高效地实现高级应用场景。
-
-
 
 ### 4.5　Kafka/Jafka
 

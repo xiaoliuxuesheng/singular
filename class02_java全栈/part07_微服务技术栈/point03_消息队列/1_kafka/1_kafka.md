@@ -80,17 +80,17 @@
 
 1. 安装zookeeper集群
 
-1. 解压Kafka安装包到安装位置，配置Kafka环境变量
-
+2. 解压Kafka安装包到安装位置，配置Kafka环境变量
+   
    ```sh
    # KAFKA 环境变量
    export KAFKA_HOME=/opt/module/kafka3
    export PATH=$PATH:$KAFKA_HOME/bin
    ```
 
-2. 修改Kafka配置文件：`$KAFKA_HOME/config/server.properties`
-
-   ```sh
+3. 修改Kafka配置文件：`$KAFKA_HOME/config/server.properties`
+   
+   ```shell
    # 唯一,每台机器的broker.id必须保证不相同
    broker.id=0
    # 日志目录
@@ -99,36 +99,36 @@
    zookeeper.connect=BigDataNode101:2181,BigDataNode102:2181,BigDataNode103:2181/kafka
    ```
 
-3. 启动Kafka集群之前需要提前准备好Zookeeper集群，**关闭Zookeeper集群之前确保Kafka全部关闭**
+4. 启动Kafka集群之前需要提前准备好Zookeeper集群，**关闭Zookeeper集群之前确保Kafka全部关闭**
 
-4. 在虚拟机中准备Kafka集群启动脚本
-
-   ```sh
+5. 在虚拟机中准备Kafka集群启动脚本
+   
+   ```shell
    #!/bin/bash
    
    case $1 in
    "start"){
-   	for i in BigDataNode101 BigDataNode102 BigDataNode103
-   	do
-   		echo  ------------- kafka $i 启动 ------------
-   		ssh $i "/opt/module/kafka3/bin/kafka-server-start.sh -daemon /opt/module/kafka3/config/server.properties"
-   	done
+       for i in BigDataNode101 BigDataNode102 BigDataNode103
+       do
+           echo  ------------- kafka $i 启动 ------------
+           ssh $i "/opt/module/kafka3/bin/kafka-server-start.sh -daemon /opt/module/kafka3/config/server.properties"
+       done
    }
    ;;
    "stop"){
-   	for i in BigDataNode101 BigDataNode102 BigDataNode103
-   	do
-   		echo  ------------- kafka $i 停止 ------------
-   		ssh $i "/opt/module/kafka3/bin/kafka-server-stop.sh"
-   	done
+       for i in BigDataNode101 BigDataNode102 BigDataNode103
+       do
+           echo  ------------- kafka $i 停止 ------------
+           ssh $i "/opt/module/kafka3/bin/kafka-server-stop.sh"
+       done
    }
    ;;
    "clean"){
-   	for i in BigDataNode101 BigDataNode102 BigDataNode103
-   	do
-   		echo  ------------- kafka.meta $i 删除 ------------
-   		ssh $i "rm -rf /opt/module/kafka3/logs/ meta.properties"
-   	done
+       for i in BigDataNode101 BigDataNode102 BigDataNode103
+       do
+           echo  ------------- kafka.meta $i 删除 ------------
+           ssh $i "rm -rf /opt/module/kafka3/logs/ meta.properties"
+       done
    }
    ;;
    esac
@@ -137,29 +137,29 @@
 ### 2.3 Kafka安装包
 
 1. Kafka安装包根据开发语言和功能场景分为三个部分
-
+   
    - broker：是kafka服务，由Scala语言开发
    - consumer：消费者，由Java语言开发
    - producer：生产者，由java语言开发
 
 2. Kafka服务脚本
-
-   | 内置Zookeeper             | 说明                                   |
-   | ------------------------- | -------------------------------------- |
+   
+   | 内置Zookeeper               | 说明                         |
+   | ------------------------- | -------------------------- |
    | zookeeper-server-start.sh | 单机启动Kafka时不需要单独安装Zookeeper |
-   | zookeeper-server-stop.sh  |                                        |
-   | **Kafka服务**             | **说明**                               |
-   | kafka-server-start.sh     | 启动Kafka服务                          |
-   | kafka-server-stop.sh      | 关闭Kafka服务                          |
-   | kafka-topics.sh           | Kafka服务Topic                         |
-   | **生产者和消费者**        | **说明**                               |
-   | kafka-console-consumer.sh | 生产者                                 |
-   | kafka-console-producer.sh | 消费者                                 |
+   | zookeeper-server-stop.sh  |                            |
+   | **Kafka服务**               | **说明**                     |
+   | kafka-server-start.sh     | 启动Kafka服务                  |
+   | kafka-server-stop.sh      | 关闭Kafka服务                  |
+   | kafka-topics.sh           | Kafka服务Topic               |
+   | **生产者和消费者**               | **说明**                     |
+   | kafka-console-consumer.sh | 生产者                        |
+   | kafka-console-producer.sh | 消费者                        |
 
 ### 2.4 Kafka基本操作
 
 1. 启动/停止kafka服务
-
+   
    ```sh
    # 启动Kafka服务
    kafka-server-start.sh -daemon /opt/module/kafka3/config/server.properties
@@ -169,8 +169,8 @@
    ```
 
 2. Kafka主题（topic）操作
-
-   ```sh
+   
+   ```shell
    # --create: 创建Topic，--partitions 分区数；--replication-factor 副本数
    kafka-topics.sh --bootstrap-server BigDataNode101:9092 --topic test --create --partitions 1 --replication-factor 3
    
@@ -188,14 +188,14 @@
    ```
 
 3. Kafka生产者基本操作
-
+   
    ```sh
    # 执行命令后向test主题中发送消息
    kafka-console-producer.sh --bootstrap-server BigDataNode101:9092 --topic test
    ```
 
 4. Kafka消费者基本操作
-
+   
    ```sh
    # 执行命令后从test主题中获取消息
    kafka-console-consumer.sh --bootstrap-server BigDataNode101:9092 --topic test
@@ -233,19 +233,19 @@
 1. 异步发送：在Kafka中异步发送是指将外部数据发送到队列中即完成，不再等待数据发送到Kafka中的Broker
 
 2. 案例演示：
-
-   -  引入Maven依赖
-
+   
+   - 引入Maven依赖
+     
      ```xml
      <dependency>
-       <groupId>org.apache.kafka</groupId>
-       <artifactId>kafka-clients</artifactId>
-       <version>3.1.0</version>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>3.1.0</version>
      </dependency>
      ```
-
+   
    - 连接Kafka集群，发送普通消息
-
+     
      ```java
      public class CustomProducerDemo01 {
          public static void main(String[] args) {
@@ -266,9 +266,9 @@
          }
      }
      ```
-
+   
    - 连接Kafka集群，发送带回调消息
-
+     
      ```java
      public class CustomProducerDemo02 {
          public static void main(String[] args) {
@@ -295,28 +295,29 @@
      ```
 
 3. 同步发送
-
-  ```java
-  // send发送后调用get()方法
-  producer.send(new ProducerRecord<>("test", "小刘学生")).get();
-  ```
+   
+   ```java
+   // send发送后调用get()方法
+   producer.send(new ProducerRecord<>("test", "小刘学生")).get();
+   ```
 
 ### 3.4 自定义分区器
 
 1. 分区的作用
-
+   
    - 便于合理使用存储资源：可以把海量数据按照分区切割成一块一块的数据存储在多个Broker上
    - 提高并行度：生产者可以根据分区为单位发送数据，消费者可以根据分区为单位消费数据；
-   
-1. 分区策略：是指使用JavaAPI调用发送时候的partition等参数指定发送消息到指定分区的计算方法；
 
+2. 分区策略：是指使用JavaAPI调用发送时候的partition等参数指定发送消息到指定分区的计算方法；
+   
    - 指明partition情况下，partition的值就是传入的值；
+   
    - 在没有指定partition值，但是有key的情况下，将key的hash值与topic的partition数进行取余得到partition值；
    
    - 既没有指定partition也没有key的情况，Kafka采用年限分区器,会随机选择一个分区，并且尽可能一直使用该分区，知道分区的batch已满或者已完成，Kafka会再随机一个分区使用；
-   
-1. 自定义类实现接口
 
+3. 自定义类实现接口
+   
    ```java
    public class MyPartitioner implements Partitioner {
        @Override
@@ -337,8 +338,8 @@
    }
    ```
 
-2. 关联自定义分区器
-
+4. 关联自定义分区器
+   
    ```java
    // 连接Kafka参数
    Properties properties = new Properties();
@@ -353,14 +354,14 @@
 ### 3.5 生产者提高吞吐量
 
 1. 从队列中拉取消息到Kafka集群的效率
-
+   
    - batch.size：表示没个批次拉取的数据大小，默认16k，可以修改为32k
    - linger.ms：表示等待时间，默认0ms（只要有数据就拉取），修改为5~100ms（会提高数据的延迟）
    - compression.type：发送时候将数据压缩
    - RecordAccumulator：缓冲区大小，默认32M，修改为64M
 
 2. 代码配置
-
+   
    ```java
    public class ProducerParamDemo {
        public static void main(String[] args) {
@@ -402,28 +403,28 @@
 ### 3.6 生产者数据
 
 1. 数据可靠性：需要理解消息发送流程：发送到队列→发送到集群→集群应答；通过应答机制确认消息是否正确发送，
-
+   
    - ack应答原理以及数据可靠性：
-
+     
      - 0：生产者发送过来的数据，不需要等待数据罗盘应答；数据可靠性：丢失数据
-
+     
      - 1：生产者发送过来的数据，Leader收到数据后应答；数据可靠性：Leader应答后还没有开始同步副本，Leader挂掉了，副本中没有数据
-
+     
      - -1：生产者发送过来的数据，Leader和ISR队列里面所有节点收到数据后应答，存在问题，如果某个Follower故障，此时的应答机制：Leader维护一个动态的in-sync replica set（ISR），如果Follower长时间未向Leader发啊送通信请求或者同步数据，则该Follower会被提出ISR，通信时间阈值设置：replica.lag.time.max.ms=30s（默认值）；这样就不用长期等待联系不上的节点了；
-
+   
    - 数据可靠性分析
-
+     
      - 如果分区副本设置为1个，或者ISR里应答的最小副本数量设置为1，和ask=1的效果是一样的，仍然有丢失数据的风险；
      - 数据完全可靠条件：ACK应答级别设置-1；分区副本数大于等于2；ISR里应答的最小副本数量大于等于2；
-
+   
    - 总结
-
+     
      - acks=0：可靠性差，效率高，生产环境基本不用
      - acks=1：可靠性中等，效率中等，一般用于日志传输，允许个别数据流式
      - acks=-1：可靠性搞，效率低，用户传输高敏感数据，对可靠性要求高的场景；
-
+   
    - ack配置
-
+     
      ```java
      public class ProducerData01Safe {
          public static void main(String[] args) {
@@ -455,25 +456,25 @@
      ```
 
 2. 数据重复：即时数据可靠，但是任然可能出现数据重复的问题
-
+   
    - 数据传递语义：
-
+     
      - 至少一次：ACK应答级别设置-1；分区副本数大于等于2；ISR里应答的最小副本数量大于等于2；保证数据不丢失，但是不能保证数据不重复
      - 最多一次：ADK级别设置为0；可以保证数据不重复，但是不能保证数据不丢失
      - 精确一次：在Kafka0.11版本后，引入重大特性，幂等性和事务；
-
+   
    - 幂等性：是指Producer不论向Broker发送多少次重复数据，Broker端只会持久化一条，保证了不重复，精确一次=幂等性+至少一次；重复数据的判断标准：（PID + Partition + SeqNumber）理解为联合主键，保证唯一性；PID是Kafka进程号，Partition表示分区号，Sequence Number是单调递增的；所以幂等性只能保证单分区单会话内不重复；配置幂等性（enable.idempotence=true）：默认是开启的，
-
+   
    - 生产者事务：（开启事务，必须开启幂等性）
-
+     
      ![image-20220710125457278](E:\AdminCode\NoteStudy\note_blogs_docsify\class02_java全栈\part07_微服务技术栈\point03_消息队列\1_kafka\resource\image-20220710125457278.png)
-
+     
      - 事务协调器：用来处理事务，存储在用来存储事务信息的特殊主题中，每个broker都会有事务协调器，如果选择对应的事务协调器：首先会有一个用户手动指定的事务ID，对事务ID的hash值对分区数取模确认事务属于哪个分区，改分区Leader所在的Broker节点就是这个事务ID对应的事务协调器
-
-     -  Producer在使用事务功能前，必须先定义一个唯一的transactional.id，即时客户端挂掉了，它重启后也能继续处理未完成的事务；
-
+     
+     - Producer在使用事务功能前，必须先定义一个唯一的transactional.id，即时客户端挂掉了，它重启后也能继续处理未完成的事务；
+     
      - Kafka事务API
-
+       
        ```java
        // 1. 初始化事务
        producer.initTransactions();
@@ -486,9 +487,9 @@
        // 5. 放弃事务
        producer.abortTransaction();
        ```
-
+     
      - 生成者模拟添加事物配置发送消息
-
+       
        ```java
        public class ProducerData02Repeat {
            public static void main(String[] args) {
@@ -539,47 +540,47 @@
 ### 4.1 Broker工作流程
 
 1. Zookeeper存储的Kafka信息：通过zookeeper客户端查看kafka信息，或者通过可视化工具PrettyZoo：https://github.com/vran-dev/PrettyZoo
-
-   ​	![image-20220710171832563](E:\AdminCode\NoteStudy\note_blogs_docsify\class02_java全栈\part07_微服务技术栈\point03_消息队列\1_kafka\resource\image-20220710171832563.png)
-
+   
+   ​    ![image-20220710171832563](E:\AdminCode\NoteStudy\note_blogs_docsify\class02_java全栈\part07_微服务技术栈\point03_消息队列\1_kafka\resource\image-20220710171832563.png)
+   
    - /kafka/brokrs/ids：记录有哪些服务器
    - /kafka/brokrs/topics/topic名称/partitions/0/state：记录Leader是哪个，哪些服务器可用
    - /kafka/controller：辅助选举Leader
 
 2. Kafka Broker总体工作流程
-
+   
    ![image-20220710172240732](E:\AdminCode\NoteStudy\note_blogs_docsify\class02_java全栈\part07_微服务技术栈\point03_消息队列\1_kafka\resource\image-20220710172240732.png)
 
 ### 4.2 节点服役和退役
 
 1. 环境准备：
-
+   
    - 准备一个Kafka节点：BigDataNode104
-
+   
    - 修改为静态IP：/etc/sysconfig/network-scripts/ifcfg-ens160
-
+     
      ```sh
      IPADDR=192.168.10.104
      ```
-
+   
    - 修改主机名称：/etc/hostname
-
+     
      ```sh
      BigDataNode104
      ```
-
+   
    - 修改Kafka配置文件：①清除安装目录中的data和log②修改配置文件server.properties
-
+     
      ```sh
      broker.id=4
      ```
 
 2. 节点服役
-
+   
    - 先启动Kafka正常服务的集群 ，并且历史数据中已经存在Topic信息
-
+   
    - 正常启动需要扩展的Kafka服务：
-
+     
      ```sh
      kafka-server-start.sh -daemon /opt/module/kafka3/config/server.properties
      
@@ -591,11 +592,11 @@
      Topic: first    Partition: 1    Leader: 2       Replicas: 2,3,1 Isr: 2,3,1
      Topic: first    Partition: 2    Leader: 3       Replicas: 3,1,2 Isr: 3,1,2
      ```
-
+   
    - 执行负载均衡操作
-
+     
      - 创建一个需要负载均衡的主题的配置文件：topic-to-move.json
-
+       
        ```json
        {
          "topics":[
@@ -606,9 +607,9 @@
          "version":1
        }
        ```
-
+     
      - 生成一个负载均衡计划
-
+       
        ```sh
        kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --topics-to-move-json-file=topic-to-move.json --broker-list "1,2,3,4" --generate
        
@@ -619,27 +620,27 @@
        Proposed partition reassignment configuration
        {"version":1,"partitions":[{"topic":"first","partition":0,"replicas":[1,3,4],"log_dirs":["any","any","any"]},{"topic":"first","partition":1,"replicas":[2,4,1],"log_dirs":["any","any","any"]},{"topic":"first","partition":2,"replicas":[3,1,2],"log_dirs":["any","any","any"]}]}
        ```
-
+     
      - 执行计划：创建计划执行文件，increase-replication-factor.json并添加执行计划信息
-
+       
        ```json
        {"version":1,"partitions":[{"topic":"first","partition":0,"replicas":[3,4,1],"log_dirs":["any","any","any"]},{"topic":"first","partition":1,"replicas":[4,1,2],"log_dirs":["any","any","any"]},{"topic":"first","partition":2,"replicas":[1,2,3],"log_dirs":["any","any","any"]}]}
        ```
-
+     
      - 执行副本存储计划
-
+       
        ```sh
        kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file increase-replication-factor.json --execute
        ```
-
+     
      - 验证执行结果
-
+       
        ```sh
        kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file increase-replication-factor.json --verify
        ```
-
+     
      - 查看topic信息
-
+       
        ```sh
        kafka-topics.sh --bootstrap-server BigDataNode101:9092 --topic first --describe
        
@@ -650,9 +651,9 @@
        ```
 
 3. 节点退役
-
+   
    - 创建一个需要退役的主题的配置文件：topic-to-move.json
-
+     
      ```json
      {
        "topics":[
@@ -663,12 +664,12 @@
        "version":1
      }
      ```
-
+   
    - 创建执行计划：表示将配置中topic中的数据移动打1,2,3节点中去
-
+     
      ```json
      kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --topics-to-move-json-file topic-to-move.json --broker-list "1,2,3" --generate
-     
+     ```
      
      Current partition replica assignment
      {"version":1,"partitions":[{"topic":"first","partition":0,"replicas":[1,3,4],"log_dirs":["any","any","any"]},{"topic":"first","partition":1,"replicas":[2,4,1],"log_dirs":["any","any","any"]},{"topic":"first","partition":2,"replicas":[3,1,2],"log_dirs":["any","any","any"]}]}
@@ -677,39 +678,90 @@
      {"version":1,"partitions":[{"topic":"first","partition":0,"replicas":[2,1,3],"log_dirs":["any","any","any"]},{"topic":"first","partition":1,"replicas":[3,2,1],"log_dirs":["any","any","any"]},{"topic":"first","partition":2,"replicas":[1,3,2],"log_dirs":["any","any","any"]}]}
      
      ```
-
-   - 创建副本存储计划:decrease-replication-factor.json
-
-     ```json
-     kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file decrease-replication-factor.json --execute
-     ```
-
-   - 执行副本存储计划
-
-     ```sh
-     kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file decrease-replication-factor.json --execute
-     ```
-
-   - 验证执行结果
-
-     ```sh
-     kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file decrease-replication-factor.json --verify
-     ```
-
-   - 查看topic信息
-
-     ```sh
-     kafka-topics.sh --bootstrap-server BigDataNode101:9092 --topic first --describe
      
-     Topic: first    TopicId: DXkgGqHBRuWHlvPnn6ZpXA PartitionCount: 3       ReplicationFactor: 3    Configs: segment.bytes=1073741824
-             Topic: first    Partition: 0    Leader: 1       Replicas: 2,1,3 Isr: 1,3,2
-             Topic: first    Partition: 1    Leader: 2       Replicas: 3,2,1 Isr: 2,1,3
-             Topic: first    Partition: 2    Leader: 3       Replicas: 1,3,2 Isr: 3,1,2
      ```
+- 创建副本存储计划:decrease-replication-factor.json
+  
+  ```json
+  kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file decrease-replication-factor.json --execute
+  ```
+
+- 执行副本存储计划
+  
+  ```sh
+  kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file decrease-replication-factor.json --execute
+  ```
+
+- 验证执行结果
+  
+  ```sh
+  kafka-reassign-partitions.sh  --bootstrap-server BigDataNode102:9092 --reassignment-json-file decrease-replication-factor.json --verify
+  ```
+
+- 查看topic信息
+  
+  ```sh
+  kafka-topics.sh --bootstrap-server BigDataNode101:9092 --topic first --describe
+  
+  Topic: first    TopicId: DXkgGqHBRuWHlvPnn6ZpXA PartitionCount: 3       ReplicationFactor: 3    Configs: segment.bytes=1073741824
+          Topic: first    Partition: 0    Leader: 1       Replicas: 2,1,3 Isr: 1,3,2
+          Topic: first    Partition: 1    Leader: 2       Replicas: 3,2,1 Isr: 2,1,3
+          Topic: first    Partition: 2    Leader: 3       Replicas: 1,3,2 Isr: 3,1,2
+  ```
 
 ### 4.3 Kafka副本
 
-https://www.bilibili.com/video/BV1vr4y1677k?p=30
+1. Kafka副本作用：提高数据可靠性
+   
+   - Kafka默认副本1个，生产环境一般配置为2个，保证数据可靠性；太多副本会增加磁盘空间，增加网络上数据传输消耗，降低效率；
+   
+   - Kafka中副本分为：Leader和Follower，Kafka生产者只会把数据发往leader，然后Follower找Leader进行同步数据；
+   
+   - Kafka中所有副本统称为AR（Assigned Repllicas）：AR = ISR + OSR
+
+2. Leader的选举流程
+   
+   ![](../../../../assets/2022-07-16-15-02-26-image.png)
+   
+   - 创建一个Topic
+     
+     ```shell
+     
+     ```
+   
+   - 查看Topic信息
+     
+     ```shellsession
+     
+     ```
+   
+   - ```shell
+     
+     ```
+     
+     ```
+     
+     ```
+
+3. Leader和Follower故障
+   
+   - LEO（Log End Offset）：每个副本的最后一个offset，LEO其实就是最新的offset+1
+   
+   - HW（High Watermark）：所有副本中最小的LEO
+   
+   . Follower故障：
+   
+   . Leader故障：只能保证副本直接的数据一致性，并不能保证数据不丢失或者不重复；
+   
+     . Leader发送故障后，会从ISR中选出一个新的Leader
+   
+     . 为保证多个副本直接的数据一致性，其余的Follower会先将各自的log文件高于HW的部分截掉，然后重新的Leader同步数据。
+
+4. 分步副本分配
+
+5. 手动跳转分区部分
+
+6. 
 
 ### 4.4 文件存储
 
@@ -728,6 +780,70 @@ https://www.bilibili.com/video/BV1vr4y1677k?p=30
 ## 第二章 集成Flink
 
 ## 第三章 集成SpringBoot
+
+### 3.1 项目初始化
+
+1. SpringBoot项目搭建
+   
+   ```xml
+       <dependencyManagement>
+           <dependencies>
+               <dependency>
+                   <groupId>org.springframework.boot</groupId>
+                   <artifactId>spring-boot-dependencies</artifactId>
+                   <version>2.7.0</version>
+                   <scope>import</scope>
+                   <type>pom</type>
+               </dependency>
+           </dependencies>
+       </dependencyManagement>
+   ```
+
+2. 添加Kafka依赖
+   
+   ```xml
+   <dependency>
+       <groupId>org.springframework.kafka</groupId>
+       <artifactId>spring-kafka</artifactId>
+   </dependency>
+   ```
+
+3. 添加配置
+   
+   ```yaml
+   spring:
+     kafka:
+       bootstrap-servers: BigDataNode101:9092,BigDataNode102:9092,BigDataNode103:9092
+       producer:
+         key-serializer: org.apache.kafka.common.serialization.StringSerializer
+         value-serializer: org.apache.kafka.common.serialization.StringSerializer
+       consumer:
+         value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+   ```
+
+### 3.2 Producer发送消息
+
+```java
+@RestController
+public class ProducerController {
+
+    @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
+
+    @GetMapping("/send01")
+    public String send(String msg){
+        kafkaTemplate.send("test", msg);
+        return "ok";
+    }
+}
+```
+
+### 3.3 Consumer接收消息
+
+```java
+
+```
 
 ## 第四章 集成Spark
 
