@@ -1,4 +1,4 @@
-# 参考资料
+# ★ 参考资料
 
 ★ Vite官网：https://cn.vitejs.dev/
 
@@ -8,94 +8,69 @@
 
 ★ axios：http://www.axios-js.com/zh-cn/
 
-# 架构步骤
+# ★ 环境准备
 
-## 01、使用Vite创建Vue项目
-
-- 环境要求： Node.js 版本 >= 14.18.0
-  
-  ```sh
-  node -v
-  ```
-
-- 使用创建Vue项目
-  
-  - 使用 NPM:
-    
-    ```sh
-    npm create vite@latest
-    ```
-    
-    # 输入项目名称:默认vite-project
-    
-    ? Project name: » vite-project
-    
-    # 选择框架
-    
-    ? Select a framework: » - Use arrow-keys. Return to submit.
-    
-        vanilla
-    
-    >   vue
-    > 
-    >     react
-    >     preact
-    >     lit
-    >     svelte
-    
-    # 选择vue-ts
-    
-    ? Select a variant: » - Use arrow-keys. Return to submit.
-    
-        vue
-    
-    >   vue-ts
-    
-    ```
-    
-    ```
-
-- 使用 Yarn:
-  
-  ```sh
-  yarn create vite
-  ```
-
-- 使用 PNPM:
-  
-  ```sh
-  pnpm create vite
-  ```
-
-## 02、启动项目
-
-- 进入项目，安装项目依赖
-  
-  ```sh
-  npm install
-  ```
-
-- 启动项目：检查环境信息是否正常
-  
-  ```sh
-  npm run dev
-  ```
-
-- 默认项目启动地址：http://localhost:3000/
-
-- 安装vue浏览器插件vue-devtools 6.1.4：[指导参考文档](https://www.cnblogs.com/kousum/p/14396401.html)
-
-## 03、路径别名配置
-
-1. 安装node路径解析器依赖包
+1. Node环境要求：ode.js 版本 >= 14.18.0
    
-   ```sh
+   ```shell
+   node -v
+   ```
+
+# ★ 项目构建
+
+## 01、使用Vite构建Vue3项目
+
+1. 使用命令行创建vue项目
+   
+   ```shell
+   npm create ite@latest
+   
+   # 输入项目名称: 默认项目名称vite-project
+   ? Project name: » vite-project
+   
+   # 选项项目框架
+   ? Select a framework: » - Use arrow-keys. Return to submit.
+       vanilla
+   >   vue
+       react
+       preact
+       lit
+       svelte
+   
+   # 选择项目语法类型
+   ? Select a variant: » - Use arrow-keys. Return to submit.
+       vue
+   >   vue-ts
+   ```
+
+2. 进入项目根目录，安装依赖包，启动项目
+   
+   ```shell
+   # 安装依赖包
+   npm install
+   # 启动项目
+   npm run dev
+   ```
+
+3. 启动项目后检查运行环境
+   
+   ```http
+   http://127.0.0.1:5173/
+   ```
+
+4. 安装vue浏览器插件vue-devtools 6.1.4：[指导参考文档](https://www.cnblogs.com/kousum/p/14396401.html)
+
+## 02、路径别名配置
+
+1. 安装node文件解析依赖包
+   
+   ```shell
    npm i @types/node -D
    ```
 
 2. 配置文件中添加别名配置项：vite.config.ts中的resolve
    
-   ```tsx
+   ```ts
    import {defineConfig} from 'vite'
    import vue from '@vitejs/plugin-vue'
    import {resolve} from 'path'
@@ -124,23 +99,21 @@
    }
    ```
 
-4. 如：修改项目中App.vue组件默认组件的路径配置，并且修改配置时候会有路径提示
+4. 检查配置结果：如：修改项目中App.vue组件默认组件的路径配置，并且修改配置时候会有路径提示，重启项目，项目访问正常。
    
-   ```vue
+   ```v
    <script setup lang="ts">
    import HelloWorld from '@/components/HelloWorld.vue'
    </script>
    ```
 
-5. 重启项目：项目正常访问
-
 ## 03、局域网服务配置
 
-1. 如果需要通过局域网中的电脑或手机访问服务调试时，需要添加配置将服务暴露在网络中
+> 如果需要通过局域网中的电脑或手机访问服务调试时，需要添加配置将服务暴露在网络中
 
-2. 方式一：修改 vite.config.js 配置
+1. 方式一：修改 vite.config.js 配置
    
-   ```tsx
+   ```ts
    export default defineConfig({
        server:{
            // 设置为 0.0.0.0 或者 true 将监听所有地址
@@ -155,13 +128,13 @@
    })
    ```
 
-3. 方式二：通过 Vite CLI 配置
+2. 方式二：通过 Vite CLI 配置
    
-   ```sh
+   ```shell
    npx vite --host 0.0.0.0
    ```
 
-4. 方式三：修改 package.json 文件中 scripts 节点下的脚本
+3. 方式三：修改 package.json 文件中 scripts 节点下的脚本
    
    ```json
    "scripts": {
@@ -169,174 +142,147 @@
    }
    ```
 
-5. 启动检查启动信息
-   
-   ```sh
-   > Network:  http://172.26.0.1:8090/
-   > Network:  http://192.168.49.1:8090/
-   > Network:  http://192.168.10.1:8090/
-   > Network:  http://192.168.31.5:8090/
-   > Local:    http://localhost:8090/
-   > Network:  http://172.17.240.1:8090/
-   ```
+## 04、ESlint
 
-## 04、Eslint
-
-1. 下载Eslint依赖包
+1. 下载ESlint依赖包
    
-   ```sh
+   ```shell
    npm i eslint -D
    ```
 
 2. 在Vue+TS项目中初始化eslint
    
-   ```sh
+   ```shell
    npm init @eslint/config
    
-   # 
-   Need to install the following packages:
-     @eslint/create-config
-   Ok to proceed? (y)
-   
+   # ESLint的使用方式选择: 检查语法问题、统一代码风格
    ? How would you like to use ESLint? ...
      To check syntax only
      To check syntax and find problems
    > To check syntax, find problems, and enforce code style
    
+   # ES module类型: JavaScript=import,CommonJS=require
    ? What type of modules does your project use? ...
    > JavaScript modules (import/export)
      CommonJS (require/exports)
      None of these
    
+   # 选择Vue框架
    ? Which framework does your project use? ...
      React
    > Vue.js
      None of these
    
-   ? Does your project use TypeScript? » No / Yes
+   # 选择TypeScript
+   ? Does your project use TypeScript? » Yes
    
+   # 项目运行环境是浏览器,键盘输入a表示全选
    ? Where does your code run? ...  (Press <space> to select, <a> to toggle all, <i> to invert selection)
    √ Browser
    √ Node
    
+   # ESlint风格选择通用的,后续需要整合prettier,自定义选择的风格可能不兼容
    ? How would you like to define a style for your project? ...
    > Use a popular style guide
      Answer questions about your style
    
+   # ESlint风格选择Standa的,后续需要整合prettier,会替换掉Standard
    ? Which style guide do you want to follow? ...
      Airbnb: https://github.com/airbnb/javascript
    > Standard: https://github.com/standard/standard
      Google: https://github.com/google/eslint-config-google
      XO: https://github.com/xojs/eslint-config-xo
-   ```
    
+   # ESLint配置文件格式:JavaScript
    ? What format do you want your config file to be in? ...
-
-> JavaScript
->      YAML
->      JSON
-
+   > JavaScript
+     YAML
+     JSON
+   
+   # 以上操作的目的：为了安装Eslint以及依赖的规范包
+   Checking peerDependencies of eslint-config-standard@latest
+   The config that you've selected requires the following dependencies:
+   
    eslint-plugin-vue@latest @typescript-eslint/eslint-plugin@latest eslint-config-standard@latest eslint@^8.0.1 eslint-plugin-import@^2.25.2 eslint-plugin-n@^
    15.0.0 eslint-plugin-promise@^6.0.0 @typescript-eslint/parser@latest
-   ? Would you like to install them now with npm? » No / Yes
+   ? Would you like to install them now with npm? » Yes
+   ```
 
-# 目的：为了安装Eslint以及依赖的规范包
-
-   npx eslint --init
-   ✔ How would you like to use ESLint? · style
-   ✔ What type of modules does your project use? · commonjs
-   ✔ Which framework does your project use? · vue
-   ✔ Does your project use TypeScript? · No / Yes
-   ✔ Where does your code run? · browser, node
-   ✔ How would you like to define a style for your project? · guide
-   ✔ Which style guide do you want to follow? · standard
-   ✔ What format do you want your config file to be in? · JavaScript
-   Checking peerDependencies of eslint-config-standard@latest
-   ✔ The style guide "standard" requires eslint@^7.12.1. You are currently using eslint@8.12.0.
-     Do you want to downgrade? · No / Yes
-   The config that you've selected requires the following dependencies:
-
-   eslint-plugin-vue@latest @typescript-eslint/eslint-plugin@latest eslint-config-standard@latest eslint@^7.12.1 eslint-plugin-import@^2.22.1 eslint-plugin-node@^11.1.0 eslint-plugin-promise@^4.2.1 || ^5.0.0 @typescript-eslint/parser@latest
-   ✔ Would you like to install them now with npm? · No / Yes
-   Installing eslint-plugin-vue@latest, @typescript-eslint/eslint-plugin@latest, eslint-config-standard@latest, eslint@^7.12.1, eslint-plugin-import@^2.22.1, eslint-plugin-node@^11.1.0, eslint-plugin-promise@^4.2.1 || ^5.0.0, @typescript-eslint/parser@latest
-
-```
-3. 查看生成eslint配置文件：.eslintrc.js
-
-```js
-module.exports = {
-  env: {
-    browser: true,
-    es2021: true
-  },
-  extends: [
-    'plugin:vue/essential',
-    'standard'
-  ],
-  parserOptions: {
-    ecmaVersion: 'latest',
-    parser: '@typescript-eslint/parser',
-    sourceType: 'module'
-  },
-  plugins: [
-    'vue',
-    '@typescript-eslint'
-  ],
-  rules: {
-  }
-}
-```
-
-4. 此时Eslint未生效，安装vite-plugin-eslint插件，用于和Vitem项目集成
+3. 查看生成eslint配置文件：.eslintrc.cjs
    
-   - 下载插件
-     
-     ```sh
-     npm i vite-plugin-eslint -D
-     ```
-   
-   - 配置插件
-     
-     ```tsx
-     import eslintPlugin from 'vite-plugin-eslint'
-     export default defineConfig({
-       plugins: [
-           eslintPlugin({
-             cache: false,
-             include: ['src/**/*.vue', 'src/**/*.ts', 'src/**/*.js', 'src/**/*.scss']
-           })
-       ]
-     })
-     ```
-   
-   - 此时启动项目会检查报错：The template root requires exactly one element，Vue3的项目是在Vue文件中是不需要根目录了，需要修改.eslintrc.js，将语法检查包升级到支持Vue3的规则：plugin:vue/vue3-essential
-     
-     ```js
-     module.exports = {
-       extends: [
-         // plugin:vue/essential 改为支持Vue3的语法检查包
-         'plugin:vue/vue3-essential',
-         'standard',
-       ]
+   ```js
+   module.exports = {
+     env: {
+       browser: true,
+       es2021: true
+     },
+     extends: [
+       'plugin:vue/essential',
+       'standard'
+     ],
+     parserOptions: {
+       ecmaVersion: 'latest',
+       parser: '@typescript-eslint/parser',
+       sourceType: 'module'
+     },
+     plugins: [
+       'vue',
+       '@typescript-eslint'
+     ],
+     rules: {
      }
-     ```
+   }
+       
+   ```
+
+4. 此时Eslint未生效，安装vite-plugin-eslint插件，用于和Vitem项目集成，下载继承ESlint继承Vite项目的插件依赖包
    
-   - 再次启动项目， 会报错error  'defineProps' is not defined  no-undef，是因为不支持Vue3中的setup函数的语法糖格式，需要添加setup函数运行环境的支持
-     
-     ```js
-     module.exports = {
-       env: {
-         // 使用的是Vue3，新增配置适配vue3 setup语法糖
-         'vue/setup-compiler-macros': true
-       }
+   ```shell
+   npm i vite-plugin-eslint -D 
+   ```
+
+5. 在Viet项目的配置文件vite.config.ts中配置插件
+   
+   ```ts
+   import eslintPlugin from 'vite-plugin-eslint'
+   export default defineConfig({
+     plugins: [
+         eslintPlugin({
+           cache: false,
+           include: ['src/**/*.vue', 'src/**/*.ts', 'src/**/*.js', 'src/**/*.scss']
+         })
+     ]
+   })
+   ```
+
+6. 此时启动项目会检查报错：`The template root requires exactly one element  vue/no-multiple-template-root`，Vue3的项目是在Vue文件中是不需要根目录了，需要修改.eslintrc.js，将语法检查包升级到支持Vue3的规则：plugin:vue/vue3-essential
+   
+   ```js
+   module.exports = {
+     extends: [
+       // plugin:vue/essential 改为支持Vue3的语法检查包
+       'plugin:vue/vue3-essential',
+       'standard',
+     ]
+   }
+   ```
+
+7. 再次启动项目， 如果项目会报错`error 'defineProps' is not defined no-undef`，是因为不支持Vue3中的setup函数的语法糖格式，需要添加setup函数运行环境的支持
+   
+   ```js
+   module.exports = {
+     env: {
+       // 使用的是Vue3，新增配置适配vue3 setup语法糖
+       'vue/setup-compiler-macros': true
      }
-     ```
+   }
+   ```
 
 ## 05、prettier
 
 1. 安装prettier相关包
    
-   ```sh
+   ```shell
    npm i -D prettier eslint-config-prettier eslint-plugin-prettier
    ```
    
@@ -344,7 +290,7 @@ module.exports = {
    > - `eslint-config-prettier`：解决ESLint中的样式规范和prettier中样式规范的冲突，以prettier的样式规范为准，使ESLint中的样式规范自动失效
    > - `eslint-plugin-prettier`：将prettier作为ESLint规范来使用
 
-2. 添加配置文件：.prettierrc.js
+2.  在项目根目录添加配置文件：`.prettierrc.js`
    
    ```js
    module.exports = {
@@ -402,6 +348,14 @@ module.exports = {
 4. 设置编辑器格式化文件跨借鉴
    
    - WebStom：File | Settings | Keymap | Plugins | Prettier | Reformat with Prettier
+
+5. 重启项目代码`prettier/prettier`检查报错，prettier组件集成成功，修改代码格式
+
+## 06、VueRouter
+
+
+
+# 架构步骤
 
 ## 06、VueRouter
 
@@ -758,6 +712,121 @@ module.exports = {
 
 ## 12、nativeUI
 
-1. 
+## 13、自定义Icon
 
-# Vue3+TS技巧
+1. 安装自定义Icon插件：npm i vite-plugin-svg-icons -D
+   
+   ```shell
+   yarn add vite-plugin-svg-icons -D
+   # or
+   npm i vite-plugin-svg-icons -D
+   # or
+   pnpm install vite-plugin-svg-icons -D
+   ```
+
+2. 配置vite.config.ts
+   
+   ```tsx
+   //插件引入
+   import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+   import path from 'path'
+   
+     plugins: [
+       vue(),
+       Components({
+         // UI库
+         resolvers: [ArcoResolver()],
+       }),
+       createSvgIconsPlugin({
+         // 指定需要缓存的图标文件夹
+         iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+         // 指定symbolId格式
+         symbolId: "icon-[dir]-[name]",
+   
+         /**
+          * 自定义插入位置
+          * @default: body-last
+          */
+         // inject?: 'body-last' | 'body-first'
+   
+         /**
+          * custom dom id
+          * @default: __svg__icons__dom__
+          */
+         // customDomId: '__svg__icons__dom__',
+       }),
+     ],
+   ```
+
+```
+3. 封装SvgIcon组件 src/components/SvgIcon
+
+```ts
+
+<template>
+  <svg aria-hidden="true">
+    <use :href="symbolId" :fill="color" />
+  </svg>
+</template>
+
+<script>
+import { defineComponent, computed } from 'vue'
+
+export default defineComponent({
+  name: 'SvgIcon',
+  props: {
+    prefix: {
+      type: String,
+      default: 'icon',
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      default: '#333',
+    },
+  },
+  setup(props) {
+    const symbolId = computed(() => `#${props.prefix}-${props.name}`)
+    return { symbolId }
+  },
+})
+</script>
+```
+
+4. 全局注册 main.ts
+   
+   ```ts
+   import { createApp } from "vue";
+   import App from "./App.vue";
+   // 路由 router 4.0
+   import router from "./router/router";
+   // 状态管理器  Pinia
+   import { createPinia } from "pinia";
+   const pinia = createPinia();
+   // UI库 ardo.design
+   import ArcoVue from "@arco-design/web-vue";
+   import "@arco-design/web-vue/dist/arco.css";
+   // svg封装插件
+   import SvgIcon from "@/components/SvgIcon.vue"; +++
+   import "virtual:svg-icons-register";            +++      
+   createApp(App)
+     .use(router)
+     .use(pinia)
+     .component("svg-icon", SvgIcon)               +++  
+     .use(ArcoVue, {
+       componentPrefix: "arco",
+     })
+     .mount("#app");
+   ```
+
+5. 下载组件组件使用 index.vue
+   
+   ```html
+   // 只需name绑定成icons目录下的svg文件名即可
+   <SvgIcon name="heSuan" />
+   ```
+
+6. # Vue3+TS技巧
