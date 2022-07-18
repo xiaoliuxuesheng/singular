@@ -2604,3 +2604,7 @@ this.$router.forward()
        })
      }
      ```
+
+# 架构
+
+[架构](./Vue_Vite_Ts架构.md)
