@@ -1191,3 +1191,27 @@ VITE_BASE_URL=http://172.17.240.1:10199/
    ```
 
 # ★ Vue3+TS技巧
+
+# ★ VsCode
+
+## 1. 安装插件
+
+| 插件名称                           | 作用            |
+| ------------------------------ | ------------- |
+| HTML CSS Support               |               |
+| JavaScript (ES6) code snippets | ES6语法插件       |
+| Auto Close Tag                 | html标签自动闭合    |
+| Auto Rename Tag                | 标签名称联动修改      |
+| open in browser                | html在浏览器打开    |
+| Prettier ESLint                | VueEslint插件支持 |
+| TypeScript Vue Plugin (Volar)  | Vue3语法        |
+| Vue Language Features (Volar)  | Vue3语法        |
+|                                |               |
+
+## 2. 自动格式化
+
+- Files: Auto Save：onFocusChange
+
+- Editor:Default Formatter：Perttier Eslint
+
+- Editor: Format On Save：√
