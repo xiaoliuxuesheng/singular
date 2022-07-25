@@ -915,6 +915,187 @@ var vm = new Vue({
 
 - **vm.$emit( eventName, […args] )**：触发当前实例上的事件。附加参数都会传给监听器回调。
 
+### 2. computed计算属性
+
+- 函数形式
+  
+  ```tsx
+  const t1 = ref('test1')
+  const c1 = computed(() => {
+      return '$.' + t1.value
+  })
+  ```
+
+- 对象形式
+  
+  ```tsx
+  
+  ```
+
+## 2.10 Vue3 Setup
+
+### 1. ref家族
+
+- 在setup中直接定义的变量是没有响应式的，如下：修改变量的值，不会再页面同步修改
+  
+  ```ts
+  let msg1 = 'test'
+  ```
+
+- ref的基本用法：①从vue中引入ref函数、②定义基本类型变量使用ref函数、③修改ref变量中的值使用ref对象的value属性
+  
+  ```ts
+  // 引入ref函数
+  import { ref } from 'vue'
+  // 定义ref引用变量
+  const msg2 = ref('test')
+  // 修改变量值
+  msg2.value = '修改后的值'
+  ```
+
+- 使用ref函数定义的变量的类型是`Ref<nwrapRef<T>>`，所以定义变量的方式也可以用如下方式
+  
+  ```ts
+  const msg3: Ref<string> = ref('test')
+  ```
+
+- `shallowRef()`只处理基本数据类型的响应式, 不进行对象的响应式处理。如果需要修改对象的响应式，需要配合triggerRef
+  
+  ```ts
+  // 定义基本类型的shallowRef引用的变量
+  const baseShall = shallowRef('基本类型的Shall')
+  // 修改shallowRef的值
+  baseShall.value = '修改基本类型是Shall变量'
+  ```
+
+- `triggerRef()`配合shallowRef一起使用；  可以使用triggerRef(xxx)强制使括号内属性进行同步（即触发一次响应）
+  
+  ```ts
+  import { triggerRef , shallowRef} from 'vue'
+  let message = shallowRef({
+    tags: 'helloworld'
+  })
+  const changeTag = () => {
+    message.value.tags = 'goodbyeworld'
+    triggerRef(message)   // 强制触发响应
+  }
+  ```
+
+- `customRef()`自定义`ref`指令，作用：在修改某些变量时候，当值发生改变后可以发送请求，实现防抖操作
+  
+  ```ts
+  // ①首先需要自定义函数，返回值是customRef的回调
+  function myRef<T>(value: T) {
+      return customRef((trank, trigger) => {
+            // ②customRef中获取值时触发get方法，修改值时触发set方法
+            return {
+              get() {
+                  // ③用来收集依赖
+                  trank()
+                  return value
+              },
+              set(newVal: T) {
+                  value = newVal
+                  // ④触发更新操作
+                  trigger()
+              },
+          }
+      })
+  }
+  // 使用自定义ref修改变量
+  const customRefVal = myRef<number>(1)
+  const customRefCheck = () => {
+      customRefVal.value = 2
+  }
+  ```
+
+### 2. reactive家族
+
+- reactive用于定义具有响应式的复杂对象类型，修改reactive变量可以直接修改对象中的值
+  
+  ```ts
+  // 定义
+  const r1 = reactive({
+      name: '张三',
+  })
+  // 修改
+  r1.name = '修改reactive对象属性'
+  ```
+
+- readonly：定义只读对象，对象和对象属性不允许被修改
+  
+  ```ts
+  const r2 = readonly({
+      name: '只读对象',
+  })
+  ```
+
+- shallowReactive：只修改对象浅层属性，并且响应到页面；修改对象深层属性时候可以修改对象的值，但是不会响应到页面
+  
+  ```ts
+  const r3 = shallowReactive({
+      name: '外层',
+      address: {
+          city: '陕西',
+          subArr: ['aaa', 'bbb'],
+          subObj: {
+              name: '内层',
+          },
+      },
+  })
+  // 修改并且具备响应式
+  const changeR31 = () => {
+      r3.name = '修改外层属性'
+  }
+  // 可以修改，但是不会响应
+  const changeR32 = () => {
+      r3.address.subArr.push('cc')
+  }
+  // 
+  const changeR33 = () => {
+      r3.address.subObj.name = '修改内层属性'
+  }
+  ```
+
+### 3. toRef、toRefs、toRaw
+
+- toRef应用的对象属性，也会影响原始对象的属性，但是不会更新页面
+  
+  ```tsx
+  const obj1 = {
+      name: '姓名',
+      age: 13,
+  }
+  
+  const toR1 = toRef(obj1, 'age') 
+  
+  toR1.value++
+  ```
+
+- toRefs：用来解构reactive对象，并且解构后的属性具有响应式，原理是每个属性都调用toRef函数，所以通过属性的value属性修改属性值；
+  
+  ```tsx
+  const obj2 = reactive({
+      name1: '姓名',
+      age1: 13,
+  })
+  const { name1, age1 } = toRefs(obj2)
+  // 修改toRefs解构后的值
+  const changeReactive2 = () => {
+      name1.value = '修改名称'
+      age1.value++
+  }
+  ```
+
+- toRaw：将reactive代理对象转为原始对象
+  
+  ```tsx
+  const obj3 = reactive({
+      test: 'test',
+  })
+  const raw = toRaw(obj3)
+  ```
+
 # 第三章 组件化开发
 
 ## 3.1 组件开发思想
