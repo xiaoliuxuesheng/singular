@@ -1,35 +1,35 @@
-| 单词            | 音标            | 注释                                                         |
-| :-------------- | --------------- | ------------------------------------------------------------ |
-| **broker**      | /‘broʊkər/      | n. 经纪人，掮客<br />vi. 作为权力经纪人进行谈判<br />vt. 以中间人等身分安排 |
-| **partition**   | /pɑːr’tɪʃn/     | n. 划分，分开；[数] 分割；隔墙；隔离物<br />vt. [数] 分割；分隔；区分 |
-| **segment**     | /‘seɡmənt/      | n. 段，部分；（水果或花的）瓣，（动物的）节；弓形；音段；<br />v. 分割；（细胞）分裂 |
+| 单词              | 音标              | 注释                                                                                                  |
+|:--------------- | --------------- | --------------------------------------------------------------------------------------------------- |
+| **broker**      | /‘broʊkər/      | n. 经纪人，掮客<br />vi. 作为权力经纪人进行谈判<br />vt. 以中间人等身分安排                                                   |
+| **partition**   | /pɑːr’tɪʃn/     | n. 划分，分开；[数] 分割；隔墙；隔离物<br />vt. [数] 分割；分隔；区分                                                        |
+| **segment**     | /‘seɡmənt/      | n. 段，部分；（水果或花的）瓣，（动物的）节；弓形；音段；<br />v. 分割；（细胞）分裂                                                    |
 | **offset**      | /ˈɔːfset/       | n. 抵消，补偿；偏离量；（测绘）支距；（电子）偏离；侧枝；（山的）支脉；（建筑）壁阶；弯管，支管；平版印刷<br />v. 抵消，弥补；衬托出；使偏离直线方向；用平版印刷术印刷，转印下一页；装支管 |
-| **replicas**    |                 | 复制品                                                       |
-| **leader**      | /ˈliːdər/       | n. 领导者；首领；指挥者                                      |
-| **follower**    | /ˈfɑːloʊər/     | n. 追随者；信徒；属下                                        |
-| **assign**      | /əˈsaɪn/        | vt. 分配；指派；[计][数] 赋值<br />vi. 将财产过户（尤指过户给债权人） |
-| **watermark**   | /'wɔːtərmɑːrk/  | n. 水印；水位标志<br />vt. 在…上印水印（图案）               |
-| **distributed** | /dɪ'strɪbjʊtɪd/ | adj. 分布式的，分散式的                                      |
-| **mirror**      | /ˈmɪrər/        | n. 镜子；真实的写照；榜样<br />vt. 反射；反映                |
-| **maker**       | /ˈmeɪkər/       | n. 制造者；造物主；出期票人；创客                            |
-| **standalone**  | /'stændə,lon/   | adj. （计算机）独立运行的；（公司）独立的<br />n. 脱机       |
+| **replicas**    |                 | 复制品                                                                                                 |
+| **leader**      | /ˈliːdər/       | n. 领导者；首领；指挥者                                                                                       |
+| **follower**    | /ˈfɑːloʊər/     | n. 追随者；信徒；属下                                                                                        |
+| **assign**      | /əˈsaɪn/        | vt. 分配；指派；[计][数] 赋值<br />vi. 将财产过户（尤指过户给债权人）                                                        |
+| **watermark**   | /'wɔːtərmɑːrk/  | n. 水印；水位标志<br />vt. 在…上印水印（图案）                                                                      |
+| **distributed** | /dɪ'strɪbjʊtɪd/ | adj. 分布式的，分散式的                                                                                      |
+| **mirror**      | /ˈmɪrər/        | n. 镜子；真实的写照；榜样<br />vt. 反射；反映                                                                       |
+| **maker**       | /ˈmeɪkər/       | n. 制造者；造物主；出期票人；创客                                                                                  |
+| **standalone**  | /'stændə,lon/   | adj. （计算机）独立运行的；（公司）独立的<br />n. 脱机                                                                  |
 
 # 第一章 初始Kafka
 
 ## 1.1 基本概念讲解
 
 1. kakfa基本介绍
-
-   ​	Kafka是采用Scala语言开发的一个多分区、多副本并且基于Zookeeper协议的分布式消息系统。目前Kafka已经定位为衣蛾分布式流式处理平台，它以高吞吐、可持久化、可水平扩展、支持流处理等对种特性而被广泛应用。
-
-   ​	Kakfa是一个分布式的发布-订阅消息系统，能够支撑海量数据的传输；
-
-   ​	Kafka将消息持久化到磁盘中，并对消息创建了备份保证数据的安全；
-
-   ​	Kafka在保证了较高的处理速度的同时，又能保证数据处理的低延迟和零丢失；
+   
+   ​    Kafka是采用Scala语言开发的一个多分区、多副本并且基于Zookeeper协议的分布式消息系统。目前Kafka已经定位为衣蛾分布式流式处理平台，它以高吞吐、可持久化、可水平扩展、支持流处理等对种特性而被广泛应用。
+   
+   ​    Kakfa是一个分布式的发布-订阅消息系统，能够支撑海量数据的传输；
+   
+   ​    Kafka将消息持久化到磁盘中，并对消息创建了备份保证数据的安全；
+   
+   ​    Kafka在保证了较高的处理速度的同时，又能保证数据处理的低延迟和零丢失；
 
 2. Kafka特性
-
+   
    - 高吞吐量、低延迟：每秒处理几十万条，延迟最低只有几毫秒，每个主题可以分多个分区，消费者对分区进行消费
    - 可扩展性：支持热扩展
    - 持久性、可靠性：消息持久化到磁盘，并支持数据备份
@@ -38,7 +38,7 @@
    - 可伸缩：
 
 3. 使用场景
-
+   
    - 日志收集：通过Kaka以统一接口服务的方式开放给各种consumer
    - 消息系统：结构生成和消费者；缓存消息
    - 用户活动跟踪：记录用户活动
@@ -46,9 +46,9 @@
    - 流式处理：
 
 4. 概念详解
-
+   
    <img src="https://s1.ax1x.com/2020/05/10/Y8ArjI.png" alt="Y8ArjI.png" border="0" />
-
+   
    - **Producer**：生产者即数据发布者，该角色将消息发布到Kafka的Topic中。broker接收到生产者发送的消息后，broker将该消息追加到当前用于追加数据的segment文件中。生产者发送的消息，存储到一个partition中，生产者也可以指定数据存储的partition
    - **consumer**：消费者可以冲broker中读取数据。消费者可以效仿多个topic中的数据
    - **topic**：在kafka中，使用一个类表属性来划分数据段所属类，划分数据的这个类称为topic。如果把kafka看做一个数据库，topic可以理解为数据库中的一张表，topic的名字即为表名。
@@ -70,22 +70,22 @@
 ## 1.2 安装与配置
 
 1. 安装
-
+   
    - Kafka需要安装Java环境：Windows和Linux
    - 安装ZooKeeper：
 
 2. 配置
-
+   
    - kafka安装包的组成：三部分
-
+     
      - broker：是kafka服务，由Scala语言开发
      - consumer：消费者，由Java语言开发
      - producer：生产者，由java语言开发
-
+   
    - config配置信息
-
+     
      - server.properties
-
+       
        ```properties
        # 唯一
        broker.id=0
@@ -94,15 +94,15 @@
        # zookeeper集群
        zookeeper.connect=BigDataNode101:2181,BigDataNode102:2181,BigDataNode103:2181/kafka
        ```
-
+     
      - producer.properties
-
+     
      - consumer.properties
-
+   
    - 添加kafka的bin到环境变量中
-
+   
    - zookeeper集群配置
-
+     
      ```sh
      # 先把dataDir=/tmp/zookeeper注释掉，然后添加以下核心配置,目录需要创建
      dataDir=/usr/local/zookeeper/data
@@ -110,129 +110,126 @@
      server.2=BigDataNode102:2888:3888
      server.3=BigDataNode103:2888:3888
      ```
-
+   
    - dataDir中添加myid文件, 文件中添加对应server是数字
-
+   
    - 启动zookeeper，启动报错，看报错信息修改配置文件，并且创建kafka节点
-
+     
      ```sh
      #!/bin/bash
      
      case $1 in
      "start"){
-     	for i in BigDataNode101 BigDataNode102 BigDataNode103
-     	do
-     		echo  ------------- zookeeper $i 启动 ------------
-     		ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh start"
-     	done
+         for i in BigDataNode101 BigDataNode102 BigDataNode103
+         do
+             echo  ------------- zookeeper $i 启动 ------------
+             ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh start"
+         done
      }
      ;;
      "stop"){
-     	for i in hadoop102 hadoop103 hadoop104
-     	do
-     		echo  ------------- zookeeper $i 停止 ------------
-     		ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh stop"
-     	done
+         for i in hadoop102 hadoop103 hadoop104
+         do
+             echo  ------------- zookeeper $i 停止 ------------
+             ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh stop"
+         done
      }
      ;;
      "status"){
-     	for i in hadoop102 hadoop103 hadoop104
-     	do
-     		echo  ------------- zookeeper $i 状态 ------------
-     		ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh status"
-     	done
+         for i in hadoop102 hadoop103 hadoop104
+         do
+             echo  ------------- zookeeper $i 状态 ------------
+             ssh $i "/opt/module/zookeeper3.7.1/bin/zkServer.sh status"
+         done
      }
      ;;
      esac
      ```
-
+   
    - 查看启动进程
-
+     
      ```sh
      xcall jps
      ```
-
+   
    - 启动kafka，关闭zookeeper之前必须提前关闭kafka
-
+     
      ```sh
      #!/bin/bash
      
      case $1 in
      "start"){
-     	for i in BigDataNode101 BigDataNode102 BigDataNode103
-     	do
-     		echo  ------------- kafka $i 启动 ------------
-     		ssh $i "/opt/module/kafka3/bin/kafka-server-start.sh -daemon /opt/module/kafka3/config/server.properties"
-     	done
+         for i in BigDataNode101 BigDataNode102 BigDataNode103
+         do
+             echo  ------------- kafka $i 启动 ------------
+             ssh $i "/opt/module/kafka3/bin/kafka-server-start.sh -daemon /opt/module/kafka3/config/server.properties"
+         done
      }
      ;;
      "stop"){
-     	for i in BigDataNode101 BigDataNode102 BigDataNode103
-     	do
-     		echo  ------------- kafka $i 停止 ------------
-     		ssh $i "/opt/module/kafka3/bin/kafka-server-stop.sh"
-     	done
+         for i in BigDataNode101 BigDataNode102 BigDataNode103
+         do
+             echo  ------------- kafka $i 停止 ------------
+             ssh $i "/opt/module/kafka3/bin/kafka-server-stop.sh"
+         done
      }
      ;;
      esac
-     
      ```
 
 3. 启动执行脚本
-
-   | kafka服务                 | 执行参数 | 说明 |
-   | ------------------------- | -------- | ---- |
-   | zookeeper-server-start.sh |          |      |
-   | zookeeper-server-stop.sh  |          |      |
-   | kafka-server-start.sh     |          |      |
-   | kafka-server-stop.sh      |          |      |
-   | kafka-topics.sh           | 主题     |      |
-   | **kafka生产者和消费者**   |          |      |
-   | kafka-console-consumer.sh |          |      |
-   | kafka-console-producer.sh |          |      |
-
    
+   | kafka服务                   | 执行参数 | 说明  |
+   | ------------------------- | ---- | --- |
+   | zookeeper-server-start.sh |      |     |
+   | zookeeper-server-stop.sh  |      |     |
+   | kafka-server-start.sh     |      |     |
+   | kafka-server-stop.sh      |      |     |
+   | kafka-topics.sh           | 主题   |     |
+   | **kafka生产者和消费者**          |      |     |
+   | kafka-console-consumer.sh |      |     |
+   | kafka-console-producer.sh |      |     |
 
-   | 启动执行                             | 执行参数                    | 使用说明                         |
-   | ------------------------------------ | --------------------------- | -------------------------------- |
-   | **connect-distributed**              |                             |                                  |
-   | **connect-mirror-maker**             |                             |                                  |
-   | **connect-standalone**               |                             |                                  |
-   | **kafka-acls**                       |                             |                                  |
-   | **kafka-broker-api-versions**        |                             |                                  |
-   | **kafka-console-consumer**           |                             | **kafka命令行工具模拟消费端**    |
-   |                                      | --bootstrap-server IP:端口  | 连接到的kafka服务地址            |
-   |                                      | --topic topic名称           | 消费指定名称的Topic              |
-   | **kafka-console-producer**           |                             | **kafka命令行工具模拟发送端**    |
-   | **kafka-consumer-groups**            |                             |                                  |
-   | **kafka-consumer-perf-test**         |                             |                                  |
-   | **kafka-delegation-tokens**          |                             |                                  |
-   | **kafka-delete-records**             |                             |                                  |
-   | **kafka-dump-log**                   |                             |                                  |
-   | **kafka-leader-election**            |                             |                                  |
-   | **kafka-log-dirs**                   |                             |                                  |
-   | **kafka-mirror-maker**               |                             |                                  |
-   | **kafka-preferred-replica-election** |                             |                                  |
-   | **kafka-producer-perf-test**         |                             |                                  |
-   | **kafka-reassign-partitions**        |                             |                                  |
-   | **kafka-replica-verification**       |                             |                                  |
-   | **kafka-run-class**                  |                             |                                  |
-   | **kafka-server-start**               |                             | **启动kafka服务**                |
-   | **kafka-server-stop**                |                             | **关闭kafka服务**                |
-   | **kafka-streams-application-reset**  |                             |                                  |
-   | **kafka-topics**                     |                             | **kafka的Topic命令行工具**       |
-   |                                      | --create \| deletet \| list | Topic的创建 \| 删除 \|  列表查询 |
-   |                                      | --zookeeper host:port       | 连接指定的zookeeper              |
-   |                                      | --partitions 分区数         | 创建的topic的分区数              |
-   |                                      | --replication-factor 副本数 | 创建的Topic副本数                |
-   |                                      | --topic 名称                | 创建指定名称的topic              |
-   | kafka-verifiable-consumer            |                             |                                  |
-   | kafka-verifiable-producer            |                             |                                  |
-   | trogdor                              |                             |                                  |
-   | zookeeper-security-migration         |                             |                                  |
-   | zookeeper-server-start               |                             | 启动内置的ZooKeeper注册中心      |
-   | zookeeper-server-stop                |                             | 停止内置的ZooKeeper服务          |
-   | zookeeper-shell                      |                             |                                  |
+| 启动执行                                 | 执行参数                        | 使用说明                    |
+| ------------------------------------ | --------------------------- | ----------------------- |
+| **connect-distributed**              |                             |                         |
+| **connect-mirror-maker**             |                             |                         |
+| **connect-standalone**               |                             |                         |
+| **kafka-acls**                       |                             |                         |
+| **kafka-broker-api-versions**        |                             |                         |
+| **kafka-console-consumer**           |                             | **kafka命令行工具模拟消费端**     |
+|                                      | --bootstrap-server IP:端口    | 连接到的kafka服务地址           |
+|                                      | --topic topic名称             | 消费指定名称的Topic            |
+| **kafka-console-producer**           |                             | **kafka命令行工具模拟发送端**     |
+| **kafka-consumer-groups**            |                             |                         |
+| **kafka-consumer-perf-test**         |                             |                         |
+| **kafka-delegation-tokens**          |                             |                         |
+| **kafka-delete-records**             |                             |                         |
+| **kafka-dump-log**                   |                             |                         |
+| **kafka-leader-election**            |                             |                         |
+| **kafka-log-dirs**                   |                             |                         |
+| **kafka-mirror-maker**               |                             |                         |
+| **kafka-preferred-replica-election** |                             |                         |
+| **kafka-producer-perf-test**         |                             |                         |
+| **kafka-reassign-partitions**        |                             |                         |
+| **kafka-replica-verification**       |                             |                         |
+| **kafka-run-class**                  |                             |                         |
+| **kafka-server-start**               |                             | **启动kafka服务**           |
+| **kafka-server-stop**                |                             | **关闭kafka服务**           |
+| **kafka-streams-application-reset**  |                             |                         |
+| **kafka-topics**                     |                             | **kafka的Topic命令行工具**    |
+|                                      | --create \| deletet \| list | Topic的创建 \| 删除 \|  列表查询 |
+|                                      | --zookeeper host:port       | 连接指定的zookeeper          |
+|                                      | --partitions 分区数            | 创建的topic的分区数            |
+|                                      | --replication-factor 副本数    | 创建的Topic副本数             |
+|                                      | --topic 名称                  | 创建指定名称的topic            |
+| kafka-verifiable-consumer            |                             |                         |
+| kafka-verifiable-producer            |                             |                         |
+| trogdor                              |                             |                         |
+| zookeeper-security-migration         |                             |                         |
+| zookeeper-server-start               |                             | 启动内置的ZooKeeper注册中心      |
+| zookeeper-server-stop                |                             | 停止内置的ZooKeeper服务        |
+| zookeeper-shell                      |                             |                         |
 
 1.3 Java程序连接
 
@@ -247,18 +244,18 @@
 ## 1.5 Kafka命令行操作
 
 1. kafka-topics.sh
-
+   
    - 链接kafka服务端
-
+     
      ```sh
      # --bootstrap-server 主机:端口
      kafka-topics.sh --bootstrap-server BigDataNode101:9092 --list
      # --topic 名称: 链接指定topic
      kafka-topics.sh --bootstrap-server BigDataNode101:9092 --topic teset --delete
      ```
-
+   
    - 操作topic
-
+     
      ```sh
      # --create
      kafka-topics.sh --bootstrap-server BigDataNode101:9092 --topic test --create --partitions 1 --replication-factor 1
@@ -273,42 +270,39 @@
      # --partitions 分区数
      
      # --replication-factor 副本数
-     
      ```
-
-     
 
 # 第二章 生产者
 
 2.1 消息发送
 
 1. kafka消息的producer发送消息流程
-
+   
    <img src="https://s1.ax1x.com/2020/05/11/YJ51zj.png" alt="YJ51zj.png" border="0" />
-
+   
    - **ProducerRecord**：表示一条待发送的消息记录，主要由5个字段构成。ProducerRecord允许用户在创建消息对象的时候就直接指定要发送的分区，这样producer后续发送该消息时可以直接发送到指定分区，而不用先通过Partitioner计算目标分区了；还可以直接指定消息的时间戳——但一定要慎重使用这个功能，因为它有可能会令时间戳索引机制失效。
-
-     | 字段      | 说明      |
-     | --------- | --------- |
+     
+     | 字段        | 说明      |
+     | --------- | ------- |
      | topic     | 所属topic |
-     | partition | 所属分区  |
+     | partition | 所属分区    |
      | key       | 键值      |
-     | value     | 消息体    |
-     | timestrap | 时间戳    |
-
+     | value     | 消息体     |
+     | timestrap | 时间戳     |
+   
    - **RecordMetaData**：该类表示Kafka服务器端返回给客户端的消息元数据
-
-     | 字段                | 说明                 |
-     | ------------------- | -------------------- |
-     | offset              | 该条消息的位移       |
-     | timestrap           | 时间戳               |
-     | topic+partition     | 所属topic的分区      |
-     | checksum            | 消息CRC32码          |
+     
+     | 字段                  | 说明         |
+     | ------------------- | ---------- |
+     | offset              | 该条消息的位移    |
+     | timestrap           | 时间戳        |
+     | topic+partition     | 所属topic的分区 |
+     | checksum            | 消息CRC32码   |
      | serializedKeySize   | 序列化后消息键字节数 |
      | serializedValueSize | 序列化后消息值字节数 |
 
 2. 消息发送流程描述
-
+   
    - 用户首先构建待发送的消息对象ProducerRecord，然后调用KafkaProducer#send方法进行发送。
    - KafkaProducer接收到消息后首先对其进行序列化
    - 然后结合本地缓存的元数据信息一起发送给partitioner去确定目标分区
@@ -316,7 +310,7 @@
    - 此时KafkaProducer#send方法成功返回。同时，KafkaProducer中还有一个专门的Sender IO线程负责将缓冲池中的消息分批次发送给对应的broker，完成真正的消息发送逻辑。
 
 3. producer关键参数
-
+   
    - **batch.size** 我把它列在了首位，因为该参数对于调优producer至关重要。之前提到过新版producer采用分批发送机制，该参数即控制一个batch的大小。默认是16KB
    - **acks**关乎到消息持久性(durability)的一个参数。高吞吐量和高持久性很多时候是相矛盾的，需要先明确我们的目标是什么？ 高吞吐量？高持久性？亦或是中等？因此该参数也有对应的三个取值：0， -1和1
    - **linger.ms**减少网络IO，节省带宽之用。原理就是把原本需要多次发送的小batch，通过引入延时的方式合并成大batch发送，减少了网络传输的压力，从而提升吞吐量。当然，也会引入延时
@@ -325,7 +319,7 @@
    - **retries** 重试机制，对于瞬时失败的消息发送，开启重试后KafkaProducer会尝试再次发送消息。对于有强烈无消息丢失需求的用户来说，开启重试机制是必选项
 
 4. 内部流程
-
+   
    - https://www.jianshu.com/p/46cb44c6b96c
 
 2.2 原理剖析
@@ -418,9 +412,9 @@
 
 :anchor: <font size=4 color=blue>Kafka介绍</font>
 
-​		Kafka是由LinkedIn公司采用Scala语言开发的一个多分区、多副本并且基于ZooKeeper协调的分布式消息系统。
+​        Kafka是由LinkedIn公司采用Scala语言开发的一个多分区、多副本并且基于ZooKeeper协调的分布式消息系统。
 
-​		Kafka目前定位与一个分布式的流式处理平台：高吞吐、可持久化、可水平扩展、支持流式处理等高性能，能支持海量数据传递，Kafka将消息持久化到磁盘中，保证数据的安全；Kafka在保证较高的处理速度的同时，又可以保证数据处理的低延时和数据的零丢失。
+​        Kafka目前定位与一个分布式的流式处理平台：高吞吐、可持久化、可水平扩展、支持流式处理等高性能，能支持海量数据传递，Kafka将消息持久化到磁盘中，保证数据的安全；Kafka在保证较高的处理速度的同时，又可以保证数据处理的低延时和数据的零丢失。
 
 :anchor: <font size=4 color=blue>Kafka特性</font>
 
@@ -443,7 +437,7 @@
 :anchor: <font size=4 color=blue>Java连接Kafka</font>
 
 1. 新建SpringBoot项目，并添加依赖
-
+   
    ```xml
    <dependency>
        <groupId>org.springframework.kafka</groupId>
@@ -457,7 +451,7 @@
    ```
 
 2. 使用Java模拟Producer
-
+   
    ```java
    import org.apache.kafka.clients.producer.KafkaProducer;
    import org.apache.kafka.clients.producer.ProducerConfig;
@@ -489,7 +483,7 @@
    ```
 
 3. 使用Java模拟Consumer
-
+   
    ```java
    import org.apache.kafka.clients.consumer.ConsumerConfig;
    import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -534,7 +528,7 @@
 ## 1.4 服务端配置参数
 
 - /config/server.properties
-
+  
   ```properties
   # 当前机器在集群中的唯一标识，和zookeeper的myid性质一样
   broker.id=0
@@ -574,20 +568,18 @@
   ```
 
 - /config/producer.properties：设计连接的zookeeper集群
-
+  
   ```properties
   metadata.broker.list=192.168.123.102:9092,192.168.123.103:9092,192.168.123.104:9092
   ```
 
 - /config/consumer.properties：设计连接的zookeeper集群
-
+  
   ```properties
   zookeeper.connect=192.168.123.102:2181,192.168.123.103:2181,192.168.123.104:2181
   ```
 
 # 第二章 生产者
-
-
 
 # 第三章 消费者
 
@@ -607,13 +599,9 @@
 
 # 第十章 监控
 
- 
-
 # 第二章 Kafka架构原理
 
 ## 2.1 Kafka工作流程
-
-
 
 ## 2.2 Kafka的架构
 
@@ -683,9 +671,9 @@ push模式很难适应消费速率不同的消费者，因为消息发送速率�
 有这么几种可能的delivery guarantee：
 
 > At most once 　　消息可能会丢，但绝不会重复传输
->
+> 
 > At least one 　　 消息绝不会丢，但可能会重复传输
->
+> 
 > Exactly once 　　 每条消息肯定会被传输一次且仅传输一次，很多时候这是用户所想要的。
 
 当Producer向broker发送消息时，一旦这条消息被commit，因数replication的存在，它就不会丢。但是如果Producer发送数据给broker后，遇到网络问题而造成通信中断，那Producer就无法判断该条消息是否已经commit。虽然Kafka无法确定网络故障期间发生了什么，但是Producer可以生成一种类似于主键的东西，发生故障时幂等性的重试多次，这样就做到了Exactly once。
@@ -705,8 +693,6 @@ push模式很难适应消费速率不同的消费者，因为消息发送速率�
 　　如果Producer使用异步模式，则Producer会尝试重新发送message.send.max.retries（默认值为3）次后记录该异常并继续发送后续数据，这会造成数据丢失并且用户只能通过日志发现该问题。同时，Kafka的Producer并未对异步模式提供callback接口。
 
 　　由此可见，在没有Replication的情况下，一旦某机器宕机或者某个Broker停止工作则会造成整个系统的可用性降低。随着集群规模的增加，整个集群中出现该类异常的几率大大增加，因此对于生产系统而言Replication机制的引入非常重要。
-
-
 
 ### 1. Leader Election
 
@@ -802,23 +788,17 @@ Kafka 0.8.*的Leader Election方案解决了上述问题，它在所有broker中
 
 ![img](https://images2018.cnblogs.com/blog/1228818/201805/1228818-20180507195223218-1719228508.png)
 
-
-
 ### 1 admin
 
 该目录下znode只有在有相关操作时才会存在，操作结束时会将其删除
 
 /admin/reassign_partitions用于将一些Partition分配到不同的broker集合上。对于每个待重新分配的Partition，Kafka会在该znode上存储其所有的Replica和相应的Broker id。该znode由管理进程创建并且一旦重新分配成功它将会被自动移除。
 
-
-
 ### 2 broker
 
 即/brokers/ids/[brokerId]）存储“活着”的broker信息。
 
 topic注册信息（/brokers/topics/[topic]），存储该topic的所有partition的所有replica所在的broker id，第一个replica即为preferred replica，对一个给定的partition，它在同一个broker上最多只有一个replica,因此broker id可作为replica id。
-
-
 
 ### 3 controller
 
@@ -832,8 +812,6 @@ topic注册信息（/brokers/topics/[topic]），存储该topic的所有partitio
 
 producer 采用 push 模式将消息发布到 broker，每条消息都被 append 到 patition 中，属于顺序写磁盘（顺序写磁盘效率比随机写内存要高，保障 kafka 吞吐率）。
 
-
-
 ### 2 消息路由
 
 producer 发送消息到 broker 时，会根据分区算法选择将其存储到哪一个 partition。其路由机制为：
@@ -843,8 +821,6 @@ producer 发送消息到 broker 时，会根据分区算法选择将其存储到
 2、 未指定 patition 但指定 key，通过对 key 的 value 进行hash 选出一个 patition
 3、 patition 和 key 都未指定，使用轮询选出一个 patition。
 ```
-
-
 
 ### 3 写入流程
 
@@ -866,15 +842,11 @@ producer 写入消息序列图如下所示：
 
 ## 3.4 broker保存消息
 
-
-
 ### 1 存储方式
 
 物理上把 topic 分成一个或多个 patition（对应 server.properties 中的 num.partitions=3 配置），每个 patition 物理上对应一个文件夹（该文件夹存储该 patition 的所有消息和索引文件），如下：
 
 ![img](https://images2018.cnblogs.com/blog/1228818/201805/1228818-20180507200226759-1617322728.png)
-
-
 
 ### 2 存储策略
 
@@ -966,8 +938,6 @@ kafka broker failover 序列图如下所示：
 
 ## 二、分析
 
-
-
 ### 2.1　topic注册信息
 
 /brokers/topics/[topic] :
@@ -1022,7 +992,7 @@ Schema:
 "leader_epoch": 该partition leader选举次数,
 "isr": [同步副本组brokerId列表]
 }
- 
+
 Example:
 {
 "controller_epoch": 1,
@@ -1050,7 +1020,7 @@ Schema:
 "version": 版本编号默认为1,
 "port": kafka broker的服务端端口号,由server.properties中参数port确定
 }
- 
+
 Example:
 {
 "jmx_port": -1,
@@ -1069,8 +1039,6 @@ Example:
 
 ![img](https://images2018.cnblogs.com/blog/1228818/201805/1228818-20180508104057913-1808088971.png)
 
-
-
 ### 2.5　Controller注册信息
 
 /controller -> int (broker id of the controller)  存储center controller中央控制器所在kafka broker的信息
@@ -1086,7 +1054,7 @@ Schema:
 "brokerid": kafka集群中broker唯一编号,
 "timestamp": kafka broker中央控制器变更时的时间戳
 }
- 
+
 Example:
 {
 "version": 1,
@@ -1096,10 +1064,6 @@ Example:
 ```
 
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
-
- 
-
-
 
 ### 2.6　补充Consumer and Consumer group
 
@@ -1126,8 +1090,6 @@ Example:
 
 **如果Consumer Group中所有consumer的总线程数大于partitions数量，则可能consumer thread或consumer会出现空闲状态**。
 
-
-
 ### 2.7　Consumer均衡算法
 
 **当一个group中,有consumer加入或者离开时,会触发partitions均衡.均衡的最终目的,是提升topic的并发消费能力.**
@@ -1137,8 +1099,6 @@ Example:
 **4) 根据(consumer.id + '-'+ thread序号)排序: C0,C1**
 **5) 计算倍数: M = [P0,P1,P2,P3].size / [C0,C1].size,本例值M=2(向上取整)**
 **6) 然后依次分配partitions: C0 = [P0,P1],C1=[P2,P3],即Ci = [P(i \* M),P((i + 1) \* M -1)]**
-
-
 
 ### 2.8　Consumer注册信息
 
@@ -1158,15 +1118,13 @@ consumerId产生规则：
 > consumerUuid = "%s-%d-%s".format(
 >  InetAddress.getLocalHost.getHostName, System.currentTimeMillis,
 >  uuid.getMostSignificantBits().toHexString.substring(0,8));
->
+> 
 > }
 > String consumerIdString = config.groupId + "_" + consumerUuid;
 
 ```
 [zk: localhost:2181(CONNECTED) 11] get /consumers/console-consumer-2304/ids/console-consumer-2304_hadoop2-1525747915241-6b48ff32
 ```
-
- 
 
 ![img](https://images2018.cnblogs.com/blog/1228818/201805/1228818-20180508105321039-416763241.png)
 
@@ -1182,7 +1140,7 @@ Schema:
 "pattern": "static",
 "timestamp": "consumer启动时的时间戳"
 }
- 
+
 Example:
 {
 "version": 1,
@@ -1196,8 +1154,6 @@ Example:
 
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
 
-
-
 ### 2.9　Consumer owner
 
 /consumers/[groupId]/owners/[topic]/[partitionId] -> consumerIdString + threadId索引编号
@@ -1210,8 +1166,6 @@ c) 在"Broker id 注册"节点下,注册一个watch用来监听broker的存活�
 
 ![img](https://images2018.cnblogs.com/blog/1228818/201805/1228818-20180508105839526-553140898.png)
 
-
-
 ### 2.10　Consumer offset
 
 /consumers/[groupId]/offsets/[topic]/[partitionId] -> long (offset)
@@ -1223,8 +1177,6 @@ c) 在"Broker id 注册"节点下,注册一个watch用来监听broker的存活�
 重新触发balance,其他consumer可以继续消费.
 
 ![img](https://images2018.cnblogs.com/blog/1228818/201805/1228818-20180508110049469-140963000.png)
-
-
 
 ### 2.11　Re-assign partitions
 
@@ -1269,7 +1221,7 @@ c) 在"Broker id 注册"节点下,注册一个watch用来监听broker的存活�
       }
    ]
 }
- 
+
 Example:
 {
   "version": 1,
@@ -1285,8 +1237,6 @@ Example:
 ```
 
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
-
-
 
 ### 2.12　Preferred replication election
 
@@ -1323,9 +1273,9 @@ Example:
       }
    ]
 }
- 
+
 例子:
- 
+
 {
   "version": 1,
   "partitions":
@@ -1344,8 +1294,6 @@ Example:
 
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
 
-
-
 ### 2.13　删除topics
 
 /admin/delete_topics
@@ -1362,7 +1310,7 @@ Schema:
        "type": { "type": "array", "items": "string", "doc": "an array of topics to be deleted"}
       } ]
 }
- 
+
 例子:
 {
   "version": 1,
@@ -1371,8 +1319,6 @@ Schema:
 ```
 
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
-
-
 
 ### 2.14　Topic配置
 
