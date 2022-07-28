@@ -1096,6 +1096,20 @@ var vm = new Vue({
   const raw = toRaw(obj3)
   ```
 
+### 4. computed计算属性
+
+- 函数形式
+  
+  ```tsx
+  
+  ```
+
+- 对象形式
+  
+  ```tex
+  
+  ```
+
 # 第三章 组件化开发
 
 ## 3.1 组件开发思想
