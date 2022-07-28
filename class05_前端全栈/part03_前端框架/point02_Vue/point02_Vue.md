@@ -915,23 +915,6 @@ var vm = new Vue({
 
 - **vm.$emit( eventName, […args] )**：触发当前实例上的事件。附加参数都会传给监听器回调。
 
-### 2. computed计算属性
-
-- 函数形式
-  
-  ```tsx
-  const t1 = ref('test1')
-  const c1 = computed(() => {
-      return '$.' + t1.value
-  })
-  ```
-
-- 对象形式
-  
-  ```tsx
-  
-  ```
-
 ## 2.10 Vue3 Setup
 
 ### 1. ref家族
@@ -1098,17 +1081,130 @@ var vm = new Vue({
 
 ### 4. computed计算属性
 
-- 函数形式
+- 函数形式：可以使用计算属性的返回值作为变量使用
   
   ```tsx
-  
+  const c1 = computed(() => {
+      return '$.' + t1.value
+  })
   ```
 
-- 对象形式
+- 对象形式：获取计算属性的值调用get方法，但是这种形式的set方法是不会触发的，绝大多数情况下使用函数的简写形式
   
   ```tex
-  
+  const c2 = computed({
+      get() {
+          return t2.value + '###'
+      },
+      set(val) {
+          t2.value = val
+          console.log(111)
+      },
+  })
   ```
+
+### 5. watch监听
+
+- 作用：侦听特定的数据源，并在单独的回调函数中执行
+
+- watch参数说明
+  
+  - 第一个参数：监听源
+  
+  - 第二个参数：回调函数(vueVal,oldVal)
+  
+  - 第三个参数：一个配置对象，①immediate=true是否立即调用，②deep=true是否开启深度监听
+
+- 监听单个参数
+  
+  ```tsx
+  const ma1 = ref('aaa')
+  
+  watch(ma1, (newVal, oldVal) => {
+      console.log('1.newVal=', newVal)
+      console.log('1.oldVal=', oldVal)
+  })
+  ```
+
+- 监听多个参数：当监听的数据源是ref类型的值时，设置deep属性可以控制ref对象是否监听深层属性，如果是reactive类型对象，无论是否设置deep都会监听深层属性。
+  
+  ```tsx
+  const mb1 = ref('aaa')
+  const mb2 = ref({
+      one: {
+          two: {
+              three: 3,
+          },
+      },
+  })
+  watch(
+      [mb1, mb2],
+      (newVal, oldVal) => {
+          console.log('2.newVal=', newVal)
+          console.log('2.oldVal=', oldVal)
+      },
+      {
+          deep: false,
+          immediate: true,
+      }
+  )
+  ```
+
+- 设置需要监听的参数：如果要多个参数中监听其中的一个参数，第一个参数是回调形式的参数，回调函数的返回值是需要监听的参数
+  
+  ```tsx
+  const mc1 = ref('aaa')
+  const mc2 = reactive({
+      one: {
+          two: {
+              three: 3,
+          },
+      },
+  })
+  watch(
+      () => mc2.one.two.three,
+      (newVal, oldVal) => {
+          console.log('2.newVal=', newVal)
+          console.log('2.oldVal=', oldVal)
+      }
+  )
+  ```
+
+- watchEffect高级监听器：只需要在监听函数内定使用需要监听的变量即可生效，并且高级监听默认都会执行一次；before参数是指在监听的值修改之前触发的回调；watchEffect的配置项：①flush指定监听器触发的时机②onTrigger用来捕获触发监听时候捕获的事件。
+  
+  ```tsx
+  const md1 = ref('高级监听1')
+  const md2 = ref('高级监听2')
+  const watchObj = watchEffect(
+      (before) => {
+          console.log(md1.value)
+          console.log(md2.value)
+          before(() => {
+              console.log('before', md1.value)
+              console.log('before', md2.value)
+          })
+      },
+      {
+          // flush: 'pre', // 组件更新前执行
+          // flush: 'sync', // 签好字效果始终同步触发
+          flush: 'post', // 组件更新后执行
+          onTrigger(event) {
+              debugger
+          },
+      }
+  )
+  ```
+
+### 6. 生命周期
+
+```tsx
+import { onBeforeMount, onBeforeUpdate, onMounted, onUpdated } from 'vue'
+import { onUnmounted, onBeforeUnmount } from 'vue'
+```
+
+### 7. less与scope
+
+
 
 # 第三章 组件化开发
 
