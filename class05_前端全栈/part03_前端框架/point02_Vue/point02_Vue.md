@@ -1582,7 +1582,9 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 
 ### 1. 插槽概述
 
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在定义Vue组件的时候，在组件内预留指定位置作为插槽（slot），当在使用组件的时候在这个插槽位置的展示内容可以由使用者指定，所以插槽的目的是为了让Vue组件更具有扩展性
+​		在定义Vue组件的时候，在组件内预留指定位置作为插槽（slot），当在使用组件的时候在这个插槽位置的展示内容可以由使用者指定，所以插槽的目的是为了让Vue组件更具有扩展性
+
+​		子组件中提供给父组件使用的一个占位符，用`<slot></slot>`表示，父组件template中添加子组件的标签胡后，可以在标签内部填充任何模板代码（html或者Vue组件），填充的内容会替换子组件的`<slot></slot>`
 
 ### 2. 插槽使用
 
@@ -1602,23 +1604,36 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
   </cpn>
   ```
 
-- **插槽默认值**：在定义插槽时候可以为slot内指定默认内容
+### 3. 插槽分类
+
+- 匿名插槽：默认只有一个插槽，不需要给插槽定义名称，直接替换
+
+  ```vue
+  // 在子组件中指定位置定义插槽
+  <template>
+      <slot></slot>
+  </template>
+  // 父组件中引入子组件并在子组件中添加内容用来替换子组件的插槽
+  <script setup lang="ts">
+  import Slot1 from '@/components/vue3/Demo12Slot1.vue'
+  </script>
   
-  ```html
-  <template id="cpnC">
+  <template>
       <div>
-          <p>我是组件C</p>
-          <slot>
-              <button>这是插槽内的默认值</button>
-          </slot>
+          <h2>匿名插槽</h2>
+          <Slot1>
+              <template v-slot>
+                  <n-button>父组件中把按钮给到子组件</n-button>
+              </template>
+          </Slot1>
       </div>
   </template>
   ```
 
 - **具名插槽**：如果在子组件中要定义多个没有命名的slot，子组件的多个插槽都会被父组件提供的内容替换
-  
-  ```html
-  在子组件中定义插槽时候为slot指定name值
+
+  ```vue
+  // 在子组件中定义插槽时候为slot指定name值
   <template id="cpnB">
       <div>
           <p>我是组件B</p>
@@ -1627,7 +1642,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
           <slot name="c"></slot>
       </div>
   </template>
-  在父组件总中使用组件时候，给替换的内容添加slot属性并指定插槽的名称
+  // 在父组件总中使用组件时候，给替换的内容添加slot属性并指定插槽的名称
   <cpn-b>
       <button slot="a">替换插槽A</button>
       <button slot="b">替换插槽B</button>
@@ -1636,39 +1651,69 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
   ```
 
 - **作用域插槽**：在父组件替换子组件时候，定义在插槽上的数据是来自子组件，而不是来自使用组件的实例；
-  
+
   ```html
   第一步 首先在子组件中定义插槽并定义data
-  <script>
-      const vm = new Vue({
-          el: '#app',
-          components:{
-              'cpn-a':{
-                  template:'#cpnA',
-                  data(){
-                      return{
-                          list: ['java','vue','c++']
-                      }
-                  }
-              }
-          }
-      })
+  <script setup lang="ts">
+  import { reactive } from 'vue'
+  const list = reactive<string[]>(['Java', 'C++', 'Ptyhon'])
   </script>
   
   第二步 在子组件中定义插槽并在插槽中绑定数据
-  <template id="cpnA">
+  <template>
       <div>
-          <p>我是子组件</p>
-          <slot :data="list"></slot>
+          <slot :result="list"></slot>
       </div>
   </template>
   
   第三步 父组件中在使用子组件的插槽时候, 在插槽中定义根标签, 在标签中添加slot-scope属性绑定到插槽并使用插槽作用域中数据
-  <cpn-a>
-      <div slot-scope="slot">
-          <span v-for="item in slot.data">{{item}} </span>
+  <div>
+    <h2>插槽作用域</h2>
+    <Slot3>
+      <template v-slot="{ result }">
+        <a :key="index" href="#" v-for="(item, index) in result">{{ item }}</a>
+      </template>
+    </Slot3>
+    <h2>插槽作用域 简写方式v-slot用#号代替</h2>
+    <Slot3>
+      <template #default="{ result }">
+        <a :key="index" href="#" v-for="(item, index) in result">{{ item }}</a>
+      </template>
+    </Slot3>
+  </div>
+  ```
+
+- 动态插槽：子组件中定义了多个插槽，在父组件中使用子组件时候可以指定插槽名称，动态的改变插入的插槽
+
+  ```vue
+  // 在子组件中定义多个插槽
+  <template>
+      <div>
+          <h4>a</h4>
+          <slot name="a"></slot>
+          <hr />
+          <h4>b</h4>
+          <slot name="b"></slot>
+          <hr />
+          <slot name="c"></slot>
+          <h4>c</h4>
       </div>
-  </cpn-a>
+  </template>
+  // 父组件引入插槽时候名称采用动态,修改name的值可以动态的插入到子组件的对应插槽中
+  <script setup lang="ts">
+  import Slot4 from '@/components/vue3/Demo12Slot4.vue'
+  import { ref } from 'vue'
+  const name = ref('a')
+  </script>
+  <template>
+    <Slot4>
+      <template #[name]>
+        <div>
+          <h4>输入框输入a,b,c会动态的插入</h4>
+      </div>
+      </template>
+    </Slot4>
+  </template>
   ```
 
 ## 3.5 组件封装
@@ -1693,7 +1738,254 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 
 3. 递归组件：例如自己调用自己，通过某个条件来结束递归，防止内存泄漏
 
+   - 在当前组件中引入自己，在使用自己的时候，给一定的条件
+
+     ```vue
+     <script setup lang="ts">
+     import { defineProps } from 'vue'
+     import Tree from '@/components/vue3/Demo10Tree.vue'
+     type MenuList = {
+         name: string
+         child: MenuList[]
+     }
+     type Props = {
+         list: MenuList[]
+     }
+     defineProps<Props>()
+     </script>
+     
+     <template>
+         <div :key="index" v-for="(item, index) in list">
+             {{ item.name }}
+             <Tree v-if="item?.child?.length" :list="item.child" />
+         </div>
+     </template>
+     ```
+
+   - 方式二：不引入自己，给自己的组件定义名称
+
+     ```vue
+     <script setup lang="ts">
+     import { defineProps } from 'vue'
+     type MenuList = {
+         name: string
+         child: MenuList[]
+     }
+     type Props = {
+         list: MenuList[]
+     }
+     defineProps<Props>()
+     </script>
+     // 单独定义一个script并指定名称
+     <script lang="ts">
+     export default {
+         name: 'TreeItem',
+     }
+     </script>
+     <template>
+         <div :key="index" v-for="(item, index) in list">
+             {{ item.name }}
+             <TreeItem v-if="item?.child?.length" :list="item.child" />
+         </div>
+     </template>
+     ```
+
 4. 动态组件：
+
+   - markRaw:封装组件跳过代理
+
+   - 动态组件使用,首先获取到所有的组件,在定义一个默认的当前组件,在使用component的is属性表示当前激活的组件
+
+     ```vue
+     <script setup lang="ts">
+     import { reactive, markRaw } from 'vue'
+     import A from '@/components/vue3/Demo11D1.vue'
+     import B from '@/components/vue3/Demo11D2.vue'
+     import C from '@/components/vue3/Demo11D3.vue'
+     
+     type Types = {
+         name: string
+         component: any
+     }
+     // 从其他类型在摘取出一个属性的类型
+     type Com = Pick<Types, 'component'>
+       
+     // ① 获取所有组件
+     const com = reactive<Types[]>([
+         { name: 'a', component: markRaw(A) },
+         { name: 'b', component: markRaw(B) },
+         { name: 'c', component: markRaw(C) },
+     ])
+     // ② 定义当前显示的组件
+     const current = reactive<Com>({
+         component: com[0].component,
+     })
+     
+     const nextCom = (e: Types) => {
+         current.component = e.component
+     }
+     </script>
+     
+     <template>
+         <div class="content">
+             <div class="tab">
+                 <div @click="nextCom(item)" :key="index" v-for="(item, index) in com">
+                     {{ item.name }}
+                 </div>
+             </div>
+             <component :is="current.component"></component>
+         </div>
+     </template>
+     
+     <style></style>
+     ```
+
+## 3.6 异步组件
+
+- 首先定义一个组件,组件内使用awat方法
+
+  ```vue
+  <script setup lang="ts">
+  const getArticleInfo = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+      const article = {
+          title: 'Vue3 中使用 defineAsyncComponent 延迟加载组件',
+          author: 'lio',
+      }
+      return article
+  }
+  const article = await getArticleInfo()
+  </script>
+  
+  <template>
+      <div>
+          {{ article }}
+      </div>
+  </template>
+  ```
+
+- 在父组件中使用defineAsyncComponent异步引入组件,并使用Suspense组件中的插槽实现异步执行效果,并且打包时候也会单独打包
+
+  ```vue
+  <script setup lang="ts">
+  import { defineAsyncComponent } from 'vue'
+  const Data = defineAsyncComponent(() => import('@/components/vue3/Demo13Data.vue'))
+  </script>
+  
+  <template>
+      <h1>异步组件</h1>
+      <div>
+          <Suspense>
+              <template #default>
+                  <Data />
+              </template>
+              <template #fallback>
+                  <div>loadding...</div>
+              </template>
+          </Suspense>
+      </div>
+  </template>
+  ```
+
+- defineAsyncComponent的用法
+
+  - 简单用法
+
+    ```tsx
+    import { defineAsyncComponent } from 'vue'
+    
+    // 简单用法
+    const ArticleList = defineAsyncComponent(() =>
+      import('@/components/ArticleList.vue')
+    )
+    ```
+
+  - 完整的选项对象,一般默认就已足够
+
+    ```tsx
+    const AsyncPopup = defineAsyncComponent({
+      loader: () => import('./ArticleList.vue'),
+      // 加载异步组件时使用的组件
+      loadingComponent: LoadingComponent,
+      // 加载失败时使用的组件
+      errorComponent: ErrorComponent
+      // 在显示加载组件之前延迟。默认值：200ms。
+      delay: 1000,
+      // 超过给定时间，则会显示错误组件。默认值：Infinity。
+      timeout: 3000
+    })
+    ```
+
+## 3.7 Teleport传送组件
+
+- Teleport是一种能够将我们的模板渲染值DOM节点，不受父级style、v-show等属性的影响，但data、prop数据依旧能够使用的技术，主要解决的问题：Teleport节点挂载到其他指定DOM节点下，完全不受父级Style样式影响
+
+- 通过to属性插入指定元素位置：支持html、class、id等选择器
+
+  ```vue
+  <template>
+      <Teleport to="body">
+          <h2>Teleport</h2>
+      </Teleport>
+      <hr />
+      <Teleport to=".model">
+          <p>插入到Index中的自定义类标签中</p>
+      </Teleport>
+  </template>
+  ```
+
+## 3.8 keep-alive组件
+
+- 不希望组件被重写渲染影响使用体验，重写渲染会刷新数据，也可以避免多次渲染降低性能，而是希望组件可以缓存下来，维持当前状态
+
+- 开启keep-alive生命周期的变化
+
+  - 初期进入时：onMounted > onActivated
+  - 退出后触发：deactivated
+  - 再次进入只会触发onActivated
+  - 时间挂载等方法等，只执行一次的放在onMounted中，组件每次进去执行的方法放在onActivated中
+
+- 基本用法：对需要缓存的组件使用keep-alive组件
+
+  ```vue
+  <keep-alive>
+    <Alive1 v-if="falg" />
+    <Alive2 v-else />
+  </keep-alive>
+  ```
+
+  > 使用keep-alive组件会产生两个声明周期
+  >
+  > ```tsx
+  > import { onMounted, onActivated, onDeactivated } from 'vue'
+  > 
+  > onMounted(() => {
+  >     console.log('22 onMounted')
+  > })
+  > onActivated(() => {
+  >     console.log('22 onActivated')
+  > })
+  > 
+  > onDeactivated(() => {
+  >     console.log('22 onDeactivated')
+  > })
+  > ```
+
+- 可以指定需要缓存的组件:keep-alive的include或exclude属性,max表示需要缓存的前10个
+
+  ```vue
+  <template>
+      <n-button @click="change">切换</n-button>
+      <keep-alive :max=10 :include=['Alive1']>
+          <Alive1 v-if="falg" />
+          <Alive2 v-else />
+      </keep-alive>
+  </template>
+  ```
+
+## 3.9 组件动画
+
+
 
 # 第四章 vue-cli
 
@@ -2270,16 +2562,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >       
+  >          
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >       
+  >          
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >       
+  >          
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >       
+  >          
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
@@ -2909,7 +3201,318 @@ this.$router.forward()
   }
   ```
 
-# 第七章 axios
+# 第七章 Pinia
+
+## 7.1 简介
+
+1. 概述：代替Vuex，是更好用的状态管理工具，其核心特点：①完整的ts支持、②足够轻量级、③去除了mutations，只有state、getters、actions（支持异步和同步）、④代码扁平化没有模块嵌套，只有store的概念，store之间可以自由使用，每个store都是独立的、⑤无需手动添加store，store创建会自动添加，直接引入即可使用、⑥支持vue2、vue3
+
+2. 安装
+
+   ```shell
+   # 下载pinia依赖
+   npm install pinia
+   
+   # 在Vue3的main.ts中配置pinia
+   import { createPinia } from 'pinia'
+   createApp(App)
+       .use(router)
+       .use(createPinia())
+       .mount('#app')
+   ```
+
+## 7.2 基本用法
+
+1. 初始化store仓库：①新建src/store文件夹，②在store中定义一个独立的XxxStore.ts作为一个store文件
+
+   ```tsx
+   import { defineStore } from 'pinia'
+   // 第一个参数id:作用的唯一的命名空间,用于标识不同的store
+   export const helloStore = defineStore('helloStore', {
+     	// 状态管理，返回对象即是需要管理的状态
+       state: () => {
+           return {}
+       },
+     	// store的一个计算属性
+       getters: {},
+     	// 可以做同步或异步，提交stats
+       actions: {},
+   })
+   ```
+
+2. 在组件中使用定义好的一个store
+
+   ```tsx
+   // 结构store并且具备响应式
+   import { storeToRefs } from 'pinia'
+   // 引入自定义的store
+   import { helloStore } from '@/stores/HelloStore'
+   // 实例化store,用于获取store对象中的值
+   const hello = helloStore()
+   // 解构store中的属性值
+   const { getCounter, getName, notAdmin } = storeToRefs(hello)
+   ```
+
+## 7.2 state
+
+1. 直接修改store中的状态值
+
+   ```tsx
+   const { counter } = storeToRefs(hello)
+   counter.value++
+   ```
+
+2. 使用store对象的$patch对象修改
+
+   ```ts
+       hello.$patch({
+           counter: 999,
+           name: '批量修改',
+       })
+   ```
+
+3. 使用store对象的$patch回调修改
+
+   ```tsx
+       hello.$patch((state) => {
+           state.counter++
+           state.name = '函数回调'
+       })
+   ```
+
+4. 使用store对象的$state对象将状态对象中的state完全覆盖
+
+   ```tsx
+       hello.$state = {
+           counter: 2323,
+           name: '整体覆盖',
+           isAdmin: false,
+       }
+   ```
+
+5. 使用actions方法修改state
+
+   ```tsx
+   import { defineStore } from 'pinia'
+   // 第一个参数id:作用的唯一的命名空间,用于标识不同的store
+   export const helloStore = defineStore('helloStore', {
+     	// 状态管理，返回对象即是需要管理的状态
+       state: () => {
+           return {}
+       },
+     	// store的一个计算属性
+       getters: {},
+     	// 可以做同步或异步，提交stats
+       actions: {
+         actionCounter() {
+               this.counter++
+           },
+       },
+   })
+   
+   // 在组件中直接调用actions中的方法,也可以传递参数
+   hello.actionCounter()
+   ```
+
+## 7.3 解构state
+
+1. 直接解构state对象是不具备响应式的
+
+   ```tsx
+   // 引入自定义的store
+   import { helloStore } from '@/stores/HelloStore'
+   // 实例化store,用于获取store对象中的值
+   const hello = helloStore()
+   // 解构store中的属性值是不具备响应式的
+   const { getCounter, getName, notAdmin } = hello
+   ```
+
+2. 使用pinia提供的storeToRefs进行结果store对象
+
+   ```tsx
+   // 结构store并且具备响应式
+   import { storeToRefs } from 'pinia'
+   // 引入自定义的store
+   import { helloStore } from '@/stores/HelloStore'
+   // 实例化store,用于获取store对象中的值
+   const hello = helloStore()
+   // 解构store中的属性值
+   const { getCounter, getName, notAdmin } = storeToRefs(hello)
+   ```
+
+## 7.4 actions
+
+1. 同步actions
+
+   ```tsx
+   import { defineStore } from 'pinia'
+   // 第一个参数id:作用的唯一的命名空间,用于标识不同的store
+   export const helloStore = defineStore('helloStore', {
+     	// 状态管理，返回对象即是需要管理的状态
+       state: () => {
+           return {}
+       },
+     	// store的一个计算属性
+       getters: {},
+     	// 可以做同步或异步，提交stats
+       actions: {
+         actionCounter() {
+               this.counter++
+           },
+       },
+   })
+   
+   // 在组件中直接调用actions中的方法,也可以传递参数
+   hello.actionCounter()
+   ```
+
+2. 异步actions
+
+   ```tsx
+   import { defineStore } from 'pinia'
+   // 第一个参数id:作用的唯一的命名空间,用于标识不同的store
+   export const helloStore = defineStore('helloStore', {
+     	// 状态管理，返回对象即是需要管理的状态
+       state: () => {
+           return {}
+       },
+     	// store的一个计算属性
+       getters: {},
+     	// 可以做同步或异步，提交stats
+       actions: {
+         async actionSync() {
+               const res: any = await mockUser()
+               this.user = res
+           },
+       },
+   })
+   
+   // 在组件中直接调用actions中的方法,也可以传递参数
+   hello.actionSync()
+   ```
+
+## 7.5 getters
+
+1. 函数式定义getter
+
+   ```tsx
+   import { defineStore } from 'pinia'
+   // 第一个参数id:作用的唯一的命名空间,用于标识不同的store
+   export const helloStore = defineStore('helloStore', {
+     	// 状态管理，返回对象即是需要管理的状态
+       state: () => {
+           return {
+             newName: '默认值'
+           }
+       },
+     	// store的一个计算属性,函数式定义函数的返回值类型
+       getters: {
+         newName(): string {
+               return this.name + '函数式'
+           },
+       },
+     	// 可以做同步或异步，提交stats
+       actions: {},
+   })
+   
+   // 在组件中直接调用getter的属性,也可以传递参数
+   <p>{{ hello.newName }}</p>
+   ```
+
+2. 属性回调形式
+
+   ```tsx
+   import { defineStore } from 'pinia'
+   // 第一个参数id:作用的唯一的命名空间,用于标识不同的store
+   export const helloStore = defineStore('helloStore', {
+     	// 状态管理，返回对象即是需要管理的状态
+       state: () => {
+           return {
+             newName: '默认值'
+           }
+       },
+     	// store的一个计算属性
+       getters: {
+         getCounter: (state) => state.counter * 2,
+       },
+     	// 可以做同步或异步，提交stats
+       actions: {},
+   })
+   
+   // 在组件中直接调用getter的属性,也可以传递参数
+   <p>{{ hello.getCounter }}</p>
+   ```
+
+### 7.6 实例Api
+
+1. $reset：重置state到他的初始状态
+
+2. 订阅store的改变：$subscribe()，只要状态发生改变就会触发
+
+   ```tsx
+   hello.$subscribe((args, state) => {
+       console.log(args)
+       console.log(state)
+   })
+   ```
+
+3. $onAction：触发action方法时调用
+
+   ```tsx
+   hello.$onAction((arg) => {
+       console.log({ arg })
+       arg.after(() => {
+           console.log('after')
+       })
+   },true)
+   ```
+
+### 7.7 Pinia持久化插件
+
+- pinia和Vuex有个通病：刷新页面状态会丢失。可以通过批念插件缓存刷新前的值
+
+- 下载pinia插件，
+
+  ```shell
+  pnpm i pinia-plugin-persistedstate
+  npm i pinia-plugin-persistedstate
+  yarn add pinia-plugin-persistedstate
+  ```
+
+- 在main.ts文件中给pinia实例中加入插件
+
+  ```tsx
+  import { createPinia } from 'pinia'
+  // 引入持久化插件
+  import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+  // 实例化pinia
+  const store = createPinia()
+  // pinia使用
+  store.use(piniaPluginPersistedstate)
+  // 挂载store到vue
+  createApp(App)
+      .use(store)
+      .mount('#app')
+  ```
+
+- 在store中添加持久化配置
+
+  ```tsx
+  // 开启持久化:会使用id名称作为storeage中的key
+  export const helloStore = defineStore('helloStore', {
+      persist: true,
+  })
+  // 自定义持久化配置
+  export const helloStore = defineStore('helloStore', {
+      persist: {
+      key: "给一个要保存的名称",
+      //保存的位置
+      storage: window.sessionStorage,//localstorage
+    },
+  })
+  ```
+
+# 第八章axios
 
 ## 7.1 前端网络请求
 
