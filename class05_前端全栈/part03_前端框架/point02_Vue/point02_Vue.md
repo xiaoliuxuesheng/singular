@@ -1204,7 +1204,15 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 
 ### 7. less与scope
 
+- 在style中添加scope属性用来隔离样式，打包后会保证样式不重复
 
+  ```html
+  <style lang="scss" scoped>
+  h1 {
+      color: $MyColor;
+  }
+  </style>
+  ```
 
 # 第三章 组件化开发
 
@@ -1462,6 +1470,114 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
   </div>
   ```
 
+### 4. vue3组件传值
+
+- defineProps：子组件接收父组件传递的值
+
+  - 父组件中引入子组件，并且给子组件添加属性，给属性赋值表示 传递的值
+
+    ```vue
+    <template>
+        <h1>父组件</h1>
+        <son title="在父组件中定义的标题" />
+    </template>
+    ```
+
+  - 子组件中定义Props的type，定义属性以及对应类型，在使用defineProps接受类型,也可以使用withDefault默认值,接收defineProps,在第二个参数中定义变量的默认值
+
+    ```vue
+    <script setup lang="ts">
+    import { defineProps } from 'vue'
+    type Props = {
+        title?: string
+    }
+    
+    withDefaults(defineProps<Props>(), {
+        title: '默认值',
+    })
+    </script>
+    
+    <template>
+        <h1>子组件</h1>
+        <p>接受父组件中传递的值: {{ title }}</p>
+    </template>
+    ```
+
+- defineEmits：子组件给父组件派发事件，在派发事件时候传递参数
+
+  - 首先在子组件中定义需要派发的事件名称，再根据定义好的事件名称派发事件并带参数
+
+    ```vue
+    <script setup lang="ts">
+    import { defineProps, ref, defineEmits } from 'vue'
+    const sonValue = ref<string>()
+    
+    const emit = defineEmits(['son-click'])
+    const sengValueToParent = () => {
+        emit('son-click', sonValue.value, 2, false)
+    }
+    </script>
+    ```
+
+  - 父组件中引入子组件，并在子组件中绑定需要接收的派发事件
+
+    ```vue
+    <script setup lang="ts">
+    import { ref } from 'vue'
+    import son from '@/components/vue3/Demo09Son.vue'
+    
+    const getParentValue = ref<string>()
+    const sonClick = (val: string, num: number, boo: boolean) => {
+        console.log(val)
+        console.log(num)
+        console.log(boo)
+        getParentValue.value = val
+    }
+    </script>
+    
+    <template>
+        <h1>父组件: -- {{ getParentValue }}</h1>
+        <son title="在父组件中定义的标题" @son-click="sonClick" />
+    </template>
+    ```
+
+  - 在子组件中触发事件后会将组件的值发送给父组件
+
+- defineExpose：子组件暴露给父组件内部属性
+
+  - 在父组件使用ref拿到子组件的实例，ref指定的名称就是定义的变量名
+
+    ```vue
+    <script setup lang="ts">
+    import { ref } from 'vue'
+    import son from '@/components/vue3/Demo09Son.vue'
+    
+    const sonObj = ref(null)
+    console.log(sonObj)
+    </script>
+    
+    <template>
+        <h1>父组件: -- {{ getParentValue }}</h1>
+        <son ref="sonObj" title="在父组件中定义的标题" @son-click="sonClick" />
+    </template>
+    ```
+
+  - 然后在子组件中暴露变量
+
+    ```vue
+    <script setup lang="ts">
+    import { defineProps, ref, defineEmits, defineExpose } from 'vue'
+    
+    const sonValue = ref<string>()
+    const falg = ref<boolean>(false)
+    
+    defineExpose({
+        sonValue,
+        falg,
+    })
+    </script>
+    ```
+
 ## 3.4 组件插槽
 
 ### 1. 插槽概述
@@ -1554,6 +1670,30 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
       </div>
   </cpn-a>
   ```
+
+## 3.5 组件封装
+
+1. 全局组件：封装全局组件
+
+   - 定义一个vue作为全局组件
+
+   - 在main.ts中引入全局组件
+
+     ```ts
+     createApp(App)
+         .use(router)
+         .use(createPinia())
+         .component('Card', Card)
+         .mount('#app')
+     ```
+
+   - 在其他组件中可以直接使用全局组件，不需要使用import
+
+2. 局部组件：使用import引入的组
+
+3. 递归组件：例如自己调用自己，通过某个条件来结束递归，防止内存泄漏
+
+4. 动态组件：
 
 # 第四章 vue-cli
 
@@ -2130,16 +2270,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >    
+  >       
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >    
+  >       
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >    
+  >       
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >    
+  >       
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
@@ -2615,20 +2755,20 @@ this.$router.forward()
   - 获取根store模块中的：
     
               state数据： 通过rootState参数    即：rootState.属性名
-        
+              
               getter方法：通过rootGetters参数来获取   即:rootGetters.increNum
-        
+              
                                     附：向根getters中传递参数方式：rootGetters.increNum({id:11,name:'lucy'});
                                            根store中getters定义接多参数：getters:{   //目前个人研究：只能传递一个参数，或者一个对象
                                                                                                       increNum:(state)=>(obj)=>{
                                                                                                             console.log(obj)
                                                                                                       }
                                                                                                }
-        
+              
               提交mutations：commit('increment',null,{root:true});       //increment为根store中的mutation
-        
+              
               分发actions：dispatch('incrementAction',null,{root:true});   //incrementAction为根store中的action
-        
+              
                参数部分示例：actions:{
                                                moduleAAction({state,commit,dispatch,getters,rootState,rootGetters}){
                                                           //处理逻辑

@@ -801,7 +801,7 @@ show tables
      <文档或文档集合>,
      {
        writeConcern: <document>,
-       ordered: <boolean>
+       ordered	: <boolean>
      }
   )
   ```
