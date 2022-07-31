@@ -327,6 +327,12 @@ var vm = new Vue({
   ```html
   <input type="text" v-model='Model属性名称'>
   ```
+  
+  > - 学习资料：https://xiaoman.blog.csdn.net/article/details/123187523
+  > - 在vue3中v-model是破坏性更新的：其实是一个语法糖，通过props和emit组合而成的
+  > - 可以定义在子组件中，并且在子组件中使用emit可以操作v-model的值也会影响到父组件中的值，
+  > - 在vue3中一个组件可以绑定多个值
+  > - 自定义修饰符，在子组件中可以接收
 
 ### 4. 事件绑定 v-on
 
@@ -2133,7 +2139,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
    > - 可以配合js动画库生成动画效果：gsap官网：https://greensock.com/
    >
    >   ```tsx
-   >   
+   >     
    >   ```
 
 6. transition appear属性：设置初始节点过度 就是页面加载完成就开始动画 对应三个状态
@@ -2312,6 +2318,214 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 ## 3.11 兄弟组件传值
 
 1. 用父组件充当桥梁，接受A组件的值，传递给B组件
+
+   - 在A组件中使用defineEmits将事件和数据传递给父组件
+
+     ```tsx
+     const emit = defineEmits(['a-click'])
+     const aValueChange = () => {
+         emit('a-click', aValue.value)
+     }
+     ```
+
+   - 在父组件中接受A组件的数据，在传递给B组件
+
+     ```vue
+     <script setup lang="ts">
+     import { ref } from 'vue'
+     import A from './Demo16A.vue'
+     import B from './Demo16B.vue'
+     
+     const toBValue = ref<string>('')
+     const getAValue = (val: string) => {
+         toBValue.value = val
+     }
+     </script>
+     
+     <template>
+         <div>
+             <h1>使用父组件作为中间件桥梁</h1>
+             <A @a-click="getAValue" />
+             <B :bValue="toBValue" />
+         </div>
+     </template>
+     ```
+
+2. 自定义EmitUtil工具类，进行封装回调并监听，手写一个发布订阅模式
+
+   - 自定义封装EmitUtil工具类
+
+     ```tsx
+     type BusClass = {
+         // name: 自定义事件名称
+         emit: (name: string) => void
+         // name: 自定义事件名称, 参数传给callback函数
+         on: (name: string, callback: Function) => void
+     }
+     
+     type PramsKey = string | number | symbol
+     
+     type List = {
+         [key: PramsKey]: Array<Function>
+     }
+     
+     class Bus implements BusClass {
+         list: List
+         constructor() {
+             this.list = {}
+         }
+     
+         emit(name: string, ...args: Array<any>) {
+             const eventName: Array<Function> = this.list[name] || []
+             eventName.forEach((fn) => {
+                 fn.apply(this, args)
+             })
+             console.log(eventName)
+         }
+     
+         on(name: string, callback: Function) {
+             const fn: Array<Function> = this.list[name] || []
+             fn.push(callback)
+             this.list[name] = fn
+         }
+     }
+     
+     export default new Bus()
+     
+     ```
+
+   - 在组件A中emit事件并发送数据
+
+     ```tsx
+     import Bus from '@/utils/BusUtil'
+     const aValue2 = ref<string>('')
+     const aValueChange2 = () => {
+         Bus.emit('a-bus-click', aValue2.value)
+     }
+     ```
+
+   - 在B组件中直接使用Bus中的事件接收数据
+
+     ```tsx
+     import Bus from '@/utils/BusUtil'
+     const value2 = ref('')
+     Bus.on('a-bus-click', (val: string) => {
+         value2.value = val
+     })
+     ```
+
+3. Mitt：在vue3中$on、$off、$off方法已被移除，组件实例不能在实现事件触发接口，因此EventBus无法使用，可以使用mitt库，实现了发布订阅模式
+
+   - 安装mitt库
+
+     ```shell
+     npm install mitt -S
+     ```
+
+   - 在main.ts中初始化：挂载全局总线
+
+     ```tsx
+     const app = createApp(App)
+     const Mit = mitt()
+     
+     declare module 'vue' {
+         export interface ComponentCustomProperties {
+             $Bus: typeof Mit
+         }
+     }
+     
+     app.config.globalProperties.$Bus = Mit
+     ```
+
+   - 在A组件的事件中定义事件并传递数据
+
+     ```tsx
+     import { ref, defineEmits, getCurrentInstance } from 'vue'
+     const instence = getCurrentInstance()
+     const aValue3 = ref<string>('')
+     const aValueChange3 = () => {
+         instence?.proxy?.$Bus.emit('emit-change', aValue3.value)
+     }
+     ```
+
+   - 在兄弟组件B中获取 事件以及事件回调中带过来的参数
+
+     ```tsx
+     import { ref, defineEmits, getCurrentInstance } from 'vue'
+     
+     const instance = getCurrentInstance()
+     const value3 = ref<any>('')
+     instance?.proxy?.$Bus.on('emit-change', (value) => {
+         value3.value = value
+     })
+     ```
+
+   - 清空所有事件
+
+     ```tsx
+     instance?.proxy?.$Bus.all.clear()
+     ```
+
+### 3.12 TSX
+
+1. 在vue中可以使用Template写模板，现在可以扩展另一种风格TSX风格，Vue3对Typescript的支持，tsx的写法也越来越好用
+
+2. 安装插件
+
+   ```shell
+   npm install @vitejs/plugin-vue-jsx -D
+   ```
+
+3. 配置插件
+
+   ```tsx
+   import vueJsx from '@vitejs/plugin-vue-jsx'
+   
+   export default defineConfig({
+     plugins: [vueJsx()]
+   })
+   ```
+
+4. 配置ts配置文件
+
+   ```json
+   {
+     "jsx":"perserve",
+     "jsxFactory":"h",
+     "jsxFragmentFactory":"Fragment"
+   }
+   ```
+
+5. 定义jsx文件
+
+   ```jsx
+   const renderDom = () => {
+       return (
+           <div>
+               <h1>我的JSX的模板</h1>
+           </div>
+       )
+   }
+   
+   export default renderDom
+   ```
+
+6. 引入jsx模板并使用
+
+   ```vue
+   import renderDom from '@/components/jsx/Demo01.jsx'
+   
+   <template>
+       <div>
+           <h1>JSX</h1>
+           <renderDom></renderDom>
+       </div>
+   </template>
+   ```
+
+7. vue中tsx的使用
+
+   - tsx中使用vue指令：v-model、v-show支持；v-for、v-if不支持，需要使用jsx的表达式，
 
 # 第四章 vue-cli
 
@@ -2888,16 +3102,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >             
+  >                
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >             
+  >                
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >             
+  >                
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >             
+  >                
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
@@ -3970,3 +4184,4 @@ this.$router.forward()
 1. animate.css
 2. gsap
 3. lodash
+4. unplugin-auto-imports
