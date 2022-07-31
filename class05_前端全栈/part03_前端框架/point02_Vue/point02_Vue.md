@@ -1985,7 +1985,333 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 
 ## 3.9 组件动画
 
+1. Vue提供了transition的封装组件，在下列情形中，可以给任何元素和组件添加进入和离开过渡
 
+   - 条件渲染：v-if
+   - 条件展示：v-show
+   - 动态组件
+   - 组件根节点
+
+2. 自定义transition：对transition组件的name属性自定义，并在css中写入对应的样式，在进入离开的过滤中会有6个class切换
+
+   - v-enter-from：定义进入过渡的开始状态，在元素被插入前生效，在元素插入后的下一帧移除
+
+   - v-enter-active：定义进入过渡生效时的状态，在整个过渡阶段中应用，在元素插入之前生效，在过渡或动画完成后移除，主要用来定义过渡期间的时间、延迟、曲线函数
+
+   - v-enter-to：定义进入过渡的结束状态，在元素插入后下一帧生效（于此同时v-enter-form被移除），在过渡/动画完成后被移除
+
+     ```css
+     .tran01-enter-from {
+         width: 0;
+         height: 0;
+     }
+     .tran01-enter-active {
+         transition: all 1.5s ease;
+     }
+     .tran01-enter-to {
+         width: 200px;
+         height: 200px;
+     }
+     ```
+
+   - v-leave-from：定义离开过渡的开始状态。在离开过渡被触发时立刻生效，下一帧被移除。
+
+   - `v-leave-active`：定义离开过渡生效时的状态。在整个离开过渡的阶段中应用，在离开过渡被触发时立刻生效，在过渡/动画完成之后移除。这个类可以被用来定义离开过渡的过程时间，延迟和曲线函数。
+
+   - v-leave-to：离开过渡的结束状态。在离开过渡被触发之后下一帧生效 (与此同时 v-leave-from 被移除)，在过渡/动画完成之后移除。
+
+     ```css
+     .tran01-leave-from {
+         width: 100px;
+         height: 100px;
+         transform: rotate(360deg);
+     }
+     .tran01-leave-active {
+         transition: all 1.5s ease;
+     }
+     .tran01-leave-to {
+         width: 0;
+         height: 0;
+     }
+     ```
+
+3. 自定义过渡 class 类名：在trasnsition 组件中的属性指定需要自定义的类名
+
+   - `enter-from-class`
+   - `enter-active-class`
+   - `enter-to-class`
+   - `leave-from-class`
+   - `leave-active-class`
+   - `leave-to-class`
+
+4. 动画库animate css
+
+   - 安装动画库animate css：https://animate.style/
+
+     ```shell
+     npm install animate.css
+     ```
+
+   - 在使用动画库的组件中引入动画组件
+
+     ```tsx
+     import 'animate.css'
+     ```
+
+   - 给trasnsition组件添加动画样式：animate__animated固定值，在后面添加动画样式
+
+     ```vue
+     <transition
+                 leave-active-class="animate__animated animate__backOutUp"
+                 enter-active-class="animate__animated animate__bounceInRight"
+                 >
+       <div class="def" v-if="flag3">使用animateChange切换</div>
+     </transition>
+     ```
+
+5. transition 生命周期8个：当只用 JavaScript 过渡的时候，在 enter 和 leave 钩子中必须使用 done 进行回调
+
+   ```tsx
+     @before-enter="beforeEnter" //对应enter-from
+     @enter="enter"//对应enter-active
+     @after-enter="afterEnter"//对应enter-to
+     @enter-cancelled="enterCancelled"//显示过度打断
+     @before-leave="beforeLeave"//对应leave-from
+     @leave="leave"//对应enter-active
+     @after-leave="afterLeave"//对应leave-to
+     @leave-cancelled="leaveCancelled"//离开过度打断
+   ```
+
+   ```vue
+   <script>
+     const enterBefore = (el: Element) => {
+       console.log('进入之前', el)
+     }
+     const enterActive = (el: Element, done: Function) => {
+       console.log('进入', el)
+       setTimeout(() => {
+         done()
+       }, 1000)
+     }
+     const enterAfter = (el: Element) => {
+       console.log('进入之后', el)
+     }
+     const leaveBefore = (el: Element) => {
+       console.log('离开之前', el)
+     }
+     const leaveActive = (el: Element, done: Function) => {
+       console.log('离开', el)
+       setTimeout(() => {
+         done()
+       }, 5000)
+     }
+     const leaveTo = (el: Element) => {
+       console.log('离开之后', el)
+     }
+     const enterCancel = (el: Element) => {
+       console.log('过渡被打断', el)
+     }
+   </script>
+   <template>
+   <div>
+     <h3 @click="tranChange">使用transition切换</h3>
+     <transition
+                 name="tran01"
+                 @before-enter="enterBefore"
+                 @enter="enterActive"
+                 @after-enter="enterAfter"
+                 @before-leave="leaveBefore"
+                 @leave="leaveActive"
+                 @after-leave="leaveTo"
+                 >
+       <div class="def" v-if="flag2">使用transition切换</div>
+     </transition>
+     </div>
+   </template>
+   ```
+
+   > - 可以配合js动画库生成动画效果：gsap官网：https://greensock.com/
+   >
+   >   ```tsx
+   >   
+   >   ```
+
+6. transition appear属性：设置初始节点过度 就是页面加载完成就开始动画 对应三个状态
+
+   - appear-active-class=""
+
+   - appear-from-class=""
+
+   - appear-to-class=""
+
+   - appear
+
+     ```vue
+     <template>
+     <div>
+       <h3 @click="tranChange">使用transition切换</h3>
+       <transition
+                   name="tran01"
+                   appear
+                   appear-from-class="appearForm"
+                   appear-active-class="appearActove"
+                   appear-to-class="appearTo"
+                   >
+         <div class="def" v-if="flag2">使用transition切换</div>
+       </transition>
+       </div>
+     </template>
+     <style>
+       .appearForm {
+         width: 0;
+         height: 0;
+       }
+       .appearActove {
+         transition: all 1.5s ease;
+       }
+       .appearTo {
+         width: 200px;
+         height: 200px;
+       }
+     </style>
+     ```
+
+7. transition-group过渡列表：v-for在这种场景下，需要使用 `<transition-group>` 组件。
+
+   - 默认情况下，被渲染的组件不会添加一个包裹元素，通过tag属性指定被渲染组件的一个包裹属性
+   - 渲染列表必须提供一个唯一的key属性值
+   - css过渡的类将会应用在内部的元素中，而不是group容器本身
+
+   ```vue
+   <template>    
+   	<div>
+       <n-button @click="Pop">pop</n-button>
+       <n-button @click="Push">Push</n-button>
+       <transition-group
+                         leave-active-class="animate__animated animate__backOutUp"
+                         enter-active-class="animate__animated animate__bounceInRight"
+                         >
+         <div style="margin: 10px" :key="item" v-for="item in list">{{ item }}</div>
+       </transition-group>
+     </div>
+   </template>
+   <script>
+   const list = reactive<number[]>([1, 2, 4, 5, 6, 7, 8, 9])
+   const Push = () => {
+       list.push(123)
+   }
+   const Pop = () => {
+       list.pop()
+   }
+   </script>
+   ```
+
+8. transition-group列表移动过：修改列表中元素位置，添加动画；新增的 v-move 类可以为定位的改变添加动画，它的前缀可以通过 name attribute 来自定义，也可以通过 move-class attribute 手动设置
+
+   ```vue
+   <template>
+       <div>
+           <button @click="shuffle">Shuffle</button>
+           <transition-group class="wraps" name="mmm" tag="ul">
+               <li class="cell" v-for="item in items" :key="item.id">{{ item.number }}</li>
+           </transition-group>
+       </div>
+   </template>
+     
+   <script setup  lang='ts'>
+   import _ from 'lodash'
+   import { ref } from 'vue'
+   let items = ref(Array.apply(null, { length: 81 } as number[]).map((_, index) => {
+       return {
+           id: index,
+           number: (index % 9) + 1
+       }
+   }))
+   const shuffle = () => {
+       items.value = _.shuffle(items.value)
+   }
+   </script>
+     
+   <style scoped lang="less">
+   .wraps {
+       display: flex;
+       flex-wrap: wrap;
+       width: calc(25px * 10 + 9px);
+       .cell {
+           width: 25px;
+           height: 25px;
+           border: 1px solid #ccc;
+           list-style-type: none;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+       }
+   }
+    
+   .mmm-move {
+       transition: transform 0.8s ease;
+   }
+   </style>
+   ```
+
+9. 状态过渡：可以给数字 Svg 背景颜色等添加过度动画 
+
+   ```vue
+   <template>
+       <div>
+           <input step="20" v-model="num.current" type="number" />
+           <div>{{ num.tweenedNumber.toFixed(0) }}</div>
+       </div>
+   </template>
+       
+   <script setup lang='ts'>
+   import { reactive, watch } from 'vue'
+   import gsap from 'gsap'
+   const num = reactive({
+       tweenedNumber: 0,
+       current:0
+   })
+    
+   watch(()=>num.current, (newVal) => {
+       gsap.to(num, {
+           duration: 1,
+           tweenedNumber: newVal
+       })
+   })
+    
+   </script>
+   ```
+
+## 3.10 依赖注入
+
+1. 概述：通常父组件向子组件传递数据库时使用props，如果有深嵌套的组件，而且只需要父组件给最深子组件传递数据，如果仍然使用pops就会变的很麻烦；provide可以在祖先组件中指定我们需要提供给后代的数据或方法，而在任何后代组件中可以使用inject来接受 provide提供的数据或方法
+
+2. 使用方法：使用ref或者reactive类型变量，使数据具有响应式，数值修改会修改每一层的数据
+
+   - 在父级组件中添加一个属性，并且给这个属性赋值
+
+     ```tsx
+     const flag = ref<number>(1)
+     provide('flag', flag)
+     ```
+
+   - 在子组件中使用Inject函数接收父组件中添加的属性
+
+     ```tsx
+     import { inject, Ref, ref } from 'vue'
+     // 直接使用inject会在ts中有类型推断错误，需要给一个默认值或者兜底函数
+     // const flag = inject('flag')
+     const flag = inject<Ref<number>>('flag', ref(1))
+     const change = () => {
+         flag.value = 2
+     }
+     ```
+
+3. 实现原理：provide是在setup语法糖的语法中可以使用，读取父级的provide属性然后赋值给自己
+
+## 3.11 兄弟组件传值
+
+1. 用父组件充当桥梁，接受A组件的值，传递给B组件
 
 # 第四章 vue-cli
 
@@ -2562,16 +2888,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >          
+  >             
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >          
+  >             
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >          
+  >             
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >          
+  >             
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
@@ -3639,4 +3965,8 @@ this.$router.forward()
      }
      ```
 
-# 
+# 第九章 前端库
+
+1. animate.css
+2. gsap
+3. lodash
