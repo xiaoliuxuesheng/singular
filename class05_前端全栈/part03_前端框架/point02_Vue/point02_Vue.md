@@ -2139,7 +2139,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
    > - 可以配合js动画库生成动画效果：gsap官网：https://greensock.com/
    >
    >   ```tsx
-   >     
+   >       
    >   ```
 
 6. transition appear属性：设置初始节点过度 就是页面加载完成就开始动画 对应三个状态
@@ -2466,9 +2466,9 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
      instance?.proxy?.$Bus.all.clear()
      ```
 
-### 3.12 TSX
+## 3.12 jsx
 
-1. 在vue中可以使用Template写模板，现在可以扩展另一种风格TSX风格，Vue3对Typescript的支持，tsx的写法也越来越好用
+1. 在vue中可以使用Template写模板，现在可以扩展另一种风格TSX风格，Vue3对Typescript的支持，jsx的写法也越来越好用
 
 2. 安装插件
 
@@ -2486,7 +2486,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
    })
    ```
 
-4. 配置ts配置文件
+4. 配置ts配置文件:**`tsconfig.json`**
 
    ```json
    {
@@ -2526,6 +2526,9 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 7. vue中tsx的使用
 
    - tsx中使用vue指令：v-model、v-show支持；v-for、v-if不支持，需要使用jsx的表达式，
+   - https://blog.csdn.net/m0_38066007/article/details/121237370
+   
+8. 
 
 # 第四章 vue-cli
 
@@ -3102,16 +3105,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >                
+  >                   
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >                
+  >                   
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >                
+  >                   
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >                
+  >                   
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
