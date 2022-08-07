@@ -333,6 +333,90 @@ var vm = new Vue({
   > - 可以定义在子组件中，并且在子组件中使用emit可以操作v-model的值也会影响到父组件中的值，
   > - 在vue3中一个组件可以绑定多个值
   > - 自定义修饰符，在子组件中可以接收
+  
+  > 1. v-model绑定组件,组件默认接受值的属性是:modelValue
+  >
+  >    ```vue
+  >    父组件
+  >    <template>
+  >        <div>
+  >            <Dialog v-model="flag"></Dialog>
+  >        </div>
+  >    </template>
+  >    
+  >    子组件
+  >    <script setup lang="ts">
+  >    import { defineProps, defineEmits } from 'vue'
+  >    
+  >    type Props = {
+  >        modelValue: boolean
+  >    }
+  >    defineProps<Props>()
+  >    </script>
+  >    ```
+  >
+  > 2. 子组件中可以通过emit修改v-model的值实现值双向绑定
+  >
+  >    ```vue
+  >    <script setup lang="ts">
+  >    const emit = defineEmits(['update:modelValue'])
+  >    const closeSub = () => {
+  >        emit('update:modelValue', false)
+  >    }
+  >    </script>
+  >    ```
+  >
+  > 3. v-modle可以自定义属性名称
+  >
+  >    ```vue
+  >    父组件中绑定多个属性
+  >    <template>
+  >        <div>
+  >            <Dialog v-model="flag" v-model:title="title"></Dialog>
+  >        </div>
+  >    </template>
+  >    
+  >    子组件修改属性值
+  >    <script setup lang="ts">
+  >    const emit = defineEmits(['update:modelValue', 'update:title'])
+  >    const closeSub = () => {
+  >        emit('update:modelValue', false)
+  >        emit('update:title', '子组件修改了标题')
+  >    }
+  >    </script>
+  >    ```
+  >
+  > 4. v-model添加自定义修饰符
+  >
+  >    ```vue
+  >    在父组件中的model中添加修饰符
+  >    <template>
+  >        <div>
+  >            <Dialog v-model="flag" v-model:title.xlxs="title"></Dialog>
+  >        </div>
+  >    </template>
+  >       
+  >    子组件中接收修饰符的值: 修饰符Modifiers对象
+  >    <script setup lang="ts">
+  >    import { defineProps, defineEmits } from 'vue'
+  >       
+  >    type Props = {
+  >        modelValue: boolean
+  >         
+  >      	// title属性和title属性的修饰符(非必传)
+  >        title: string
+  >        titleModifiers?: {
+  >            xlxs: boolean
+  >        }
+  >    }
+  >    const propsData = defineProps<Props>()
+  >       
+  >    const emit = defineEmits(['update:modelValue', 'update:title'])
+  >    const closeSub = () => {
+  >        console.log(propsData.titleModifiers)
+  >    }
+  >    </script>
+  >    ```
 
 ### 4. 事件绑定 v-on
 
@@ -760,6 +844,133 @@ var vm = new Vue({
   </script>
   ```
 
+### 10. 自定义指令
+
+- Vue3指令的钩子函数
+
+  | 钩子函数      | 作用                                |
+  | ------------- | ----------------------------------- |
+  | created       | 元素初始化的时候                    |
+  | beforeMount   | 指令绑定到元素后调用一次,只调用一次 |
+  | mounted       | 元素插入父级DOM调用                 |
+  | beforeUpdate  | 元素被更新前调用                    |
+  | updated       | 修改后调用                          |
+  | beforeUnmount | 元素被移除前调用                    |
+  | unmounted     | 指令被移除后调用,只调用一次         |
+
+- 自定义指令定义:命名格式v{名称}OfDirective的形式来命名本地自定义指令,这样才能直接在模板中使用
+
+  ```vue
+  <script setup lang="ts">
+  import { ref, Directive, DirectiveBinding } from 'vue'
+  import A from '@/components/vue3model/ModelDirectiveA.vue'
+  type Dir = {
+      key: string
+  }
+  const flag = ref(true)
+  const vMove: Directive = {
+      created() {
+          console.log('created')
+      },
+      beforeMount() {
+          console.log('onBeforeMount')
+      },
+      mounted(el: Element, dir: DirectiveBinding<Dir>) {
+          console.log('mounted', el, dir.value.key)
+      },
+      beforeUpdate() {
+          console.log('beforeUpdate')
+      },
+      updated() {
+          console.log('updated')
+      },
+      beforeUnmount() {
+          console.log('beforeUnmount')
+      },
+      unmounted() {
+          console.log('unmounted')
+      },
+  }
+  </script>
+  
+  <template>
+      <n-button @click="flag = !flag">卸载</n-button>
+      <A v-move="{ key: 'val' }" v-if="flag"></A>
+  </template>
+  
+  <style></style>
+  ```
+
+- 自定义指令的函数简写:在mounted和updated时触发相同的行为,而且不关心其他函数,可以使用函数简写模式实现
+
+  ```vue
+  <script setup lang="ts">
+  import { ref, Directive, DirectiveBinding } from 'vue'
+  import A from '@/components/vue3model/ModelDirectiveA.vue'
+  type Dir = {
+      key: string
+  }
+  const text = ref('')
+  const vMove: Directive = (el, dir: DirectiveBinding<Dir>) => {
+      el.style.background = dir.value.key
+  }
+  </script>
+  
+  <template>
+      <input v-model="text" />
+      <A v-move="{ key: text }"></A>
+  </template>
+  ```
+
+### 11. 自定义hooks
+
+- 概述
+  - Vue3的hook函数相当于vue2的mixin,不同是在于hooks是函数
+  - Vue3的hook函数可以提高代码的复用性,在不用的组件都能利用hooks函数
+- 
+
+### 12. 全局函数和全局变量
+
+- Vue3中没有Prototype属性,使用app.config.globalProperties代替,然后去定义变量和函数
+
+  ```tsx
+  // VUE2
+  Vue.propotype.$http = () => {}
+  
+  // VUE3
+  const app = createApp({})
+  app.config.globalProperties.$http  = () => {}
+  ```
+
+- 过滤器:在Vue中移除了过滤器,可以使用全局函数代替过滤器
+
+  ```tsx
+  const app = createApp(App)
+  
+  // 自定义Filter是一个函数
+  type Filter = {
+      format: <T>(str: T) => string
+  }
+  
+  // Filter声明文件
+  declare module '@vue/runtime-core' {
+      export interface ComponentCustomOptions {
+          $filter: Filter
+      }
+  }
+  // 添加全局函数
+  app.config.globalProperties.$filter = {
+      format<T>(str: T): string {
+          return `真·${str}`
+      },
+  }
+  
+  // 使用全局变量
+  $filter.format('test')
+  ```
+  
+  
+
 ## 2.6 Vue资源 - 过滤器
 
 - 过滤器的作用：主要是用于格式化数据
@@ -920,6 +1131,46 @@ var vm = new Vue({
   - 如果同时提供了事件与回调，则只移除这个回调的监听器。
 
 - **vm.$emit( eventName, […args] )**：触发当前实例上的事件。附加参数都会传给监听器回调。
+
+### 2. 自定义Vue插件
+
+- 插件概述:
+
+  - 插件是自包含的代码,通常向Vue添加全局功能,如果一个对象需要有install方法,Vue会帮助这个对象自动注入到install方法,如果是function就直接当install方法使用
+
+- 自定义插件
+
+  - 插件入口ts:在插件中使用组件
+
+    ```ts
+    import { App, createVNode, render, VNode } from 'vue'
+    import Loadding from '@/plugin/LoadingCom.vue'
+    
+    export default {
+        install(app: App) {
+            // 转为虚拟DOM
+            const vnode: VNode = createVNode(Loadding)
+            // 创建为真实DOM
+            render(vnode, document.body)
+            app.config.globalProperties.$loadding = {
+                show: vnode.component?.exposed?.show,
+                hide: vnode.component?.exposed?.hide,
+            }
+        },
+    }
+    ```
+
+### 3. scoped和样式穿透
+
+### 4. css Style完整特性
+
+- 插槽选择器
+- 全局选择器
+- 动态css
+
+### 5. 打包
+
+
 
 ## 2.10 Vue3 Setup
 
@@ -1212,7 +1463,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
 
 - 在style中添加scope属性用来隔离样式，打包后会保证样式不重复
 
-  ```html
+  ```tml
   <style lang="scss" scoped>
   h1 {
       color: $MyColor;
@@ -2139,7 +2390,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
    > - 可以配合js动画库生成动画效果：gsap官网：https://greensock.com/
    >
    >   ```tsx
-   >       
+   >           
    >   ```
 
 6. transition appear属性：设置初始节点过度 就是页面加载完成就开始动画 对应三个状态
@@ -3105,16 +3356,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >                   
+  >                         
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >                   
+  >                         
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >                   
+  >                         
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >                   
+  >                         
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
@@ -4185,6 +4436,25 @@ this.$router.forward()
 # 第九章 前端库
 
 1. animate.css
+
 2. gsap
+
 3. lodash
+
 4. unplugin-auto-imports
+
+5. element-plus:https://element-plus.gitee.io/zh-CN/
+
+   ```json
+   "types": ["element-plus/golbal", "node"]
+   ```
+
+6. naiveui:https://www.naiveui.com/zh-CN/light
+
+   ```json
+   "types": ["naive-ui/volar", "node"]
+   ```
+
+7. antDesign:https://ant.design/index-cn
+
+8. tailwindcss:https://tailwindcss.com/
