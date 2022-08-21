@@ -61,6 +61,203 @@
 
 7. 新建模块引入Spring组件
 
+# 第一章 Spring源码
+
+1. 加载配置文件
+
+   ```java
+   ApplicationContext context = new ClassPathXmlApplicationContext("spring-application01.xml");
+   ```
+
+2. 调用父类AbstractApplicationContext的静态代码块：主动加载ContextClosedEvent类以避免奇怪的类加载器问题
+
+   ```java
+   	static {
+   		ContextClosedEvent.class.getName();
+   	}
+   ```
+
+3. 调用ClassPathXmlApplicationContext的构造方法
+
+   ```java
+   	public ClassPathXmlApplicationContext(String[] configLocations, boolean refresh, ApplicationContext parent)
+   			throws BeansException {
+   
+   		super(parent);
+   		setConfigLocations(configLocations);
+   		if (refresh) {
+   			refresh();
+   		}
+   	}
+   ```
+
+   > 3.1 super(parent):调用父类构造方法,设置相关成员属性
+   >
+   > - 创建资源处理器对象(用于加载配置文件)
+   >
+   >   ```java
+   >   public AbstractApplicationContext() {
+   >     this.resourcePatternResolver = getResourcePatternResolver();
+   >   }
+   >   
+   >   // AbstractApplicationContext 类中会初始化许多默认属性
+   >   // String id 
+   >   // List<BeanFactoryPostProcessor>
+   >   ```
+   >
+   > - setParent如果有父容器会设置父容器,并将父容器中的环境变量信息合并到环境变量中
+   >
+   >   ```java
+   >   public void setParent(@Nullable ApplicationContext parent) {
+   >     this.parent = parent;
+   >     if (parent != null) {
+   >       Environment parentEnvironment = parent.getEnvironment();
+   >       if (parentEnvironment instanceof ConfigurableEnvironment) {
+   >         getEnvironment().merge((ConfigurableEnvironment) parentEnvironment);
+   >       }
+   >     }
+   >   }
+   >   ```
+   >
+   > 3.2 setConfigLocations():设置配置文件的路径到对象的一个属性中
+   >
+   > - 获取路径文件解析路径
+   >
+   >   ```java
+   >   resolvePath(locations[i]).trim();
+   >   ```
+   >
+   > - 获取环境变量
+   >
+   >   ```java
+   >   protected String resolvePath(String path) {
+   >     return getEnvironment().resolveRequiredPlaceholders(path);
+   >   }
+   >   protected ConfigurableEnvironment createEnvironment() {
+   >     return new StandardEnvironment();
+   >   }
+   >   ```
+   >
+   > - 替换配置文件中的变量
+   >
+   >   ```java
+   >   resolveRequiredPlaceholders()
+   >   ```
+
+4. 调用到父类AbstractApplicationContext的refresh()方法
+
+   ```java
+   @Override
+   public void refresh() throws BeansException, IllegalStateException {
+     synchronized (this.startupShutdownMonitor) {
+       StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
+   
+       // 为刷新准备此上下文
+       prepareRefresh();
+   
+       // 告诉子类刷新内部bean工厂
+       ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+   
+       // 准备好bean工厂使用
+       prepareBeanFactory(beanFactory);
+   
+       try {
+         // 允许在上下文子类中对bean工厂进行后处理
+         postProcessBeanFactory(beanFactory);
+   
+         StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
+         // 调用在上下文中注册为bean的工厂处理器
+         invokeBeanFactoryPostProcessors(beanFactory);
+   
+         // 注册拦截bean创建的bean处理器。 
+         registerBeanPostProcessors(beanFactory);
+         beanPostProcess.end();
+   
+         // 初始化此上下文的消息源。
+         initMessageSource();
+   
+         // 为此上下文初始化事件多播。 
+         initApplicationEventMulticaster();
+   
+         // 在特定的上下文子类中初始化其他特殊bean。 
+         onRefresh();
+   
+         // 检查侦听器bean并注册它们。
+         registerListeners();
+   
+         // 实例化所有剩余的(非lazy-init)单例。 
+         finishBeanFactoryInitialization(beanFactory);
+   
+         // 发布相应的事件
+         finishRefresh();
+       }
+   
+       catch (BeansException ex) {
+         if (logger.isWarnEnabled()) {
+           logger.warn("Exception encountered during context initialization - " +
+                       "cancelling refresh attempt: " + ex);
+         }
+   
+         // Destroy already created singletons to avoid dangling resources.
+         destroyBeans();
+   
+         // Reset 'active' flag.
+         cancelRefresh(ex);
+   
+         // Propagate exception to caller.
+         throw ex;
+       }
+   
+       finally {
+         // Reset common introspection caches in Spring's core, since we
+         // might not ever need metadata for singleton beans anymore...
+         resetCommonCaches();
+         contextRefresh.end();
+       }
+     }
+   }
+   ```
+
+5. ★ 扩展 prepareRefresh:设置启动时间,和容器启动状态,初始化属性源,加载配置文件时候可以使用MyPropertySource代替ClassPathXmlApplicationContext来加载配置文件,添加监听器
+
+   ```java
+   // AbstractApplicationContext#initPropertySources;
+   public class MyPropertySource extends ClassPathXmlApplicationContext {
+   
+       public MyPropertySource(String... configLocation) throws BeansException {
+           super(configLocation);
+       }
+   
+       @Override
+       protected void initPropertySources() {
+           System.out.println("扩展属性资源----");
+           getEnvironment().setRequiredProperties("aaa");
+       }
+   }
+   ```
+
+6. obtainFreshBeanFactory():创建容器对象DefaultListableBeanFactory,加载xml配置文件中的属性值到当前工厂中,BeanDefinition
+
+7. prepareBeanFactory(beanFactory):
+
+## 1.1 加载配置文件
+
+
+
+## 1.2 BeanFactoryPostProcessor
+
+## 1.3 Aware
+
+## 1.4 BeanPostProcessor
+
+## 1.5 InitializingBean
+
+
+
+
+
+
+
 # 第二章 Spring容器-IOC
 
 ## 2.1 IOC Helloworld
