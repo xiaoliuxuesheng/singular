@@ -862,7 +862,7 @@ try {
 
 ### 1. SpringBean生命周期
 
-![image-20220826233138162](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220826233138162.png)
+![image-20220826233138162](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220826233138162)
 
 ### 2. SpringBean功能扩展
 
