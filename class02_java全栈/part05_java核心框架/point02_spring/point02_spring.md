@@ -862,7 +862,7 @@ try {
 
 ### 1. SpringBean生命周期
 
-![image-20220826233138162](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220826233138162)
+<img src='https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220826233138162'/>
 
 ### 2. SpringBean功能扩展
 
@@ -992,7 +992,7 @@ try {
 
 ### 3. 源码执行流程说明
 
-![image-20220824203704551](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220824203704551.png)
+![image-20220824203704551](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220824203704551)
 
 - 第一层中，先回获取A的Bean，发现没有就准备创建一个，此时会将A的代理工厂放入到三级缓存，然后继续执行A的创建过程之，给A的属性进行初始化，A中的属性又依赖B，所以必须创建B
 - 第二层中，准备创建B，又发现B有依赖A，所以又去创建A（在创建A之前会从缓存中找）
@@ -1207,7 +1207,7 @@ try {
 
 3. 源码解读第二层-获取B的Bean对象
 
-   ![image-20220825001656612](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220825001656612.png)
+   ![image-20220825001656612](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220825001656612)
 
    - getBean到将B的工厂添加到三级缓存的过程省略,此时三级缓存singletonFactories中有两个代理工厂,从getBean的开始到resolveReference()方法
 
