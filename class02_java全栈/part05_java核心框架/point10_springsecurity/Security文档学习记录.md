@@ -30,7 +30,7 @@
     ```xml
     <properties>
         <spring.version>5.2.6.RELEASE</spring.version>
-    </dependencies>
+    </properties>
     ```
 
   - 修改Security版本的方式
@@ -38,7 +38,7 @@
     ```xml
     <properties>
         <spring-security.version>5.3.2.RELEASE</spring-security.version>
-    </dependencies>
+    </properties>
     ```
 
 - 在非SpringBoot项目中添加依赖

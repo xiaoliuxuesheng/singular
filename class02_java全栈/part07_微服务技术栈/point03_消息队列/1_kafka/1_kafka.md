@@ -1,3 +1,11 @@
+# 前言
+
+## 1. 技能要求
+
+- JavaSE+Maven
+- Linux
+- Idea+SpringBoot
+
 # 第一部分 Kafka基础
 
 ## 第一章 概述
@@ -6,10 +14,16 @@
 
 1. Kafka介绍
    - Kafka是采用Scala语言开发的一个多分区、多副本并且基于Zookeeper协议的分布式消息系统。目前Kafka已经定位为衣蛾分布式流式处理平台，它以高吞吐、可持久化、可水平扩展、支持流处理等对种特性而被广泛应用。
-   - **传统定义**：Kakfa是一个分布式的发布-订阅消息系统，能够支撑海量数据的传输；
+   
+   - **传统定义**：Kakfa是一个分布式的发布-订阅消息系统，能够支撑海量数据的传输；用于大数据实时处理
+   
+     > 发布订阅:消息发布者不会直接把消息发送给订阅者,而是将消息分为不同的类别(topic),订阅者只接收感兴趣的类别
+   
      - Kafka将消息持久化到磁盘中，并对消息创建了备份保证数据的安全；
      - Kafka在保证了较高的处理速度的同时，又能保证数据处理的低延迟和零丢失；
+   
    - **最新定义**：开源的分布式事件流平台，用于高性能数据管道、流分析、数据继承、关键任务应用。
+   
 2. Kafka特性
    - 高吞吐量、低延迟：每秒处理几十万条，延迟最低只有几毫秒，每个主题可以分多个分区，消费者对分区进行消费
    - 可扩展性：支持热扩展
@@ -17,12 +31,14 @@
    - 容错性：允许集群节点失败
    - 高并发：支持数千个客户同时读写
    - 可伸缩：
+   
 3. Kafka使用场景
    - 日志收集：通过Kaka以统一接口服务的方式开放给各种consumer
    - 消息系统：结构生成和消费者；缓存消息
    - 用户活动跟踪：记录用户活动
    - 运营指标：记录运营监控数据
    - 流式处理：
+   
 4. Kafka记录
    - 前端埋点记录用户行为到日志服务器，最终日志会落盘到Hadoop集群，用于数据分析
    - 在日志服务器会安装Flume监控日志，采集速度小于100M/s，效率低
@@ -31,36 +47,48 @@
 ### 1.2 消息队列
 
 1. 常见消息队列
-   - ActiveMQ：
-   - Kafka：
-   - RabbitMQ：
-   - RocketMQ：
+   
+   | 特性     | ActiveMQ                                                     | Kafka                                                        | RocketMQ                                                     | RabbitMQ                                                     |
+   | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+   | 开发语言 | java                                                         | Scala                                                        | java                                                         | erLang                                                       |
+   | 协议     | AMQP                                                         | 自行设计                                                     | AMQP                                                         | AMQP                                                         |
+   | 跨语言   | 支持                                                         | 支持                                                         | 支持                                                         | 支持                                                         |
+   | 优点     | 单机吞吐量：万级 可用性：非常高 功能支持： MQ功能完备 高扩展性 | 单机吞吐量：百万级 可用性：分布式的非常高 依赖ZK可动态扩展节点高性能高吞吐，消息可指定追溯 | 单机吞吐量：十万级 可用性： 非常高，分布式 架构： 消息可靠性高 功能支持：MQ功能完备 高扩展性：支持事务 | 单机吞吐量： 万级 健壮、稳定、医用、跨平台、支持多种语言； 功能支持： MQ功能完备 高扩展性： 支持事务 |
+   | 缺点     | 项目比较陈旧，官方社区在5.X之后对其维护越来越少              | 严格的顺序机制，不支持消息优先级，不支持标准协议             | 目前只支持java及c++；                                        | Elang语言难度大，很难扩展,研发人员较少                       |
+   | 综合评价 | 小型系统比较适用，但是因为维护越来越少，建议不用             | 在日志和大数据方向使用较多                                   | 阿里系，国内互联网公司使用居多                               | 适用于稳定性要求优先的企业级应用                             |
 2. 消息队列使用场景
    - 缓冲/消峰：控制数据流经过系统的速度，解决消息生成和消费的处理速度不一致的问题
    - 解耦：独立大数据组件的处理情况，用中间件保证他们遵循相同的接口
    - 异步通信：运行用户把消息放入队列，但是不是立即处理，在需要使用的时候再处理
-3. 消息队列模式
+3. Kafka消息队列模式
    - 点对点模式：消费者主动拉取消息，消息收到后清除消息
-   - 发布订阅模式：可以有多个topic主题，消费者消费数据后，不删除数据，每个消费者相互独立，都可以消费到数据
+   - 发布订阅模式：可以有多个topic主题，将消息进行分类，发布者将消息发送给Topic；消费者只订阅关心的Topic，消费数据后，不删除数据，每个消费者相互独立，都可以消费到数据
 
-### 1.3 Kafka架构
+### 1.3 Kafka架构简图
 
-<img src="https://s1.ax1x.com/2020/05/10/Y8ArjI.png" alt="Y8ArjI.png" border="0" />
+![](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image_20220823142754.png)
 
-![image-20220710081523526](E:\AdminCode\NoteStudy\note_blogs_docsify\class02_java全栈\part07_微服务技术栈\point03_消息队列\1_kafka\resource\image-20220710081523526.png)
+1. Zookeeper：kafka通过zookeeper来存储集群的meta信息
+2. Producers将消息发送给Topic
+3. 每个Topic包含一个或多个partition,接收消息后把消息保存到对应的Partition并且同步给对应的副本
+4. ConsumerGroup:每个消费者组订阅一个Topic,接收发送到Topic中的数据
 
-- **Producer**：生产者即数据发布者，该角色将消息发布到Kafka的Topic中。broker接收到生产者发送的消息后，broker将该消息追加到当前用于追加数据的segment文件中。生产者发送的消息，存储到一个partition中，生产者也可以指定数据存储的partition
-- **consumer**：消费者可以从broker中读取数据。消费者可以消费多个topic中的数据，消费者可以定义在同一个组（group）中，每个group也是只对应一个partition，
+### 1.4 Kafka架构术语
+
+![](https://gitee.com/panda_code_note/commons-resources/raw/ab604b6f27b18e5bf779cc5e1b2d1a3e82559333/part01_images/image-20220710081523526.png)
+
+- **zookeeper**：zookeeper负责维护和协调broker。当kafka系统中新增broker或某个broker发生故障失效时，由zookeeper通知生产者和消费者。生产者和消费者依据zookeeper的broker状态与broker协调数据段发布和订阅任务，在最新版本kafka中zookeeper已经成为kafka的瓶颈，去zookeeper化在进行中；
+- **broker**：Kafka 集群包含一个或多个服务器，服务器节点称为broker。broker存储topic的数据。如果某topic有N个partition，集群有N个broker，那么每个broker存储该topic的一个partition。如果某topic有N个partition，集群有(N+M)个broker，那么其中有N个broker存储该topic的一个partition，剩下的M个broker不存储该topic的partition数据。如果某topic有N个partition，集群中broker数目少于N个，那么一个broker存储该topic的一个或多个partition。在实际生产环境中，尽量避免这种情况的发生，这种情况容易导致Kafka集群数据不均衡
 - **topic**：在kafka中，使用一个类表属性来划分数据段所属类，划分数据的这个类称为topic。如果把kafka看做一个数据库，topic可以理解为数据库中的一张表，topic的名字即为表名。物理上不同Topic的消息分开存储；逻辑上一个Topic的消息虽然保存于一个或多个broker上，但用户只需指定消息的Topic即可生产或消费数据而不必关心数据存于何处
 - **partition**：分区，topic中的数据分割为一个或多个partition。每个topic至少有一个partition。每个partition中的数据使用多个segment文件存储。partition中的数据是有序的，partition间的数据不一定是有序的。如果topic有对个partition，消费数据时就不能保证数据的顺序。在需要严格保证消息的消费顺序的场景下，需要将partition的数目设置为1。
-- **partition offset**：每条消息都有一个档期partition下唯一的64字节的offset，他指明了这条消息的起始位置
-- **replicas of partition**：副本是一个分区的副本。副本不会被消费者消费，副本只用于防止数据丢失，即消费者不从为follwer的partition中消费数据，而是从为leader的partition中读取数据。副本之间是一主多从的关系。
-- **broker**：Kafka 集群包含一个或多个服务器，服务器节点称为broker。broker存储topic的数据。如果某topic有N个partition，集群有N个broker，那么每个broker存储该topic的一个partition。如果某topic有N个partition，集群有(N+M)个broker，那么其中有N个broker存储该topic的一个partition，剩下的M个
-  broker不存储该topic的partition数据。如果某topic有N个partition，集群中broker数目少于N个，那么
-  一个broker存储该topic的一个或多个partition。在实际生产环境中，尽量避免这种情况的发生，这种
-  情况容易导致Kafka集群数据不均衡
+- **Segment**：partition物理上由多个segment组成。
+- **replicas of partition**：副本是一个分区的副本。副本不会被消费者消费，副本只用于防止数据丢失，即消费者不从为follwer的partition中消费数据，而是从为leader的partition中读取数据。副本之间是一主多从的关系。保障 partition 的高可用。
+- **Producer**：生产者即数据发布者，该角色将消息发布到Kafka的Topic中。broker接收到生产者发送的消息后，broker将该消息追加到当前用于追加数据的segment文件中。生产者发送的消息，存储到一个partition中，生产者也可以指定数据存储的partition
+- **consumer**：消费者可以从broker中读取数据。消费者可以消费多个topic中的数据，消费者可以定义在同一个组（group）中，每个group也是只对应一个partition，
+- **partition offset**：每条消息都有一个档期partition下唯一的64字节的offset，他指明了这条消息的起始位置,每个partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到partition中。partition中的每个消息都有一个连续递增的序列号叫做offset，偏移量offset在每个分区中是唯一的。
+- **leader**：replica 中的一个角色， producer 和 consumer 只跟 leader 交互。
+- **follower**： replica 中的一个角色，从 leader 中复制（fentch）数据。
 - **leader + follower**：Follower跟随Leader，所有写请求都通过Leader路由，数据变更会广播给所有Follower，Follower与Leader保持数据同步。如果Leader失效，则从Follower中选举出一个新的Leader。当Follower与Leader挂掉、卡住或者同步太慢，leader会把这个follower从“in sync replicas”（ISR）列表中删除，重新创建一个Follower。
-- **zookeeper**：zookeeper负责维护和协调broker。当kafka系统中新增broker或某个broker发生故障失效时，由zookeeper通知生产者和消费者。生产者和消费者依据zookeeper的broker状态与broker协调数据段发布和订阅任务，在最新版本kafka中zookeeper已经成为kafka的瓶颈，去zookeeper化在进行中；
 - **AR（Assigned Replicas）**：分区中所有的副本统称为AR
 - **ISR（In-Sync Replicas）**：所有与Leader部分保持一定程度的副本（包括Leader副本在内）组成ISR
 - **OSR（Out-of-Sync Replicas）**：与Leader副本同步滞后过多的副本
@@ -72,8 +100,47 @@
 ### 2.1 环境准备
 
 1. 安装VMware，并且准备安装Kafka集群的3台虚拟机
+
 2. 配置虚拟机：①固定IP、②关闭防火墙、③修改主机名称、④配置host用主机名称、⑤ssh免密登陆
+
+   - 固定IP:network-scripts目录中的文件名称非固定名称
+
+     ```sh
+     cd /etc/sysconfig/network-scripts/{ifcfg-ens160}
+     vim ifcfg-ens160
+     # 修改
+     BOOTPROTO=static
+     # 添加
+     IPADDR=192.168.10.101
+     GATEWAY=192.168.10.2
+     DNS1=192.168.10.2
+     ```
+
+   - 关闭防火墙
+
+     ```sh
+     # 1.关闭防火墙
+     systemctl stop firewalld.service
+     
+     # 2.开机禁查看防火墙状态
+     systemctl disable firewalld.service
+     
+     # 3.查看防火墙状态
+     systemctl status firewalld.service
+     ```
+
+   - 修改主机名称
+
+     ```sh
+     vim /etc/hostname
+     ```
+
+   - ssh免密登陆配置
+
+     
+
 3. Kafka环境准备：①JDK安装、②Zookeeper集群安装
+
 4. Kafka安装包下载：https://kafka.apache.org/downloads
 
 ### 2.2 Kafka安装

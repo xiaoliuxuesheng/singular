@@ -858,7 +858,627 @@ try {
 
 # 第六章 Spring源码解析
 
-## 6.1 SpringBoot启动
+## 6.1 Spring源码基础
+
+### 1. SpringBean生命周期
+
+![image-20220826233138162](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220826233138162.png)
+
+### 2. SpringBean功能扩展
+
+- ①通过BeanFactoryPostProcessor修改BeanDefinition
+
+  ```java
+  public class IocUserBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+  
+      @Override
+      public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {
+          // 修改Bean定义信息
+          String[] names = factory.getBeanDefinitionNames();
+          for (String name : names) {
+              if ("iocUser".equals(name)) {
+                  BeanDefinition def = factory.getBeanDefinition(name);
+                  MutablePropertyValues va = def.getPropertyValues();
+                  va.addPropertyValue("name", "test");
+              }
+          }
+      }
+  }
+  ```
+
+- ②实例化Bean,执行Bean的默认无参构造方法
+
+- ③通过Aware接口获取SpringIOC容器对象相关的Bean
+
+  ```java
+  @Getter
+  @Setter
+  public class Xxx implements ApplicationContextAware {
+      private ApplicationContext context;
+      @Override
+      public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+          this.context = applicationContext;
+      }
+  }
+  ```
+
+- ④通过BeanPostProcessor接口,在Bean实例化后的初始化前后执行
+
+  ```java
+  public class IocUserBeanPostProcessor implements BeanPostProcessor {
+  
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+      if ("xxx".equals(beanName)) {
+        System.out.println("Bean初始化方法之前执行"+bean.getClass());
+      }
+      return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);
+    }
+    // postProcessBeforeInitialization方法执行完成后执行InitializingBean的afterPropertiesSet方法
+    
+    // InitializingBean的afterPropertiesSet方法之后执行Bean的init方法
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+      if ("xxx".equals(beanName)) {
+        System.out.println("Bean初始化方法后前执行"+bean.getClass());
+      }
+      return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
+    }
+  }
+  ```
+
+- ⑤InitializingBean的afterPropertiesSet方法在Bean初始化之后执行
+
+  ```java
+  @Getter
+  @Setter
+  public class IocUser implements InitializingBean {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+      
+    }
+  }
+  ```
+
+- ⑥为Bean指定初始化方法
+
+  ```java
+  public class Xxx {
+      public void init(){
+      }
+  }
+  ```
+
+  > ```xml
+  > <bean id="iocUser" class="com.bean.Xxx" init-method="init">
+  > </bean>
+  > ```
+
+- ⑦AOP对Bean中的方法进行扩展
+
+## 6.2 循环依赖
+
+### 1. 学习步骤
+
+- 第一:①什么是循环依赖②三级缓存③执行流程
+
+- 第二:源码解读
+- 第三:为什么要用三级缓存
+
+### 2. 基础知识
+
+- 什么是循环依赖:一个或多个对象之间存在直接或间接的依赖关系，这种依赖关系构成一个环形调用
+
+- 三级缓存:DefaultSingletonBeanRegistry中的Map集合
+
+  ```java
+  // 一级缓存
+  private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+  // 三缓存
+  private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
+  // 二级缓存
+  private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
+  ```
+
+  - 第一级缓存：singletonObjets:用于存储实例化、初始化完成的SpringBean
+  - 第二级缓存：earlySingletonObjects：用于保存实例化完成、未初始化的半成品SpringBean
+  - 第三级缓存：singletonFactories：用于保存SpringBean的创建工厂，在一定条件下会创建代理对象
+
+- 执行基本逻辑
+
+  - 首先会从第一级缓存中找对象，如果没有找到就从第二级缓存中找
+  - 然后重第二级缓存中找对象，没有找到就从第三级缓存找
+  - 第三级缓存中找到了，就创建对象放到第二级缓存，然后从第三级缓存中移除
+
+### 3. 源码执行流程说明
+
+![image-20220824203704551](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220824203704551.png)
+
+- 第一层中，先回获取A的Bean，发现没有就准备创建一个，此时会将A的代理工厂放入到三级缓存，然后继续执行A的创建过程之，给A的属性进行初始化，A中的属性又依赖B，所以必须创建B
+- 第二层中，准备创建B，又发现B有依赖A，所以又去创建A（在创建A之前会从缓存中找）
+- 第三层中，创建A之前，会从缓存中找，因为第一层已经创建的A的代理工厂，直接从三级缓存中拿到代理工厂，获取A的代理对象放入到二级缓存中，并清除三级缓存，此时二级缓存中的A对象是未初始的SpringBean
+- 回到第二层，此时二级缓存中有了A的SpringBean对象，B对A的依赖完成，B对象的创建流程执行完成，B对象初始化完成，保存到第一层缓存中，
+- 回到第一层，B初始已经完成，此时需要对A中的B属性进行赋值，完成对A对象的初始化，然后将A对象保存入一级缓存，因为是对象引用，此时B对象中A属性也变成了完整对象，到此循环依赖对象创建完成，
+
+### 4. 源码解读
+
+1. 源码解读-入口
+
+   - 循环依赖的Java对象:A和B
+
+     ```java
+     @Setter
+     @Getter
+     public class A {
+         private B b;
+     }
+     
+     @Getter
+     @Setter
+     public class B {
+         private A a;
+     }
+     ```
+
+   - 使用xml配置文件将循环引用的对象配置到容器中
+
+     ```xml
+     <?xml version="1.0" encoding="UTF-8"?>
+     <beans xmlns="http://www.springframework.org/schema/beans"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+            xmlns:context="http://www.springframework.org/schema/context"
+            xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+     
+         <bean name="a" class="com.spring.demo03.bean.A">
+             <property name="b" ref="b"/>
+         </bean>
+         <bean name="b" class="com.spring.demo03.bean.B">
+             <property name="a" ref="a"/>
+         </bean>
+     </beans>
+     ```
+
+   - 加载配置文件:ClassPathXmlApplicationContext读取xml配置文件
+
+     ```java
+     new ClassPathXmlApplicationContext("spring-application.xml");
+     ```
+
+   - 在ClassPathXmlApplicationContext构造方法中最终进入到AbstractApplicationContext#refresh方法,refresh方法中的finishBeanFactoryInitialization作用是实例化所有非懒加载的单例Bean
+
+     ```java
+     public void refresh() throws BeansException, IllegalStateException {
+       // 实例化非懒加载的单例Bean对象
+       finishBeanFactoryInitialization(beanFactory);
+     }
+     ```
+
+   - 调用finishBeanFactoryInitialization方法参数中的preInstantiateSingletons方法用于实例化Bean
+
+     ```java
+     protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+     	beanFactory.preInstantiateSingletons();
+     }
+     ```
+
+   - ConfigurableListableBeanFactory接口的默认实现类DefaultListableBeanFactory,从beanDefinition中获取所有的Bean的名称,根据名称创建单例Bean并且是非懒加载的
+
+     ```java
+     public void preInstantiateSingletons() throws BeansException {
+     	getBean(beanName);
+     }
+     ```
+
+2. 源码解读-第一层,把A对象的工厂添加到第三级缓存中,并且根据工厂创建出A对象并赋值给B对象
+
+   ![图片](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/640)
+
+   - 进入doGetBean(),调用getSingleton方法,第一个参数bean名称,二个参数匿名内部类,会在getSingleton方法中调用匿名内部类的createBean方法
+
+     ```java
+     if (mbd.isSingleton()) {
+       sharedInstance = getSingleton(beanName, () -> {
+         try {
+           return createBean(beanName, mbd, args);
+         }
+         catch (BeansException ex) {
+           // Explicitly remove instance from singleton cache: It might have been put there
+           // eagerly by the creation process, to allow for circular reference resolution.
+           // Also remove any beans that received a temporary reference to the bean.
+           destroySingleton(beanName);
+           throw ex;
+         }
+       });
+       beanInstance = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+     }
+     ```
+
+     > ```java
+     > public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+     >   // 先从一级缓存中查询
+     >   Object singletonObject = this.singletonObjects.get(beanName);
+     >   try {
+     >     // 调用ObjectFactory的getObject方法执行匿名内部类参数的createBean方法
+     >     singletonObject = singletonFactory.getObject();
+     >     newSingleton = true;
+     >   }
+     >   catch (IllegalStateException ex) {
+     >   }
+     > }
+     > ```
+
+   - 在createBean()方法中进入doCreateBean(),调用addSingletonFactory方法,用创建匿名内部类的方式将工厂接口的实现类添加到的三级缓存的工厂中,这个内部类包含了创建这个Bean所需要的相关参数;
+
+     ```java
+     protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args){
+       if (earlySingletonExposure) {
+         if (logger.isTraceEnabled()) {
+           logger.trace("Eagerly caching bean '" + beanName +
+                        "' to allow for resolving potential circular references");
+         }
+         addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+       }
+     }
+     ```
+
+   - 在addSingletonFactory()方法中,将工厂参数添加到三级缓存中
+
+     ```java
+     protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+       Assert.notNull(singletonFactory, "Singleton factory must not be null");
+       synchronized (this.singletonObjects) {
+         if (!this.singletonObjects.containsKey(beanName)) {
+           this.singletonFactories.put(beanName, singletonFactory);
+           this.earlySingletonObjects.remove(beanName);
+           this.registeredSingletons.add(beanName);
+         }
+       }
+     }
+     ```
+
+   - 继续执行A对象的初始化过程,接下来的流程是需要给A对象的B属性进行赋值,进入populateBean()方法
+
+     ```java
+     if (earlySingletonExposure) {
+       if (logger.isTraceEnabled()) {
+         logger.trace("Eagerly caching bean '" + beanName +
+                      "' to allow for resolving potential circular references");
+       }
+       // 已经将A对象的工厂类添加到三级缓存中
+       addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+     }
+     
+     // 给A对象进行初始化 进入 populateBean方法
+     Object exposedObject = bean;
+     try {
+       populateBean(beanName, mbd, instanceWrapper);
+       exposedObject = initializeBean(beanName, exposedObject, mbd);
+     }
+     ```
+
+   - 在populateBean()方法中调用applyPropertyValues()方法,获取属性并给属性赋值
+
+     ```java
+     protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) {
+       if (pvs != null) {
+         applyPropertyValues(beanName, mbd, bw, pvs);
+       }
+     }
+     ```
+
+   - 获取属性名称和属性类型,执行resolveValueIfNecessary方法
+
+     ```java
+     protected void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs) {		
+       // 属性名称
+       String propertyName = pv.getName();
+       // 属性名对应的运行时类型:RuntimeBeanReference
+       Object originalValue = pv.getValue();
+       if (originalValue == AutowiredPropertyMarker.INSTANCE) {
+         Method writeMethod = bw.getPropertyDescriptor(propertyName).getWriteMethod();
+         if (writeMethod == null) {
+           throw new IllegalArgumentException("Autowire marker for property without write method: " + pv);
+         }
+         originalValue = new DependencyDescriptor(new MethodParameter(writeMethod, 0), true);
+       }
+       Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
+     }
+     ```
+
+   - 判断参数类型如果是RuntimeBeanReference类型,执行resolveReference()方法
+
+     ```java
+     public Object resolveValueIfNecessary(Object argName, @Nullable Object value) {
+       if (value instanceof RuntimeBeanReference) {
+         RuntimeBeanReference ref = (RuntimeBeanReference) value;
+         return resolveReference(argName, ref);
+       }
+     }
+     ```
+
+   - 进入resolveReference方法,第二次看到调用getBean的流程中了
+
+     ```java
+     private Object resolveReference(Object argName, RuntimeBeanReference ref) {
+       resolvedName = String.valueOf(doEvaluate(ref.getBeanName()));
+       bean = this.beanFactory.getBean(resolvedName);
+     }
+     ```
+
+3. 源码解读第二层-获取B的Bean对象
+
+   ![image-20220825001656612](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220825001656612.png)
+
+   - getBean到将B的工厂添加到三级缓存的过程省略,此时三级缓存singletonFactories中有两个代理工厂,从getBean的开始到resolveReference()方法
+
+     ```java
+     public Object resolveValueIfNecessary(Object argName, @Nullable Object value) {
+       // We must check each value to see whether it requires a runtime reference
+       // to another bean to be resolved.
+       if (value instanceof RuntimeBeanReference) {
+         RuntimeBeanReference ref = (RuntimeBeanReference) value;
+         return resolveReference(argName, ref);
+       }
+     }
+     ```
+
+   - 进入resolveReference方法,第三次看到调用getBean的流程中了:这次getBean的作用是获取B对象中A属性的Bean对象
+
+     ```java
+     private Object resolveReference(Object argName, RuntimeBeanReference ref) {
+       resolvedName = String.valueOf(doEvaluate(ref.getBeanName()));
+       bean = this.beanFactory.getBean(resolvedName);
+     }
+     ```
+
+   - 从第三次getBean方法中执行getSingleton方法
+
+     ```java
+     	protected <T> T doGetBean(String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly){
+     		Object sharedInstance = getSingleton(beanName);
+       }
+     ```
+
+   - 完整的getSingleton方法,此时从三级缓存中获取A对象的代理工厂并创建出半成品的A对象并存入二级缓存,代理工厂从三级缓存中移除
+
+     ```java
+     protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+       // 1. 从一级缓存中获取
+       Object singletonObject = this.singletonObjects.get(beanName);
+       if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+         // 2. 从二级缓存中获取
+         singletonObject = this.earlySingletonObjects.get(beanName);
+         if (singletonObject == null && allowEarlyReference) {
+           synchronized (this.singletonObjects) {
+             // 3. 上锁,再次冲一级缓存中获取
+             singletonObject = this.singletonObjects.get(beanName);
+             if (singletonObject == null) {
+               // 4.一级缓存中没有后从二级缓存中获取
+               singletonObject = this.earlySingletonObjects.get(beanName);
+               if (singletonObject == null) {
+                 // 5. 二级缓存中没有后从三级缓存中获取,如果没有返回null
+                 ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+                 if (singletonFactory != null) {
+                   // 6. 如果三级缓存中有,则使用代理工厂创建对象
+                   singletonObject = singletonFactory.getObject();
+                   // 7. 创建的对象保存到二级缓存
+                   this.earlySingletonObjects.put(beanName, singletonObject);
+                   // 8. 从三级缓存中删除该对象的代理工厂
+                   this.singletonFactories.remove(beanName);
+                 }
+               }
+             }
+           }
+         }
+       }
+       return singletonObject;
+     }
+     ```
+
+     > 使用代理工厂创建对象:AOP的重点,创建代理对象
+
+   - 此时正在初始化的B对象,继续执行,在getSingleton方法中执行addSingleton()方法
+
+     ```java
+     public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+       if (newSingleton) {
+         addSingleton(beanName, singletonObject);
+       }
+     }
+     ```
+
+   - addSingleton处理一、二级缓存的逻辑，将二级缓存清除，放入一级缓存。
+
+     ```java
+     protected void addSingleton(String beanName, Object singletonObject) {
+       synchronized (this.singletonObjects) {
+         // 1. 一级缓存中放入B的Bean,此时B中A属性是半成品
+         this.singletonObjects.put(beanName, singletonObject);
+         // 2. 三级缓存中将B的工厂移除
+         this.singletonFactories.remove(beanName);
+         // 3. 二级缓存中将B对象移除
+         this.earlySingletonObjects.remove(beanName);
+         this.registeredSingletons.add(beanName);
+       }
+     }
+     ```
+
+4. 源码解读第三层:A对象的getBean方法获取B对象的实例,此时可以从一级缓存中直接获取,并赋值给A对象中的B属性
+
+   
+
+   - 继续执行A对象的getBean方法
+
+     ```java
+     	protected <T> T doGetBean(String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly){
+     		Object sharedInstance = getSingleton(beanName);
+       }
+     ```
+
+     > 此时正在初始化的A对象,继续执行,在getSingleton方法中执行addSingleton()方法,将B属性赋值给A并将A对象添加到Spring容器中
+     >
+     > ```java
+     > protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+     >   // 1. 从一级缓存中获取
+     >   Object singletonObject = this.singletonObjects.get(beanName);
+     >   if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+     >     // 2. 从二级缓存中获取
+     >     singletonObject = this.earlySingletonObjects.get(beanName);
+     >     if (singletonObject == null && allowEarlyReference) {
+     >       synchronized (this.singletonObjects) {
+     >         // 3. 上锁,再次冲一级缓存中获取
+     >         singletonObject = this.singletonObjects.get(beanName);
+     >         if (singletonObject == null) {
+     >           // 4.一级缓存中没有后从二级缓存中获取
+     >           singletonObject = this.earlySingletonObjects.get(beanName);
+     >           if (singletonObject == null) {
+     >             // 5. 二级缓存中没有后从三级缓存中获取,如果没有返回null
+     >             ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+     >             if (singletonFactory != null) {
+     >               // 6. 如果三级缓存中有,则使用代理工厂创建对象
+     >               singletonObject = singletonFactory.getObject();
+     >               // 7. 创建的对象保存到二级缓存
+     >               this.earlySingletonObjects.put(beanName, singletonObject);
+     >               // 8. 从三级缓存中删除该对象的代理工厂
+     >               this.singletonFactories.remove(beanName);
+     >             }
+     >           }
+     >         }
+     >       }
+     >     }
+     >   }
+     >   return singletonObject;
+     > }
+     > ```
+
+5. 源码解析:代理工厂创建实例
+
+   - 向三级缓存中添加代理工厂时候是一个匿名内部类
+
+     ```java
+     addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+     ```
+
+   - 进入getEarlyBeanReference方法
+
+     ```java
+     	protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean) {
+     		Object exposedObject = bean;
+     		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
+     			for (SmartInstantiationAwareBeanPostProcessor bp : getBeanPostProcessorCache().smartInstantiationAware) {
+     				exposedObject = bp.getEarlyBeanReference(exposedObject, beanName);
+     			}
+     		}
+     		return exposedObject;
+     	}
+     ```
+
+   - 进入实现SmartInstantiationAwareBeanPostProcessor接口的getEarlyBeanReference方法的实现类:AbstractAutoProxyCreator
+
+     ```java
+     public Object getEarlyBeanReference(Object bean, String beanName) {
+       Object cacheKey = getCacheKey(bean.getClass(), beanName);
+       this.earlyProxyReferences.put(cacheKey, bean);
+       return wrapIfNecessary(bean, beanName, cacheKey);
+     }
+     // 调用本类方法wrapIfNecessary
+     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+       // Create proxy if we have advice.
+       // 判断是否实现创建代理对象,
+       Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+       if (specificInterceptors != DO_NOT_PROXY) {
+         this.advisedBeans.put(cacheKey, Boolean.TRUE);
+         Object proxy = createProxy(
+           bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+         this.proxyTypes.put(cacheKey, proxy.getClass());
+         return proxy;
+       }
+       this.advisedBeans.put(cacheKey, Boolean.FALSE);
+       // 否则返回原始地形
+       return bean;
+     }
+     
+     // 继续调用本类方法createProxy
+     protected Object createProxy(Class<?> beanClass, @Nullable String beanName,
+                                  @Nullable Object[] specificInterceptors, TargetSource targetSource) {
+       ProxyFactory proxyFactory = new ProxyFactory();
+       return proxyFactory.getProxy(classLoader);
+     }
+     ```
+
+   - 查看ProxyFactory中的getProxy方法:createAopProxy()方法返回AopProxy接口类型
+
+     ```java
+     public Object getProxy(@Nullable ClassLoader classLoader) {
+       return createAopProxy().getProxy(classLoader);
+     }
+     ```
+
+   - 查看AopProxy接口getProxy的实现类:CglibAopProxy和JdkDynamicAopProxy
+
+     ```java
+     // 1. CglibAopProxy
+     class CglibAopProxy implements AopProxy, Serializable {
+     }
+     // 2. JdkDynamicAopProxy
+     final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializable {
+     }
+     ```
+
+   - Cglib动态代理和JDK动态代理源码解析
+
+6. 源码解析:反射创建对象,反射属性赋值
+
+### 5. 总结
+
+1. 为什么要有三级缓存
+
+   - 首先一级缓存singletonObjets类型是Map<String, Object>作用是保存初始化好的对象,用来保证SpringBean的单例;
+   - 然后直接看“三级缓存”的作用:变量命名为 singletonFactories，结构是 Map<String, ObjectFactory<?>>，Value 是一个对象的代理工厂，所以“三级缓存”的作用，其实就是用来存放对象的代理工厂,这个代理工厂的作用就是生成半成品的单例Bean;
+   - 二级缓存的作用就是存放由三级缓存生成的半成品对象,如果创建的对象有AOP就创建代理对象,如果没有AOP就创建真实对象,所以**这个对象可能是原对象，也可能是个代理对象。**
+
+2. 能干掉二级缓存么:二级缓存的目的是为了避免因为 AOP 创建多个对象，其中存储的是半成品的 AOP 的单例 bean
+
+   > ```java
+   > @Service
+   > public class A {
+   > 
+   >     @Autowired
+   >     private B b;
+   > 
+   >     @Autowired
+   >     private C c;
+   > 
+   >     public void test1() {
+   >     }
+   > }
+   > 
+   > @Service
+   > public class B {
+   >     @Autowired
+   >     private A a;
+   > 
+   >     public void test2() {
+   >     }
+   > }
+   > 
+   > @Service
+   > public class C {
+   > 
+   >     @Autowired
+   >     private A a;
+   > 
+   >     public void test3() {
+   >     }
+   > }
+   > ```
+   >
+   > 场景说明:根据上面的套娃逻辑，A需要找B和C，但是B需要找A，C也需要找A。假如A需要进行AOP，因为代理对象每次都是生成不同的对象，如果干掉第二级缓存，只有第一、三级缓存：通过A的工厂的代理对象，生成了两个不同的对象A1和A2
+   >
+   > - B 找到 A 时，直接通过三级缓存的工厂的代理对象，生成对象 A1。
+   > - C 找到 A 时，直接通过三级缓存的工厂的代理对象，生成对象 A2。
+
+## 6.2 SpringBoot启动
 
 1. new SpringApplication(Class<?> primarySources)
    - `Set<Class<?>> SpringApplication.primarySources`：将主启动类赋值给该属性
