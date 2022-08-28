@@ -2,13 +2,15 @@
 
 ## 1.1 Spring简介
 
-1. **Spring框架的核心**
+1. 历史背景,应用场景
+
+2. **Spring框架的核心**
 
    - 是抽取出来的高度可重用的代码, 多个可重用模块的集合, 形成：JavaEE领域的整体解决方案
    - Spring框架是是一个IOC和AOP的容器框架
    - Spring容器包含并且管理应用中的对象的关系以及生命周期
 
-2. **Spring技术栈**
+3. **Spring技术栈**
 
    | Spring技术      | 功能说明               |
    | --------------- | ---------------------- |
@@ -18,7 +20,7 @@
    | spring boot     | Spring场景启动自动配置 |
    | spring cloud    | Spring微服务解决方案   |
 
-3. **Spring优点**
+4. **Spring优点**
 
    - **为JavaEE开发提供了一站式的解决方案** ：从基础的IOC容器，已经衍生为Cloud Native的基础设施
    - **非侵入** : 用Spring开发的应用不依赖Spring的API
@@ -77,12 +79,14 @@
 
 | 概述                    | 技术点                                            |
 | ----------------------- | ------------------------------------------------- |
-| **Java语言特性**        | 反射、动态代理、枚举、泛型、注解、ARM、Lambda语法 |
+| **Java语言特性**        | 反射、动态代理、枚举、泛型、注解、JVM、Lambda语法 |
 | **设计模式与设计思想**  | OOP、IoC、AOP、DDD、TDD、GOF23                    |
 | **JavaAPI的分装与简化** | JDBC、Servlet、JPA、JMX、Bean、Validation         |
-| **第三方框架的整合**    | Mybatis、Hibernate、Redis、SpringMVC              |
+| **第三方框架的整合**    | Mybatis、Hibernate、Redis、SpringMVC...           |
 
 # 第二章 Spring IOC
+
+
 
 # 第三章 Spring AOP
 
@@ -1478,7 +1482,7 @@ try {
    > - B 找到 A 时，直接通过三级缓存的工厂的代理对象，生成对象 A1。
    > - C 找到 A 时，直接通过三级缓存的工厂的代理对象，生成对象 A2。
 
-## 6.2 SpringBoot启动
+# SpringBoot
 
 1. new SpringApplication(Class<?> primarySources)
    - `Set<Class<?>> SpringApplication.primarySources`：将主启动类赋值给该属性

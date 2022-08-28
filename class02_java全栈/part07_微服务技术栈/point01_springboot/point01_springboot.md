@@ -875,6 +875,140 @@ public @interface SpringBootApplication {
       </dependency>
       ```
 
-      
 
-      
+# 第七章 SpringBoot高级
+
+## 7.1 SpringBoot注解解析
+
+### 1. @Bean
+
+### 2. @Configuration
+
+### 3. @ConditionOnXxx
+
+> 当构建一个Spring应用的时候，如果在满足指定条件的时候才将某个bean加载到应用上下文中， 在Spring 4.0 时代，可以通过@Conditional注解来实现这类操作
+
+| @Condition系列                                               | 功能                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| @ConditionalOnProperty                                       | 配置文件中是否包含某个属性 - value:属性名称 - havingValue: 属性的值 - matchIfMissing: 没有匹配是否会加载 |
+| @ConditionalOnExpression                                     | 复杂的多属性判断,支持SpEL表达式 - 案例:"${xxx.enable:true}"  |
+| @ConditionalOnBean @ConditionalOnMissingBean                 | Spring容器中是否存在某个Bean                                 |
+| @ConditionalOnClass @ConditionalOnMissingClass               | 判断classpath中是否存在某个类                                |
+| @ConditionalOnSingleCandidate                                |                                                              |
+| @ConditionalOnResource                                       | 判断依赖的指定资源是否存在于classpath                        |
+| @ConditionalOnJndi                                           | 只有指定的资源通过 JNDI 加载后才加载 bean                    |
+| @ConditionalOnJava                                           | 只有运行指定版本的 Java 才会加载 Bean                        |
+| @ConditionalOnWebApplication @ConditionalOnNotWebApplication | 判断是否在web应用里加载bean                                  |
+| @ConditionalOnCloudPlatform                                  | 只有运行在指定的云平台上才加载指定的 bean - CloudPlatform枚举值 |
+
+### 4. @Inherited
+
+- 作用：用来修饰注解。如果某个类使用了被@Inherited修饰的注解，子类可以获取到该类上的注解；
+  - **类继承关系中@Inherited的作用**：类继承关系中，子类会继承父类使用的注解中被@Inherited修饰的注解
+  - **接口继承关系中@Inherited的作用**：接口继承关系中，子接口不会继承父接口中的任何注解，不管父接口中使用的注解有没有被@Inherited修饰
+  - **类实现接口关系中@Inherited的作用**：类实现接口时不会继承任何接口中定义的注解
+- 功能解释：子类继承了父类（由于继承特性，子类会拥有父类的公有一切），在通过反射获取子类所有公有字段/方法/构造器的时候，会获取得到自身和父亲的所有**public**字段/方法/构造器，而通过反射获取所有任何字段/方法/构造器的时候，只能得到自身的所有任何访问权限修饰符的字段/方法/构造器，不会得到父类的任何字段/方法/构造器。然注解不一样，只有当父类的注解中用@Inherited修饰，子类的getAnnotations()才能获取得到父亲的注解以及自身的注解，而getDeclaredAnnotations()只会获取自身的注解，无论如何都不会获取父亲的注解。
+
+### 5. @Import
+
+> @Import注解是用来导入配置类或者一些需要前置加载的类
+
+- 方式一:导入带有@Configuration的配置类
+
+  ```java
+  @Import({TestA.class})
+  @Configuration
+  public class ImportConfig {
+  }
+  ```
+
+- 方式二:导入ImportSelector的实现
+
+  ```java
+  // 1. 首先通过ImportSelector接口封装需要导入的类
+  public class SelfImportSelector implements ImportSelector {
+    @Override
+    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+      return new String[]{"com.test.importdemo.TestB"};
+    }
+  }
+  // 2. 然后用@Import导入这个实现类
+  @Import({TestA.class,SelfImportSelector.class})
+  @Configuration
+  public class ImportConfig {
+  }
+  ```
+
+- 方式三:导入ImportBeanDefinitionRegistrar方式导入
+
+  ```java
+  // 1. 首先通过ImportBeanDefinitionRegistrar注册需要导入的Bean
+  public class SelfImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+      RootBeanDefinition root = new RootBeanDefinition(TestD.class);
+      registry.registerBeanDefinition("testD", root);
+    }
+  }
+  // 2. 然后用@Import导入这个实现类
+  @Import({TestA.class,SelfImportBeanDefinitionRegistrar.class})
+  @Configuration
+  public class ImportConfig {
+  }
+  ```
+
+ ### 6. @AutoConfigurationPackage
+
+```java
+@Inherited
+@Import(AutoConfigurationPackages.Registrar.class)
+public @interface AutoConfigurationPackage {}
+```
+
+> 导入配置配AutoConfigurationPackages.Registrar.class,加载配置类中指定的Bean
+
+### 7. @EnableAutoConfiguration
+
+```java
+@Inherited
+@AutoConfigurationPackage
+@Import(AutoConfigurationImportSelector.class)
+public @interface EnableAutoConfiguration {}
+```
+
+> 导入配置类AutoConfigurationImportSelector.class,加载配置类中指定的Bean
+
+### 8. @SpringBootConfiguration
+
+```java
+@Configuration
+@Indexed
+public @interface SpringBootConfiguration {}
+```
+
+> 本质是@Configuration注解,自动配置
+
+### 9. @SpringBootApplication
+
+```java
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication {}
+```
+
+## 7.2 SpringBoot功能扩展
+
+> 回顾:[Spring对Bean的功能扩展](https://xiaoliuxuesheng.github.io/singular/#/class02_java%E5%85%A8%E6%A0%88/part05_java%E6%A0%B8%E5%BF%83%E6%A1%86%E6%9E%B6/point02_spring/point02_spring?id=_2-springbean%e5%8a%9f%e8%83%bd%e6%89%a9%e5%b1%95)
+
+1. ApplicationListener:启动监听器
+
+   ```java
+   ```
+
+   
+
+## 7.3 SpringBoot源码
+
