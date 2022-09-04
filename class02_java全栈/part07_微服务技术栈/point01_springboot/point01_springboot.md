@@ -1012,3 +1012,37 @@ public @interface SpringBootApplication {}
 
 ## 7.3 SpringBoot源码
 
+### 001-自动装配重点
+
+> 自动装配:就是SpringBoot根据特定的规则将配置文件中,jar包中,环境变量等信息自动将对应规则的组件添加的Spring容器中,所以学习使用的重点的对这些规则的掌握
+
+1. 开发SpringBoot应用时候会在引导类上添加@SpringBootApplication这个注解,这个注解是组合组合注解,加载配置文件实现自动装配主要观察@EnableAutoConfiguration里一部分逻辑
+
+2. @EnableAutoConfiguration这个注解也是个组合注解,@Import标签`@Import(AutoConfigurationImportSelector.class)`就是自动转配的入口了。熟悉Spring的应该知道，被Import的配置类AutoConfigurationImportSelector#selectImports方法会在Spring容器生命周期的 invokeBeanFactoryPostProcessors 阶段（bean工厂后置处理器）调用，核心方法
+
+   ```java
+   @Override
+   public String[] selectImports(AnnotationMetadata annotationMetadata) {
+     if (!isEnabled(annotationMetadata)) {
+       return NO_IMPORTS;
+     }
+     AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(annotationMetadata);
+     return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+   }
+   protected AutoConfigurationEntry getAutoConfigurationEntry(AnnotationMetadata annotationMetadata) {
+     if (!isEnabled(annotationMetadata)) {
+       return EMPTY_ENTRY;
+     }
+     AnnotationAttributes attributes = getAttributes(annotationMetadata);
+     List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);
+     configurations = removeDuplicates(configurations);
+     Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+     checkExcludedClasses(configurations, exclusions);
+     configurations.removeAll(exclusions);
+     configurations = getConfigurationClassFilter().filter(configurations);
+     fireAutoConfigurationImportEvents(configurations, exclusions);
+     return new AutoConfigurationEntry(configurations, exclusions);
+   }
+   ```
+
+   > 

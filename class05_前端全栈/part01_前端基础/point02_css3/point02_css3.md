@@ -662,7 +662,10 @@
 
 3. **布局原理**：Flex布局就是通过flex container中属性的item的属性设置子元素在主轴方向和测轴方向的摆放方式；
 
-4. **display：flex**：①flex：父盒子是块级元素，使用flex属性值后父盒子仍然保留块级元素特点，独占一行②inline-flex：父盒子是块级元素，使用inline-flex属性值后父盒子会有行内块元素特点（如果设置父盒子的宽度和高度，flex容器的的宽度将有子元素宽度决定）
+4. **display：flex**：给盒子添加flex属性后，会给该盒子添加主轴和侧轴，盒子中的子盒子会根据flex的布局属性进行位置排列。并且添加flex属性的盒子属于块级元素（即有宽高属性）
+
+   1. flex：父盒子是块级元素，使用flex属性值后父盒子仍然保留块级元素特点，独占一行
+   2. inline-flex：父盒子是块级元素，使用inline-flex属性值后父盒子会有行内块元素特点（如果设置父盒子的宽度和高度，flex容器的的宽度将有子元素宽度决定）
 
    ```css
    .container {
@@ -675,34 +678,35 @@
    > ```html
    > <!DOCTYPE html>
    > <html>
-   > <head>
-   >  <meta charset="UTF-8">
-   >  <title>Container</title>
-   >  <style>
-   >      .box1 {background: red;display: flex;}
-   >      .box1 div { width: 100px;height: 50px;background: green;}
+   >   <head>
+   >      <meta charset="UTF-8">
+   >      <title>Container</title>
+   >      <style>
+   >          .box1 {background: red;display: flex;}
+   >          .box1 div { width: 100px;height: 50px;background: green;}
    > 
-   >      .box2 {background: red; display: inline-flex;}
-   >      .box2 div {width: 100px;height: background: green;}
-   >  </style>
-   > </head>
-   > <body>
-   > <div class="box1">
-   >  <div>1</div>
-   >  <div>2</div>
-   >  <div>3</div>
-   >  <div>4</div>
-   > </div>
-   > <br>
-   > <div class="box2">
-   >  <div>1</div>
-   >  <div>2</div>
-   >  <div>3</div>
-   >  <div>4</div>
-   > </div>
-   > </body>
+   >          .box2 {background: red; display: inline-flex;}
+   >          .box2 div {width: 100px;height: background: green;}
+   >      </style>
+   >   </head>
+   >   <body>
+   >     <div class="box1">
+   >        <div>1</div>
+   >        <div>2</div>
+   >        <div>3</div>
+   >        <div>4</div>
+   >     </div>
+   >     <br>
+   >     <div class="box2">
+   >        <div>1</div>
+   >        <div>2</div>
+   >        <div>3</div>
+   >        <div>4</div>
+   >     </div>
+   >   </body>
    > </html>
    > ```
+
 
 ### 5.3 Flex Container
 
