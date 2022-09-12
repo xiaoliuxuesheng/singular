@@ -30,12 +30,14 @@
 4. Hello Flutter
 
    ```dart
+   // ① 导入material ui 库
    import 'package:flutter/material.dart';
    
    void main(){
      runApp(const MyApp());
    }
    
+   // ② 初始化一个无状态组件
    class MyApp extends StatelessWidget {
      const MyApp({Key? key}) : super(key: key);
    
@@ -51,7 +53,6 @@
    }
    ```
    
-   - 实例化对象可以省略new关键字
 
 ## 1.2 App结构
 

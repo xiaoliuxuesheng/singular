@@ -1,3 +1,69 @@
+# OAuth2
+
+
+
+1. Oatuh2出现的原因：代理授权（是一种运行第三方应用访问用户数据的方法）；实现方案就是通过OAuth认证，你同意第三方应用访问你的数据，而无需将你的认证信息交给第三方应用；
+
+2. OAuth（Open Authorization）：即开放授权，是一个用于代理授权的标准协议（运行应用程序在不提供用户名密码的情况下访问改用户的数据）
+
+3. OAuth2术语表
+
+   | 关键词                           | 说明                                             |
+   | -------------------------------- | ------------------------------------------------ |
+   | 资源所有者：Resource Owner       | 拥有客户端应用程序想要访问的数据的用户           |
+   | 客户端：Client                   | 想要访问用户数据的应用程序                       |
+   | 授权服务器：Authorization Server | 通过用于许可，授权客户端的服务器                 |
+   | 资源服务器：Resource Server      | 存储客户端想要访问用户数据的系统                 |
+   | 访问令牌                         | 是客户端用户访问资源服务器上用户授权的数据的秘钥 |
+
+4. OAuth-授权码
+
+   <img src='https://img-blog.csdnimg.cn/img_convert/81c74952a2da133798fcd987b0312d1b.png'/>
+
+   > - 授权码存在问题:最后得到的访问令牌不希望人和人都能访问用户信息,如果暴露给浏览器,任何人都可以使用
+   > - 解决方案：客户端从前端获取到授权码，然后将授权码发送给后台，后台再根据客户端向授权服务器发送请求获取认证令牌；后台存储了这个访问令牌，前台通过后台访问资源服务器
+
+5. 认证授权：OAuth解决了代理授权的问题，但是没有提供一个用户身份认证的标准方法，所以提供了OpenID  Connect用于认证
+
+   - 认证：是确保通信实体是所声明的实体
+   - 授权：是验证通信实体是否有权访问资源的过程
+
+6. OpenID Connect：是OAuth2协议之上的标识层，扩展了OAuth2，标准化认证方式，OAuth不会立即提供用户身份，而是会提供用于授权的访问令牌，OpenID Connect使客户端能够通过认证来识别用户，其中认证是在授权服务端执行，实现方式：客户端向授权服务器发起用户登陆和授权告知的请求时，定义一个名叫openid的授权范围，在告知授权服务器需要使用OpenID Connect时,openid是必须存在的scope
+
+   - 客户端发起用于OpenID Connect的认证请求的URL,得到JWT令牌
+
+     ```tex
+     https://accounts.google.com/o/oauth2/v2/auth
+     ?response_type=code
+     &client_id=your_client_id
+     &scope=openid%20contacts
+     &redirect_uri=https%3A//oauth2.example.com/code
+     ```
+
+     
+
+# Authorization Server
+
+1. 介绍：是一个提供OAuth 2.1和OpenID Connect 1.0规范以及其他相关规范实现的框架，是构建在SpringSecurity之上的
+
+2. OpenID Connect 1.0是在OAuth 2.0协议之上的一个简单的身份层。它使客户端能够根据授权服务器执行的身份验证来验证最终用户的身份，并以一种可互操作的rest式方式获得关于最终用户的基本概要信息。本规范定义了一种机制，供OpenID连接依赖方发现终端用户的OpenID提供者，并获取与其交互所需的信息，包括其OAuth 2.0端点位置
+
+   > - 为了让OpenID连接依赖方为终端用户使用OpenID连接服务，RP需要知道OpenID提供商在哪里
+   > - 资源:在WebFinger中作为请求目标的实体。
+   > - 宿主:托管WebFinger服务的服务器。
+   > - 标识符:在特定上下文中唯一表示实体的值。
+
+3. 特征列表
+
+   | 分类          | 特性                                                         | 相关规范                                           |
+   | ------------- | ------------------------------------------------------------ | -------------------------------------------------- |
+   | 授权许可      | 授权码<br />客户端<br />刷新Token                            | OAuth 2.1<br />OpenID Connect Core 1.0             |
+   | 令牌格式      | JWT<br />                                                    | JSON Web Token (JWT)<br />JSON Web Signature (JWS) |
+   | 客户端验证    | `client_secret_basic` <br />`client_secret_post`<br />`client_secret_jwt` <br />`private_key_jwt`<br />`none` |                                                    |
+   | 协议Endpoints | OAuth2 Authorization                                         |                                                    |
+
+   
+
 # 6. 项目模块和依赖项
 
 在Spring Security 3.0中，代码库被细分为独立的jar，更清晰地区分了不同的功能区域和第三方依赖。

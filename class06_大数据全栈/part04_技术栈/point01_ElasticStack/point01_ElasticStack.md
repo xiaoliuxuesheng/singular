@@ -23,7 +23,7 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 
 ## 1.3 ElasticSearch技术栈简介
 
-[![GfcENQ.png](https://s1.ax1x.com/2020/04/08/GfcENQ.png)](https://imgtu.com/i/GfcENQ)
+[![GfcENQ.png](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/GfcENQ.png)](https://imgtu.com/i/GfcENQ)
 
 1. **ElasticSearch**：是使用Java语言编写的并且基于Lucene编写的搜索引擎框架，主要特点是：分布式，零配置，自动发现，索引自动分片，索引副本机制，RESTful风格接口，多数据源，自动搜索负载等。核心技术是倒排索引：在ElasticSrearch中数据存储在索引中，ElasticSearch会根据索引中的数据进行分词保存在分词库中；当需要检索数据时候，首先会根据检索关键字在分词库中检索出索引ID，再根据检索的索引ID去索引中直接查找对应的数据；
    - Lucene：本身就是一个搜索引擎的底层；
@@ -367,6 +367,10 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 ## 2.8 ES基础知识
 
 1. ES是分布式，支持RESTFul搜索和分析的：资源根据请求状态的不同而产生不同的响应；
+   - POST:支持重复请求,不具备幂等性
+   - GET:支持重复请求,不具备幂等性
+   - PUT:不支持重复请求,具备幂等性
+   - DELETE:不知道重复请求,具备幂等性
 2. 倒排索引：ES是面向文档型数据库，一条数据就是表示一个文档；可以与关系性数据库做对比：es中的索引在关系性数据库中表示为一个database，es中的type相当于表，一个文档（json格式的字符串）表示一行数据，文档中的Field（json中的key）表示列名；es中为了做到快速检索，使用倒排索引加速检索：将文档中的内容作为查询的key，而将文档ID作为对应的value；在新版es中type被淘汰了；
 
 # 第三章 ElasticSearch基础
@@ -434,7 +438,7 @@ ElasticStack表示ES技术栈，在ELK的基础设基础上新增了Beats技术�
 💛原文地址为https://www.cnblogs.com/haixiang/p/12040272.html，转载请注明出处!
 🍎**es与SpringBoot的整合以及常用CRUD、搜索API已被作者封装,开箱即用效果很好,欢迎star谢谢!**[github](https://github.com/Motianshi/all-search)
 
-## Mapping简介[#](https://www.cnblogs.com/haixiang/p/12040272.html#1119358845)
+Mapping简介[#](https://www.cnblogs.com/haixiang/p/12040272.html#1119358845)
 
 mapping 是用来定义文档及其字段的存储方式、索引方式的手段，例如利用`mapping` 来定义以下内容：
 
@@ -443,7 +447,7 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 - 格式化时间格式
 - 自定义规则，用于控制动态添加字段的映射
 
-## Mapping Type
+Mapping Type
 
 每个索引都拥有唯一的 `mapping type`，用来决定文档将如何被索引。`mapping type`由下面两部分组成
 
@@ -452,7 +456,7 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 - Fields or properties
   映射类型包含与文档相关的字段或属性的列表。
 
-## 分词器最佳实践[#](https://www.cnblogs.com/haixiang/p/12040272.html#3142227410)
+分词器最佳实践[#](https://www.cnblogs.com/haixiang/p/12040272.html#3142227410)
 
 因为后续的`keyword`和`text`设计分词问题，这里给出分词最佳实践。即**索引时用ik_max_word，搜索时分词器用ik_smart**，这样索引时最大化的将内容分词，搜索时更精确的搜索到想要的结果。
 
@@ -460,7 +464,7 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 
 我们后续会使用`"search_analyzer": "ik_smart"`来实现这样的需求。
 
-## 字段类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2026557297)
+字段类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2026557297)
 
 - 一种简单的数据类型，例如`text`、`keyword`、`double`、`boolean`、`long`、`date`、`ip`类型。
 - 也可以是一种分层的json对象（支持属性嵌套）。
@@ -468,7 +472,7 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 
 针对同一字段支持多种字段类型可以更好地满足我们的搜索需求，例如一个`string`类型的字段可以设置为`text`来支持全文检索，与此同时也可以让这个字段拥有`keyword`类型来做排序和聚合，另外我们也可以为字段单独配置分词方式，例如`"analyzer": "ik_max_word",`
 
-### text 类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#4164760018)
+text 类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#4164760018)
 
 `text`类型的字段用来做全文检索，例如邮件的主题、淘宝京东中商品的描述等。这种字段在被索引存储前**先进行分词**，存储的是分词后的结果，而不是完整的字段。`text`字段不适合做排序和聚合。如果是一些结构化字段，分词后无意义的字段建议使用`keyword`类型，例如邮箱地址、主机名、商品标签等。
 
@@ -480,7 +484,7 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 - search_analyzer：这个字段用来指定**搜索阶段**时使用的分词器，默认使用`analyzer`的设置
 - search_quote_analyzer：搜索遇到短语时使用的分词器，默认使用`search_analyzer`的设置
 
-### keyword 类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#3592965838)
+keyword 类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#3592965838)
 
 `keyword`用于索引结构化内容（例如电子邮件地址，主机名，状态代码，邮政编码或标签）的字段，这些字段被拆分后不具有意义，所以在es中应**索引完整的字段**，而不是分词后的结果。
 
@@ -506,7 +510,7 @@ PUT my_index
 - null_value：如果该字段为空，设置的默认值，默认为`null`
 - ignore_above：设置索引字段大小的阈值。该字段不会索引大小超过该属性设置的值，默认为2147483647，代表着可以接收任意大小的值。但是这一值可以被`PUT Mapping Api`中新设置的`ignore_above`来覆盖这一值。
 
-### date类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#4169588024)
+date类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#4169588024)
 
 支持排序，且可以通过`format`字段对时间格式进行格式化。
 
@@ -516,7 +520,7 @@ PUT my_index
 - 一段`long`类型的数字，指距某个时间的毫秒数，例如`1420070400001`
 - 一段`integer`类型的数字，指距某个时间的秒数
 
-### object类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#3164138260)
+object类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#3164138260)
 
 `mapping`中不用特意指定field为`object`类型，因为这是它的默认类型。
 
@@ -573,7 +577,7 @@ PUT my_index
 }
 ```
 
-### nest类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#1806022256)
+nest类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#1806022256)
 
 `nest`类型是一种特殊的`object`类型，它允许`object`可以以数组形式被索引，而且数组中的某一项都可以被独立检索。
 
@@ -606,7 +610,7 @@ PUT my_index/_doc/1
 }
 ```
 
-### range类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2473687704)
+range类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2473687704)
 
 支持以下范围类型：
 
@@ -653,7 +657,7 @@ PUT range_index/_doc/1?refresh
 }
 ```
 
-## 实战：同时使用keyword和text类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2674254835)
+实战：同时使用keyword和text类型[#](https://www.cnblogs.com/haixiang/p/12040272.html#2674254835)
 
 **注：term是查询时对关键字不分词，keyword是索引时不分词**
 
@@ -764,7 +768,7 @@ GET idx_item/_search
 "term": {"title": "苏泊尔煮饭SL3200"}
 ```
 
-## 实战：格式化时间、以及按照时间排序[#](https://www.cnblogs.com/haixiang/p/12040272.html#2847931562)
+实战：格式化时间、以及按照时间排序[#](https://www.cnblogs.com/haixiang/p/12040272.html#2847931562)
 
 我们创建索引`idx_pro`，将`mytimestamp`和`createTime`字段分别格式化成两种时间格
 
@@ -907,6 +911,7 @@ GET idx_pro/_search
 
    ```json
    PUT /person
+   
    {
      "settings": {
        "number_of_shards": 5,
@@ -1770,7 +1775,13 @@ GET idx_pro/_search
 
     -  https://github.com/elastic/elasticsearch-java/
 
-# 第四章 Kibana基础
+# 第四章 Elasticsearch优化
+
+# 第五章 Elasticsearch 集群
+
+
+
+# 第六章 Kibana基础
 
 
 

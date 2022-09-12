@@ -6,39 +6,157 @@
 
 # 第一章 Gradle介绍与环境搭建
 
-## 1.1 Gradle相关介绍
+## 1.1 项目构建工具
+
+1. Ant:Apache推出的纯Java编写的构建工具,同xml管理项目,但是Ant没有强加任何编码约定,开发人员需要编写繁杂的xml文件
+2. Maven:2004年Apache推出的使用xml管理项目的构建工具,项目构建僵化,配置文件不灵活,不方便自定义组件
+3. Gradle:2012年Google推出的基于Groovy语言的构建工具,集成了Ant和Maven的优势,侧重于大项目构建,但是学习成本高,脚本灵活,版本兼容性差
+
+## 1.2 Gradle相关介绍
 
 1. **领域特定语言DSL** : **求专不求全**，如UML建模语言、html语言等等；特点是①特定领域的专用语言②使用范围小, 功能专一
 2. **Groovy 编程语言**：①是一种基于JVM的敏捷开发语言②结合Python, Ruby等脚本语言的有许多强大特性③Groovy可以和Java完美结合 - 而且可以使用Java的所有的库
 3. **Groovy 语言特性**：①语法上支持动态类型, 闭包等新一代语言特性②无缝集成所有已存在的Java类库③支持面向对象编程, 也支持面向过程编程
 4. **Groovy 优势**：①更加敏捷的编程语言 : 非常多的语法糖②入门非常容器 , 功能非常强大③既可以用作编程也可以用作编写脚本
 
-## 1.2 开发坏境搭建
+## 1.3 开发坏境搭建
 
 1. Groovy是基于JVM的一种编程语言：Groovy需要准备JDK环境
+
 2. Groov下载并快捷环境搭建 : [Groovy官网](http://www.groovy-lang.org/)
    - Mac系统的Groovy安装 : 解压并配置`~/bin`坏境变量
-   
+
    - Win系统的Groovy安装 : 解压并配置`~/bin`坏境变量
-   
+
      ```sh
      GRADLE_HOME=
      path=%GRADLE_HOME%/bin
      GRADLE_USER_HOME=
      ```
+
 3. IDEA开发工具的Groovy环境配置
    - 开启IDEA的Groovy插件
    - 创建Groovy工程 : 选择本地的Groovy坏境
 
+## 1.4 Gradle项目创建
+
+1. 使用Idea工具创建Gradle项目
+
+2. 使用命令行工具创建Gradle项目
+
+   ```sh
+   gradle init
+   ```
+
+3. Gradle项目目录结构
+
+   ```text
+   |-- /build:封装编译后的字节码
+   |--	/gradle:封装包装器文件夹
+   			|--	/wrapper
+   					|-- gradle-wrapper.jar
+   					|--	gradle-wapper.properties
+   |--	/src
+   |--	gradlew:包装器启动脚本(linux)
+   |--	gradlew.bat:包装器启动脚本(windowns)
+   |--	build.gradle:构建脚本
+   |--	settings.gradle:设置文件,定义项目及子项目信息
+   ```
+
+## 1.5 Gradle常用指令
+
+> gradle指令需要在含有build.gradle文件的目录中执行
+
+| 指令                 | 作用                      |
+| -------------------- | ------------------------- |
+| gradle clean         | 情况build目录             |
+| gradle classes       | 编译业务代码和配置文件    |
+| gradle test          | 编译测试代码,生成测试报告 |
+| gradle build         | 构建项目                  |
+| gradle build -x test | 跳过测试构建项目          |
+
+## 1.6 Gradle源设置
+
+1. 在Gradle安装目录中的init.d目录中新建`.gradle`结尾的初始化脚本:init.gradle
+
+   > 阿里云仓库镜像源地址:https://developer.aliyun.com/mvn/guide
+
+   ```groovy
+   buildscript {
+     repositories {
+       mavenLocal()
+       maven {
+         url 'https://maven.aliyun.com/repository/public/'
+       }
+       maven {
+         url 'https://maven.aliyun.com/repository/spring/'
+       }
+       mavenCentral()
+     }
+   }
+   ```
+
+2. 启用init.gradle文件的方式
+
+   - 在命令行指定文件:`gradle --init-script [init.gradle目录]`
+   - 把init.gradle放到家目录的`.gradle`目录下
+   - 把以`.gradle`结尾的文件放到用户家目录的`.gradle/init.d/`目录下
+   - 把以`.gradle`结尾的文件放到`GRADLE_HOME/init.d`目录下
+
+3. 仓库地址说明
+
+   - mavenLocal():指定使用本地Maven仓库,Maven在配置时的settings文件指定的仓库地址,查找jar包的顺序:①家目录/.m2/settings.xml②M2_HOME/conf/settings.xml③家目录/.m2/repository
+   - maven(url):指定maven仓库,一般用私有仓库地址或其他第三方仓库
+   - mavenCentral():maven的中央仓库
+
+## 1.7 Wrapper包装器
+
+- GradleWrapper实际上是对Gradle的一层包装,用于解决实际开发中不同的项目遇到的不同Gradle版本的问题,比如把代码分享给别人,别人可能没有安装gradle或者安装的gradle版本不一致,这个时候可以考虑使用gradleWrapper,实际上有了GradleWrapper后本地实际上可以不配做Gradle,使用gradle项目自带的wrapper也是可以的
+
+- GradleWrapper的使用:项目中gradlew和gradlew.cmd就是wrapper中规定了gradle版本,或者通过命令指定gradle版本
+
+  | gradlew指令参数           | 说明                              |
+  | ------------------------- | --------------------------------- |
+  | --gradle-version          | 用于指定使用的Gradle版本          |
+  | --gradle-distribution-url | 用于指定下载Gradle发行版的url地址 |
+
+- gradlewrapper.properties配置文件说明
+
+  | 参数字段         | 说明                                 |
+  | ---------------- | ------------------------------------ |
+  | distributionBese | 通过gradlewrapper下载Gradle的目录    |
+  | distributionPath | 相对distributionBese解压Gradle的目录 |
+  | distributionUrl  | Gradle发行版压缩包下载地址           |
+  | zipStoreBase     | 存在zip压缩包                        |
+  | zipStorePath     | 存在zip压缩包                        |
+
+  > distributionBese指定的GRALE_USER_HOME环境变量如果没有会去家目录的.gradle文件夹中
+
 # 第二章 Gradle核心语法
 
-## 2.1 Groovy基础语法
+## 2.1 Groovy简介
+
+Groovy可以被视为Java的一种脚本化的改良版,Groovy也可以运行在jvm上,所以亏与java代码以及java和核心库交互,是一种成熟的面向对象的编程语言,并且可以用于纯粹的脚本语言,groovy代码的特点:
+
+- 功能强大:提供动态类型转换、闭包、元编程的支持
+- 支持函数式编程：不需要main函数
+- 默认导入常用的包
+- 类不支持default作用域，且默认作用域为public
+- Groovy中基本类型也是对象，可以直接调用对象的方法
+
+Groovy基本是指
+
+- Groovy作为类使用：编译后默认继承GroovyObject
+- Groovy作为脚本使用：编译后默认继承Script
+- Groovy混合脚本和类使用：脚本中的类不能和文件重名
+
+## 2.2 Groovy基础语法
 
 ### 1. 变量
 
 - 变量的类型：在Groovy中变量分为基本类型和对象类型：本质上都是对象类型，基本类型本质是基本类型的包装类
 
-- **变量的定义：建议使用强类型定义变量**：变量的定义方式有强类型方式定义和弱类型方式定义（弱类型变量类型根据值推断）
+- **变量的定义：建议使用强类型定义变量**：变量的定义方式有强类型方式定义和弱类型方式定义（弱类型变量类型根据值推断），弱类型定义的变量默认会添加get和set方法
 
   ```groovy
   变量类型 变量名 = 变量值 			# 定义方式与Java变量定义方式相同
@@ -51,11 +169,11 @@
 
 - 是Java的String和GStringImpl作为参数可以相互替换和相互调用，在Groovy中的String定义格式有三种
 
-  | 定义方式 | 使用说明                                         |
-  | -------- | ------------------------------------------------ |
-  | 单引号   | 普通无格式字符串                                 |
-  | 双引号   | 可扩展字符串 : 可以使用`${}`引用变量表达式<br /> |
-  | 三单引号 | 格式化输出字符串                                 |
+  | 定义方式 | 使用说明                                                     |
+  | -------- | ------------------------------------------------------------ |
+  | 单引号   | 普通无格式字符串                                             |
+  | 双引号   | 可扩展字符串 : 可以使用`${}`引用变量表达式<br /> - 大括号也可以省略 |
+  | 三单引号 | 格式化输出字符串                                             |
 
 ### 3. 字符串GString
 
@@ -119,8 +237,6 @@
 
 - **StringAPI来源四**：**StringGroovyMethods**闭包类型参数方法（查看闭包使用详解）
 
-  - 
-
 ### 5. Groovy语句
 
 - **顺序语句**
@@ -164,7 +280,7 @@
     }
     ```
 
-## 2.2 Groovy闭包
+## 2.3 Groovy闭包
 
 ### 1. ​​ 闭包基础
 
@@ -342,17 +458,45 @@
   public static final int DELEGATE_ONLY = 3;	//	仅仅delegate
   ```
 
-## 2.3 Gradle常见数据结构
+## 2.4 Gradle常见数据结构
 
-### ⚓️ Groovy列表
+> groovy支持List、Map集合操作，并且扩展了API
 
+### 1. Groovy列表:List
 
+### 2. Groovy映射:Map
 
-### ⚓️ Groovy映射
+### 3. Groovy范围
 
-### ⚓️ Groovy范围
+## 2.5 Gradle面向对象特性
 
-## 2.4 Gradle面向对象特性
+1. 使用def定义变量：默认会给变量添加get和set方法
+
+   ```groovy
+   class ClassName {
+       def name
+   }
+   
+   def a = new ClassName()
+   a.setName("aaa")
+   a.getName()
+   ```
+
+2. 对象取值可以使用方括号
+
+   ```groovy
+   class ClassName {
+       def name
+   }
+   
+   def a = new ClassName()
+   a.setName("aaa")
+   a["name"]
+   ```
+
+3. 方法调用的时候，一个参数可以不使用小括号
+
+4. 
 
 # 第三章 Gradle高级用法
 

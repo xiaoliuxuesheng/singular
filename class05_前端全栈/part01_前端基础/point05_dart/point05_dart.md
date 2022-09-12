@@ -2,7 +2,7 @@
 
 ## 1.1 Dart介绍
 
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Dart是google于2011发布的计算机语言，其初衷是志向改变web开发的现状，主要是fix javascript的问题。随着时间的发展，Dart自身也经历了无数次的颠覆性迭代，几乎现代语言该有的特征Dart都有，比如async/await异步模式编程、完全内存隔离的isolate多线程编程范式、函数编程范式、面向对象编程范式、静态数据类型、JIT+AOT的编译优化等等。而Dart的生态，已经逐渐成型。虽然还不敢说超越Javascript，但是后起之势非常迅猛。而Flutter就是基于Dart语言的UI框架，可以快速在iOS和Android上构建高质量原生应用，最大特点是跨平台和高性能，Flutte涉及到各个主流平台的开发：
+​	Dart是google于2011发布的计算机语言，其初衷是志向改变web开发的现状，主要是fix javascript的问题。随着时间的发展，Dart自身也经历了无数次的颠覆性迭代，几乎现代语言该有的特征Dart都有，比如async/await异步模式编程、完全内存隔离的isolate多线程编程范式、函数编程范式、面向对象编程范式、静态数据类型、JIT+AOT的编译优化等等。而Dart的生态，已经逐渐成型。虽然还不敢说超越Javascript，但是后起之势非常迅猛。而Flutter就是基于Dart语言的UI框架，可以快速在iOS和Android上构建高质量原生应用，最大特点是跨平台和高性能，Flutte涉及到各个主流平台的开发：
 
 - 首先就是，flutter框架横扫APP，Android和iOS平台日臻完善。
 - Flutter for web也已经合并到稳定版本，
@@ -168,7 +168,13 @@
    }
    ```
 
-2. Hello World说明
+2. 运行dart脚本
+
+   ```sh
+   dart 文件名称
+   ```
+
+3. Hello World说明
 
    - dart代码的入口是main函数
 
@@ -300,7 +306,7 @@
      | remainder(被除数)             | 当前值除以被除数后的余数                                    |
      | clamp(最小值,最大值)          | 当数值大于最大值或小于最小值,会取设定的边界值，否则取当前值 |
      | ceil()                        | 向上取整：获取不小于当前值的最小整数                        |
-     | eilToDouble()                 | 向上取整：获取不小于当前值的最小整数，返回浮点数            |
+     | ceilToDouble()                | 向上取整：获取不小于当前值的最小整数，返回浮点数            |
      | floor()                       | 向下取整：获取不大于当前值的最大整数                        |
      | floorToDouble()               | 向下取整：获取不大于当前值的最大整数，返回浮点数            |
      | round()                       | 四舍五入：获取最接近当前值的整数                            |
@@ -723,6 +729,7 @@
 - 函数参数
 
   ```dart
+  // 案例1
   void myPrint(String str) {
     print("自定义输出函数" + str);
   }
@@ -733,6 +740,24 @@
   void main(List<String> args) {
     // 调用函数时候, 将函数作为参数传递
     test("aaa", myPrint);
+  }
+  
+  // 案例2
+  void func4(Function cal) {
+    cal();
+  }
+  void main(List<String> args) {
+    // 调用函数时候, 将函数作为参数传递
+    func4(() => {print("参数传了个寂寞")});
+  }
+  
+  // 案例3
+  void func5(Function cal) {
+    cal("回调带参数");
+  }
+  void main(List<String> args) {
+    // 调用函数时候, 将函数作为参数传递
+    func5((String call) => {print(call)});
   }
   ```
 
@@ -769,7 +794,6 @@
      }
      ```
 
-     
 
 ## 3.4 异步函数
 
@@ -828,44 +852,42 @@
    - 属性：用来描述类的变量
    - 方法：类中定义的函数称为方法
 
-3. 类的定义
+3. 类的定义:①属性定义、②方法的定义、③类的实例化、④类的成员访问
+
+   > - flutter2.0添加了Sound null safety空安全声明，目的是通过显式声明可能为null的变量，增加Dart语言的健壮性;
+   > - 因为Dart语言变量可以存null或者具体的值，因此在日常的开发中可能因为忘记赋值或者变量延迟赋值，导致访问某个变量时为null，导致程序运行时抛出exception。
+   > - 从源码级解决null异常导致的错误
+   >   1. 在类型声明后添加 "?" 以标识这个变量是可以为null的
+   >   2. 在类型声明前添加 "late" 以标识这个变量在使用前一定要进行初始化。
 
    ```dart
+   void main(List<String> args) {
+     var p1 = new Persion();
+     // ?标记的变量可以为null
+     print(p1.name);
+     print(p1.age);
+     
+     // 标记了late类型的变量如果不初始化会执行报错
+     p1.flag = false;
+     print(p1.flag);
+     
+     // 方法调用
+     p1.pringName();
+   }
+   
    class Persion {
-     // 类的属性
-     String name;
-   
-     // 构造函数1:默认构造函数 与类同名的函数
-     Persion() {
-       print("========被new出了一个对象");
-     }
-   
-     // 构造函数2: 命名构造函数
-     Persion.name(String name) {
-       this.name = name;
-     }
-   	// 构造函数3: 命名构造函数
-     Persion.simple(this.name);
+     // 属性: 可以为null
+     String? name;
+     // 属性: 没有标记必须初始化
+     int age = 0;
+     // 属性: late标记,使用前必须初始化
+     late bool flag;
    
      // 类的方法
      void pringName() {
        print(this.name);
      }
    }
-   
-   void main(List<String> args) {
-     var p1 = new Persion();
-     p1.name = "test";
-     print(p1.name);
-     p1.pringName();
-   
-     var p2 = new Persion.name("name");
-     print(p2.name);
-   
-     var p3 = new Persion.simple("simple");
-     print(p3.name);
-   }
-   
    ```
 
 ## 4.2 构造函数
@@ -873,26 +895,47 @@
 1. 默认构造函：与类名同名的函数，和Java的构造函数相同，实例化对象的时候会调用构造函数
 
    ```dart
-   class Persion {
-     // 类的属性
-     String name;
+   void main(List<String> args) {
+     Car1 c1 = new Car1();
+     print(c1);
+   }
    
-     // 构造函数:默认构造函数 与类同名的函数
-     Persion() {
-       print("========被new出了一个对象");
+   class Car1 {
+     String? name;
+   
+     Car1() {
+       print("默认无参构造函数");
      }
    }
    ```
 
-2. 默认构造函数简写：构造函数中定义参数可以简写
+2. 有参构造函数简写：构造函数中定义参数可以简写
 
    ```dart
-   class Persion {
-     // 类的属性
-     String name;
+   void main(List<String> args) {
+     Car1 c1 = new Car1("标准构造函数");
+     print(c1);
+     print(c1.name);
    
-     // 构造函数:默认构造函数 与类同名的函数
-     Persion(this.name);
+     Car2 c2 = new Car2("简写构造函数");
+     print(c2);
+     print(c2.name);
+   }
+   
+   // 标准的有参构造函数
+   class Car1 {
+     String? name;
+   
+     Car1(String name) {
+       this.name = name;
+     }
+   }
+   
+   // 有参构造函数简写方式
+   class Car2 {
+     String? name;
+   
+     Car2(this.name);
    }
    ```
 
@@ -917,23 +960,31 @@
 4. 命名构造函数：简写
 
    ```dart
-   class Persion {
-     // 类的属性
-     String name;
-   	// 构造函数3: 命名构造函数
-     Persion.simple(this.name);
-   }
    void main(List<String> args) {
-     var p3 = new Persion.simple("simple");
-     print(p3.name);
+     Person namePerson = new Person.name("一个参数的构造函数");
+     print(namePerson.name);
+     print(namePerson.age);
+   
+     Person allPerson = new Person.all("一个参数的构造函数", 23);
+     print(allPerson.name);
+     print(allPerson.age);
+   }
+   
+   class Person {
+     String? name;
+     int? age;
+   
+     // 命名构造函数：简写
+     Person.name(this.name);
+     Person.all(this.name, this.age);
    }
    ```
 
 5. 常量构造函数：如果类创建的对象不会改变的话，会使用到常量类（java中的单例概念）
 
    > - 常量类中的属性必须是final
-   > - 常量构造函数的标识是使用const修饰
-   >   - 声明不可变对象：必须声明的new一个const对象
+   > - 常量构造函数的标识是使用const修饰,并且常量构造函数只能简写方式,不能有body
+   > - 声明不可变对象：必须声明的new一个const对象
 
    ```dart
    class Point {
@@ -1037,32 +1088,36 @@
    ```dart
    class Person {
      // get set
-     int _age;
-     
+     int? _age;
+   
      // get 方法不能用小括号
-     int get age {
-       return this._age;
+     int? get getAge {
+       return _age;
      }
    
      // set 方法
-     set age(num age) {
+     set setAge(int age) {
        this._age = age;
      }
    }
+   
    void main(List<String> args) {
      Person person = new Person();
      // 访问get方法
-     int a = person.age
+     var a = person.getAge;
+     print(a);
      // 设置set方法
-     person.age = 23;
+     person.setAge = 23;
+     print(person.getAge);
    }
+   
    ```
 
 ## 4.5 初始化列表 
 
 1. 初始列表概述
 
-   - 作用：在构造函数中设置属性的默认值
+   - **作用：在构造函数中设置属性的默认值**
    - 时机：在构造函数体执行前执行
    - 语法：使用逗号分隔初始化表达式
    - 功能：常用于设置final常量的值
@@ -1094,7 +1149,6 @@
      print(p2.weight);
      print(p2.height);
    }
-   
    ```
 
 ## 4.6 元数据
