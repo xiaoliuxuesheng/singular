@@ -109,6 +109,8 @@
 
 1. **Material**：Material Design是由谷歌推出的全新设计语言，这种设计语言旨在为手机、平板电脑、台式机和其他平台提供更一致、更广泛的外观和感觉。Material Design风格是一直非常有质感的设计风格，并会提供一些默认的交互动画，对于搞Android开发的来说应该耳熟能详了。MaterialApp代表使用Material Design风格的应用，里面包含了其他所需的基本控件。
 
+   > https://m3.material-io.cn/
+
    ```dart
    import 'package:flutter/material.dart';
    ```
@@ -121,9 +123,9 @@
 
 ## 2.3 Widget概述
 
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Flutter Widget采用现代响应式框架构建，这是从React中获得的灵感，中心思想是用widget构建你的UI。 Widget描述了他们的视图在给定其当前配置和状态时应该看起来像什么。当widget的状态发生变化时，widget会重新构建UI，Flutter会对比前后变化的不同， 以确定底层渲染树从一个状态转换到下一个状态所需的最小更改。
+​	Flutter Widget采用现代响应式框架构建，这是从React中获得的灵感，中心思想是用widget构建你的UI。 Widget描述了他们的视图在给定其当前配置和状态时应该看起来像什么。当widget的状态发生变化时，widget会重新构建UI，Flutter会对比前后变化的不同， 以确定底层渲染树从一个状态转换到下一个状态所需的最小更改。
 
-<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>在Flutter中几乎所有的对象都是一个 widget，它不仅可以表示UI元素，也可以表示一些功能性的组件。在 Flutter中widget 的功能是“描述一个UI元素的配置信息（是 Widget 接收的参数）”，它就是说， Widget 其实并不是表示最终绘制在设备屏幕上的显示元素，而是根据配置信息最终生成Layer树然后显示。Flutter中根据Widget的布局绘制流程如下：
+​	在Flutter中几乎所有的对象都是一个 widget，它不仅可以表示UI元素，也可以表示一些功能性的组件。在 Flutter中widget 的功能是“描述一个UI元素的配置信息（是 Widget 接收的参数）”，它就是说， Widget 其实并不是表示最终绘制在设备屏幕上的显示元素，而是根据配置信息最终生成Layer树然后显示。Flutter中根据Widget的布局绘制流程如下：
 
 1. 根据 Widget 树生成一个 Element 树，Element 树中的节点都继承自 `Element` 类。
 2. 根据 Element 树生成 Render 树（渲染树），渲染树中的节点都继承自`RenderObject` 类。
