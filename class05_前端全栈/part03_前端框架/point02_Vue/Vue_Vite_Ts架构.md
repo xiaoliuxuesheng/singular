@@ -346,8 +346,11 @@
 
 4. 设置编辑器格式化文件跨借鉴
    
-   - WebStom：File | Settings | Keymap | Plugins | Prettier | Reformat with Prettier
-
+   - WebStom
+     - WIN:File | Settings | Keymap | Plugins | Prettier | Reformat with Prettier
+     - MAC: WIN + 搜索prettier -> 选择prettierPackage -> 选择复选框
+   - VSCode:
+   
 5. 重启项目代码`prettier/prettier`检查报错，prettier组件集成成功，修改代码格式
 
 ## 06、VueRouter
