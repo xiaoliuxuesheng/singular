@@ -178,6 +178,76 @@
 
 # 第二章 Nacos配置中心
 
+## 2.1 什么是配置中心
+
+1. 什么是配置中中心
+2. 主流配置中心
+
+## 2.2 Nacos配置中心简介
+
+1. Nacos配置中心
+2. Nacos特性
+3. 配置中心相关概念
+4. 安装并启动单机版Nacos
+
+## 2.3 Nacos配置入门
+
+1. SpringAlibabaCloud服务版本管理
+
+   ```xml
+   <dependencyManagement>
+     <dependencies>
+       <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-dependencies</artifactId>
+         <version>2.6.6</version>
+         <scope>import</scope>
+         <type>pom</type>
+       </dependency>
+       <dependency>
+         <groupId>org.springframework.cloud</groupId>
+         <artifactId>spring-cloud-dependencies</artifactId>
+         <version>2021.0.1</version>
+         <type>pom</type>
+         <scope>import</scope>
+       </dependency>
+       <dependency>
+         <groupId>com.alibaba.cloud</groupId>
+         <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+         <version>2021.0.1.0</version>
+         <type>pom</type>
+         <scope>import</scope>
+       </dependency>
+     </dependencies>
+   </dependencyManagement>
+   ```
+
+2. 添加NacosConfig依赖
+
+   ```xml
+   <dependency>
+     <groupId>com.alibaba.cloud</groupId>
+     <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+   </dependency>
+   ```
+
+3. 在服务根目录添加配置文件`bootstrap.yml`
+
+   ```yaml
+   spring:
+     application:
+       name: server-user
+     cloud:
+       nacos:
+         config:
+           server-addr: 127.0.0.1:8848
+           file-extension: yaml
+           username: nacos
+           password: nacos
+   ```
+
+   
+
 ## 2.1 Nacos配置相关概念
 
 1. 命名空间：命名空间可用于进行不同环境的配置隔离。一般一个环境划分到一个命名空间

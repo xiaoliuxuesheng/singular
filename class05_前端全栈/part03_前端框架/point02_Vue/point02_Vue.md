@@ -395,14 +395,14 @@ var vm = new Vue({
   >            <Dialog v-model="flag" v-model:title.xlxs="title"></Dialog>
   >        </div>
   >    </template>
-  >       
+  >          
   >    子组件中接收修饰符的值: 修饰符Modifiers对象
   >    <script setup lang="ts">
   >    import { defineProps, defineEmits } from 'vue'
-  >       
+  >          
   >    type Props = {
   >        modelValue: boolean
-  >         
+  >            
   >      	// title属性和title属性的修饰符(非必传)
   >        title: string
   >        titleModifiers?: {
@@ -410,7 +410,7 @@ var vm = new Vue({
   >        }
   >    }
   >    const propsData = defineProps<Props>()
-  >       
+  >          
   >    const emit = defineEmits(['update:modelValue', 'update:title'])
   >    const closeSub = () => {
   >        console.log(propsData.titleModifiers)
@@ -2390,7 +2390,7 @@ import { onUnmounted, onBeforeUnmount } from 'vue'
    > - 可以配合js动画库生成动画效果：gsap官网：https://greensock.com/
    >
    >   ```tsx
-   >           
+   >             
    >   ```
 
 6. transition appear属性：设置初始节点过度 就是页面加载完成就开始动画 对应三个状态
@@ -3356,16 +3356,16 @@ this.$router.forward()
   >    <router-link to="/home">Home</router-link>
   >    <!-- 渲染结果 -->
   >    <a href="/home">Home</a>
-  >                         
+  >                            
   >    <!-- 使用 v-bind 的 JS 表达式 -->
   >    <router-link :to="'/home'">Home</router-link>
-  >                         
+  >                            
   >    <!-- 同上 -->
   >    <router-link :to="{ path: '/home' }">Home</router-link>
-  >                         
+  >                            
   >    <!-- 命名的路由 -->
   >    <router-link :to="{ name: 'user', params: { userId: '123' }}">User</router-link>
-  >                         
+  >                            
   >    <!-- 带查询参数，下面的结果为 `/register?plan=private` -->
   >    <router-link :to="{ path: '/register', query: { plan: 'private' }}">
   >      Register
@@ -4263,7 +4263,7 @@ this.$router.forward()
 
 ### 7.7 Pinia持久化插件
 
-- pinia和Vuex有个通病：刷新页面状态会丢失。可以通过批念插件缓存刷新前的值
+- pinia和Vuex有个通病：刷新页面状态会丢失。可以通过pinia插件缓存刷新前的值
 
 - 下载pinia插件，
 

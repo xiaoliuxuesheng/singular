@@ -14,16 +14,16 @@
 
 1. Kafka介绍
    - Kafka是采用Scala语言开发的一个多分区、多副本并且基于Zookeeper协议的分布式消息系统。目前Kafka已经定位为衣蛾分布式流式处理平台，它以高吞吐、可持久化、可水平扩展、支持流处理等对种特性而被广泛应用。
-   
+
    - **传统定义**：Kakfa是一个分布式的发布-订阅消息系统，能够支撑海量数据的传输；用于大数据实时处理
-   
+
      > 发布订阅:消息发布者不会直接把消息发送给订阅者,而是将消息分为不同的类别(topic),订阅者只接收感兴趣的类别
-   
+
      - Kafka将消息持久化到磁盘中，并对消息创建了备份保证数据的安全；
      - Kafka在保证了较高的处理速度的同时，又能保证数据处理的低延迟和零丢失；
-   
+
    - **最新定义**：开源的分布式事件流平台，用于高性能数据管道、流分析、数据继承、关键任务应用。
-   
+
 2. Kafka特性
    - 高吞吐量、低延迟：每秒处理几十万条，延迟最低只有几毫秒，每个主题可以分多个分区，消费者对分区进行消费
    - 可扩展性：支持热扩展
@@ -31,18 +31,22 @@
    - 容错性：允许集群节点失败
    - 高并发：支持数千个客户同时读写
    - 可伸缩：
-   
+
 3. Kafka使用场景
+
    - 日志收集：通过Kaka以统一接口服务的方式开放给各种consumer
    - 消息系统：结构生成和消费者；缓存消息
    - 用户活动跟踪：记录用户活动
    - 运营指标：记录运营监控数据
    - 流式处理：
-   
-4. Kafka记录
-   - 前端埋点记录用户行为到日志服务器，最终日志会落盘到Hadoop集群，用于数据分析
-   - 在日志服务器会安装Flume监控日志，采集速度小于100M/s，效率低
-   - 所以需要提供Kafka集群解决方案：可以大量接收推送消息，并且按消费者的速度接收消息
+
+4. Kafka对埋点业务场景的使用流程
+
+   ![image-20221112084851805](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20221112084851805.png)
+
+   - ① 前端埋点记录用户行为生成log文件,日志服务器获取到这些文件(最终目的日志会落盘到Hadoop集群，用于数据分析)
+   - ② 方案一: 在日志服务器会安装Flume监控日志，采集速度小于100M/s，并且Hadoop获取数据的数据也有大小限制
+   - ③ 方案二: 所以Flume采集日志后全部灌入Kafka集群,Kafka特点是：可以大量接收推送消息，并且按消费者的速度接收消息
 
 ### 1.2 消息队列
 
@@ -56,26 +60,28 @@
    | 优点     | 单机吞吐量：万级 可用性：非常高 功能支持： MQ功能完备 高扩展性 | 单机吞吐量：百万级 可用性：分布式的非常高 依赖ZK可动态扩展节点高性能高吞吐，消息可指定追溯 | 单机吞吐量：十万级 可用性： 非常高，分布式 架构： 消息可靠性高 功能支持：MQ功能完备 高扩展性：支持事务 | 单机吞吐量： 万级 健壮、稳定、医用、跨平台、支持多种语言； 功能支持： MQ功能完备 高扩展性： 支持事务 |
    | 缺点     | 项目比较陈旧，官方社区在5.X之后对其维护越来越少              | 严格的顺序机制，不支持消息优先级，不支持标准协议             | 目前只支持java及c++；                                        | Elang语言难度大，很难扩展,研发人员较少                       |
    | 综合评价 | 小型系统比较适用，但是因为维护越来越少，建议不用             | 在日志和大数据方向使用较多                                   | 阿里系，国内互联网公司使用居多                               | 适用于稳定性要求优先的企业级应用                             |
+   
 2. 消息队列使用场景
    - 缓冲/消峰：控制数据流经过系统的速度，解决消息生成和消费的处理速度不一致的问题
    - 解耦：独立大数据组件的处理情况，用中间件保证他们遵循相同的接口
    - 异步通信：运行用户把消息放入队列，但是不是立即处理，在需要使用的时候再处理
+   
 3. Kafka消息队列模式
    - 点对点模式：消费者主动拉取消息，消息收到后清除消息
    - 发布订阅模式：可以有多个topic主题，将消息进行分类，发布者将消息发送给Topic；消费者只订阅关心的Topic，消费数据后，不删除数据，每个消费者相互独立，都可以消费到数据
 
 ### 1.3 Kafka架构简图
 
-![](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image_20220823142754.png)
+![image-20221112083142085](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20221112083142085.png)
 
 1. Zookeeper：kafka通过zookeeper来存储集群的meta信息
-2. Producers将消息发送给Topic
-3. 每个Topic包含一个或多个partition,接收消息后把消息保存到对应的Partition并且同步给对应的副本
-4. ConsumerGroup:每个消费者组订阅一个Topic,接收发送到Topic中的数据
+2. Producers接收外部接口的消息：将消息发送给Topic
+3. Topic：生成者可以发消息发送给多个Topic；为了提高吞吐量，每个Topic分为一个或多个partition（每个分区的消息是不一样的）；为了防止数据丢失，每个分区会对应有一个副本,接收消息后把消息保存到对应的Partition并且同步给对应的副本，分区分为leader和follower；
+4. 消费者：因为topic分成了多个分区，消费者消费数据又是针对topic的，所以每个分区对应一个消费者，这些消费者组成ConsumerGroup，这样每个消费者组订阅一个Topic,接收发送到Topic中的数据；消费者组的每一个消费者对应一个分区
 
 ### 1.4 Kafka架构术语
 
-![](https://gitee.com/panda_code_note/commons-resources/raw/ab604b6f27b18e5bf779cc5e1b2d1a3e82559333/part01_images/image-20220710081523526.png)
+![](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220710081523526.png)
 
 - **zookeeper**：zookeeper负责维护和协调broker。当kafka系统中新增broker或某个broker发生故障失效时，由zookeeper通知生产者和消费者。生产者和消费者依据zookeeper的broker状态与broker协调数据段发布和订阅任务，在最新版本kafka中zookeeper已经成为kafka的瓶颈，去zookeeper化在进行中；
 - **broker**：Kafka 集群包含一个或多个服务器，服务器节点称为broker。broker存储topic的数据。如果某topic有N个partition，集群有N个broker，那么每个broker存储该topic的一个partition。如果某topic有N个partition，集群有(N+M)个broker，那么其中有N个broker存储该topic的一个partition，剩下的M个broker不存储该topic的partition数据。如果某topic有N个partition，集群中broker数目少于N个，那么一个broker存储该topic的一个或多个partition。在实际生产环境中，尽量避免这种情况的发生，这种情况容易导致Kafka集群数据不均衡
@@ -99,7 +105,10 @@
 
 ### 2.1 环境准备
 
-1. 安装VMware，并且准备安装Kafka集群的3台虚拟机
+1. 安装VMware，并且准备安装Kafka集群的3台虚拟机，进行集群规划
+
+   > - 安装3个Zookeeper组成集群
+   > - 安装3个Kafka组成集群，并注册到Zookeeper集群中
 
 2. 配置虚拟机：①固定IP、②关闭防火墙、③修改主机名称、④配置host用主机名称、⑤ssh免密登陆
 
@@ -160,7 +169,7 @@
    ```shell
    # 唯一,每台机器的broker.id必须保证不相同
    broker.id=0
-   # 日志目录
+   # 存储数据的地方
    log.dirs=/opt/module/kafka3/logs
    # zookeeper集群：Zookeeper中新建kafka目录
    zookeeper.connect=BigDataNode101:2181,BigDataNode102:2181,BigDataNode103:2181/kafka
@@ -194,7 +203,7 @@
        for i in BigDataNode101 BigDataNode102 BigDataNode103
        do
            echo  ------------- kafka.meta $i 删除 ------------
-           ssh $i "rm -rf /opt/module/kafka3/logs/ meta.properties"
+           ssh $i "rm -rf /opt/module/kafka3/logs/meta.properties"
        done
    }
    ;;
@@ -265,7 +274,7 @@
    
    ```sh
    # 执行命令后从test主题中获取消息
-   kafka-console-consumer.sh --bootstrap-server BigDataNode101:9092 --topic test
+   kafka-console-consumer.sh --bootstrap-server BigDataNode101:9092 --topic partition_three
    ```
 
 ## 第三章 Kafka生产者
@@ -275,15 +284,19 @@
 > 3. 同步发送
 > 4. 同步发送带回调
 
-### 3.1 Kafka生产者发送原理
+### 3.1 Kafka生产者发送原理（面试题）
+
+> `<iframe src="https://www.bilibili.com/video/BV1vr4y1677k?p=10"  width="100%" height="600px" frameborder="0" scrolling="no"> </iframe>`
+
+![image-20220703151731636](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20220703151731636.png)
 
 1. 在消息发送过程中，涉及到两个线程：mian线程和sender线程（主要目的是将外部数据发送到kafka集群）；main线程中创建了几个双端队列（RecordAccumulator）。Sender线程不断从RecordAccumulator中拉取消息发送到Kafka Broker；
 2. 外部数据发送到kafka集群的数据流
    - 首先会创建一个Producer，调用send方法发送数据
-   - （可选）数据经过拦截器：对数据进行加工扩展处理，通常会使用Flume中的拦截器
+   - （可选）数据经过拦截器：对数据进行加工扩展处理
    - 数据处理过后经过Kafka序列化器：做简单校验并序列化，高效
    - 数据需要给哪个分区发送：由分区器中进行处理
-3. RecordAccumulator默认32M
+3. 分区器:RecordAccumulator默认32M
    - 分区器会将消息发送到指定的队列中，这些操作都是在内存中执行
    - 整个双端队列大小为32M，给DQueue中传送每批次大小16K
 4. Sender线程拉取队列中消息，发送到kafka集群
@@ -293,26 +306,22 @@
    - Kafka集群收到数据会应答：0、1、-1
 5. 消息成功会清理队列中数据；如果失败会重试；
 
-![image-20220703151731636](.\resource\image-20220703151731636.png)
-
 ### 3.3 Kafka发送
 
 1. 异步发送：在Kafka中异步发送是指将外部数据发送到队列中即完成，不再等待数据发送到Kafka中的Broker
 
-2. 案例演示：
-   
-   - 引入Maven依赖
-     
+   - 引入Kafka依赖
+
      ```xml
      <dependency>
-      <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka-clients</artifactId>
-      <version>3.1.0</version>
+       <groupId>org.apache.kafka</groupId>
+       <artifactId>kafka-clients</artifactId>
+       <version>3.1.0</version>
      </dependency>
      ```
-   
-   - 连接Kafka集群，发送普通消息
-     
+
+   - 连接Kafka,异步发送消息
+
      ```java
      public class CustomProducerDemo01 {
          public static void main(String[] args) {
@@ -333,36 +342,36 @@
          }
      }
      ```
-   
-   - 连接Kafka集群，发送带回调消息
-     
-     ```java
-     public class CustomProducerDemo02 {
-         public static void main(String[] args) {
-             // 连接
-             Properties properties = new Properties();
-             properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"BigDataNode101:9092,BigDataNode102:9092");
-             properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-             // 创建对象
-             KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
-     
-             // 发送消息
-             for(int i = 0; i < 5; i++) {
-                 producer.send(new ProducerRecord<>("test", "小刘学生"),(meta,e)->{
-                     if (e == null) {
-                         System.out.println("主题: " + meta.topic() + ",分区: " + meta.partition());
-                     }
-                 });
-             }
-             // 关闭资源
-             producer.close();
-         }
-     }
-     ```
 
-3. 同步发送
+2. 发送回调:连接Kafka集群，发送带回调消息,获取发送的topic和分区
+
+   ```java
+   public class CustomProducerDemo02 {
+       public static void main(String[] args) {
+           // 连接
+           Properties properties = new Properties();
+           properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"BigDataNode101:9092,BigDataNode102:9092");
+           properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+           properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+           // 创建对象
+           KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
    
+           // 发送消息
+           for(int i = 0; i < 5; i++) {
+               producer.send(new ProducerRecord<>("test", "小刘学生"),(meta,e)->{
+                   if (e == null) {
+                       System.out.println("主题: " + meta.topic() + ",分区: " + meta.partition());
+                   }
+               });
+           }
+           // 关闭资源
+           producer.close();
+       }
+   }
+   ```
+
+3. 同步发送:外部数据发送到分区器并且Sender线程将数据发送到Kafka集群
+
    ```java
    // send发送后调用get()方法
    producer.send(new ProducerRecord<>("test", "小刘学生")).get();
@@ -372,7 +381,7 @@
 
 1. 分区的作用
    
-   - 便于合理使用存储资源：可以把海量数据按照分区切割成一块一块的数据存储在多个Broker上
+   - 便于合理使用存储资源：可以把海量数据按照分区切割成一块一块的数据存储在多个Broker上,合理控制分区任务,可以实现负载均衡
    - 提高并行度：生产者可以根据分区为单位发送数据，消费者可以根据分区为单位消费数据；
 
 2. 分区策略：是指使用JavaAPI调用发送时候的partition等参数指定发送消息到指定分区的计算方法；
@@ -381,7 +390,7 @@
    
    - 在没有指定partition值，但是有key的情况下，将key的hash值与topic的partition数进行取余得到partition值；
    
-   - 既没有指定partition也没有key的情况，Kafka采用年限分区器,会随机选择一个分区，并且尽可能一直使用该分区，知道分区的batch已满或者已完成，Kafka会再随机一个分区使用；
+   - 既没有指定partition也没有key的情况，Kafka采用黏性分区器,会随机选择一个分区，并且尽可能一直使用该分区，知道分区的batch已满或者已完成，Kafka会再随机一个分区使用；
 
 3. 自定义类实现接口
    
@@ -835,6 +844,55 @@
 ### 4.5 高效读写数据
 
 ## 第五章 Kafka 消费者
+
+### 5.1 Kafka消费方式
+
+1. pull:拉取:Kafka的consumer采用从broker中主动拉取数据,因为每个消费者消费数据的速度可能不一样,需要根据消费者速度消费数据,缺点是如果broker没有数据,消费者一直循环拉取
+2. push:推送:如果broker发送速率,很难适应消费者的消费速率,
+
+### 5.2 消费者工作流程
+
+1. 概念解释
+
+   - Zookeeper
+   - Kafka集群
+   - Consumer
+   - Consumer Group
+   - Offset
+
+2. 消费者组原理:消费者组是由多个消费者组成,形成消费者组的条件,是所有消费者的groupId相同
+
+   - 消费者组内每个消费者负责不同分区的数据,一个分区只能由一个组内消费者消费
+   - 消费者组之间互不影响,所有消费者都属于某个消费者组(即消费者组是逻辑上的一个订阅者)
+   - 如果消费者组中添加更多的消费者,超过主题分区数量,则由一部分消费者就会闲置,不会收到任何消息
+
+3. 消费者组初始化流程
+
+   ![image-20221113111125579](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20221113111125579.png)
+
+   - coordinator:辅助实现消费者组的初始化和分区的分配(hash(groupId)%50(_consumer_offset的分区数量等于50)),计算得到topic的分区号,那个这个节点的coordinator作为消费者组的老大,消费者组下面的所有消费者提交offset的时候就给这个分区提交offset
+   - 所有加入组的消费者都发送JoinGroup请求,加入消费组,coordinator会随机选择一个消费者作为Leader,作为Leader的消费者会把消费方案发送给coordinator,coordinator再将计划分配给对应的消费者
+   - 每个消费都会和coordinator保持心跳,默认3秒
+
+4. 消费者消费流程
+
+   ![image-20221113112036530](https://gitee.com/panda_code_note/commons-resources/raw/master/part01_images/image-20221113112036530.png)
+
+   - 消费者创建一个消费者网络连接客户端:①抓取大小②批数据最小值未达到超时时间③每批次最大抓取大小
+   - 消费者发送抓取的send方法,拉取成功发送onSuccess回调,
+   - 拉取回来的数据保存到队列中,消费者从队列中获取数据,首先进行反序列化,经过拦截器后进行数据处理
+
+### 5.3 消费者API
+
+### 5.4 生产经验:分区配置以及再平衡
+
+### 5.5 offset位移
+
+### 5.6 消费者事务
+
+### 5.7 生产经验:消息积压
+
+
 
 ## 第六章 Kafka Eagle监控
 

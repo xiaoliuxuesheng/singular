@@ -1001,14 +1001,32 @@
 
 ## 3.1 dio
 
-1. 概述：发送Http请求，类似Axios。
+1. 概述：是一个强大的Dart Http请求库,类似Axios
 
-2. 在pubspec.yaml添加依赖，自动下载
+   > 官网:https://pub.dev/packages/dio
 
-   ```yaml
-   dependencies:
-     dio: ^4.0.4
-   ```
+2. 使用步骤
+
+   1. 先在pubspec.yaml添加依赖，自动下载
+
+      ```yaml
+      dependencies:
+        dio: ^4.0.4
+      ```
+
+   2. 然后安装依赖
+
+      ```yaml
+      pub get
+      # 或者
+      flutter packages get
+      ```
+
+   3. 在dart文件中引入dio的包
+
+      ```dart
+      import 'package:dio/dio.dart';
+      ```
 
 3. 使用案例
 
