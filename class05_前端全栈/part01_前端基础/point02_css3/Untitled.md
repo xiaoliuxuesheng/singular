@@ -92,9 +92,9 @@ Grid 布局的属性分成两类。一类定义在容器上面，称为容器属
 
 > ```css
 > .container {
->   display: grid;
->   grid-template-columns: 100px 100px 100px;
->   grid-template-rows: 100px 100px 100px;
+>     display: grid;
+>     grid-template-columns: 100px 100px 100px;
+>     grid-template-rows: 100px 100px 100px;
 > }
 > ```
 
@@ -106,9 +106,9 @@ Grid 布局的属性分成两类。一类定义在容器上面，称为容器属
 
 > ```css
 > .container {
->   display: grid;
->   grid-template-columns: 33.33% 33.33% 33.33%;
->   grid-template-rows: 33.33% 33.33% 33.33%;
+>     display: grid;
+>     grid-template-columns: 33.33% 33.33% 33.33%;
+>     grid-template-rows: 33.33% 33.33% 33.33%;
 > }
 > ```
 
@@ -142,8 +142,8 @@ Grid 布局的属性分成两类。一类定义在容器上面，称为容器属
 
 > ```css
 > .container {
->   display: grid;
->   grid-template-columns: repeat(auto-fill, 100px);
+>     display: grid;
+>     grid-template-columns: repeat(auto-fill, 100px);
 > }
 > ```
 
@@ -157,8 +157,8 @@ Grid 布局的属性分成两类。一类定义在容器上面，称为容器属
 
 > ```css
 > .container {
->   display: grid;
->   grid-template-columns: 1fr 1fr;
+>     display: grid;
+>     grid-template-columns: 1fr 1fr;
 > }
 > ```
 
@@ -170,8 +170,8 @@ Grid 布局的属性分成两类。一类定义在容器上面，称为容器属
 
 > ```css
 > .container {
->   display: grid;
->   grid-template-columns: 150px 1fr 2fr;
+>     display: grid;
+>     grid-template-columns: 150px 1fr 2fr;
 > }
 > ```
 
