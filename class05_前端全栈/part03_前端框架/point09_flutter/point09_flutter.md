@@ -351,8 +351,76 @@ TextButton(onPressed: (){
 
 ## 3.4 资源管理
 
+
+
 # 第四章 基础组件
 
+<<<<<<< HEAD
+### 4.1 Flutter组件原理
+
+1. Flutter内置了两种风格的UI库：①通用的Material组件②以iOS设计风格的Cupertino组件
+2. Flutter应用的入口：在main方法中调用runApp()方法，运行传入的Widget组件作为Flutter应用的跟组件
+
+### 4.2 Flutter基础组件
+
+1. MaterialApp：作为Material风格的根组件，用于获取Material主题数据（因为许多Material风格的Widget在MaterialApp应用中才能正常显示）
+
+### 4.3 布局组件
+
+1. Flutter中布局概念：Flutter中几乎所有东西都是Widget，可见的文字、图片、图标等等，不可见的布局、模型等等；
+
+2. 布局组件在Flutter中的作用：用来限制、排列可见的Widget，使可见的Widget在特定的行、列或者网格中显示，通过组装简单的Widget构建复杂的界面；
+
+3. 容器组件
+
+   | 组件类    | 作用                                                     |
+   | --------- | -------------------------------------------------------- |
+   | Container | 绘制、定位、调整大小                                     |
+   | Row       | 水平方向排列子Widget组件列表                             |
+   | Column    | 垂直方向排列子Widget组件列表                             |
+   | GridView  | 可滚动的网格                                             |
+   | ListView  | 可滚动的列表                                             |
+   | Stack     | Widget覆盖在另一个Widget                                 |
+   | Card      | 将相关信息整理到一个有圆角的阴影盒子中                   |
+   | ListTitle | 将最多三行的文本、可选的导语以及后面的图标组织在一行中。 |
+
+4. 常用组件
+
+   | 组件类       | 作用         |
+   | ------------ | ------------ |
+   | Text         | 带样式的文本 |
+   | Image        | 图片组件     |
+   | Icon         | 图标组件     |
+   | RaisedButton | 按钮组件     |
+   |              |              |
+
+5. 结构组件
+
+   | 组件类      | 作用       |
+   | ----------- | ---------- |
+   | AlertDialog | 弹窗对话框 |
+   |             |            |
+
+   
+
+6. Material App组件
+
+   | 组件类   | 作用                                                         |
+   | -------- | ------------------------------------------------------------ |
+   | Scaffold | APP基本布局：用于显示drawer、snackbar和底部sheet的API        |
+   | Appbar   | APP应用程序栏，由工具栏和其他可能的widget（如TabBar和FlexibleSpaceBar）组成 |
+   |          |                                                              |
+
+7. 其他
+
+   | 组件类        | 说明                                                         |
+   | ------------- | ------------------------------------------------------------ |
+   | AbsorbPointer | 禁止用户输入的控件，如：按钮、输入框、滚动等等<br /> - 特点：`AbsorbPointer` 本身可以接收点击事件，消耗掉事件 |
+   | IgnorePointer | IgnorePointer的用法和AbsorbPointer一样，而且达到的效果一样<br /> - 特点：`IgnorePointer`无法接收点击事件，其下的控件可以接收到点击事件 |
+   | AlertDialog   | 弹窗                                                         |
+
+   
+=======
 ## 4.1 Container
 
 
@@ -378,6 +446,7 @@ TextButton(onPressed: (){
 ## 4.11 Placeholder
 
 
+>>>>>>> 212c526ef6bbdf8f6a4048a734bd93bb3b1c90d3
 
 # 第五章 布局组件
 
